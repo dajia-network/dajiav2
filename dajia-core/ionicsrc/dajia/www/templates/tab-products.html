@@ -1,0 +1,24 @@
+<ion-view>
+  <ion-nav-title>
+    <span>打价</span>
+  </ion-nav-title>
+  <ion-nav-bar class="bar-assertive"></ion-nav-bar>
+  <ion-content>
+	<div class="list card" ng-repeat="product in products">
+	  <div class="item item-avatar">
+	    <img ng-src="{{product.vendorImg}}">
+	    <h2>{{product.name}}</h2>
+	    <p>{{product.brief}}</p>
+	  </div>
+	
+	  <div class="item item-image">
+	    <a href="#/tab/prod/{{product.productId}}"><img ng-src="{{product.productImg}}"></a>
+	  </div>
+	
+	  <a class="item item-icon-right assertive" href="#/tab/prod/{{product.productId}}">
+	    <i class="icon ion-arrow-graph-down-right"></i>
+	    现在只要￥{{product.currentPrice}}（已打掉￥{{product.priceOff}}）
+	  </a>
+	</div>
+  </ion-content>
+</ion-view>

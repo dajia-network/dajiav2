@@ -1,0 +1,59 @@
+/* Empty. Add your own CSS if you like */
+.ori_price {
+	text-decoration: line-through;
+}
+
+.now_price {
+	font-size: 1.8em;
+}
+
+.row.noPadding {
+	padding: 0;
+}
+
+.col.noPadding {
+	padding: 0;
+}
+
+.item.noBorder {
+	border-width: 0;
+}
+
+.progress {
+	height: 1.4em;
+	margin-bottom: 2px;
+}
+
+.progress i {
+	line-height: 1em;
+}
+
+.progress-bar {
+	transition: width 1s ease-in-out;
+}
+
+.progress-bar-success {
+	background-color: #ef473a;
+}
+
+.label-row {
+	margin: 0px;
+	padding: 0px;
+}
+
+a:hover,a:focus {
+	color: inherit;
+	text-decoration: none;
+}
+
+.platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader) {
+    height: 44px;
+}
+
+.platform-ios.platform-cordova:not(.fullscreen) .bar-subheader, .platform-ios.platform-cordova:not(.fullscreen) .has-header, .platform-ios.platform-cordova:not(.fullscreen) .tabs-top>.tabs, .platform-ios.platform-cordova:not(.fullscreen) .tabs.tabs-top {
+    top: 44px;
+}
+
+.platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader)>* {
+    margin-top: 0px;
+}

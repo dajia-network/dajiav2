@@ -1,0 +1,48 @@
+<ion-view view-title="订单#{{order.id}}">
+	<ion-nav-bar class="bar-assertive">
+		<ion-nav-back-button>
+			返回
+		</ion-nav-back-button>
+	</ion-nav-bar>
+	<ion-content>
+  		<div class="card">
+			<div class="item item-divider">
+			  购买详情
+			</div>
+			<div class="item item-text-wrap">
+				<div class="item noBorder item-thumbnail-left">
+					<img ng-src="{{order.product.img}}">
+					<p>{{order.product.name}}</p>
+					<p>购买价<span class="assertive">￥{{order.price}}</span></p>
+					<p>购买日期：{{order.orderDate}}</p>
+				</div>
+			</div>
+		</div>
+  		<div class="card">
+			<div class="item item-divider">
+			  打价进度
+			</div>
+			<div class="item item-text-wrap">
+		        <p>目前共<span class="assertive">{{order.product.orderNum}}</span>人参与打价。</p>
+		        <p>还需要<span class="assertive">{{order.product.targetOrderNum-order.product.orderNum}}</span>人购买就能将价格打到最低价<span class="assertive">￥{{order.product.targetPrice}}</span>。</p>
+				<div>
+				    <progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></progressbar>
+				</div>
+		        <p>当前价格：<span class="assertive">￥{{order.product.price}}</span></p>
+				<p>可退差价：<span class="assertive">￥{{order.price-order.product.price}}</span></p>
+		        <p>截止日期：{{order.dueDate}}</p>
+			</div>
+		</div>
+  		<div class="card">
+		  <div class="item item-divider">
+		    收货信息
+		  </div>
+		  <div class="item item-text-wrap">
+		    <p>收货人: {{order.contactInfo.name}}</p>
+		    <p>手机: {{order.contactInfo.cell}}</p>
+		    <p>收货地址: {{order.contactInfo.address1}}&nbsp;{{order.contactInfo.address2}}</p>
+		    <p>订单状态: {{order.status}}</p>
+		  </div>
+		</div>
+	</ion-content>
+</ion-view>

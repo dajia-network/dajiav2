@@ -1,0 +1,19 @@
+<ion-view>
+  <ion-nav-title>
+    <span>打价进度</span>
+  </ion-nav-title>
+  <ion-nav-bar class="bar-assertive"></ion-nav-bar>
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="order in myOrders" type="item-text-wrap" href="#/tab/prog/{{order.id}}">
+        <img ng-src="{{order.product.img}}" >
+        <p>{{order.product.name}}</p>
+        <p><progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></progressbar></p>
+        <p>购买价￥{{order.price}}</p>
+        <p>可退差价<span class="assertive">￥{{order.price-order.product.price}}</span></p>
+        <p>截止日期：{{order.dueDate}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

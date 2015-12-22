@@ -1,0 +1,66 @@
+<ion-view view-title="{{product.name}}"> 
+<ion-nav-bar class="bar-assertive">
+	<ion-nav-back-button>
+		返回
+	</ion-nav-back-button>
+</ion-nav-bar>
+<ion-content>
+	<div class="list card">
+		<div class="item item-body">
+			<ion-slide-box on-slide-changed="slideHasChanged($index)">
+			  <ion-slide ng-repeat="prodImg in product.productImages">
+			    <img ng-src="{{prodImg.path}}" class="full-image">
+			  </ion-slide>
+			</ion-slide-box>
+			<p>{{product.desc}}</p>
+			<p>
+				<span class="ori_price">￥{{product.originalPrice}}</span>&nbsp;
+				<span class="assertive now_price">￥</span>
+				<span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span>
+			</p>
+			<div>
+			    <progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
+			    	<!-- <i><span count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> / {{product.targetPrice}}</i> -->
+			    </progressbar>
+			</div>
+		    <ul class="row label-row">
+	            <li class="col" style="text-align: left;">原价:￥{{product.originalPrice}}</li>
+	            <li class="col" style="text-align: right;">最低价:￥{{product.targetPrice}}</li>
+	        </ul>
+			<p>
+				目前共<span class="assertive">{{product.orderNum}}</span>人参与打价。还需要<span class="assertive">{{orderNeeded}}</span>人购买就能将价格打到<span class="assertive">￥{{product.targetPrice}}</span>。下一个订单将打掉<span class="assertive">{{nextPriceOff}}</span>块钱！
+			</p>
+		</div>
+	
+		<div class="item tabs tabs-secondary tabs-icon-left">
+			<a class="tab-item" href="#"> <i class="icon ion-star"></i> 收藏
+			</a> 
+			<a class="tab-item" href="#"> <i class="icon ion-share"></i> 分享
+			</a>
+		</div>
+	</div>
+	<div class="card">
+	  <div class="item item-divider">
+	    产品介绍
+	  </div>
+	  <div class="item item-text-wrap">
+	    {{product.description}}
+	  </div>
+	</div>
+	<div class="card">
+	  <div class="item item-divider">
+	    产品规格
+	  </div>
+	  <div class="item item-text-wrap">
+	    {{product.spec}}
+	  </div>
+	</div>
+</ion-content>
+<ion-footer-bar align-title="left" class="bar-stable">
+	<div class="row noPadding">
+		<div class="col noPadding text-right">
+			<button class="button button-outline button-assertive" ng-click="buyNow()">立即购买</button>
+		</div>
+	</div>
+</ion-footer-bar>
+</ion-view>
