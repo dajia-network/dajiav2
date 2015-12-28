@@ -94,3 +94,17 @@ CREATE TABLE dajia.user_order (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(order_id)
 );
+
+
+DROP TABLE dajia.property;
+CREATE TABLE dajia.property (
+	property_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	property_key VARCHAR(100) NOT NULL,
+    property_value VARCHAR(1000),
+    comments VARCHAR(1000),
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(property_id),
+    UNIQUE KEY (property_key)
+)

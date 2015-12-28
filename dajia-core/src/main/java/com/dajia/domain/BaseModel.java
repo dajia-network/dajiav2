@@ -3,7 +3,6 @@ package com.dajia.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 public class BaseModel {
@@ -16,11 +15,6 @@ public class BaseModel {
 
     @Column(name="is_active")
     public String isActive;
-    
-    @PrePersist
-    public void createdDate() {
-        this.createdDate = this.modifiedDate = new Date();
-    }
 
     @PreUpdate
     public void modifiedDate() {

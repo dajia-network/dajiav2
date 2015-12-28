@@ -22,5 +22,7 @@ public class RepositoryTests {
 	public void testPropertyRepo() throws Exception {
 		Property p = repo.findByPropertyKey("appkey");
 		System.out.println(p.propertyValue);
+		p = repo.findByPropertyKey("secret");
+		System.out.println(p.propertyValue);
 	}
 }

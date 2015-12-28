@@ -174,3 +174,31 @@ VALUES(
     '/Users/Puffy/Works/dajia_upload/dajia-company-3.jpg',
     '/ionic/upload/productImg/dajia-company-3.jpg'
     );
+    
+    
+INSERT INTO dajia.property (
+	property_key,
+    property_value
+	) 
+VALUES(
+    'appkey',
+    '642537'
+    );
+    
+INSERT INTO dajia.property (
+	property_key,
+    property_value
+	) 
+VALUES(
+    'secret',
+    '71a748a0c72eb8626eecacf340477846'
+    );
+    
+INSERT INTO dajia.property (
+	property_key,
+    property_value
+	) 
+VALUES(
+    'token',
+    null
+    );
