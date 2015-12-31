@@ -8,8 +8,8 @@
 	<div class="list card">
 		<div class="item item-body">
 			<ion-slide-box on-slide-changed="slideHasChanged($index)">
-			  <ion-slide ng-repeat="prodImg in product.productImages">
-			    <img ng-src="{{prodImg.path}}" class="full-image">
+			  <ion-slide ng-repeat="prodImg in product.productImagesExt">
+			    <img ng-src="{{prodImg}}" class="full-image">
 			  </ion-slide>
 			</ion-slide-box>
 			<p>{{product.desc}}</p>

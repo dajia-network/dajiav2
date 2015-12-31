@@ -1,7 +1,9 @@
 package com.dajia.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.dajia.domain.Product;
 import com.dajia.domain.Property;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.util.ApiUtils;
@@ -28,7 +31,7 @@ public class ApiService {
 		String token = (propertyRepo.findByPropertyKey(ApiUtils.token)).propertyValue;
 		boolean tokenValid = false;
 		if (null != token && token.length() > 0) {
-			String testTokenUrl = ApiUtils.apiFullPath();
+			String testTokenUrl = ApiUtils.testTokenUrl();
 			String publicStr = ApiUtils.testTokenPublicStr(token);
 			logger.info("testTokenUrl: " + testTokenUrl);
 			RestTemplate restTemplate = new RestTemplate();
@@ -47,7 +50,7 @@ public class ApiService {
 			logger.info("access token is invalid...");
 			String appkey = (propertyRepo.findByPropertyKey(ApiUtils.appkey)).propertyValue;
 			String secret = (propertyRepo.findByPropertyKey(ApiUtils.secret)).propertyValue;
-			String generateTokenUrl = ApiUtils.generateTokenPath(appkey, secret);
+			String generateTokenUrl = ApiUtils.generateTokenUrl(appkey, secret);
 			logger.info("generateTokenUrl: " + generateTokenUrl);
 			RestTemplate restTemplate = new RestTemplate();
 			String retrunJsonStr = restTemplate.getForObject(generateTokenUrl, String.class);

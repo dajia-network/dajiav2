@@ -41,14 +41,14 @@ CREATE TABLE dajia.user_contact (
 DROP TABLE dajia.product;
 CREATE TABLE dajia.product (
 	product_id BIGINT(25) NOT NULL AUTO_INCREMENT,
-    ref_id BIGINT(25) NULL,
+    ref_id VARCHAR(100) NULL,
     short_name VARCHAR(100) NULL,
     name VARCHAR(500) NOT NULL,
     brief VARCHAR(4000) NULL,
     description TEXT NULL,
     spec TEXT NULL,
     order_num INT,
-    max_order INT,
+    stock INT,
     original_price NUMERIC(10,2),
     current_price NUMERIC(10,2),
     target_price NUMERIC(10,2),

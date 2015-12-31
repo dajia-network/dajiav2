@@ -21,7 +21,7 @@ public class Product extends BaseModel {
 	public Long productId;
 
 	@Column(name = "ref_id")
-	public Long refId;
+	public String refId;
 
 	@Column(name = "short_name")
 	public String shortName;
@@ -41,8 +41,8 @@ public class Product extends BaseModel {
 	@Column(name = "order_num")
 	public Long orderNum;
 
-	@Column(name = "max_order")
-	public Long maxOrder;
+	@Column(name = "stock")
+	public Long stock;
 
 	@Column(name = "original_price")
 	public BigDecimal originalPrice;
@@ -70,5 +70,11 @@ public class Product extends BaseModel {
 
 	@Transient
 	public List<ProductImage> productImages;
+
+	@Transient
+	public List<String> productImagesExt;
+
+	@Transient
+	public List<String> productImagesThumbExt;
 
 }

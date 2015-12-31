@@ -20,13 +20,13 @@ public class ServiceTests {
 	@Autowired
 	private ProductService productService;
 
-	//@Test
+	// @Test
 	public void testApiService() throws Exception {
 		apiService.loadApiToken();
 	}
 
 	@Test
 	public void testProductService() {
-		productService.loadProductsFromApi();
+		productService.syncProductsAll();
 	}
 }

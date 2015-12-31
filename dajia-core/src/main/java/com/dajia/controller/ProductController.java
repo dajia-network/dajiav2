@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
+import com.dajia.service.ProductService;
 
 @RestController
 public class ProductController {
@@ -19,16 +20,31 @@ public class ProductController {
 	@Autowired
 	private ProductRepo productRepo;
 
+	@Autowired
+	private ProductService productService;
+
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
 		// Pageable pageable = new PageRequest(1, 20);
 		List<Product> products = (List<Product>) productRepo.findAll();
+		for (Product product : products) {
+			// will remove this when finish product imgs sync logic
+			Product productVO = productService.loadProductFromApi(product.refId);
+			product.productImagesExt = productVO.productImagesExt;
+			product.productImagesThumbExt = productVO.productImagesThumbExt;
+			if (null != productVO.productImagesExt && productVO.productImagesExt.size() > 0) {
+				product.productImg = productVO.productImagesExt.get(0);
+			}
+		}
 		return products;
 	}
 
 	@RequestMapping("/product/{pid}")
 	public Product product(@PathVariable("pid") Long pid) {
 		Product product = productRepo.findOne(pid);
+		Product productVO = productService.loadProductFromApi(product.refId);
+		product.productImagesExt = productVO.productImagesExt;
+		product.productImagesThumbExt = productVO.productImagesThumbExt;
 		return product;
 	}
 
