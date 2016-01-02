@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 @MappedSuperclass
@@ -18,8 +19,14 @@ public class BaseModel {
 	@Column(name = "is_active")
 	public String isActive;
 
+	@PrePersist
+	public void beforeCreation() {
+		this.isActive = "Y";
+		this.createdDate = new Date();
+	}
+
 	@PreUpdate
-	public void modifiedDate() {
+	public void beforeModification() {
 		this.modifiedDate = new Date();
 	}
 }

@@ -45,6 +45,22 @@ public class ApiUtils {
 		return publicStr;
 	}
 
+	public static String updateProductUrl() {
+		String path = schema + "://" + domain + path_api + "?param={paramStr}&public={publicStr}";
+		return path;
+	}
+
+	public static String updateProductParamStr(String refId, String price) {
+		String paramStr = "{\"itemid\":\"" + refId + "\", \"price\":\"" + price + "\"}";
+		return paramStr;
+	}
+
+	public static String updateProductPublicStr(String token) {
+		String publicStr = "{\"method\":\"vdian.item.update\",\"access_token\":\"" + token
+				+ "\",\"version\":\"1.0\",\"format\":\"json\"}";
+		return publicStr;
+	}
+
 	public static String testTokenUrl() {
 		return schema + "://" + domain + path_api + "?param={}&public={publicStr}";
 	}

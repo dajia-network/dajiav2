@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
 import com.dajia.util.ApiUtils;
+import com.dajia.util.CommonUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,6 +84,29 @@ public class ProductService {
 		return product;
 	}
 
+	@Transactional
+	public void updateProductPrice(Long productId, BigDecimal price) {
+		Product product = productRepo.findOne(productId);
+		if (null != product && null != product.refId) {
+			String token = "";
+			try {
+				token = apiService.loadApiToken();
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error(e.getMessage());
+			}
+			String paramStr = ApiUtils.updateProductParamStr(product.refId, price.toString());
+			String publicStr = ApiUtils.updateProductPublicStr(token);
+			String productUrl = ApiUtils.updateProductUrl();
+			logger.info("productUrl: " + productUrl);
+			RestTemplate restTemplate = new RestTemplate();
+			String retrunJsonStr = restTemplate.getForObject(productUrl, String.class, paramStr, publicStr);
+			logger.info("retrunJsonStr: " + retrunJsonStr);
+			product.currentPrice = price;
+			productRepo.save(product);
+		}
+	}
+
 	public void syncProductsAll() {
 		List<Product> productList = this.loadProductsAllFromApi();
 		this.syncProducts(productList);
@@ -90,8 +116,15 @@ public class ProductService {
 		for (Product product : products) {
 			Product p = productRepo.findByRefId(product.refId);
 			if (null != p) {
-
+				try {
+					CommonUtils.copyProperties(product, p);
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error(e.getMessage());
+				}
+				productRepo.save(p);
 			} else {
+				product.originalPrice = product.currentPrice;
 				productRepo.save(product);
 			}
 		}

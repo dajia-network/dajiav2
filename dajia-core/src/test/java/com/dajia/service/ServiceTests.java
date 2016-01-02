@@ -1,5 +1,7 @@
 package com.dajia.service;
 
+import java.math.BigDecimal;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +30,6 @@ public class ServiceTests {
 	@Test
 	public void testProductService() {
 		productService.syncProductsAll();
+		// productService.updateProductPrice(1L, new BigDecimal(549));
 	}
 }
