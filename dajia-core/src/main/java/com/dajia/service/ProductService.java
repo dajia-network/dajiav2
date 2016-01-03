@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
-import com.dajia.util.ApiUtils;
+import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -42,9 +42,9 @@ public class ProductService {
 			logger.error(e.getMessage());
 		}
 		logger.info("access token: " + token);
-		String paramStr = ApiUtils.allProductsParamStr();
-		String publicStr = ApiUtils.allProductsPublicStr(token);
-		String allProductsUrl = ApiUtils.allProductsUrl();
+		String paramStr = ApiWdUtils.allProductsParamStr();
+		String publicStr = ApiWdUtils.allProductsPublicStr(token);
+		String allProductsUrl = ApiWdUtils.allProductsUrl();
 		logger.info("allProductsUrl: " + allProductsUrl);
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(allProductsUrl, String.class, paramStr, publicStr);
@@ -67,9 +67,9 @@ public class ProductService {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
-		String paramStr = ApiUtils.productParamStr(refId);
-		String publicStr = ApiUtils.productPublicStr(token);
-		String productUrl = ApiUtils.productUrl();
+		String paramStr = ApiWdUtils.productParamStr(refId);
+		String publicStr = ApiWdUtils.productPublicStr(token);
+		String productUrl = ApiWdUtils.productUrl();
 		logger.info("productUrl: " + productUrl);
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(productUrl, String.class, paramStr, publicStr);
@@ -95,9 +95,9 @@ public class ProductService {
 				e.printStackTrace();
 				logger.error(e.getMessage());
 			}
-			String paramStr = ApiUtils.updateProductParamStr(product.refId, price.toString());
-			String publicStr = ApiUtils.updateProductPublicStr(token);
-			String productUrl = ApiUtils.updateProductUrl();
+			String paramStr = ApiWdUtils.updateProductParamStr(product.refId, price.toString());
+			String publicStr = ApiWdUtils.updateProductPublicStr(token);
+			String productUrl = ApiWdUtils.updateProductUrl();
 			logger.info("productUrl: " + productUrl);
 			RestTemplate restTemplate = new RestTemplate();
 			String retrunJsonStr = restTemplate.getForObject(productUrl, String.class, paramStr, publicStr);
@@ -138,7 +138,7 @@ public class ProductService {
 		map = mapper.readValue(jsonStr, HashMap.class);
 		List<Map> itemList = (List) ((Map) map.get("result")).get("items");
 		for (Map itemMap : itemList) {
-			productList.add(this.productMapper(itemMap));
+			productList.add(ApiWdUtils.productMapper(itemMap));
 		}
 		return productList;
 	}
@@ -148,18 +148,6 @@ public class ProductService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map = mapper.readValue(jsonStr, HashMap.class);
 		Map itemMap = (Map) map.get("result");
-		return this.productMapper(itemMap);
-	}
-
-	private Product productMapper(Map itemMap) {
-		Product product = new Product();
-		product.refId = (String) itemMap.get("itemid");
-		product.name = (String) itemMap.get("item_name");
-		product.brief = (String) itemMap.get("item_desc");
-		product.stock = ((Integer) itemMap.get("stock")).longValue();
-		product.currentPrice = new BigDecimal((String) itemMap.get("price"));
-		product.productImagesExt = (List<String>) itemMap.get("imgs");
-		product.productImagesThumbExt = (List<String>) itemMap.get("thumb_imgs");
-		return product;
+		return ApiWdUtils.productMapper(itemMap);
 	}
 }

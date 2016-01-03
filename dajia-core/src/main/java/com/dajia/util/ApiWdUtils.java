@@ -1,6 +1,12 @@
 package com.dajia.util;
 
-public class ApiUtils {
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+
+import com.dajia.domain.Product;
+
+public class ApiWdUtils {
 	public static final String schema = "http";
 	public static final String schema_https = "https";
 	public static final String domain = "api.vdian.com";
@@ -75,5 +81,18 @@ public class ApiUtils {
 		String path = schema_https + "://" + domain + path_token + "?grant_type=client_credential&appkey=" + appkey
 				+ "&secret=" + secret;
 		return path;
+	}
+
+	public static Product productMapper(Map itemMap) {
+		Product product = new Product();
+		product.refId = (String) itemMap.get("itemid");
+		product.name = (String) itemMap.get("item_name");
+		// product.brief = (String) itemMap.get("item_desc");
+		product.stock = ((Integer) itemMap.get("stock")).longValue();
+		product.sold = ((Integer) itemMap.get("sold")).longValue();
+		product.currentPrice = new BigDecimal((String) itemMap.get("price"));
+		product.productImagesExt = (List<String>) itemMap.get("imgs");
+		product.productImagesThumbExt = (List<String>) itemMap.get("thumb_imgs");
+		return product;
 	}
 }

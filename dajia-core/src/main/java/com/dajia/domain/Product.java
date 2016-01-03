@@ -38,11 +38,14 @@ public class Product extends BaseModel {
 	@Column(name = "spec")
 	public String spec;
 
-	@Column(name = "order_num")
-	public Long orderNum;
+	@Column(name = "sold")
+	public Long sold;
 
 	@Column(name = "stock")
 	public Long stock;
+	
+	@Column(name = "product_status")
+	public Integer productStatus;
 
 	@Column(name = "original_price")
 	public BigDecimal originalPrice;

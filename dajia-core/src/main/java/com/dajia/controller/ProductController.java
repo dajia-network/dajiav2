@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
 import com.dajia.service.ProductService;
+import com.dajia.util.CommonUtils;
 
 @RestController
 public class ProductController {
@@ -26,7 +27,8 @@ public class ProductController {
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
 		// Pageable pageable = new PageRequest(1, 20);
-		List<Product> products = (List<Product>) productRepo.findAll();
+		List<Product> products = (List<Product>) productRepo
+				.findByIsActiveOrderByCreatedDateDesc(CommonUtils.is_active_y);
 		for (Product product : products) {
 			// will remove this when finish product imgs sync logic
 			Product productVO = productService.loadProductFromApi(product.refId);
