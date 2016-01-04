@@ -1,9 +1,12 @@
 package com.dajia.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +15,12 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Property;
 import com.dajia.repository.PropertyRepo;
+import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kdt.api.KdtApiClient;
 
 @Service
 public class ApiService {
@@ -24,7 +29,7 @@ public class ApiService {
 	@Autowired
 	private PropertyRepo propertyRepo;
 
-	public String loadApiToken() throws JsonParseException, JsonMappingException, IOException {
+	public String loadApiWdToken() throws JsonParseException, JsonMappingException, IOException {
 		String token = (propertyRepo.findByPropertyKey(ApiWdUtils.token)).propertyValue;
 		boolean tokenValid = false;
 		if (null != token && token.length() > 0) {
@@ -66,5 +71,30 @@ public class ApiService {
 			}
 		}
 		return token;
+	}
+
+	public String sendGet2Kdt(String method, HashMap<String, String> params) {
+		String returnStr = "";
+		KdtApiClient kdtApiClient;
+		HttpResponse response;
+
+		try {
+			String appkey = (propertyRepo.findByPropertyKey(ApiKdtUtils.appkey)).propertyValue;
+			String secret = (propertyRepo.findByPropertyKey(ApiKdtUtils.secret)).propertyValue;
+			kdtApiClient = new KdtApiClient(appkey, secret);
+			response = kdtApiClient.get(method, params);
+			System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(),
+					"UTF-8"));
+			StringBuffer resultSb = new StringBuffer();
+			String line = "";
+			while ((line = bufferedReader.readLine()) != null) {
+				resultSb.append(line);
+			}
+			returnStr = resultSb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnStr;
 	}
 }

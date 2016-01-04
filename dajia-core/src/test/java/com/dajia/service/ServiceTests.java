@@ -24,7 +24,7 @@ public class ServiceTests {
 
 	// @Test
 	public void testApiService() throws Exception {
-		apiService.loadApiToken();
+		apiService.loadApiWdToken();
 	}
 
 	@Test

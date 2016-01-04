@@ -36,7 +36,7 @@ public class ProductService {
 	public List<Product> loadProductsAllFromApi() {
 		String token = "";
 		try {
-			token = apiService.loadApiToken();
+			token = apiService.loadApiWdToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
@@ -62,7 +62,7 @@ public class ProductService {
 	public Product loadProductFromApi(String refId) {
 		String token = "";
 		try {
-			token = apiService.loadApiToken();
+			token = apiService.loadApiWdToken();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
@@ -90,7 +90,7 @@ public class ProductService {
 		if (null != product && null != product.refId) {
 			String token = "";
 			try {
-				token = apiService.loadApiToken();
+				token = apiService.loadApiWdToken();
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error(e.getMessage());

@@ -12,9 +12,9 @@ public class ApiWdUtils {
 	public static final String domain = "api.vdian.com";
 	public static final String path_api = "/api";
 	public static final String path_token = "/token";
-	public static final String appkey = "appkey";
-	public static final String secret = "secret";
-	public static final String token = "token";
+	public static final String appkey = "appkey_wd";
+	public static final String secret = "secret_wd";
+	public static final String token = "token_wd";
 
 	public static final int code_success = 0;
 	public static final int code_token_error = 10016;

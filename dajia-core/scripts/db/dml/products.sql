@@ -181,7 +181,7 @@ INSERT INTO dajia.property (
     property_value
 	) 
 VALUES(
-    'appkey',
+    'appkey_wd',
     '642537'
     );
     
@@ -190,7 +190,7 @@ INSERT INTO dajia.property (
     property_value
 	) 
 VALUES(
-    'secret',
+    'secret_wd',
     '71a748a0c72eb8626eecacf340477846'
     );
     
@@ -199,6 +199,27 @@ INSERT INTO dajia.property (
     property_value
 	) 
 VALUES(
-    'token',
+    'token_wd',
     null
     );
+
+INSERT INTO dajia.property (
+	property_key,
+    property_value
+	) 
+VALUES(
+    'appkey_kdt',
+    'de5a1e8e7432865656'
+    );
+    
+INSERT INTO dajia.property (
+	property_key,
+    property_value
+	) 
+VALUES(
+    'secret_kdt',
+    '0e97019571e2562eabea1d373ad94761'
+    );
+    
+    
+    
