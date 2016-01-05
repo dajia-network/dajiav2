@@ -1,32 +1,58 @@
 package com.dajia.util;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductImage;
 
 public class ApiKdtUtils {
-	public static final String schema = "http";
-	public static final String schema_https = "https";
-	public static final String domain = "open.koudaitong.com";
-	public static final String path_api = "/api/entry";
 	public static final String appkey = "appkey_kdt";
 	public static final String secret = "secret_kdt";
-	
+
+	public static final String key_refid = "num_iid";
+
 	public static final String method_get_item = "kdt.item.get";
 	public static final String method_get_onsale_items = "kdt.items.onsale.get";
-	
+	public static final String method_update_item = "kdt.item.update";
+
 	public static Product productMapper(Map itemMap) {
 		Product product = new Product();
-		product.refId = (String) itemMap.get("itemid");
-		product.name = (String) itemMap.get("item_name");
-		product.description = (String) itemMap.get("item_desc");
-		product.stock = ((Integer) itemMap.get("stock")).longValue();
-		product.sold = ((Integer) itemMap.get("sold")).longValue();
+		product.refId = (String) itemMap.get(key_refid);
+		product.name = (String) itemMap.get("title");
+		product.description = (String) itemMap.get("desc");
+		product.stock = Long.valueOf((String) itemMap.get("num"));
+		product.sold = ((Integer) itemMap.get("sold_num")).longValue();
+		product.buyQuota = Integer.valueOf((String) itemMap.get("buy_quota"));
 		product.currentPrice = new BigDecimal((String) itemMap.get("price"));
-		product.productImagesExt = (List<String>) itemMap.get("imgs");
-		product.productImagesThumbExt = (List<String>) itemMap.get("thumb_imgs");
+		product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
+		product.imgUrl = (String) itemMap.get("pic_url");
+		product.imgThumbUrl = (String) itemMap.get("pic_thumb_url");
+
+		List<Map<String, String>> imgMaps = (List<Map<String, String>>) itemMap.get("item_imgs");
+		List<ProductImage> productImgs = new ArrayList<ProductImage>();
+		if (null != imgMaps && imgMaps.size() > 0) {
+			for (Map<String, String> imgMap : imgMaps) {
+				ProductImage pi = new ProductImage();
+				pi.url = imgMap.get("url");
+				pi.thumbUrl = imgMap.get("thumbnail");
+				pi.medUrl = imgMap.get("medium");
+				pi.product = product;
+				productImgs.add(pi);
+			}
+		}
+		product.productImages = productImgs;
+		return product;
+	}
+
+	public static Product reMapProductImgs(Product product) {
+		if (null != product.productImages && product.productImages.size() > 0) {
+			for (ProductImage pi : product.productImages) {
+				pi.product = product;
+			}
+		}
 		return product;
 	}
 }

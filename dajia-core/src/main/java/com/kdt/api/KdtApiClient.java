@@ -104,15 +104,17 @@ public class KdtApiClient {
 		return paramStr;
 	}
 
-	private HashMap<String, String> buildCompleteParams(String method, HashMap<String, String> parames)
-			throws Exception {
+	private HashMap<String, String> buildCompleteParams(String method, HashMap<String, String> params) throws Exception {
+		if (null == params) {
+			params = new HashMap<String, String>();
+		}
 		HashMap<String, String> commonParams = getCommonParams(method);
-		for (String key : parames.keySet()) {
+		for (String key : params.keySet()) {
 			if (commonParams.containsKey(key)) {
 				throw new Exception("参数名冲突");
 			}
 
-			commonParams.put(key, parames.get(key));
+			commonParams.put(key, params.get(key));
 		}
 
 		commonParams.put(KdtApiProtocol.SIGN_KEY, KdtApiProtocol.sign(appSecret, commonParams));

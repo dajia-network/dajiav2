@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
+import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -33,7 +34,7 @@ public class ProductService {
 	@Autowired
 	private ProductRepo productRepo;
 
-	public List<Product> loadProductsAllFromApi() {
+	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
 		try {
 			token = apiService.loadApiWdToken();
@@ -59,7 +60,20 @@ public class ProductService {
 		return productList;
 	}
 
-	public Product loadProductFromApi(String refId) {
+	public List<Product> loadProductsAllFromApiKdt() {
+		String retrunJsonStr = apiService.sendGet2Kdt(ApiKdtUtils.method_get_onsale_items, null);
+		logger.info("retrunJsonStr: " + retrunJsonStr);
+		List<Product> productList = new ArrayList<Product>();
+		try {
+			productList = this.convertJson2Products(retrunJsonStr);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
+		return productList;
+	}
+
+	public Product loadProductFromApiWd(String refId) {
 		String token = "";
 		try {
 			token = apiService.loadApiWdToken();
@@ -73,6 +87,21 @@ public class ProductService {
 		logger.info("productUrl: " + productUrl);
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(productUrl, String.class, paramStr, publicStr);
+		logger.info("retrunJsonStr: " + retrunJsonStr);
+		Product product = new Product();
+		try {
+			product = this.convertJson2Product(retrunJsonStr);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+		}
+		return product;
+	}
+
+	public Product loadProductFromApiKdt(String refId) {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put(ApiKdtUtils.key_refid, refId);
+		String retrunJsonStr = apiService.sendGet2Kdt(ApiKdtUtils.method_get_item, params);
 		logger.info("retrunJsonStr: " + retrunJsonStr);
 		Product product = new Product();
 		try {
@@ -108,7 +137,7 @@ public class ProductService {
 	}
 
 	public void syncProductsAll() {
-		List<Product> productList = this.loadProductsAllFromApi();
+		List<Product> productList = this.loadProductsAllFromApiKdt();
 		this.syncProducts(productList);
 	}
 
@@ -122,6 +151,7 @@ public class ProductService {
 					e.printStackTrace();
 					logger.error(e.getMessage());
 				}
+				p = ApiKdtUtils.reMapProductImgs(p);
 				productRepo.save(p);
 			} else {
 				product.originalPrice = product.currentPrice;
@@ -136,9 +166,9 @@ public class ProductService {
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map = mapper.readValue(jsonStr, HashMap.class);
-		List<Map> itemList = (List) ((Map) map.get("result")).get("items");
+		List<Map> itemList = (List) ((Map) map.get("response")).get("items");
 		for (Map itemMap : itemList) {
-			productList.add(ApiWdUtils.productMapper(itemMap));
+			productList.add(ApiKdtUtils.productMapper(itemMap));
 		}
 		return productList;
 	}
@@ -147,7 +177,7 @@ public class ProductService {
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map = mapper.readValue(jsonStr, HashMap.class);
-		Map itemMap = (Map) map.get("result");
-		return ApiWdUtils.productMapper(itemMap);
+		Map itemMap = (Map) map.get("response");
+		return ApiKdtUtils.productMapper(itemMap);
 	}
 }

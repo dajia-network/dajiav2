@@ -8,11 +8,11 @@
 	<div class="list card">
 		<div class="item item-body">
 			<ion-slide-box on-slide-changed="slideHasChanged($index)">
-			  <ion-slide ng-repeat="prodImg in product.productImagesExt">
-			    <img ng-src="{{prodImg}}" class="full-image">
+			  <ion-slide ng-repeat="prodImg in product.productImages">
+			    <img ng-src="{{prodImg.url}}" class="full-image">
 			  </ion-slide>
 			</ion-slide-box>
-			<p>{{product.desc}}</p>
+			<p>{{product.name}}</p>
 			<p>
 				<span class="ori_price">￥{{product.originalPrice}}</span>&nbsp;
 				<span class="assertive now_price">￥</span>
@@ -28,7 +28,7 @@
 	            <li class="col" style="text-align: right;">最低价:￥{{product.targetPrice}}</li>
 	        </ul>
 			<p>
-				目前共<span class="assertive">{{product.orderNum}}</span>人参与打价。还需要<span class="assertive">{{orderNeeded}}</span>人购买就能将价格打到<span class="assertive">￥{{product.targetPrice}}</span>。下一个订单将打掉<span class="assertive">{{nextPriceOff}}</span>块钱！
+				目前共<span class="assertive">{{product.sold}}</span>人参与打价。还需要<span class="assertive">{{orderNeeded}}</span>人购买就能将价格打到<span class="assertive">￥{{product.targetPrice}}</span>。下一个订单将打掉<span class="assertive">{{nextPriceOff}}</span>块钱！
 			</p>
 		</div>
 	

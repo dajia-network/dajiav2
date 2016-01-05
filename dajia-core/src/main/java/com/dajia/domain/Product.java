@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -43,7 +46,10 @@ public class Product extends BaseModel {
 
 	@Column(name = "stock")
 	public Long stock;
-	
+
+	@Column(name = "buy_quota")
+	public Integer buyQuota;
+
 	@Column(name = "product_status")
 	public Integer productStatus;
 
@@ -56,6 +62,9 @@ public class Product extends BaseModel {
 	@Column(name = "target_price")
 	public BigDecimal targetPrice;
 
+	@Column(name = "post_fee")
+	public BigDecimal postFee;
+
 	@Column(name = "start_date")
 	public Date startDate;
 
@@ -65,18 +74,24 @@ public class Product extends BaseModel {
 	@Transient
 	public BigDecimal priceOff;
 
-	@Transient
-	public String productImg;
+	@Column(name = "img_url")
+	public String imgUrl;
 
+	@Column(name = "img_thumb_url")
+	public String imgThumbUrl;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product", fetch = FetchType.LAZY)
+	public List<ProductImage> productImages;
+
+	@Deprecated
 	@Transient
 	public String vendorImg;
 
-	@Transient
-	public List<ProductImage> productImages;
-
+	@Deprecated
 	@Transient
 	public List<String> productImagesExt;
 
+	@Deprecated
 	@Transient
 	public List<String> productImagesThumbExt;
 

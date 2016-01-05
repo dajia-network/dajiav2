@@ -29,24 +29,13 @@ public class ProductController {
 		// Pageable pageable = new PageRequest(1, 20);
 		List<Product> products = (List<Product>) productRepo
 				.findByIsActiveOrderByCreatedDateDesc(CommonUtils.is_active_y);
-		for (Product product : products) {
-			// will remove this when finish product imgs sync logic
-			Product productVO = productService.loadProductFromApi(product.refId);
-			product.productImagesExt = productVO.productImagesExt;
-			product.productImagesThumbExt = productVO.productImagesThumbExt;
-			if (null != productVO.productImagesExt && productVO.productImagesExt.size() > 0) {
-				product.productImg = productVO.productImagesExt.get(0);
-			}
-		}
 		return products;
 	}
 
 	@RequestMapping("/product/{pid}")
 	public Product product(@PathVariable("pid") Long pid) {
 		Product product = productRepo.findOne(pid);
-		Product productVO = productService.loadProductFromApi(product.refId);
-		product.productImagesExt = productVO.productImagesExt;
-		product.productImagesThumbExt = productVO.productImagesThumbExt;
+		product.productImages.size();
 		return product;
 	}
 
