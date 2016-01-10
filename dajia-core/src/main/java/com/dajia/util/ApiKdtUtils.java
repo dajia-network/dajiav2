@@ -23,10 +23,11 @@ public class ApiKdtUtils {
 		product.refId = (String) itemMap.get(key_refid);
 		product.name = (String) itemMap.get("title");
 		product.description = (String) itemMap.get("desc");
-		product.stock = Long.valueOf((String) itemMap.get("num"));
-		product.sold = ((Integer) itemMap.get("sold_num")).longValue();
-		product.buyQuota = Integer.valueOf((String) itemMap.get("buy_quota"));
-		product.currentPrice = new BigDecimal((String) itemMap.get("price"));
+		// product.stock = Long.valueOf((String) itemMap.get("num"));
+		// product.sold = ((Integer) itemMap.get("sold_num")).longValue();
+		// product.buyQuota = Integer.valueOf((String)
+		// itemMap.get("buy_quota"));
+		// product.currentPrice = new BigDecimal((String) itemMap.get("price"));
 		product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
 		product.imgUrl = (String) itemMap.get("pic_url");
 		product.imgThumbUrl = (String) itemMap.get("pic_thumb_url");

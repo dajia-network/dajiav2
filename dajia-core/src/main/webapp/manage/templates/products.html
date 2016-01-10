@@ -1,1 +1,45 @@
-<h1>HEELLO WEERLD</h1>
+<nav class="navbar navbar-default navbar-static-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a href="#" class="navbar-brand">打价网管理后台</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">产品</a></li>
+				<li><a href="#/orders">订单</a></li>
+				<li><a href="#/clients">客户</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div class="container">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th data-field="id">ID</th>
+				<th data-field="name">产品</th>
+				<th data-field="currentPrice">当前价格</th>
+				<th data-field="stock">库存</th>
+				<th data-field="sold">销量</th>
+				<th data-field="startDate">起始时间</th>
+				<th data-field="expiredDate">过期时间</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr ng-repeat="product in products">
+				<td>{{product.productId}}</td>
+				<td>{{product.name}}</td>
+				<td>￥{{product.currentPrice}}</td>
+				<td>{{product.stock}}</td>
+				<td>{{product.sold}}</td>
+				<td>{{product.startDate}}</td>
+				<td>{{product.expiredDate}}</td>
+				<td><button type="button" class="btn btn-primary btn-sm" ng-click="editProduct(product.productId);">编辑</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+

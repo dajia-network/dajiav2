@@ -1,0 +1,71 @@
+<nav class="navbar navbar-default navbar-static-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a href="#" class="navbar-brand">打价网管理后台</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">产品</a></li>
+				<li><a href="#/orders">订单</a></li>
+				<li><a href="#/clients">客户</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div class="container">
+	<form class="form-horizontal" id="productForm" ng-submit="submit()">
+		<div class="form-group">
+			<label for="name" class="col-sm-2 control-label">产品名</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="name" ng-model="product.name" readonly>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="brief" class="col-sm-2 control-label">产品描述</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="brief" placeholder="对产品的简单描述"
+					ng-model="product.brief">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="stock" class="col-sm-2 control-label">库存</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" id="stock" placeholder="100" ng-model="product.stock">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="sold" class="col-sm-2 control-label">销量</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" id="sold" ng-model="product.sold" readonly>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="startDate" class="col-sm-2 control-label">开始日期</label>
+			<div class="col-sm-10">
+				<input type="date" class="form-control" id="startDate" ng-model="product.startDate"
+					uib-datepicker-popup ng-required="true" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="expiredDate" class="col-sm-2 control-label">截止日期</label>
+			<div class="col-sm-10">
+				<input type="date" class="form-control" id="expiredDate" ng-model="product.expiredDate"
+					uib-datepicker-popup ng-required="true" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="postFee" class="col-sm-2 control-label">邮费</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" id="postFee" ng-model="product.postFee" readonly>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button type="submit" class="btn btn-primary">提交修改</button>
+				<button type="button" class="btn btn-default" ng-click="go2Kdt(product.refId);">修改产品图片和介绍</button>
+				<a class="btn btn-default" href="#" role="button">返回</a>
+			</div>
+		</div>
+	</form>
+</div>
