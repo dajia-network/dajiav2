@@ -18,6 +18,16 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 	$http.get('/product/' + $routeParams.pid).success(function(data, status, headers, config) {
 		console.log(data);
 		var product = data;
+		if (null == product.startDate) {
+			product.startDate = new Date();
+		} else {
+			product.startDate = new Date(product.startDate);
+		}
+		if (null == product.expiredDate) {
+			product.expiredDate = new Date();
+		} else {
+			product.expiredDate = new Date(product.expiredDate);
+		}
 		$scope.product = product;
 		$scope.go2Kdt = function(refId) {
 			window.location.href = 'https://koudaitong.com/v2/showcase/goods/edit#id=' + refId;
@@ -27,6 +37,7 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 				window.location = '#';
 			}).error(function(data, status, headers, config) {
 				console.log('product update failed...');
+				console.log(data.message);
 			});
 		}
 	}).error(function(data, status, headers, config) {

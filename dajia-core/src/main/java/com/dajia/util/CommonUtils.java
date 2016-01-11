@@ -34,5 +34,8 @@ public class CommonUtils {
 		if (null != req.expiredDate) {
 			persist.expiredDate = req.expiredDate;
 		}
+		if (null != req.originalPrice) {
+			persist.originalPrice = req.originalPrice;
+		}
 	}
 }
