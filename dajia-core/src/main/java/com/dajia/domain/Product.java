@@ -59,9 +59,6 @@ public class Product extends BaseModel {
 	@Column(name = "current_price")
 	public BigDecimal currentPrice;
 
-	@Column(name = "target_price")
-	public BigDecimal targetPrice;
-
 	@Column(name = "post_fee")
 	public BigDecimal postFee;
 
@@ -82,6 +79,9 @@ public class Product extends BaseModel {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product", fetch = FetchType.LAZY)
 	public List<ProductImage> productImages;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product", fetch = FetchType.LAZY)
+	public List<Price> prices;
 
 	@Deprecated
 	@Transient

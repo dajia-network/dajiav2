@@ -55,7 +55,6 @@ CREATE TABLE dajia.product (
     product_status INT,
     original_price NUMERIC(10,2),
     current_price NUMERIC(10,2),
-    target_price NUMERIC(10,2),
     post_fee NUMERIC(10,2),
 	start_date TIMESTAMP NULL,
 	expired_date TIMESTAMP NULL,
@@ -63,6 +62,19 @@ CREATE TABLE dajia.product (
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(product_id)
+);
+
+DROP TABLE dajia.price;
+CREATE TABLE dajia.price (
+	price_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    product_id BIGINT(25) NOT NULL,
+    sort INT NOT NULL,
+    sold INT,
+    target_price NUMERIC(10,2),
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(price_id)
 );
 
 DROP TABLE dajia.product_img;

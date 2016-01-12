@@ -1,10 +1,8 @@
 package com.dajia.util;
 
 import java.lang.reflect.Field;
-import java.util.Date;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 
 public class CommonUtils {
@@ -36,6 +34,17 @@ public class CommonUtils {
 		}
 		if (null != req.originalPrice) {
 			persist.originalPrice = req.originalPrice;
+		}
+		if (null != req.originalPrice) {
+			persist.currentPrice = req.originalPrice;
+		}
+		if (null != req.prices && req.prices.size() > 0) {
+			if (null != persist.prices) {
+				for (Price price : req.prices) {
+					price.product = persist;
+				}
+				persist.prices.addAll(req.prices);
+			}
 		}
 	}
 }
