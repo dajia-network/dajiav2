@@ -26,6 +26,9 @@ public class CommonUtils {
 		if (null != req.stock) {
 			persist.stock = req.stock;
 		}
+		if (null != req.buyQuota) {
+			persist.buyQuota = req.buyQuota;
+		}
 		if (null != req.startDate) {
 			persist.startDate = req.startDate;
 		}
@@ -43,8 +46,13 @@ public class CommonUtils {
 				for (Price price : req.prices) {
 					price.product = persist;
 				}
+				persist.prices.clear();
 				persist.prices.addAll(req.prices);
 			}
 		}
+	}
+
+	public static long getLongValue(Long input) {
+		return null != input ? input.longValue() : 0L;
 	}
 }

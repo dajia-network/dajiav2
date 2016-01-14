@@ -69,7 +69,13 @@ public class Product extends BaseModel {
 	public Date expiredDate;
 
 	@Transient
+	public BigDecimal targetPrice;
+
+	@Transient
 	public BigDecimal priceOff;
+
+	@Transient
+	public long soldNeeded;
 
 	@Column(name = "img_url")
 	public String imgUrl;

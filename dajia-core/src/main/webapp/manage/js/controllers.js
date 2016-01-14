@@ -49,7 +49,6 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 									$scope.product.prices = [];
 								}
 								$scope.product.prices.push(priceObj);
-								console.log($scope.product.prices);
 								$http.post('/product/' + $routeParams.pid, $scope.product).success(
 										function(data, status, headers, config) {
 											$route.reload();
@@ -58,7 +57,21 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 									console.log(data.message);
 								});
 							}
-						}
+						};
+						$scope.removePrice = function(priceId) {
+							for (var i = $scope.product.prices.length - 1; i >= 0; i--) {
+								if ($scope.product.prices[i].priceId == priceId) {
+									$scope.product.prices.splice(i, 1);
+								}
+							}
+							$http.post('/product/' + $routeParams.pid, $scope.product).success(
+									function(data, status, headers, config) {
+										$route.reload();
+									}).error(function(data, status, headers, config) {
+								console.log('product update failed...');
+								console.log(data.message);
+							});
+						};
 						$scope.submit = function() {
 							$http.post('/product/' + $routeParams.pid, $scope.product).success(
 									function(data, status, headers, config) {

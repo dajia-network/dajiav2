@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.repository.ProductRepo;
 import com.dajia.util.ApiKdtUtils;
@@ -158,6 +159,34 @@ public class ProductService {
 				productRepo.save(product);
 			}
 		}
+	}
+
+	public Product loadProductDetail(Long pid) {
+		Product product = productRepo.findOne(pid);
+		product.productImages.size();
+
+		BigDecimal targetPrice = product.originalPrice;
+		long soldNeeded = 0L;
+		for (Price price : product.prices) {
+			if (price.targetPrice.compareTo(targetPrice) < 0) {
+				targetPrice = price.targetPrice;
+				soldNeeded = price.sold;
+			}
+		}
+		product.targetPrice = targetPrice;
+		product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
+		product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+		return product;
+	}
+
+	public List<Product> loadAllProducts() {
+		// Pageable pageable = new PageRequest(1, 20);
+		List<Product> products = (List<Product>) productRepo
+				.findByIsActiveOrderByExpiredDateAsc(CommonUtils.is_active_y);
+		for (Product product : products) {
+			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+		}
+		return products;
 	}
 
 	private List<Product> convertJson2Products(String jsonStr) throws JsonParseException, JsonMappingException,

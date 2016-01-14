@@ -10,5 +10,5 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
 
 	public Product findByRefId(String refId);
 
-	public List<Product> findByIsActiveOrderByCreatedDateDesc(String isActive);
+	public List<Product> findByIsActiveOrderByExpiredDateAsc(String isActive);
 }

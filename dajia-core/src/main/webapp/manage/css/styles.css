@@ -23,3 +23,13 @@
 	border-radius: 32px;
 	color: black;
 }
+
+.multi-row {
+	margin-bottom: 10px;
+}
+
+.multi-row-input {
+	float: left;
+	width: 90%;
+	margin-right: 10px;
+}

@@ -29,16 +29,13 @@ public class ProductController {
 
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
-		// Pageable pageable = new PageRequest(1, 20);
-		List<Product> products = (List<Product>) productRepo
-				.findByIsActiveOrderByCreatedDateDesc(CommonUtils.is_active_y);
+		List<Product> products = productService.loadAllProducts();
 		return products;
 	}
 
 	@RequestMapping("/product/{pid}")
 	public Product product(@PathVariable("pid") Long pid) {
-		Product product = productRepo.findOne(pid);
-		product.productImages.size();
+		Product product = productService.loadProductDetail(pid);
 		return product;
 	}
 

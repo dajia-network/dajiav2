@@ -29,6 +29,12 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<label for="buyQuota" class="col-sm-2 control-label">购买限制</label>
+			<div class="col-sm-10">
+				<input type="number" class="form-control" id="buyQuota" placeholder="一个用户最多购买几件，留空为无限制" ng-model="product.buyQuota">
+			</div>
+		</div>
+		<div class="form-group">
 			<label for="stock" class="col-sm-2 control-label">库存</label>
 			<div class="col-sm-10">
 				<input type="number" class="form-control" id="stock" placeholder="库存数量" ng-model="product.stock">
@@ -83,23 +89,20 @@
 				</div>
 			</div>
 		</div>
-
 		<div class="form-group">
 			<label for="currentPrice" class="col-sm-2 control-label">价格变化规则</label>
 			<div class="col-sm-10">
-				<div class="input-group" ng-repeat="price in product.prices">
-					<input type="number" class="form-control" ng-model="price.sold">
-					<div class="input-group-addon">￥</div>
-					<input type="number" class="form-control" ng-model="price.targetPrice">
-					<button type="button" class="btn btn-default" ng-click="removePrice();">删除</button>
-					<br />
+				<div class="multi-row" ng-repeat="price in product.prices">
+					<div class="input-group multi-row-input">
+						<input type="number" class="form-control" ng-model="price.sold">
+						<div class="input-group-addon">￥</div>
+						<input type="number" class="form-control" ng-model="price.targetPrice">
+					</div>
+					<div>
+						<button type="button" class="btn btn-default" ng-click="removePrice(price.priceId);">删除</button>
+					</div>
 				</div>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">abc</label>
-			<div class="col-sm-10">
-				<div class="input-group">
+				<div class="input-group multi-row-input">
 					<input type="number" class="form-control" placeholder="销售数量" ng-model="newSold">
 					<div class="input-group-addon">￥</div>
 					<input type="number" class="form-control" placeholder="目标价格" ng-model="newPrice">
@@ -107,16 +110,13 @@
 				<div>
 					<button type="button" class="btn btn-default" ng-click="addPrice();">添加</button>
 				</div>
-
 			</div>
 		</div>
-
-		<br />
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button type="submit" class="btn btn-primary">提交修改</button>
-				<button type="button" class="btn btn-default" ng-click="go2Kdt(product.refId);">修改产品图片和介绍</button>
 				<a class="btn btn-default" href="#" role="button">返回</a>
+				<button type="button" class="btn btn-default" ng-click="go2Kdt(product.refId);">修改产品图片和介绍</button>
 			</div>
 		</div>
 	</form>
