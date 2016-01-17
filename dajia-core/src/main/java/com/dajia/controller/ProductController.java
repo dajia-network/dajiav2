@@ -1,6 +1,8 @@
 package com.dajia.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,4 +53,11 @@ public class ProductController {
 		}
 	}
 
+	@RequestMapping("/sync")
+	public Map<String, String> syncAllProducts() {
+		productService.syncProductsAll();
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("result", "success");
+		return map;
+	}
 }

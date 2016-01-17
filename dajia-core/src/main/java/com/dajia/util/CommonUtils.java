@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductImage;
 
 public class CommonUtils {
 	public static final String is_active_y = "Y";
@@ -16,6 +17,21 @@ public class CommonUtils {
 			if (null != field.get(src)) {
 				field.set(target, field.get(src));
 			}
+		}
+	}
+
+	public static void copyProductProperties(Product src, Product target) {
+		target.name = src.name;
+		target.description = src.description;
+		target.postFee = src.postFee;
+		target.imgUrl = src.imgUrl;
+		target.imgThumbUrl = src.imgThumbUrl;
+		if (null != src.productImages && src.productImages.size() > 0) {
+			for (ProductImage pi : src.productImages) {
+				pi.product = target;
+			}
+			target.productImages.clear();
+			target.productImages.addAll(src.productImages);
 		}
 	}
 

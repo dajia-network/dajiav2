@@ -47,13 +47,4 @@ public class ApiKdtUtils {
 		product.productImages = productImgs;
 		return product;
 	}
-
-	public static Product reMapProductImgs(Product product) {
-		if (null != product.productImages && product.productImages.size() > 0) {
-			for (ProductImage pi : product.productImages) {
-				pi.product = product;
-			}
-		}
-		return product;
-	}
 }

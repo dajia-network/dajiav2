@@ -2,9 +2,19 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 	console.log('ProductsCtrl...');
 	$http.get('/products/').success(function(data, status, headers, config) {
 		console.log(data);
+		$scope.syncBtnTxt = '同步数据';
 		$scope.products = data;
 		$scope.editProduct = function(pid) {
 			window.location.href = '#/product/' + pid;
+		};
+		$scope.sync = function() {
+			$scope.syncBtnTxt = '进行中...';
+			$http.get('/sync/').success(function(data, status, headers, config) {
+				console.log(data);
+				$scope.syncBtnTxt = '同步数据';
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
 		};
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');

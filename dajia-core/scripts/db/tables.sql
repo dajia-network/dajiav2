@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS dajia DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 
-DROP TABLE dajia.user;
-CREATE TABLE dajia.user (
+DROP TABLE IF EXISTS dajia.user;
+CREATE TABLE IF NOT EXISTS dajia.user (
 	user_id BIGINT(25) NOT NULL AUTO_INCREMENT,
 	username VARCHAR(100) NOT NULL,
 	email VARCHAR(255) NULL,
@@ -19,8 +19,8 @@ CREATE TABLE dajia.user (
     UNIQUE KEY (mobile)
 );
   
-DROP TABLE dajia.user_contact;
-CREATE TABLE dajia.user_contact (
+DROP TABLE IF EXISTS dajia.user_contact;
+CREATE TABLE IF NOT EXISTS dajia.user_contact (
 	user_contact_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     user_id BIGINT(25) NOT NULL,
     contact_name VARCHAR(100) NOT NULL,
@@ -38,8 +38,8 @@ CREATE TABLE dajia.user_contact (
 	PRIMARY KEY(user_contact_id)
 );
 
-DROP TABLE dajia.product;
-CREATE TABLE dajia.product (
+DROP TABLE IF EXISTS dajia.product;
+CREATE TABLE IF NOT EXISTS dajia.product (
 	product_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     ref_id VARCHAR(100) NULL,
     short_name VARCHAR(100) NULL,
@@ -64,8 +64,8 @@ CREATE TABLE dajia.product (
 	PRIMARY KEY(product_id)
 );
 
-DROP TABLE dajia.price;
-CREATE TABLE dajia.price (
+DROP TABLE IF EXISTS dajia.price;
+CREATE TABLE IF NOT EXISTS dajia.price (
 	price_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     product_id BIGINT(25) NOT NULL,
     sort INT NOT NULL,
@@ -77,8 +77,8 @@ CREATE TABLE dajia.price (
 	PRIMARY KEY(price_id)
 );
 
-DROP TABLE dajia.product_img;
-CREATE TABLE dajia.product_img (
+DROP TABLE IF EXISTS dajia.product_img;
+CREATE TABLE IF NOT EXISTS dajia.product_img (
 	img_id BIGINT(25) NOT NULL AUTO_INCREMENT,
 	product_id BIGINT(25) NOT NULL,
     sort INT NULL,
@@ -92,8 +92,8 @@ CREATE TABLE dajia.product_img (
 	PRIMARY KEY(img_id)
 );
 
-DROP TABLE dajia.user_order;
-CREATE TABLE dajia.user_order (
+DROP TABLE IF EXISTS dajia.user_order;
+CREATE TABLE IF NOT EXISTS dajia.user_order (
 	order_id BIGINT(25) NOT NULL AUTO_INCREMENT,
 	product_id BIGINT(25) NOT NULL,
 	user_contact_id BIGINT(25) NOT NULL,
@@ -114,8 +114,8 @@ CREATE TABLE dajia.user_order (
 );
 
 
-DROP TABLE dajia.property;
-CREATE TABLE dajia.property (
+DROP TABLE IF EXISTS dajia.property;
+CREATE TABLE IF NOT EXISTS dajia.property (
 	property_id BIGINT(25) NOT NULL AUTO_INCREMENT,
 	property_key VARCHAR(100) NOT NULL,
     property_value VARCHAR(1000),

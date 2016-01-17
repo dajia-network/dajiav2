@@ -145,14 +145,14 @@ public class ProductService {
 	public void syncProducts(List<Product> products) {
 		for (Product product : products) {
 			Product p = productRepo.findByRefId(product.refId);
+			p.productImages.size();
 			if (null != p) {
 				try {
-					CommonUtils.copyProperties(product, p);
+					CommonUtils.copyProductProperties(product, p);
 				} catch (Exception e) {
 					e.printStackTrace();
 					logger.error(e.getMessage());
 				}
-				p = ApiKdtUtils.reMapProductImgs(p);
 				productRepo.save(p);
 			} else {
 				product.originalPrice = product.currentPrice;

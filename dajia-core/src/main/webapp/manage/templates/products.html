@@ -44,8 +44,8 @@
 		</tbody>
 	</table>
 
-	<div class="ol-sm-12">
-		<button type="button" class="btn btn-primary">同步数据</button>
+	<div class="ol-sm-12" ng-if="syncBtnTxt">
+		<button type="button" class="btn btn-primary" ng-click="sync();">{{syncBtnTxt}}</button>
 	</div>
 </div>
 
