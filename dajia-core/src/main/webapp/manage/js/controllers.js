@@ -1,4 +1,4 @@
-angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http) {
+angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route) {
 	console.log('ProductsCtrl...');
 	$http.get('/products/').success(function(data, status, headers, config) {
 		console.log(data);
@@ -16,6 +16,14 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 				console.log('request failed...');
 			});
 		};
+		$scope.bot = function(pid) {
+			$http.get('/robotorder/' + pid).success(function(data, status, headers, config) {
+				console.log(data);
+				$route.reload();
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+		}
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});

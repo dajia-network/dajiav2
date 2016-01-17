@@ -3535,7 +3535,7 @@ INSERT INTO dajia.city (id, city_id, city, parent_id) VALUES
 DROP TABLE IF EXISTS dajia.province;
 CREATE TABLE IF NOT EXISTS dajia.province (
   id int(11) NOT NULL auto_increment,
-  provinceID int(11) NOT NULL,
+  province_id int(11) NOT NULL,
   province varchar(20) NOT NULL,
   PRIMARY KEY  (id)
 );
@@ -3544,7 +3544,7 @@ CREATE TABLE IF NOT EXISTS dajia.province (
 -- 导出表中的数据 `province`
 --
 
-INSERT INTO dajia.province (id, provinceID, province) VALUES
+INSERT INTO dajia.province (id, province_id, province) VALUES
 (1, 110000, '北京市'),
 (2, 120000, '天津市'),
 (3, 130000, '河北省'),

@@ -2,6 +2,7 @@ package com.dajia.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -182,11 +183,36 @@ public class ProductService {
 	public List<Product> loadAllProducts() {
 		// Pageable pageable = new PageRequest(1, 20);
 		List<Product> products = (List<Product>) productRepo
-				.findByIsActiveOrderByExpiredDateAsc(CommonUtils.is_active_y);
+				.findByIsActiveOrderByExpiredDateAsc(CommonUtils.ActiveStatus.YES.toString());
 		for (Product product : products) {
 			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
 		}
 		return products;
+	}
+
+	public void productSold(Long productId, Integer quantity) {
+		Product product = productRepo.findOne(productId);
+		if (null != product) {
+			if (null == product.sold) {
+				product.sold = 0L;
+			}
+			product.sold += 1;
+			product.stock -= 1;
+			calcCurrentPrice(product);
+		}
+		productRepo.save(product);
+	}
+
+	private void calcCurrentPrice(Product product) {
+		List<Price> prices = product.prices;
+		for (Price price : prices) {
+			if (price.sold >= product.sold) {
+				BigDecimal priceOff = product.currentPrice.add(price.targetPrice.negate()).divide(
+						new BigDecimal(price.sold - product.sold + 1), 2, RoundingMode.HALF_UP);
+				product.currentPrice = product.currentPrice.add(priceOff.negate());
+				break;
+			}
+		}
 	}
 
 	private List<Product> convertJson2Products(String jsonStr) throws JsonParseException, JsonMappingException,

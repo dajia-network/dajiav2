@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Table(name = "user_contact")
 public class UserContact extends BaseModel {
 
-	@Column(name = "contact_info_id")
+	@Column(name = "user_contact_id")
 	@Id
 	@GeneratedValue
 	public Long contactId;

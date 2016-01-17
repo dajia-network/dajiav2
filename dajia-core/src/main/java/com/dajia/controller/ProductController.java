@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
+import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
 
@@ -28,6 +30,9 @@ public class ProductController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private OrderService orderService;
 
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
@@ -59,5 +64,11 @@ public class ProductController {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("result", "success");
 		return map;
+	}
+
+	@RequestMapping("/robotorder/{pid}")
+	public UserOrder robotOrder(@PathVariable("pid") Long pid) {
+		UserOrder order = orderService.generateRobotOrder(pid, 1);
+		return order;
 	}
 }

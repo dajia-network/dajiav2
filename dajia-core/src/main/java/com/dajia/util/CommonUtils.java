@@ -7,8 +7,9 @@ import com.dajia.domain.Product;
 import com.dajia.domain.ProductImage;
 
 public class CommonUtils {
-	public static final String is_active_y = "Y";
-	public static final String is_active_n = "N";
+
+	public static Long beijing_city_key = 110100L;
+	public static Long shanghai_city_key = 310100L;
 
 	public static void copyProperties(Object src, Object target) throws IllegalArgumentException,
 			IllegalAccessException {
@@ -70,5 +71,54 @@ public class CommonUtils {
 
 	public static long getLongValue(Long input) {
 		return null != input ? input.longValue() : 0L;
+	}
+
+	public enum ActiveStatus {
+		YES("Y"), NO("N");
+		private String key;
+
+		private ActiveStatus(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(this.key);
+		}
+	}
+
+	public enum LocationType {
+		PROVINCE("province"), CITY("city"), AREA("area");
+		private String key;
+
+		private LocationType(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(this.key);
+		}
+	}
+
+	public enum OrderStatus {
+		PENDING_PAY(1, "待付款"), PAIED(2, "已付款"), DELEVERING(3, "已发货"), DELEVRIED(4, "已签收"), CLOSED(5, "已完成"), CANCELLED(
+				6, "已取消");
+		private Integer key;
+		private String value;
+
+		private OrderStatus(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
 	}
 }

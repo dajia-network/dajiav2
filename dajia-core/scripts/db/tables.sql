@@ -102,17 +102,16 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
     quantity INT,
     unit_price NUMERIC(10,2),
     total_price NUMERIC(10,2),
-    order_status VARCHAR(100),
+    order_status INT,
     order_date TIMESTAMP NULL,
     deliver_date TIMESTAMP NULL,
     close_date TIMESTAMP NULL,
-    pay_type VARCHAR(100),
+    pay_type INT,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(order_id)
 );
-
 
 DROP TABLE IF EXISTS dajia.property;
 CREATE TABLE IF NOT EXISTS dajia.property (
@@ -125,4 +124,18 @@ CREATE TABLE IF NOT EXISTS dajia.property (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(property_id),
     UNIQUE KEY (property_key)
-)
+);
+
+DROP TABLE IF EXISTS dajia.location;
+CREATE TABLE IF NOT EXISTS dajia.location (
+	id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	location_key int(11) NOT NULL,
+	location_value varchar(20) NOT NULL,
+	location_type varchar(20) NOT NULL,
+	parent_key int(11) NOT NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY  (id),
+    UNIQUE KEY (location_key)
+);
