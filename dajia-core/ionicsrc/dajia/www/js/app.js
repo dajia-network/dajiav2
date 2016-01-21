@@ -103,7 +103,7 @@ angular.module('starter', [ 'ionic', 'starter.controllers', 'starter.services' ]
 }).config(function($ionicConfigProvider) {
 	var appVersion = navigator.appVersion;
 	console.log(appVersion);
-	//alert(appVersion);
+	// alert(appVersion);
 	if(appVersion.indexOf('iPhone')==-1){
 		$ionicConfigProvider.views.transition('none');
 	}

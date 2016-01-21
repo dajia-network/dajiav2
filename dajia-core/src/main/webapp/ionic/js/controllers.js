@@ -16,6 +16,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		// console.log(data);
 		var product = data;
 		$scope.product = product;
+		$ionicSlideBoxDelegate.update();
 		$scope.orderNeeded = product.maxOrder - product.orderNum;
 		$scope.nextPriceOff = product.priceOff / product.maxOrder;
 		$scope.buyNow = function() {
@@ -27,7 +28,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		$timeout(function() {
 			$scope.progressValue = amt;
 		}, 1000);
-		$ionicSlideBoxDelegate.update();
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
