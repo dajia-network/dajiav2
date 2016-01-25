@@ -79,9 +79,50 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.totalPrice = product.price;
 })
 
-.controller('LoginCtrl', function($scope, $ionicModal) {
-	console.log('用户登录...');
+.controller('SignInCtrl', function($scope, $http, $state, AuthenticationService) {
+	$scope.message = '';
 
+	$scope.user = {
+		username : null,
+		password : null
+	};
+
+	$scope.submit = function() {
+		if (!$scope.user.username) {
+			alert('username required');
+			return;
+		}
+		if (!$scope.user.password) {
+			alert('password required');
+			return;
+		}
+		AuthenticationService.login($scope.user);
+	};
+
+	$scope.$on('event:auth-loginRequired', function(e, rejection) {
+		$scope.signinModal.show();
+	});
+
+	$scope.$on('event:auth-loginConfirmed', function() {
+		$scope.signinModal.hide();
+	});
+
+	$scope.$on('event:auth-login-failed', function(e, status) {
+		var error = "Login failed.";
+		if (status == 401) {
+			error = "Invalid Username or Password.";
+		}
+		$scope.message = error;
+	});
+
+	$scope.$on('event:auth-logout-complete', function() {
+		$state.go("home");
+		$scope.signinModal.show();
+	});
+})
+
+.controller('SignOutCtrl', function($scope, AuthenticationService) {
+	AuthenticationService.logout();
 });
 
 var loginModalInit = function($scope, $ionicModal) {

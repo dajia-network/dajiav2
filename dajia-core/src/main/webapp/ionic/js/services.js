@@ -1,4 +1,36 @@
-var starter = angular.module('starter.services', [])
+var starter = angular.module('starter.services', []);
+
+starter.factory('AuthService', function($rootScope, $http, authService) {
+	var service = {
+		login : function(user) {
+			$http.post('https://hostname:port/login', {
+				user : user
+			}, {
+				ignoreAuthModule : true
+			}).success(function(data, status, headers, config) {
+				$http.defaults.headers.common.Authorization = data.authToken;
+				authService.loginConfirmed(data, function(config) {
+					config.headers.Authorization = data.authToken;
+					return config;
+				});
+			}).error(function(data, status, headers, config) {
+				$rootScope.$broadcast('event:auth-login-failed', status);
+			});
+		},
+		logout : function(user) {
+			$http.post('https://hostname:port/logout', {}, {
+				ignoreAuthModule : true
+			}).finally(function(data) {
+				delete $http.defaults.headers.common.Authorization;
+				$rootScope.$broadcast('event:auth-logout-complete');
+			});
+		},
+		loginCancelled : function() {
+			authService.loginCancelled();
+		}
+	};
+	return service;
+});
 
 starter.factory('Mocks', function() {
 	// Might use a resource here that returns a JSON array

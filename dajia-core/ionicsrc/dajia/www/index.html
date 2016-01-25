@@ -20,6 +20,8 @@
     
     <script src="./lib/angular-ui/ui-bootstrap-custom-tpls-0.14.3.min.js"></script>
     <script src="./lib/angular-countto/count-to.js"></script>
+    <script src="./lib/angular-cookies/angular-cookies.min.js"></script>
+    <script src="./lib/angular-http-auth-master/http-auth-interceptor.js"></script>
 
     <!-- cordova script (this will be a 404 during development) -->
     <script src="./cordova.js"></script>
@@ -29,7 +31,7 @@
     <script src="./js/controllers.js"></script>
     <script src="./js/services.js"></script>
   </head>
-  <body ng-app="starter">
+  <body ng-app="starter" class="platform-browser platform-cordova platform-webview">
     <!--
       The nav bar that will be updated as we navigate between views.
     -->
