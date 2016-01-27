@@ -6,7 +6,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
-	// $scope.products = Mocks.getProducts();
 })
 
 .controller(
@@ -79,45 +78,38 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.totalPrice = product.price;
 })
 
-.controller('SignInCtrl', function($scope, $http, $state, AuthenticationService) {
-	$scope.message = '';
-
-	$scope.user = {
-		username : null,
-		password : null
+.controller('SignInCtrl', function($scope, $http, $state, $ionicLoading, $timeout, AuthService) {
+	$scope.login = {
+		'userAccount' : null,
+		'userPassword' : null
 	};
-
 	$scope.submit = function() {
-		if (!$scope.user.username) {
-			alert('username required');
+		if (!$scope.login.userAccount || !$scope.login.userPassword) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
-		if (!$scope.user.password) {
-			alert('password required');
-			return;
-		}
-		AuthenticationService.login($scope.user);
+		AuthService.login($scope.login);
 	};
 
 	$scope.$on('event:auth-loginRequired', function(e, rejection) {
-		$scope.signinModal.show();
+		$scope.openModal();
 	});
 
 	$scope.$on('event:auth-loginConfirmed', function() {
-		$scope.signinModal.hide();
+		$scope.closeModal();
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {
-		var error = "Login failed.";
+		var error = "登录失败";
 		if (status == 401) {
-			error = "Invalid Username or Password.";
+			error = "用户名或密码错误";
 		}
-		$scope.message = error;
+		popWarning(error, $timeout, $ionicLoading);
 	});
 
 	$scope.$on('event:auth-logout-complete', function() {
-		$state.go("home");
-		$scope.signinModal.show();
+		// $state.go("home");
+		$scope.openModal();
 	});
 })
 
@@ -130,24 +122,31 @@ var loginModalInit = function($scope, $ionicModal) {
 		scope : $scope,
 		animation : 'slide-in-up'
 	}).then(function(modal) {
-		$scope.modal = modal;
+		$scope.loginModal = modal;
 	});
 	$scope.openModal = function() {
-		$scope.modal.show();
+		$scope.loginModal.show();
 	};
 	$scope.closeModal = function() {
-		$scope.modal.hide();
+		$scope.loginModal.hide();
 	};
-	// Cleanup the modal when we're done with it!
+	s
 	$scope.$on('$destroy', function() {
-		$scope.modal.remove();
+		$scope.loginModal.remove();
 	});
-	// Execute action on hide modal
 	$scope.$on('modal.hidden', function() {
 		// Execute action
 	});
-	// Execute action on remove modal
 	$scope.$on('modal.removed', function() {
 		// Execute action
 	});
+}
+
+var popWarning = function(msg, $timeout, $ionicLoading) {
+	$ionicLoading.show({
+		template : msg
+	});
+	$timeout(function() {
+		$ionicLoading.hide();
+	}, 800);
 }

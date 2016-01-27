@@ -2,11 +2,10 @@ var starter = angular.module('starter.services', []);
 
 starter.factory('AuthService', function($rootScope, $http, authService) {
 	var service = {
-		login : function(user) {
-			$http.post('https://hostname:port/login', {
-				user : user
-			}, {
-				ignoreAuthModule : true
+		login : function(login) {
+			$http.post('/user/login', {
+				login : login,
+				ignoreAuth : true
 			}).success(function(data, status, headers, config) {
 				$http.defaults.headers.common.Authorization = data.authToken;
 				authService.loginConfirmed(data, function(config) {
@@ -18,7 +17,7 @@ starter.factory('AuthService', function($rootScope, $http, authService) {
 			});
 		},
 		logout : function(user) {
-			$http.post('https://hostname:port/logout', {}, {
+			$http.post('/user/logout', {
 				ignoreAuthModule : true
 			}).finally(function(data) {
 				delete $http.defaults.headers.common.Authorization;
