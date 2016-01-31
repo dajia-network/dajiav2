@@ -71,4 +71,10 @@ public class ProductController {
 		UserOrder order = orderService.generateRobotOrder(pid, 1);
 		return order;
 	}
+
+	@RequestMapping("/user/product/{pid}/order")
+	public Product productOrder(@PathVariable("pid") Long pid) {
+		Product product = productService.loadProductDetail(pid);
+		return product;
+	}
 }

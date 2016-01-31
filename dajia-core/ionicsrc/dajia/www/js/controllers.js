@@ -10,9 +10,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller(
 		'ProdDetailCtrl',
-		function($scope, $stateParams, $state, $window, $timeout, $http, $ionicSlideBoxDelegate, $ionicModal) {
+		function($scope, $rootScope, $stateParams, $http, $cookieStore, $window, $timeout, $ionicSlideBoxDelegate,
+				$ionicModal) {
 			console.log('产品详情...')
-			loginModalInit($scope, $ionicModal);
+			modalInit($scope, $ionicModal, 'login');
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
 						// console.log(data);
@@ -26,9 +27,12 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
 						$scope.buyNow = function() {
-							// $window.location.href = '#/tab/prod/' +
-							// $stateParams.pid + '/order';
-							$scope.openModal();
+							var loginUser = $cookieStore.get('loginUser');
+							if (loginUser == null) {
+								$rootScope.$broadcast('event:auth-loginRequired');
+							} else {
+								$window.location.href = '#/tab/prod/' + $stateParams.pid + '/order';
+							}
 						}
 						$timeout(function() {
 							$scope.progressValue = amt;
@@ -41,10 +45,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('ProgCtrl', function($scope, $ionicModal, $timeout, Mocks) {
 	console.log('进度列表...');
-	loginModalInit($scope, $ionicModal);
-	$timeout(function() {
-		$scope.openModal();
-	}, 500);
+	modalInit($scope, $ionicModal, 'login');
 	var orders = Mocks.getMyOrders();
 	orders.forEach(function(o) {
 		o.product = Mocks.getProduct(o.pid);
@@ -69,34 +70,45 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 })
 
-.controller('OrderCtrl', function($scope, $stateParams, Mocks) {
+.controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal) {
 	console.log('订单页面...')
-	var product = Mocks.getProduct($stateParams.pid);
-	var orderItems = [];
-	orderItems.push(product);
-	$scope.orderItems = orderItems;
-	$scope.totalPrice = product.price;
+	modalInit($scope, $ionicModal, 'login');
+	$http.get('/user/product/' + $stateParams.pid + '/order').success(function(data, status, headers, config) {
+		// console.log(data);
+		var product = data;
+		var orderItems = [];
+		orderItems.push(product);
+		$scope.orderItems = orderItems;
+		$scope.totalPrice = product.price;
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+
 })
 
-.controller('SignInCtrl', function($scope, $http, $state, $ionicLoading, $timeout, AuthService) {
+.controller('SignInCtrl', function($scope, $ionicLoading, $timeout, AuthService, $ionicModal) {
+	modalInit($scope, $ionicModal, 'signup');
 	$scope.login = {
-		'userAccount' : null,
-		'userPassword' : null
+		'mobile' : null,
+		'password' : null
 	};
 	$scope.submit = function() {
-		if (!$scope.login.userAccount || !$scope.login.userPassword) {
+		if (!$scope.login.mobile || !$scope.login.password) {
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
 		AuthService.login($scope.login);
 	};
+	$scope.signup = function() {
+		$scope.openModal('signup');
+	}
 
 	$scope.$on('event:auth-loginRequired', function(e, rejection) {
-		$scope.openModal();
+		$scope.openModal('login');
 	});
 
 	$scope.$on('event:auth-loginConfirmed', function() {
-		$scope.closeModal();
+		$scope.closeModal('login');
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {
@@ -113,32 +125,39 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	});
 })
 
-.controller('SignOutCtrl', function($scope, AuthenticationService) {
-	AuthenticationService.logout();
+.controller('SignUpCtrl', function($scope, $http, $ionicLoading, $timeout, AuthService) {
+	$scope.login = {
+		'mobile' : null,
+		'password' : null
+	};
+	$scope.submit = function() {
+		if (!$scope.signup.mobile || !$scope.signup.password) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+	};
+})
+
+.controller('SignOutCtrl', function($scope, AuthService) {
+	AuthService.logout();
 });
 
-var loginModalInit = function($scope, $ionicModal) {
-	$ionicModal.fromTemplateUrl('templates/login.html', {
+var modalInit = function($scope, $ionicModal, modalType) {
+	console.log($ionicModal);
+	$ionicModal.fromTemplateUrl('templates/' + modalType + '.html', {
 		scope : $scope,
 		animation : 'slide-in-up'
 	}).then(function(modal) {
-		$scope.loginModal = modal;
+		$scope['modal_' + modalType] = modal;
 	});
-	$scope.openModal = function() {
-		$scope.loginModal.show();
+	$scope.openModal = function(type) {
+		$scope['modal_' + type].show();
 	};
-	$scope.closeModal = function() {
-		$scope.loginModal.hide();
+	$scope.closeModal = function(type) {
+		$scope['modal_' + type].hide();
 	};
-	s
 	$scope.$on('$destroy', function() {
-		$scope.loginModal.remove();
-	});
-	$scope.$on('modal.hidden', function() {
-		// Execute action
-	});
-	$scope.$on('modal.removed', function() {
-		// Execute action
+		$scope['modal_' + modalType].remove();
 	});
 }
 

@@ -1,14 +1,14 @@
 <div class="modal" ng-controller="SignInCtrl">
 	<ion-header-bar>
-	<button class="button button-icon icon ion-android-cancel" ng-click="closeModal()"></button>
+	<button class="button button-icon icon ion-android-cancel" ng-click="closeModal('login')"></button>
 	<div class="h1 title">打价账户登录</div>
 	</ion-header-bar>
 	<ion-content>
 	<div class="list card">
-		<label class="item item-input"> <span class="input-label">手机号码</span> <input type="number"
-			ng-model="login.userAccount" />
+		<label class="item item-input"> <span class="input-label">手机号码</span> <input type="text"
+			ng-model="login.mobile" />
 		</label> <label class="item item-input"> <span class="input-label">登录密码</span> <input
-			type="password" ng-model="login.userPassword" />
+			type="password" ng-model="login.password" />
 		</label>
 	</div>
 	<div class="row">
@@ -19,7 +19,7 @@
 	<br />
 	<div class="row">
 		<div class="col text-center">
-			<button class="button button-outline button-assertive" ng-click="closeModal()">免费注册</button>
+			<button class="button button-outline button-assertive" ng-click="signup()">免费注册</button>
 		</div>
 	</div>
 	</ion-content>

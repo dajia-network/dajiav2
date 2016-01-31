@@ -5,7 +5,8 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', [ 'ionic', 'ngCookies', 'http-auth-interceptor', 'starter.controllers', 'starter.services' ])
+angular.module('starter',
+		[ 'ionic', 'ngCookies', 'starter.controllers', 'starter.services' ])
 
 .run(function($ionicPlatform) {
 	$ionicPlatform.ready(function() {
@@ -103,8 +104,4 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'http-auth-interceptor', 'star
 }).config(function($ionicConfigProvider) {
 	var appVersion = navigator.appVersion;
 	console.log(appVersion);
-	// alert(appVersion);
-	if (appVersion.indexOf('iPhone') == -1) {
-		$ionicConfigProvider.views.transition('none');
-	}
 });

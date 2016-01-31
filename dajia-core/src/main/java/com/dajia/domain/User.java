@@ -38,6 +38,6 @@ public class User extends BaseModel {
 	public Date lastVisitDate;
 
 	@Column(name = "last_visit_ip")
-	public String lastVisitIp;
+	public String lastVisitIP;
 
 }

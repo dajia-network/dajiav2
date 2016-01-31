@@ -1,17 +1,13 @@
-var starter = angular.module('starter.services', []);
+var starter = angular.module('starter.services', ['http-auth-interceptor']);
 
-starter.factory('AuthService', function($rootScope, $http, authService) {
+starter.factory('AuthService', function($rootScope, $http, $cookieStore, authService) {
 	var service = {
 		login : function(login) {
-			$http.post('/user/login', {
-				login : login,
-				ignoreAuth : true
-			}).success(function(data, status, headers, config) {
-				$http.defaults.headers.common.Authorization = data.authToken;
-				authService.loginConfirmed(data, function(config) {
-					config.headers.Authorization = data.authToken;
-					return config;
-				});
+			$http.post('/user/login', login).success(function(data, status, headers, config) {
+				console.log(data);
+				// $http.defaults.headers.common.Authorization = data.authToken;
+				$cookieStore.put('loginUser', data);
+				authService.loginConfirmed();
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-login-failed', status);
 			});
