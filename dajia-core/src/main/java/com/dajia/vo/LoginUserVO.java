@@ -7,6 +7,8 @@ public class LoginUserVO {
 
 	public String userName;
 
+	public String password;
+
 	public String email;
 
 	public String mobile;

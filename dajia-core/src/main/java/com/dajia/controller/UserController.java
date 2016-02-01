@@ -17,6 +17,7 @@ import com.dajia.domain.User;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 
 @RestController
@@ -29,24 +30,23 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "/user/login", method = RequestMethod.POST)
-	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser) {
-		User user = userRepo.findByMobile(loginUser.mobile);
-		loginUser.userId = user.userId;
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
+		User user = userService.userLogin(loginUser.mobile, loginUser.password, false);
+		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
 	}
 
-	@RequestMapping(value = "/user/signup", method = RequestMethod.POST)
+	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userSignup(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
 		loginUser.loginIP = request.getRemoteAddr();
 		loginUser.loginDate = new Date();
-		
+
 		User user = new User();
-		CommonUtils.copyUserProperties(loginUser, user);
+		UserUtils.copyUserProperties(loginUser, user);
 		userService.userSignup(user);
 
-		loginUser.userId = user.userId;
-		loginUser.userName = user.userName;
+		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
 	}
 }

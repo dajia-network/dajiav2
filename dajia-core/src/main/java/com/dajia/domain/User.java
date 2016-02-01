@@ -19,7 +19,7 @@ public class User extends BaseModel {
 	@GeneratedValue
 	public Long userId;
 
-	@Column(name = "username", nullable = false)
+	@Column(name = "username")
 	public String userName;
 
 	@Column(name = "email")

@@ -5,18 +5,11 @@ import java.lang.reflect.Field;
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductImage;
-import com.dajia.domain.User;
-import com.dajia.vo.LoginUserVO;
 
 public class CommonUtils {
 
 	public static Long beijing_city_key = 110100L;
 	public static Long shanghai_city_key = 310100L;
-
-	public static String generateUserName(Long userId) {
-		String userName = "用户" + String.valueOf(userId);
-		return userName;
-	}
 
 	public static void copyProperties(Object src, Object target) throws IllegalArgumentException,
 			IllegalAccessException {
@@ -26,16 +19,6 @@ public class CommonUtils {
 				field.set(target, field.get(src));
 			}
 		}
-	}
-
-	public static void copyUserProperties(LoginUserVO src, User target) {
-		target.email = src.email;
-		target.mobile = src.mobile;
-		if (null != src.userName) {
-			target.userName = src.userName;
-		}
-		target.lastVisitDate = src.loginDate;
-		target.lastVisitIP = src.loginIP;
 	}
 
 	public static void copyProductProperties(Product src, Product target) {

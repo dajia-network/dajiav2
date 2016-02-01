@@ -8,26 +8,48 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.dajia.domain.User;
+import com.dajia.service.UserService;
+import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 
 public class AuthFilter implements Filter {
 	Logger logger = LoggerFactory.getLogger(AuthFilter.class);
+
+	@Autowired
+	private UserService userService;
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
 			ServletException {
 		logger.info("in AuthFilter...");
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpSession session = request.getSession(true);
-		LoginUserVO loginUser = (LoginUserVO) session.getAttribute("user");
+		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
 
 		HttpServletResponse response = (HttpServletResponse) res;
+		if (null == loginUser || null == loginUser.userId) {
+			// check cookie for auto login
+			Cookie[] cookies = request.getCookies();
+			if (null != cookies) {
+				for (Cookie cookie : cookies) {
+					String name = cookie.getName();
+					if (name.equals("dajia_user")) {
+						String mobile = cookie.getValue();
+						User user = userService.userLogin(mobile, null, true);
+						loginUser = UserUtils.addLoginSession(loginUser, user, request);
+					}
+				}
+			}
+		}
 		if (null == loginUser || null == loginUser.userId) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}
