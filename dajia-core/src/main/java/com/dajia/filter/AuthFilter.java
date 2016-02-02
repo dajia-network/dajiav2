@@ -37,7 +37,7 @@ public class AuthFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 		if (null == loginUser || null == loginUser.userId) {
-			// check cookie for auto login
+			// auto login base on user cookies
 			Cookie[] cookies = request.getCookies();
 			if (null != cookies) {
 				for (Cookie cookie : cookies) {
@@ -45,7 +45,9 @@ public class AuthFilter implements Filter {
 					if (name.equals("dajia_user")) {
 						String mobile = cookie.getValue();
 						User user = userService.userLogin(mobile, null, true);
-						loginUser = UserUtils.addLoginSession(loginUser, user, request);
+						if (null != user) {
+							loginUser = UserUtils.addLoginSession(loginUser, user, request);
+						}
 					}
 				}
 			}

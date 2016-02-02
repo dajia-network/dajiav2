@@ -1,22 +1,32 @@
-var starter = angular.module('starter.services', ['http-auth-interceptor']);
+var starter = angular.module('starter.services', [ 'http-auth-interceptor' ]);
 
-starter.factory('AuthService', function($rootScope, $http, $cookieStore, authService) {
+starter.factory('AuthService', function($rootScope, $http, $cookies, authService) {
 	var service = {
+		signup : function(signup) {
+			$http.post('/signup', signup).success(function(data, status, headers, config) {
+				$cookies.put('dajia_user', data['mobile'], {
+					path : '/'
+				});
+				$rootScope.$broadcast('event:auth-signup-success', status);
+				authService.loginConfirmed();
+			}).error(function(data, status, headers, config) {
+				$rootScope.$broadcast('event:auth-signup-failed', status);
+			});
+		},
 		login : function(login) {
-			$http.post('/user/login', login).success(function(data, status, headers, config) {
+			$http.post('/login', login).success(function(data, status, headers, config) {
 				console.log(data);
 				// $http.defaults.headers.common.Authorization = data.authToken;
-				$cookieStore.put('loginUser', data);
+				$cookies.put('dajia_user', data['mobile'], {
+					path : '/'
+				});
 				authService.loginConfirmed();
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-login-failed', status);
 			});
 		},
 		logout : function(user) {
-			$http.post('/user/logout', {
-				ignoreAuthModule : true
-			}).finally(function(data) {
-				delete $http.defaults.headers.common.Authorization;
+			$http.post('/user/logout', {}).success(function(data, status) {
 				$rootScope.$broadcast('event:auth-logout-complete');
 			});
 		},

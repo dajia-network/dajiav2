@@ -10,9 +10,11 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller(
 		'ProdDetailCtrl',
-		function($scope, $rootScope, $stateParams, $http, $cookieStore, $window, $timeout, $ionicSlideBoxDelegate,
+		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal) {
 			console.log('产品详情...')
+			console.log($cookies.get('dajia_user'));
+			console.log($cookies.get('JSESSIONID'));
 			modalInit($scope, $ionicModal, 'login');
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
@@ -27,7 +29,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
 						$scope.buyNow = function() {
-							var loginUser = $cookieStore.get('loginUser');
+							var loginUser = $cookies.get('dajia_user');
 							if (loginUser == null) {
 								$rootScope.$broadcast('event:auth-loginRequired');
 							} else {
@@ -92,6 +94,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		'mobile' : null,
 		'password' : null
 	};
+
 	$scope.submit = function() {
 		if (!$scope.login.mobile || !$scope.login.password) {
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
@@ -99,6 +102,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		}
 		AuthService.login($scope.login);
 	};
+
 	$scope.signup = function() {
 		$scope.openModal('signup');
 	}
@@ -109,6 +113,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 	$scope.$on('event:auth-loginConfirmed', function() {
 		$scope.closeModal('login');
+		popWarning('登陆成功', $timeout, $ionicLoading);
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {
@@ -126,16 +131,28 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 })
 
 .controller('SignUpCtrl', function($scope, $http, $ionicLoading, $timeout, AuthService) {
-	$scope.login = {
+	$scope.signup = {
 		'mobile' : null,
 		'password' : null
 	};
+
 	$scope.submit = function() {
 		if (!$scope.signup.mobile || !$scope.signup.password) {
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
+		AuthService.signup($scope.signup);
 	};
+
+	$scope.$on('event:auth-signup-failed', function(e, status) {
+		var error = "注册失败";
+		popWarning(error, $timeout, $ionicLoading);
+	});
+
+	$scope.$on('event:auth-signup-success', function() {
+		$scope.closeModal('signup');
+		popWarning('注册成功', $timeout, $ionicLoading);
+	});
 })
 
 .controller('SignOutCtrl', function($scope, AuthService) {

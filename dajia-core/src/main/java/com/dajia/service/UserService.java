@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.dajia.domain.User;
 import com.dajia.repository.UserRepo;
+import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 
 @Service
@@ -17,6 +18,7 @@ public class UserService {
 	private UserRepo userRepo;
 
 	public User userSignup(User user) {
+		user.password = EncodingUtil.encode("SHA1", user.password);
 		userRepo.save(user);
 		if (null == user.userName) {
 			// generate default user name base on userId for the users without a
@@ -30,7 +32,7 @@ public class UserService {
 	public User userLogin(String mobile, String password, boolean authIgnore) {
 		User user = userRepo.findByMobile(mobile);
 		if (!authIgnore) {
-			if (!user.password.equals(password)) {
+			if (null == user || !user.password.equals(password)) {
 				return null;
 			}
 		}

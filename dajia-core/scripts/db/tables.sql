@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS dajia.user (
 	username VARCHAR(100) NULL,
 	email VARCHAR(255) NULL,
 	mobile VARCHAR(20) NOT NULL,
-	password VARCHAR(32) NOT NULL,
+	password VARCHAR(200) NOT NULL,
 	wechat VARCHAR(100) NULL,
 	last_visit_date TIMESTAMP NULL,
 	last_visit_ip VARCHAR(20) NULL,
