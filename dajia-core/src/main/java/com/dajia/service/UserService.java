@@ -31,6 +31,7 @@ public class UserService {
 
 	public User userLogin(String mobile, String password, boolean authIgnore) {
 		User user = userRepo.findByMobile(mobile);
+		password = EncodingUtil.encode("SHA1", password);
 		if (!authIgnore) {
 			if (null == user || !user.password.equals(password)) {
 				return null;

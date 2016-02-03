@@ -1,11 +1,17 @@
 angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl', function($scope, $http) {
 	console.log('产品列表...');
-	$http.get('/products/').success(function(data, status, headers, config) {
-		console.log(data);
-		$scope.products = data;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
+	var loadProducts = function() {
+		return $http.get('/products/').success(function(data, status, headers, config) {
+			$scope.products = data;
+			$scope.$broadcast('scroll.refreshComplete');
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	loadProducts();
+	$scope.doRefresh = function() {
+		loadProducts();
+	};
 })
 
 .controller(
@@ -13,8 +19,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal) {
 			console.log('产品详情...')
-			console.log($cookies.get('dajia_user'));
-			console.log($cookies.get('JSESSIONID'));
 			modalInit($scope, $ionicModal, 'login');
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
@@ -137,8 +141,19 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 
 	$scope.submit = function() {
-		if (!$scope.signup.mobile || !$scope.signup.password) {
+		var mobile = $scope.signup.mobile;
+		var password = $scope.signup.password;
+		if (!mobile || !password) {
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+		if (mobile.length != 11 || !mobileReg.test(mobile)) {
+			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+			return;
+		}
+		if (password.length < 6) {
+			popWarning('请输入至少六位数的密码', $timeout, $ionicLoading);
 			return;
 		}
 		AuthService.signup($scope.signup);
