@@ -79,17 +79,37 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal) {
 	console.log('订单页面...')
 	modalInit($scope, $ionicModal, 'login');
-	$http.get('/user/product/' + $stateParams.pid + '/order').success(function(data, status, headers, config) {
-		// console.log(data);
+	$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
 		var product = data;
-		var orderItems = [];
-		orderItems.push(product);
-		$scope.orderItems = orderItems;
+		$scope.orderItem = product;
 		$scope.totalPrice = product.price;
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
-
+	$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+		var loginuser = data;
+		$scope.loginuser = loginuser;
+		$scope.userContact = {};
+		$scope.order = {};
+		if (loginuser.userContacts.length > 0) {
+			loginuser.userContacts.forEach(function(uc) {
+				console.log(uc);
+				if (uc.isDefault) {
+					$scope.userContact = uc;
+					return;
+				}
+			});
+		}
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+	$scope.submit = function() {
+		if ($scope.userContact.contactId == null) {
+			console.log('new userContact.');
+		}
+		console.log($scope.userContact.contactMobile);
+		console.log($scope.order.totalPrice);
+	}
 })
 
 .controller('SignInCtrl', function($scope, $ionicLoading, $timeout, AuthService, $ionicModal) {

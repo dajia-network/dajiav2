@@ -19,13 +19,8 @@ public class UserService {
 
 	public User userSignup(User user) {
 		user.password = EncodingUtil.encode("SHA1", user.password);
+		user.userName = UserUtils.generateUserName(user.mobile);
 		userRepo.save(user);
-		if (null == user.userName) {
-			// generate default user name base on userId for the users without a
-			// user name
-			user.userName = UserUtils.generateUserName(user.userId);
-			userRepo.save(user);
-		}
 		return user;
 	}
 

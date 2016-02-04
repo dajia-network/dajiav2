@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +19,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.UserUtils;
+import com.dajia.vo.LoginUserVO;
 
 @RestController
-public class ProductController {
+public class ProductController extends BaseController {
 	Logger logger = LoggerFactory.getLogger(ProductController.class);
 
 	@Autowired
 	private ProductRepo productRepo;
+
+	@Autowired
+	private UserRepo userRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -59,7 +70,7 @@ public class ProductController {
 	}
 
 	@RequestMapping("/sync")
-	public Map<String, String> syncAllProducts() {
+	public @ResponseBody Map<String, String> syncAllProducts() {
 		productService.syncProductsAll();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("result", "success");
@@ -67,13 +78,15 @@ public class ProductController {
 	}
 
 	@RequestMapping("/robotorder/{pid}")
-	public UserOrder robotOrder(@PathVariable("pid") Long pid) {
+	public @ResponseBody UserOrder robotOrder(@PathVariable("pid") Long pid) {
 		UserOrder order = orderService.generateRobotOrder(pid, 1);
 		return order;
 	}
 
 	@RequestMapping("/user/product/{pid}/order")
-	public Product productOrder(@PathVariable("pid") Long pid) {
+	public Product productOrder(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo);
+		user.userContacts.size();
 		Product product = productService.loadProductDetail(pid);
 		return product;
 	}

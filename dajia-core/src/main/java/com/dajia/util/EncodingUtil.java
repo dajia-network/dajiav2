@@ -4,18 +4,20 @@ import java.security.MessageDigest;
 
 public class EncodingUtil {
 
+	public static String salt = "daj1a";
+
 	public static String encode(String algorithm, String str) {
 		if (str == null) {
 			return null;
 		}
 		try {
+			str += salt;
 			MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
 			messageDigest.update(str.getBytes("UTF8"));
 			return convertToHexString(messageDigest.digest());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	static String convertToHexString(byte data[]) {

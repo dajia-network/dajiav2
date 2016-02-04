@@ -2,8 +2,11 @@ package com.dajia.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,17 +18,11 @@ public class UserContact extends BaseModel {
 	@GeneratedValue
 	public Long contactId;
 
-	@Column(name = "user_id", nullable = false)
-	public Long userId;
-
 	@Column(name = "contact_name", nullable = false)
 	public String contactName;
 
 	@Column(name = "contact_mobile", nullable = false)
 	public String contactMobile;
-
-	@Column(name = "mobile", nullable = false)
-	public String mobile;
 
 	@Column(name = "province")
 	public String province;
@@ -48,4 +45,7 @@ public class UserContact extends BaseModel {
 	@Column(name = "address_2")
 	public String address2;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+	public User user;
 }

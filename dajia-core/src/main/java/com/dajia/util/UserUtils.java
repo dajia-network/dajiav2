@@ -9,8 +9,8 @@ public class UserUtils {
 
 	public static String session_user = "user";
 
-	public static String generateUserName(Long userId) {
-		String userName = "用户" + String.valueOf(userId);
+	public static String generateUserName(String key) {
+		String userName = "用户" + String.valueOf(key);
 		return userName;
 	}
 
@@ -30,7 +30,9 @@ public class UserUtils {
 			loginUser = new LoginUserVO();
 		}
 		loginUser.userId = user.userId;
+		loginUser.mobile = user.mobile;
 		loginUser.userName = user.userName;
+		loginUser.password = user.password;
 		request.getSession().setAttribute(UserUtils.session_user, loginUser);
 		return loginUser;
 	}
