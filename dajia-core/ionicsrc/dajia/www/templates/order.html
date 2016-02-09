@@ -15,15 +15,29 @@
 	<label class="item item-input">
 		<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
 	</label>
-	<label class="item item-input">
-		<input type="text" placeholder="省" ng-model="userContact.province">
+	<label class="item item-input item-select">
+	    <div class="input-label">
+	      省
+	    </div>
+	    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
+			<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
+	    </select>
 	</label>
-	<label class="item item-input">
-		<input type="text" placeholder="市" ng-model="userContact.city">
+	<label class="item item-input item-select">
+	    <div class="input-label">
+	      市
+	    </div>
+	    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
+	    </select>
 	</label>
-	<label class="item item-input">
-		<input type="text" placeholder="区" ng-model="userContact.district">
+	<label class="item item-input item-select">
+	    <div class="input-label">
+	      区
+	    </div>
+	    <select ng-model="userContact.district" ng-options="district.locationValue for district in userContact.city.children" >
+	    </select>
 	</label>
+	
 	<label class="item item-input">
 		<input type="text" placeholder="详细地址" ng-model="userContact.address1">
 	</label>
@@ -39,10 +53,11 @@
 			<div class="col">购买数量</div>
 			<div class="col text-right">		
 				<div class="buttons">
-					<button class="button button-small button-stable">
+					<button class="button button-small button-stable" ng-click="remove()">
 						<i class="icon ion-minus"></i>
 					</button>
-					<button class="button button-small button-stable">
+					&nbsp;{{order.quantity}}&nbsp;
+					<button class="button button-small button-stable" ng-click="add()">
 						<i class="icon ion-plus"></i>
 					</button>
 				</div>
@@ -50,7 +65,7 @@
 		</div>
 		<div class="row">
 			<div class="col">商品金额</div>
-			<div class="col text-right assertive">￥{{orderItem.price}}</div>
+			<div class="col text-right assertive">￥{{orderItem.currentPrice}}</div>
 		</div>
 		<p>
 			提示：如果截止日期前商品价格被打得更低，我们将向您返还差额。

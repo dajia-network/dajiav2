@@ -24,15 +24,6 @@ public class UserContact extends BaseModel {
 	@Column(name = "contact_mobile", nullable = false)
 	public String contactMobile;
 
-	@Column(name = "province")
-	public String province;
-
-	@Column(name = "city")
-	public String city;
-
-	@Column(name = "district")
-	public String district;
-
 	@Column(name = "zipcode")
 	public String zipcode;
 
@@ -44,6 +35,18 @@ public class UserContact extends BaseModel {
 
 	@Column(name = "address_2")
 	public String address2;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "province", referencedColumnName = "id")
+	public Location province;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "city", referencedColumnName = "id")
+	public Location city;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "district", referencedColumnName = "id")
+	public Location district;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")

@@ -25,6 +25,15 @@ public class UserUtils {
 		target.lastVisitIP = src.loginIP;
 	}
 
+	public static void copyUserProperties(User src, LoginUserVO target) {
+		target.email = src.email;
+		target.mobile = src.mobile;
+		target.userId = src.userId;
+		if (null != src.userName) {
+			target.userName = src.userName;
+		}
+	}
+
 	public static LoginUserVO addLoginSession(LoginUserVO loginUser, User user, HttpServletRequest request) {
 		if (null == loginUser) {
 			loginUser = new LoginUserVO();

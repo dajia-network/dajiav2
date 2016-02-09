@@ -2,9 +2,51 @@ package com.dajia.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.dajia.domain.User;
+import com.dajia.domain.UserContact;
+import com.dajia.repository.LocationRepo;
+import com.dajia.repository.UserContactRepo;
+import com.dajia.util.CommonUtils;
 
 @Service
 public class UserContactService {
 	Logger logger = LoggerFactory.getLogger(UserContactService.class);
+
+	@Autowired
+	private UserContactRepo userContactRepo;
+
+	@Autowired
+	private LocationRepo locationRepo;
+
+	public UserContact updateUserContact(UserContact userContact, User user) {
+		userContact.isDefault = "Y";
+		userContact.province = locationRepo.findByLocationKey(userContact.province.locationKey);
+		userContact.city = locationRepo.findByLocationKey(userContact.city.locationKey);
+		userContact.district = locationRepo.findByLocationKey(userContact.district.locationKey);
+		if (null == userContact.contactId) {
+			userContact.user = user;
+			userContactRepo.save(userContact);
+			return userContact;
+		} else {
+			UserContact uc = userContactRepo.findOne(userContact.contactId);
+			if (null != uc && uc.user.userId == user.userId) {
+				try {
+					CommonUtils.copyProperties(userContact, uc);
+					userContactRepo.save(uc);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return uc;
+			} else {
+				return null;
+			}
+		}
+	}
 }

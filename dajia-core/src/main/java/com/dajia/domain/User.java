@@ -12,8 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-//import com.avaje.ebean.*;
-
 @Entity
 @Table(name = "user")
 public class User extends BaseModel {

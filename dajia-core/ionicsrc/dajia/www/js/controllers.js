@@ -76,30 +76,53 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 })
 
-.controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal) {
+.controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('订单页面...')
 	modalInit($scope, $ionicModal, 'login');
+	$scope.order = {
+		'quantity' : 1,
+		'unitPrice' : 0,
+		'totalPrice' : 0
+	};
+	var quota = 5;
 	$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
 		var product = data;
 		$scope.orderItem = product;
 		$scope.totalPrice = product.price;
+		quota = product.buyQuota;
+		$scope.order.productId = product.productId;
+		$scope.order.unitPrice = product.currentPrice;
+		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
 	$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 		var loginuser = data;
 		$scope.loginuser = loginuser;
-		$scope.userContact = {};
-		$scope.order = {};
-		if (loginuser.userContacts.length > 0) {
-			loginuser.userContacts.forEach(function(uc) {
-				console.log(uc);
-				if (uc.isDefault) {
-					$scope.userContact = uc;
-					return;
-				}
-			});
-		}
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+	$http.get('/locations').success(function(data, status, headers, config) {
+		$scope.provinces = data;
+		$scope.userContact = $scope.loginuser.userContact;
+		$scope.provinces.forEach(function(p) {
+			if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
+				$scope.userContact.province = p;
+				p.children.forEach(function(c) {
+					if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
+						$scope.userContact.city = c;
+						c.children.forEach(function(d) {
+							if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
+								$scope.userContact.district = d;
+								return;
+							}
+						});
+						return;
+					}
+				});
+				return;
+			}
+		});
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
@@ -107,8 +130,45 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		if ($scope.userContact.contactId == null) {
 			console.log('new userContact.');
 		}
-		console.log($scope.userContact.contactMobile);
-		console.log($scope.order.totalPrice);
+		var name = $scope.userContact.contactName;
+		var mobile = $scope.userContact.contactMobile;
+		var province = $scope.userContact.province;
+		var city = $scope.userContact.city;
+		var district = $scope.userContact.district;
+		var address = $scope.userContact.address1;
+
+		if (!name || !mobile || !province || !city || !district || !address) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+		if (mobile.length != 11 || !mobileReg.test(mobile)) {
+			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+			return;
+		}
+
+		$scope.order.userContact = $scope.userContact;
+
+		$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
+			var orderId = data;
+			popWarning('订单编号：' + orderId, $timeout, $ionicLoading);
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.add = function() {
+		if ($scope.order.quantity >= quota) {
+			popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
+			return;
+		}
+		$scope.order.quantity += 1;
+		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+	}
+	$scope.remove = function() {
+		if ($scope.order.quantity > 1) {
+			$scope.order.quantity -= 1;
+			$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+		}
 	}
 })
 
@@ -195,7 +255,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 });
 
 var modalInit = function($scope, $ionicModal, modalType) {
-	console.log($ionicModal);
+	// console.log($ionicModal);
 	$ionicModal.fromTemplateUrl('templates/' + modalType + '.html', {
 		scope : $scope,
 		animation : 'slide-in-up'

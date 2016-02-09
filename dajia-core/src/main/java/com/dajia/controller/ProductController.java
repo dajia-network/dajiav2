@@ -4,10 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
-import com.dajia.domain.User;
-import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserRepo;
-import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
-import com.dajia.util.UserUtils;
-import com.dajia.vo.LoginUserVO;
 
 @RestController
 public class ProductController extends BaseController {
@@ -41,9 +32,6 @@ public class ProductController extends BaseController {
 
 	@Autowired
 	private ProductService productService;
-
-	@Autowired
-	private OrderService orderService;
 
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
@@ -75,19 +63,5 @@ public class ProductController extends BaseController {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("result", "success");
 		return map;
-	}
-
-	@RequestMapping("/robotorder/{pid}")
-	public @ResponseBody UserOrder robotOrder(@PathVariable("pid") Long pid) {
-		UserOrder order = orderService.generateRobotOrder(pid, 1);
-		return order;
-	}
-
-	@RequestMapping("/user/product/{pid}/order")
-	public Product productOrder(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
-		User user = this.getLoginUser(request, response, userRepo);
-		user.userContacts.size();
-		Product product = productService.loadProductDetail(pid);
-		return product;
 	}
 }

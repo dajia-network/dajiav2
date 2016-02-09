@@ -2,6 +2,8 @@ package com.dajia.vo;
 
 import java.util.Date;
 
+import com.dajia.domain.UserContact;
+
 public class LoginUserVO {
 	public Long userId;
 
@@ -16,4 +18,6 @@ public class LoginUserVO {
 	public Date loginDate;
 
 	public String loginIP;
+
+	public UserContact userContact;
 }
