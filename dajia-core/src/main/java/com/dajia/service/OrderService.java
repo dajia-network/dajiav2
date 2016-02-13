@@ -14,6 +14,8 @@ import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.OrderStatus;
+import com.dajia.vo.OrderVO;
 
 @Service
 public class OrderService {
@@ -46,5 +48,35 @@ public class OrderService {
 		orderRepo.save(order);
 		productService.productSold(productId, quantity);
 		return order;
+	}
+
+	public String getOrderStatusStr(Integer key) {
+		String returnStr = null;
+		if (key.equals(OrderStatus.PENDING_PAY.getKey())) {
+			returnStr = OrderStatus.PENDING_PAY.getValue();
+		} else if (key.equals(OrderStatus.PAIED.getKey())) {
+			returnStr = OrderStatus.PAIED.getValue();
+		} else if (key.equals(OrderStatus.DELEVERING.getKey())) {
+			returnStr = OrderStatus.DELEVERING.getValue();
+		} else if (key.equals(OrderStatus.DELEVRIED.getKey())) {
+			returnStr = OrderStatus.DELEVRIED.getValue();
+		} else if (key.equals(OrderStatus.CLOSED.getKey())) {
+			returnStr = OrderStatus.CLOSED.getValue();
+		} else if (key.equals(OrderStatus.CANCELLED.getKey())) {
+			returnStr = OrderStatus.CANCELLED.getValue();
+		}
+		return returnStr;
+	}
+
+	public OrderVO convertOrderVO(UserOrder order) {
+		OrderVO ov = new OrderVO();
+		ov.orderId = order.orderId;
+		ov.productId = order.productId;
+		ov.quantity = order.quantity;
+		ov.orderDate = order.orderDate;
+		ov.unitPrice = order.unitPrice;
+		ov.totalPrice = order.totalPrice;
+		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
+		return ov;
 	}
 }

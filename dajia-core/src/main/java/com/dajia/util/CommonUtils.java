@@ -119,6 +119,5 @@ public class CommonUtils {
 		public String getValue() {
 			return value;
 		}
-
 	}
 }

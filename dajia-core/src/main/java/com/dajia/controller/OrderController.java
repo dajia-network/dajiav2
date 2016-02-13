@@ -1,6 +1,8 @@
 package com.dajia.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
+import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
@@ -35,6 +38,9 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private UserContactRepo userContactRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -71,6 +77,41 @@ public class OrderController extends BaseController {
 		order.paymentId = 0L;
 		orderRepo.save(order);
 
+		// need to be moved to payment logic
+		productService.productSold(order.productId, order.quantity);
+
 		return order;
+	}
+
+	@RequestMapping("/user/progress")
+	public List<OrderVO> myProgress(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo);
+		List<UserOrder> orders = orderRepo.findByUserIdOrderByOrderDateDesc(user.userId);
+		List<OrderVO> progressList = new ArrayList<OrderVO>();
+		for (UserOrder order : orders) {
+			OrderVO ov = orderService.convertOrderVO(order);
+			ov.product = productService.loadProductDetail(order.productId);
+			if (null != ov.product) {
+				ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
+			}
+			progressList.add(ov);
+		}
+		return progressList;
+	}
+
+	@RequestMapping("/user/order/{oid}")
+	public OrderVO orderDetail(@PathVariable("oid") Long oid) {
+		UserOrder order = orderRepo.findOne(oid);
+		if (null == order) {
+			return null;
+		}
+		OrderVO ov = orderService.convertOrderVO(order);
+		ov.product = productService.loadProductDetail(order.productId);
+		if (null != ov.product) {
+			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
+		}
+		ov.userContact = userContactRepo.findOne(order.contactId);
+		ov.userContact.user = null;
+		return ov;
 	}
 }

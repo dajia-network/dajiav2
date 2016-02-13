@@ -49,24 +49,41 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$scope.progressValue = 0;
 		})
 
-.controller('ProgCtrl', function($scope, $ionicModal, $timeout, Mocks) {
+.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout) {
 	console.log('进度列表...');
+	$scope.loginUser = $cookies.get('dajia_user');
 	modalInit($scope, $ionicModal, 'login');
-	var orders = Mocks.getMyOrders();
-	orders.forEach(function(o) {
-		o.product = Mocks.getProduct(o.pid);
-		o.progressValue = o.product.priceOff / (o.product.oriPrice - o.product.targetPrice) * 100;
-	});
-	$scope.myOrders = orders;
+	$scope.login = function() {
+		if ($scope.loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.reload();
+		}
+	}
+	if ($scope.loginUser != null) {
+		$http.get('/user/progress').success(function(data, status, headers, config) {
+			var orders = data;
+			orders.forEach(function(o) {
+				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
+			});
+			$scope.myOrders = orders;
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
 })
 
-.controller('ProgDetailCtrl', function($scope, $stateParams, Mocks) {
+.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout) {
 	console.log('进度详情...')
-	var order = Mocks.getOrder($stateParams.orderId);
-	order.product = Mocks.getProduct(order.pid);
-	order.contactInfo = Mocks.getContact(order.contactId);
-	order.progressValue = order.product.priceOff / (order.product.oriPrice - order.product.targetPrice) * 100;
-	$scope.order = order;
+	$scope.order = {};
+	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
+		var order = data;
+		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
+		$scope.order = order;
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+	$scope.order.progressValue = 0;
 })
 
 .controller('MineCtrl', function($scope) {
@@ -150,8 +167,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		$scope.order.userContact = $scope.userContact;
 
 		$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
-			var orderId = data;
-			popWarning('订单编号：' + orderId, $timeout, $ionicLoading);
+			var order = data;
+			popWarning('订单编号：' + order.orderId, $timeout, $ionicLoading);
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
@@ -172,7 +189,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	}
 })
 
-.controller('SignInCtrl', function($scope, $ionicLoading, $timeout, AuthService, $ionicModal) {
+.controller('SignInCtrl', function($scope, $window, $ionicLoading, $timeout, AuthService, $ionicModal) {
 	modalInit($scope, $ionicModal, 'signup');
 	$scope.login = {
 		'mobile' : null,
@@ -198,6 +215,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.$on('event:auth-loginConfirmed', function() {
 		$scope.closeModal('login');
 		popWarning('登陆成功', $timeout, $ionicLoading);
+		$window.location.reload();
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {

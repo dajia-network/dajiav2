@@ -4,16 +4,30 @@
   </ion-nav-title>
   <ion-nav-bar class="bar-assertive"></ion-nav-bar>
   <ion-content>
-    <ion-list>
-      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="order in myOrders" type="item-text-wrap" href="#/tab/prog/{{order.id}}">
-        <img ng-src="{{order.product.img}}" >
+    <ion-list ng-if="loginUser">
+      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="order in myOrders" type="item-text-wrap" href="#/tab/prog/{{order.orderId}}">
+        <img ng-src="{{order.product.imgUrl}}" >
         <p>{{order.product.name}}</p>
         <p><progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></progressbar></p>
-        <p>购买价￥{{order.price}}</p>
-        <p>可退差价<span class="assertive">￥{{order.price-order.product.price}}</span></p>
-        <p>截止日期：{{order.dueDate}}</p>
+        <p>购买价：￥{{order.unitPrice}}</p>
+        <p>购买数量：{{order.quantity}}</p>
+        <p>可退差价：<span class="assertive">￥{{(order.unitPrice-order.product.currentPrice)*order.quantity}}</span></p>
+        <p>购买日期：{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
+    <div ng-if="loginUser==null">
+	    <div class="row">
+			<div class="col text-center">
+				请立即登录系统，查看自己的打价进度
+			</div>
+		</div>
+	    <div class="row">
+			<div class="col text-center">
+				<button class="button button-outline button-assertive" ng-click="login()">立即登录</button>
+			</div>
+		</div>
+    </div>
   </ion-content>
 </ion-view>

@@ -11,10 +11,11 @@
 			</div>
 			<div class="item item-text-wrap">
 				<div class="item noBorder item-thumbnail-left">
-					<img ng-src="{{order.product.img}}">
+					<img ng-src="{{order.product.imgUrl}}">
 					<p>{{order.product.name}}</p>
-					<p>购买价<span class="assertive">￥{{order.price}}</span></p>
-					<p>购买日期：{{order.orderDate}}</p>
+					<p>购买价<span class="assertive">￥{{order.unitPrice}}</span></p>
+        			<p>购买数量：{{order.quantity}}</p>
+        			<p>购买日期：{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
 				</div>
 			</div>
 		</div>
@@ -23,14 +24,13 @@
 			  打价进度
 			</div>
 			<div class="item item-text-wrap">
-		        <p>目前共<span class="assertive">{{order.product.orderNum}}</span>人参与打价。</p>
-		        <p>还需要<span class="assertive">{{order.product.targetOrderNum-order.product.orderNum}}</span>人购买就能将价格打到最低价<span class="assertive">￥{{order.product.targetPrice}}</span>。</p>
-				<div>
+		        <p>目前共<span class="assertive">{{order.product.sold}}</span>人参与打价。</p>
+		        <div>
 				    <progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></progressbar>
 				</div>
-		        <p>当前价格：<span class="assertive">￥{{order.product.price}}</span></p>
-				<p>可退差价：<span class="assertive">￥{{order.price-order.product.price}}</span></p>
-		        <p>截止日期：{{order.dueDate}}</p>
+		        <p>当前价格：<span class="assertive">￥{{order.product.currentPrice}}</span></p>
+        		<p>可退差价：<span class="assertive">￥{{(order.unitPrice-order.product.currentPrice)*order.quantity}}</span></p>
+        		<p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
 			</div>
 		</div>
   		<div class="card">
@@ -38,10 +38,10 @@
 		    收货信息
 		  </div>
 		  <div class="item item-text-wrap">
-		    <p>收货人: {{order.contactInfo.name}}</p>
-		    <p>手机: {{order.contactInfo.cell}}</p>
-		    <p>收货地址: {{order.contactInfo.address1}}&nbsp;{{order.contactInfo.address2}}</p>
-		    <p>订单状态: {{order.status}}</p>
+		    <p>收货人: {{order.userContact.contactName}}</p>
+		    <p>手机: {{order.userContact.contactMobile}}</p>
+		    <p>收货地址: {{order.userContact.address1}}&nbsp;{{order.userContact.address2}}</p>
+		    <p>订单状态: {{order.orderStatus4Show}}</p>
 		  </div>
 		</div>
 	</ion-content>
