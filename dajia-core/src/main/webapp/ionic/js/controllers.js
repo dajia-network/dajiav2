@@ -60,17 +60,24 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$window.location.reload();
 		}
 	}
-	if ($scope.loginUser != null) {
+	var loadProgress = function() {
 		$http.get('/user/progress').success(function(data, status, headers, config) {
 			var orders = data;
 			orders.forEach(function(o) {
 				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
 			});
 			$scope.myOrders = orders;
+			$scope.$broadcast('scroll.refreshComplete');
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
 	}
+	if ($scope.loginUser != null) {
+		loadProgress();
+	}
+	$scope.doRefresh = function() {
+		loadProgress();
+	};
 })
 
 .controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout) {
