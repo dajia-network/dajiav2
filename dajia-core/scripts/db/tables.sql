@@ -139,3 +139,14 @@ CREATE TABLE IF NOT EXISTS dajia.location (
 	PRIMARY KEY  (id),
     UNIQUE KEY (location_key)
 );
+
+DROP TABLE IF EXISTS dajia.user_favourite;
+CREATE TABLE IF NOT EXISTS dajia.user_favourite (
+	favourite_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NOT NULL,
+    product_id BIGINT(25) NOT NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(favourite_id)
+);

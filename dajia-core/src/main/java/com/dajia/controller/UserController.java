@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dajia.domain.Location;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
+import com.dajia.domain.UserFavourite;
 import com.dajia.repository.LocationRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.service.FavouriteService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.UserUtils;
@@ -35,10 +38,13 @@ public class UserController extends BaseController {
 	private UserRepo userRepo;
 
 	@Autowired
+	private LocationRepo locationRepo;
+
+	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private LocationRepo locationRepo;
+	private FavouriteService favouriteService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
@@ -79,7 +85,6 @@ public class UserController extends BaseController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					userContactInfo.user = null;
 					loginUser.userContact = userContactInfo;
 				}
 			}
@@ -124,5 +129,20 @@ public class UserController extends BaseController {
 			locationMap.add(pvo);
 		}
 		return locationMap;
+	}
+
+	@RequestMapping("/user/favourite/add/{pid}")
+	public void addFavourite(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
+		UserFavourite favourite = new UserFavourite();
+		User user = this.getLoginUser(request, response, userRepo);
+		favourite.userId = user.userId;
+		favourite.productId = pid;
+		favouriteService.addFavourite(favourite);
+	}
+
+	@RequestMapping("/user/favourite/remove/{pid}")
+	public void removeFavourite(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo);
+		favouriteService.removeFavourite(user.userId, pid);
 	}
 }

@@ -1,0 +1,30 @@
+package com.dajia.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.dajia.domain.UserFavourite;
+import com.dajia.repository.UserFavouriteRepo;
+
+@Service
+public class FavouriteService {
+	Logger logger = LoggerFactory.getLogger(FavouriteService.class);
+
+	@Autowired
+	private UserFavouriteRepo favouriteRepo;
+
+	public void addFavourite(UserFavourite favourite) {
+		if (null != favouriteRepo.findByUserIdProductId(favourite.userId, favourite.productId)) {
+			favouriteRepo.save(favourite);
+		}
+	}
+
+	public void removeFavourite(Long userId, Long productId) {
+		UserFavourite favourite = favouriteRepo.findByUserIdProductId(userId, productId);
+		if (null != favourite) {
+			favouriteRepo.delete(favourite);
+		}
+	}
+}

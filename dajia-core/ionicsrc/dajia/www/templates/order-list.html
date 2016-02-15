@@ -1,0 +1,23 @@
+<ion-view>
+  <ion-nav-title>
+    <span>我的订单</span>
+  </ion-nav-title>
+  <ion-nav-bar class="bar-assertive"></ion-nav-bar>
+  <ion-content>            
+  	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
+  	</ion-refresher> 
+    <ion-list>
+      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="order in myOrders" type="item-text-wrap" href="#/tab/prog/{{order.orderId}}">
+        <img ng-src="{{order.product.imgUrl}}" >
+        <p>{{order.product.name}}</p>
+        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
+        <p>购买价：￥{{order.unitPrice}}</p>
+        <p>购买数量：{{order.quantity}}</p>
+        <p>可退差价：<span class="assertive">￥{{(order.unitPrice-order.product.currentPrice)*order.quantity}}</span></p>
+        <p>购买日期：{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

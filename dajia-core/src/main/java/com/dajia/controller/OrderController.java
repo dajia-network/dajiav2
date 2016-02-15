@@ -111,7 +111,6 @@ public class OrderController extends BaseController {
 			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
 		}
 		ov.userContact = userContactRepo.findOne(order.contactId);
-		ov.userContact.user = null;
 		return ov;
 	}
 }
