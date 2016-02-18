@@ -10,5 +10,5 @@ public interface UserFavouriteRepo extends CrudRepository<UserFavourite, Long> {
 
 	public List<UserFavourite> findByUserId(Long userId);
 
-	public UserFavourite findByUserIdProductId(Long userId, Long productId);
+	public UserFavourite findByUserIdAndProductId(Long userId, Long productId);
 }

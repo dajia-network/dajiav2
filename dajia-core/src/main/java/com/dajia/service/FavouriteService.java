@@ -16,13 +16,13 @@ public class FavouriteService {
 	private UserFavouriteRepo favouriteRepo;
 
 	public void addFavourite(UserFavourite favourite) {
-		if (null != favouriteRepo.findByUserIdProductId(favourite.userId, favourite.productId)) {
+		if (null != favouriteRepo.findByUserIdAndProductId(favourite.userId, favourite.productId)) {
 			favouriteRepo.save(favourite);
 		}
 	}
 
 	public void removeFavourite(Long userId, Long productId) {
-		UserFavourite favourite = favouriteRepo.findByUserIdProductId(userId, productId);
+		UserFavourite favourite = favouriteRepo.findByUserIdAndProductId(userId, productId);
 		if (null != favourite) {
 			favouriteRepo.delete(favourite);
 		}
