@@ -16,7 +16,7 @@ public class FavouriteService {
 	private UserFavouriteRepo favouriteRepo;
 
 	public void addFavourite(UserFavourite favourite) {
-		if (null != favouriteRepo.findByUserIdAndProductId(favourite.userId, favourite.productId)) {
+		if (null == favouriteRepo.findByUserIdAndProductId(favourite.userId, favourite.productId)) {
 			favouriteRepo.save(favourite);
 		}
 	}

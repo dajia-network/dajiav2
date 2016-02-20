@@ -17,12 +17,25 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller(
 		'ProdDetailCtrl',
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
-				$ionicModal) {
+				$ionicModal, $ionicLoading) {
 			console.log('产品详情...')
+			$scope.favBtnTxt = '收藏';
+			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($scope, $ionicModal, 'login');
+
+			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
+				var isFav = data;
+				$scope.isFav = isFav;
+				if ($scope.isFav) {
+					$scope.favBtnTxt = '已收藏';
+					element.addClass('assertive');
+				}
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
-						// console.log(data);
 						var product = data;
 						$scope.product = product;
 						$ionicSlideBoxDelegate.update();
@@ -38,6 +51,34 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 								$rootScope.$broadcast('event:auth-loginRequired');
 							} else {
 								$window.location.href = '#/tab/prod/' + $stateParams.pid + '/order';
+							}
+						}
+						$scope.add2Fav = function() {
+							var loginUser = $cookies.get('dajia_user');
+							if (loginUser == null) {
+								$rootScope.$broadcast('event:auth-loginRequired');
+							} else {
+								if ($scope.isFav) {
+									$http.get('/user/favourite/remove/' + $stateParams.pid).success(
+											function(data, status, headers, config) {
+												popWarning('已取消收藏', $timeout, $ionicLoading);
+												$scope.isFav = false;
+												$scope.favBtnTxt = '收藏';
+												element.removeClass('assertive');
+											}).error(function(data, status, headers, config) {
+										console.log('request failed...');
+									});
+								} else {
+									$http.get('/user/favourite/add/' + $stateParams.pid).success(
+											function(data, status, headers, config) {
+												popWarning('收藏成功', $timeout, $ionicLoading);
+												$scope.isFav = true;
+												$scope.favBtnTxt = '已收藏';
+												element.addClass('assertive');
+											}).error(function(data, status, headers, config) {
+										console.log('request failed...');
+									});
+								}
 							}
 						}
 						$timeout(function() {
@@ -93,10 +134,31 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.order.progressValue = 0;
 })
 
-.controller('MineCtrl', function($scope) {
+.controller('MineCtrl', function($scope, $rootScope, $window, $cookies) {
 	console.log('我的打价...');
-	$scope.settings = {
-		enableFriends : true
+	$scope.myFav = function() {
+		var loginUser = $cookies.get('dajia_user');
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/fav';
+		}
+	}
+})
+
+.controller('MyFavCtrl', function($scope, $http) {
+	console.log('我的收藏...');
+	var loadFavs = function() {
+		return $http.get('/user/favourites').success(function(data, status, headers, config) {
+			$scope.products = data;
+			console.log($scope.products);
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	loadFavs();
+	$scope.doRefresh = function() {
+		loadFavs();
 	};
 })
 

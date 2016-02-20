@@ -8,7 +8,7 @@ import com.dajia.domain.UserFavourite;
 
 public interface UserFavouriteRepo extends CrudRepository<UserFavourite, Long> {
 
-	public List<UserFavourite> findByUserId(Long userId);
+	public List<UserFavourite> findByUserIdOrderByCreatedDateDesc(Long userId);
 
 	public UserFavourite findByUserIdAndProductId(Long userId, Long productId);
 }

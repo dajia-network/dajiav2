@@ -68,7 +68,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping("/user/loginuserinfo")
 	public @ResponseBody LoginUserVO getSessionUser(HttpServletRequest request, HttpServletResponse response) {
-		User user = this.getLoginUser(request, response, userRepo);
+		User user = this.getLoginUser(request, response, userRepo, true);
 		LoginUserVO loginUser = new LoginUserVO();
 		UserUtils.copyUserProperties(user, loginUser);
 		// get default userContact
@@ -134,7 +134,7 @@ public class UserController extends BaseController {
 	@RequestMapping("/user/favourite/add/{pid}")
 	public void addFavourite(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
 		UserFavourite favourite = new UserFavourite();
-		User user = this.getLoginUser(request, response, userRepo);
+		User user = this.getLoginUser(request, response, userRepo, true);
 		favourite.userId = user.userId;
 		favourite.productId = pid;
 		favouriteService.addFavourite(favourite);
@@ -142,7 +142,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping("/user/favourite/remove/{pid}")
 	public void removeFavourite(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
-		User user = this.getLoginUser(request, response, userRepo);
+		User user = this.getLoginUser(request, response, userRepo, true);
 		favouriteService.removeFavourite(user.userId, pid);
 	}
 }

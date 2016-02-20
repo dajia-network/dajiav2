@@ -95,6 +95,14 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 				controller : 'MineCtrl'
 			}
 		}
+	}).state('tab.mine-fav', {
+		url : '/mine/fav',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/fav-list.html',
+				controller : 'MyFavCtrl'
+			}
+		}
 	});
 
 	// if none of the above states are matched, use this as the fallback
@@ -103,5 +111,5 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 }).config(function($ionicConfigProvider, $httpProvider) {
 	var appVersion = navigator.appVersion;
 	console.log(appVersion);
-    $httpProvider.defaults.withCredentials = true;
+	$httpProvider.defaults.withCredentials = true;
 });

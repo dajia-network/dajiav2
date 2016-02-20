@@ -77,6 +77,9 @@ public class Product extends BaseModel {
 	@Transient
 	public long soldNeeded;
 
+	@Transient
+	public boolean isFav;
+
 	@Column(name = "img_url")
 	public String imgUrl;
 

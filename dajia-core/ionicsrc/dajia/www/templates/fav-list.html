@@ -1,0 +1,24 @@
+<ion-view>
+  <ion-nav-title>
+    <span>我的收藏</span>
+  </ion-nav-title>
+  <ion-nav-bar class="bar-assertive">
+	<ion-nav-back-button>
+		返回
+	</ion-nav-back-button>
+  </ion-nav-bar>
+  <ion-content>            
+  	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
+  	</ion-refresher> 
+    <ion-list>
+      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="product in products" type="item-text-wrap" href="#/tab/prod/{{product.productId}}">
+        <img ng-src="{{product.imgUrl}}" >
+        <p>{{product.name}}</p>
+        <p>价格：￥{{product.originalPrice}}</p>
+        <p>打价开始日期：{{product.startDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <p>打价截止日期：{{product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

@@ -52,9 +52,9 @@ public class AuthFilter implements Filter {
 				}
 			}
 		}
-		if (null == loginUser || null == loginUser.userId) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		}
+		// if (null == loginUser || null == loginUser.userId) {
+		// response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		// }
 		chain.doFilter(req, res);
 	}
 

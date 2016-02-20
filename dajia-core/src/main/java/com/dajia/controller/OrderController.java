@@ -59,7 +59,7 @@ public class OrderController extends BaseController {
 
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public UserOrder submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
-		User user = this.getLoginUser(request, response, userRepo);
+		User user = this.getLoginUser(request, response, userRepo, true);
 		UserContact uc = orderVO.userContact;
 		if (null != uc) {
 			uc = userContactService.updateUserContact(uc, user);
@@ -85,7 +85,7 @@ public class OrderController extends BaseController {
 
 	@RequestMapping("/user/progress")
 	public List<OrderVO> myProgress(HttpServletRequest request, HttpServletResponse response) {
-		User user = this.getLoginUser(request, response, userRepo);
+		User user = this.getLoginUser(request, response, userRepo, true);
 		List<UserOrder> orders = orderRepo.findByUserIdOrderByOrderDateDesc(user.userId);
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {

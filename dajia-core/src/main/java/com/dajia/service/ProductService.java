@@ -18,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
+import com.dajia.domain.UserFavourite;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
@@ -35,6 +37,9 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepo productRepo;
+
+	@Autowired
+	private UserFavouriteRepo favouriteRepo;
 
 	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
@@ -201,6 +206,16 @@ public class ProductService {
 			calcCurrentPrice(product);
 		}
 		productRepo.save(product);
+	}
+
+	public List<Product> loadFavProductsByUserId(Long userId) {
+		List<UserFavourite> favourites = favouriteRepo.findByUserIdOrderByCreatedDateDesc(userId);
+		List<Long> productIds = new ArrayList<Long>();
+		for (UserFavourite favourite : favourites) {
+			productIds.add(favourite.productId);
+		}
+		List<Product> products = (List<Product>) productRepo.findByProductIdIn(productIds);
+		return products;
 	}
 
 	private void calcCurrentPrice(Product product) {

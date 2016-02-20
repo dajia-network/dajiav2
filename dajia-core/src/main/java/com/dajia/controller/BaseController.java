@@ -15,14 +15,15 @@ import com.dajia.vo.LoginUserVO;
 public class BaseController {
 	Logger logger = LoggerFactory.getLogger(BaseController.class);
 
-	protected User getLoginUser(HttpServletRequest request, HttpServletResponse response, UserRepo userRepo) {
+	protected User getLoginUser(HttpServletRequest request, HttpServletResponse response, UserRepo userRepo,
+			boolean returnFailCode) {
 		User user = null;
 		HttpSession session = request.getSession(true);
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
 		if (null != loginUser) {
 			user = userRepo.findByMobile(loginUser.mobile);
 		}
-		if (null == user) {
+		if (null == user && returnFailCode) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
