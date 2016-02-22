@@ -103,6 +103,14 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 				controller : 'MyFavCtrl'
 			}
 		}
+	}).state('tab.mine-pass', {
+		url : '/mine/password',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/password.html',
+				controller : 'MyPassCtrl'
+			}
+		}
 	});
 
 	// if none of the above states are matched, use this as the fallback

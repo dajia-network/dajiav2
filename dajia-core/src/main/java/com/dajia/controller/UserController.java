@@ -2,7 +2,9 @@ package com.dajia.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ import com.dajia.repository.UserRepo;
 import com.dajia.service.FavouriteService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LocationVO;
 import com.dajia.vo.LoginUserVO;
@@ -144,5 +147,23 @@ public class UserController extends BaseController {
 	public void removeFavourite(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		favouriteService.removeFavourite(user.userId, pid);
+	}
+
+	@RequestMapping(value = "/user/changePassword", method = RequestMethod.POST)
+	public @ResponseBody Map<String, String> changePassword(@RequestBody Map<String, String> postMap,
+			HttpServletRequest request, HttpServletResponse response) {
+		Map<String, String> returnMap = new HashMap<String, String>();
+		String oldPassword = postMap.get("oldPassword");
+		String newPassword = postMap.get("newPassword");
+		User loginUser = this.getLoginUser(request, response, userRepo, true);
+		User user = userService.userLogin(loginUser.mobile, oldPassword, false);
+		if (null == user) {
+			returnMap.put("msg", "密码错误");
+		} else {
+			user.password = EncodingUtil.encode("SHA1", newPassword);
+			userRepo.save(user);
+			returnMap.put("msg", "修改成功");
+		}
+		return returnMap;
 	}
 }

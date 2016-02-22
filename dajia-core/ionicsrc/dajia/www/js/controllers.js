@@ -151,7 +151,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	var loadFavs = function() {
 		return $http.get('/user/favourites').success(function(data, status, headers, config) {
 			$scope.products = data;
-			console.log($scope.products);
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
@@ -159,6 +158,39 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	loadFavs();
 	$scope.doRefresh = function() {
 		loadFavs();
+	};
+})
+
+.controller('MyPassCtrl', function($scope, $http, $timeout, $ionicLoading) {
+	console.log('修改密码...');
+	$scope.form = {};
+	$scope.submit = function() {
+		var oldPassword = $scope.form.oldPassword;
+		var newPassword = $scope.form.newPassword;
+		var newPasswordConfirm = $scope.form.newPasswordConfirm;
+		if (!oldPassword || !newPassword || !newPasswordConfirm) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword.length < 6) {
+			popWarning('请输入至少六位数的密码', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword != newPasswordConfirm) {
+			popWarning('两次输入的新密码不一致', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword == oldPassword) {
+			popWarning('新密码不能与老密码相同', $timeout, $ionicLoading);
+			return;
+		}
+		$http.post('/user/changePassword', $scope.form).success(function(data, status, headers, config) {
+			var msg = data.msg;
+			popWarning(msg, $timeout, $ionicLoading);
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+
 	};
 })
 
