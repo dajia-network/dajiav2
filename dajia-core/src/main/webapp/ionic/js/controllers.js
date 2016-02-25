@@ -136,6 +136,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('MineCtrl', function($scope, $rootScope, $window, $cookies) {
 	console.log('我的打价...');
+	$scope.userName = $cookies.get('dajia_username');
 	$scope.myFav = function() {
 		var loginUser = $cookies.get('dajia_user');
 		if (loginUser == null) {

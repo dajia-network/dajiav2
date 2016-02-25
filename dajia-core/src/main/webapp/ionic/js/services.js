@@ -20,6 +20,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 				$cookies.put('dajia_user', data['mobile'], {
 					path : '/'
 				});
+				$cookies.put('dajia_username', data['userName'], {
+					path : '/'
+				});
 				authService.loginConfirmed();
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-login-failed', status);

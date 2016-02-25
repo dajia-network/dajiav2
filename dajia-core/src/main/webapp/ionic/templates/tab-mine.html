@@ -1,20 +1,20 @@
-<ion-view>
-  <ion-nav-title>
-    <span>我的</span>
-  </ion-nav-title>
+<ion-view view-title="用户中心">
   <ion-nav-bar class="bar-assertive"></ion-nav-bar>
   <ion-content>
+	<button ng-if="userName" class="button button-clear button-full button-stable">
+		<i class="icon ion-person"></i>&nbsp;{{userName}}
+	</button>
     <ion-list>
 		<div class="item item-divider">
 			购物信息
 		</div>
 		<a class="item item-icon-left" href="#/tab/prog">
-		  <i class="icon ion-ios-list-outline"></i>
-		  我的订单
+			<i class="icon ion-ios-list-outline"></i>
+			我的订单
 		</a>
 		<a class="item item-icon-left" ng-click="myFav()">
-		  <i class="icon ion-ios-star"></i>
-		  我的收藏
+			<i class="icon ion-ios-star"></i>
+			我的收藏
 		</a>
 		<!-- 
 		<a class="item item-icon-left" href="#">
@@ -28,20 +28,20 @@
 		 -->
 		
 		<a class="item item-icon-left" >
-		  <i class="icon ion-chatbubbles"></i>
-		  我的消息
-		  <!-- <span class="badge badge-assertive">1</span> -->
+			<i class="icon ion-chatbubbles"></i>
+			我的消息
+			<!-- <span class="badge badge-assertive">1</span> -->
 		</a>
 		<div class="item item-divider">
 			账号设置
 		</div>
 		<a class="item item-icon-left" >
-		  <i class="icon ion-home"></i>
-		  收货地址管理
+			<i class="icon ion-home"></i>
+			收货地址管理
 		</a>
 		<a class="item item-icon-left" href="#/tab/mine/password" >
-		  <i class="icon ion-unlocked"></i>
-		  修改密码
+			<i class="icon ion-unlocked"></i>
+			修改密码
 		</a>
     </ion-list>
   </ion-content>

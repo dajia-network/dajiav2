@@ -1,9 +1,10 @@
 angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route) {
 	console.log('ProductsCtrl...');
-	$http.get('/products/').success(function(data, status, headers, config) {
+	$http.get('/products/1').success(function(data, status, headers, config) {
 		console.log(data);
 		$scope.syncBtnTxt = '同步数据';
-		$scope.products = data;
+		$scope.pager = data;
+		$scope.products = data.results;
 		$scope.editProduct = function(pid) {
 			window.location.href = '#/product/' + pid;
 		};
