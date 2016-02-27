@@ -1,15 +1,47 @@
 package com.dajia.util;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductImage;
+import com.dajia.vo.PaginationVO;
 
 public class CommonUtils {
 
 	public static Long beijing_city_key = 110100L;
 	public static Long shanghai_city_key = 310100L;
+
+	public static Integer page_range_limit = 10;
+
+	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
+		PaginationVO pv = new PaginationVO();
+		pv.results = page.getContent();
+		pv.totalPages = page.getTotalPages();
+		pv.totalCount = page.getNumberOfElements();
+		pv.currentPage = currentPageIdx;
+		pv.hasPrev = page.hasPrevious();
+		pv.hasNext = page.hasNext();
+		if (page.getTotalPages() <= page_range_limit) {
+			pv.startPage = 1;
+			pv.endPage = page.getTotalPages();
+		} else if (currentPageIdx <= page_range_limit) {
+			pv.startPage = 1;
+			pv.endPage = page_range_limit;
+		} else {
+			pv.startPage = currentPageIdx - page_range_limit + 1;
+			pv.endPage = currentPageIdx;
+		}
+		pv.pageRange = new ArrayList<Integer>();
+		for (int i = pv.startPage; i <= pv.endPage; i++) {
+			pv.pageRange.add(i);
+		}
+		return pv;
+	}
 
 	public static void copyProperties(Object src, Object target) throws IllegalArgumentException,
 			IllegalAccessException {

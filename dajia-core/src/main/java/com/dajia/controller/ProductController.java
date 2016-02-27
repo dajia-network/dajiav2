@@ -53,11 +53,7 @@ public class ProductController extends BaseController {
 	@RequestMapping("/products/{page}")
 	public PaginationVO<Product> productByPage(@PathVariable("page") Integer pageNum) {
 		Page<Product> products = productService.loadProductsByPage(pageNum);
-		PaginationVO<Product> page = new PaginationVO<Product>();
-		page.results = products.getContent();
-		page.totalPages = products.getTotalPages();
-		page.totalCount = products.getNumberOfElements();
-		page.currentPage = pageNum;
+		PaginationVO<Product> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}
 

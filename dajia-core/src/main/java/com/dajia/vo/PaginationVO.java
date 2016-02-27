@@ -10,4 +10,14 @@ public class PaginationVO<T> {
 	public Integer totalPages;
 
 	public Integer currentPage;
+
+	public Boolean hasPrev;
+
+	public Boolean hasNext;
+
+	public Integer startPage;
+
+	public Integer endPage;
+
+	public List<Integer> pageRange;
 }
