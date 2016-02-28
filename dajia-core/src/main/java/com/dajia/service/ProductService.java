@@ -199,7 +199,7 @@ public class ProductService {
 	}
 
 	public Page<Product> loadProductsByPage(Integer pageNum) {
-		Pageable pageable = new PageRequest(pageNum - 1, 20);
+		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<Product> products = productRepo.findByIsActiveOrderByExpiredDateAsc(
 				CommonUtils.ActiveStatus.YES.toString(), pageable);
 		return products;

@@ -16,6 +16,7 @@ public class CommonUtils {
 	public static Long beijing_city_key = 110100L;
 	public static Long shanghai_city_key = 310100L;
 
+	public static Integer page_item_perpage = 20;
 	public static Integer page_range_limit = 10;
 
 	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
