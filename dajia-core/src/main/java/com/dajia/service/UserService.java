@@ -40,9 +40,9 @@ public class UserService {
 		return user;
 	}
 	
-	public Page<User> loadUersByPage(Integer pageNum) {
+	public Page<User> loadUsersByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateAsc(
+		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateDesc(
 				CommonUtils.ActiveStatus.YES.toString(), pageable);
 		return users;
 	}

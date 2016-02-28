@@ -75,8 +75,15 @@ public class AdminController extends BaseController {
 
 	@RequestMapping("/users/{page}")
 	public PaginationVO<User> usersByPage(@PathVariable("page") Integer pageNum) {
-		Page<User> users = userService.loadUersByPage(pageNum);
+		Page<User> users = userService.loadUsersByPage(pageNum);
 		PaginationVO<User> page = CommonUtils.generatePaginationVO(users, pageNum);
+		return page;
+	}
+
+	@RequestMapping("/orders/{page}")
+	public PaginationVO<UserOrder> ordersByPage(@PathVariable("page") Integer pageNum) {
+		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum);
+		PaginationVO<UserOrder> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		return page;
 	}
 }

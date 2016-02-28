@@ -30,6 +30,13 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 	});
 }).controller('OrdersCtrl', function($scope, $http) {
 	console.log('OrdersCtrl...');
+	$http.get('/orders/1').success(function(data, status, headers, config) {
+		console.log(data);
+		$scope.pager = data;
+		$scope.orders = data.results;
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
 }).controller('ClientsCtrl', function($scope, $http) {
 	console.log('ClientsCtrl...');
 	$http.get('/users/1').success(function(data, status, headers, config) {

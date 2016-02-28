@@ -10,5 +10,5 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
 	public User findByMobile(String mobile);
 
-	public Page<User> findByIsActiveOrderByCreatedDateAsc(String isActive, Pageable pageable);
+	public Page<User> findByIsActiveOrderByCreatedDateDesc(String isActive, Pageable pageable);
 }

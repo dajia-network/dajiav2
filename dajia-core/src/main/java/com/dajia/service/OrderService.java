@@ -6,13 +6,18 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
+import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
@@ -26,6 +31,9 @@ public class OrderService {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private UserRepo userRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -78,5 +86,23 @@ public class OrderService {
 		ov.totalPrice = order.totalPrice;
 		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
 		return ov;
+	}
+
+	public Page<UserOrder> loadOrdersByPage(Integer pageNum) {
+		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
+		Page<UserOrder> orders = orderRepo.findByIsActiveOrderByOrderDateDesc(CommonUtils.ActiveStatus.YES.toString(),
+				pageable);
+		for (UserOrder order : orders) {
+			order.orderStatus4Show = getOrderStatusStr(order.orderStatus);
+			Product p = productService.loadProductDetail(order.productId);
+			if (null != p) {
+				order.productInfo4Show = p.name;
+			}
+			User u = userRepo.findOne(order.userId);
+			if (null != u) {
+				order.userInfo4Show = u.userName;
+			}
+		}
+		return orders;
 	}
 }

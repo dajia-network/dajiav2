@@ -60,4 +60,7 @@ public class UserOrder extends BaseModel {
 
 	@Transient
 	public String userInfo4Show;
+
+	@Transient
+	public String productInfo4Show;
 }
