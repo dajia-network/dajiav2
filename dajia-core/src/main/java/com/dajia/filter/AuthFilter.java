@@ -44,7 +44,7 @@ public class AuthFilter implements Filter {
 					String name = cookie.getName();
 					if (name.equals("dajia_user")) {
 						String mobile = cookie.getValue();
-						User user = userService.userLogin(mobile, null, true);
+						User user = userService.userLogin(mobile, null, request, true);
 						if (null != user) {
 							loginUser = UserUtils.addLoginSession(loginUser, user, request);
 						}

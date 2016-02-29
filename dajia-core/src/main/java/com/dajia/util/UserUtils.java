@@ -21,8 +21,8 @@ public class UserUtils {
 			target.userName = src.userName;
 		}
 		target.password = src.password;
-		target.lastVisitDate = src.loginDate;
-		target.lastVisitIP = src.loginIP;
+		// target.lastVisitDate = src.loginDate;
+		// target.lastVisitIP = src.loginIP;
 	}
 
 	public static void copyUserProperties(User src, LoginUserVO target) {

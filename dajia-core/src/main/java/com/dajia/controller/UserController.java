@@ -51,7 +51,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
-		User user = userService.userLogin(loginUser.mobile, loginUser.password, false);
+		User user = userService.userLogin(loginUser.mobile, loginUser.password, request, false);
 		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
 	}
@@ -63,7 +63,7 @@ public class UserController extends BaseController {
 
 		User user = new User();
 		UserUtils.copyUserProperties(loginUser, user);
-		userService.userSignup(user);
+		userService.userSignup(user, request);
 
 		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
@@ -156,7 +156,7 @@ public class UserController extends BaseController {
 		String oldPassword = postMap.get("oldPassword");
 		String newPassword = postMap.get("newPassword");
 		User loginUser = this.getLoginUser(request, response, userRepo, true);
-		User user = userService.userLogin(loginUser.mobile, oldPassword, false);
+		User user = userService.userLogin(loginUser.mobile, oldPassword, request, false);
 		if (null == user) {
 			returnMap.put("msg", "密码错误");
 		} else {
