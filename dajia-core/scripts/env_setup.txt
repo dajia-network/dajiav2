@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=.../src/main/resources/lib/alidayu-sdk.jar -DgroupId=alidayu -DartifactId=alidayu -Dversion=1.0 -Dpackaging=jar
