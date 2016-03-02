@@ -399,5 +399,5 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	});
 	$timeout(function() {
 		$ionicLoading.hide();
-	}, 800);
+	}, 1000);
 }

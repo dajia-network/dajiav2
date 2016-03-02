@@ -22,14 +22,21 @@ public class ServiceTests {
 	@Autowired
 	private ProductService productService;
 
+	@Autowired
+	private SmsService smsService;
+
 	// @Test
 	public void testApiService() throws Exception {
 		apiService.loadApiWdToken();
 	}
 
-	@Test
 	public void testProductService() {
 		productService.syncProductsAll();
-		// productService.updateProductPrice(1L, new BigDecimal("0.05"));
+		productService.updateProductPrice(1L, new BigDecimal("0.05"));
+	}
+
+	@Test
+	public void testSmsService() {
+		smsService.sendSignupMessage("13900000000", false);
 	}
 }

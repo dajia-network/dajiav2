@@ -7,6 +7,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 				$cookies.put('dajia_user', data['mobile'], {
 					path : '/'
 				});
+				$cookies.put('dajia_username', data['userName'], {
+					path : '/'
+				});
 				$rootScope.$broadcast('event:auth-signup-success', status);
 				authService.loginConfirmed();
 			}).error(function(data, status, headers, config) {

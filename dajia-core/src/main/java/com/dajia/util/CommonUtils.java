@@ -2,7 +2,7 @@ package com.dajia.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 import org.springframework.data.domain.Page;
 
@@ -18,6 +18,11 @@ public class CommonUtils {
 
 	public static Integer page_item_perpage = 20;
 	public static Integer page_range_limit = 10;
+
+	public static String sms_server_url = "http://gw.api.taobao.com/router/rest";
+	public static String sms_app_key = "appkey_alidayu";
+	public static String sms_app_secret = "secret_alidayu";
+	public static String sms_template_signup = "SMS_5435124";
 
 	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
 		PaginationVO pv = new PaginationVO();
@@ -104,6 +109,19 @@ public class CommonUtils {
 
 	public static long getLongValue(Long input) {
 		return null != input ? input.longValue() : 0L;
+	}
+
+	public static String genRandomNum(int pwd_len) {
+		int i;
+		int count = 0;
+		StringBuffer pwd = new StringBuffer("");
+		Random r = new Random();
+		while (count < pwd_len) {
+			i = Math.abs(r.nextInt(10));
+			pwd.append(i);
+			count++;
+		}
+		return pwd.toString();
 	}
 
 	public enum ActiveStatus {

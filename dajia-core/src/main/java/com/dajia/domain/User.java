@@ -35,6 +35,9 @@ public class User extends BaseModel {
 
 	@Column(name = "wechat")
 	public String wechat;
+	
+	@Column(name = "ref_user_id")
+	public Long refUserId;
 
 	@Column(name = "last_visit_date")
 	public Date lastVisitDate;

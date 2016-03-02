@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS dajia.user (
 	mobile VARCHAR(20) NOT NULL,
 	password VARCHAR(200) NOT NULL,
 	wechat VARCHAR(100) NULL,
+	ref_user_id BIGINT(25) NULL,
 	last_visit_date TIMESTAMP NULL,
 	last_visit_ip VARCHAR(20) NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
