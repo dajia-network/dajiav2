@@ -1,8 +1,12 @@
 package com.dajia.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Service;
 
 import com.dajia.repository.PropertyRepo;
@@ -20,6 +24,9 @@ public class SmsService {
 	@Autowired
 	PropertyRepo propertyRepo;
 
+	@Autowired
+	EhCacheCacheManager ehcacheManager;
+
 	public void sendSignupMessage(String mobile, boolean allowSend) {
 		String url = CommonUtils.sms_server_url;
 		String appkey = propertyRepo.findByPropertyKey(CommonUtils.sms_app_key).propertyValue;
@@ -27,6 +34,13 @@ public class SmsService {
 		String signupCode = CommonUtils.genRandomNum(4);
 
 		// put signup code into cache;
+		if (null == ehcacheManager.getCacheManager().getCache("sms_signup_code")) {
+			ehcacheManager.getCacheManager().addCache("sms_signup_code");
+		}
+		Cache cache = ehcacheManager.getCacheManager().getCache("sms_signup_code");
+		cache.put(new Element(mobile, signupCode));
+
+		logger.info(cache.get(mobile).getValue().toString());
 
 		TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
 		AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();

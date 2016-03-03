@@ -38,6 +38,14 @@
 			<artifactId>httpmime</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache</artifactId>
+			</dependency>
+		<dependency>
 			<groupId>alidayu</groupId>
 			<artifactId>alidayu</artifactId>
 			<version>1.0</version>
@@ -46,9 +54,9 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-	    <start-class>com.dajia.Application</start-class>
+		<start-class>com.dajia.Application</start-class>
 	</properties>
-	
+
 	<build>
 		<plugins>
 			<plugin>
