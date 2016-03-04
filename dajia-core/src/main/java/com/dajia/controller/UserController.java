@@ -9,9 +9,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.Cache;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,12 +29,14 @@ import com.dajia.domain.UserFavourite;
 import com.dajia.repository.LocationRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.FavouriteService;
+import com.dajia.service.SmsService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LocationVO;
 import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.ReturnVO;
 
 @RestController
 public class UserController extends BaseController {
@@ -49,6 +54,28 @@ public class UserController extends BaseController {
 	@Autowired
 	private FavouriteService favouriteService;
 
+	@Autowired
+	private SmsService smsService;
+
+	@Autowired
+	EhCacheCacheManager ehcacheManager;
+
+	@RequestMapping("/signupSms/{mobile}")
+	public @ResponseBody ReturnVO signupSms(@PathVariable("mobile") String mobile) {
+		String result = smsService.sendSignupMessage(mobile, true);
+		ReturnVO rv = new ReturnVO();
+		rv.result = result;
+		return rv;
+	}
+
+	@RequestMapping("/signupCheck/{mobile}")
+	public @ResponseBody ReturnVO signupCheck(@PathVariable("mobile") String mobile) {
+		String result = userService.checkMobile(mobile);
+		ReturnVO rv = new ReturnVO();
+		rv.result = result;
+		return rv;
+	}
+
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
 		User user = userService.userLogin(loginUser.mobile, loginUser.password, request, false);
@@ -58,15 +85,26 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userSignup(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
-		loginUser.loginIP = request.getRemoteAddr();
-		loginUser.loginDate = new Date();
+		// check sms signup_code
+		if (null != ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signup_code)) {
+			Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signup_code);
+			String signupCode = cache.get(loginUser.mobile).getObjectValue().toString();
+			logger.info(signupCode);
+			if (null == signupCode || !signupCode.equals(loginUser.signupCode)) {
+				return null;
+			}
+			loginUser.loginIP = request.getRemoteAddr();
+			loginUser.loginDate = new Date();
 
-		User user = new User();
-		UserUtils.copyUserProperties(loginUser, user);
-		userService.userSignup(user, request);
+			User user = new User();
+			UserUtils.copyUserProperties(loginUser, user);
+			userService.userSignup(user, request);
 
-		loginUser = UserUtils.addLoginSession(loginUser, user, request);
-		return loginUser;
+			loginUser = UserUtils.addLoginSession(loginUser, user, request);
+			return loginUser;
+		} else {
+			return null;
+		}
 	}
 
 	@RequestMapping("/user/loginuserinfo")

@@ -4,11 +4,18 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 	var service = {
 		signup : function(signup) {
 			$http.post('/signup', signup).success(function(data, status, headers, config) {
-				$cookies.put('dajia_user', data['mobile'], {
-					path : '/'
-				});
-				$rootScope.$broadcast('event:auth-signup-success', status);
-				authService.loginConfirmed();
+				if (null == data || data.length == 0) {
+					$rootScope.$broadcast('event:auth-signup-failed', status);
+				} else {
+					$cookies.put('dajia_user', data['mobile'], {
+						path : '/'
+					});
+					$cookies.put('dajia_username', data['userName'], {
+						path : '/'
+					});
+					$rootScope.$broadcast('event:auth-signup-success', status);
+					authService.loginConfirmed();
+				}
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-signup-failed', status);
 			});

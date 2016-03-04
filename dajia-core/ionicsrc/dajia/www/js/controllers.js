@@ -334,16 +334,57 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	});
 })
 
-.controller('SignUpCtrl', function($scope, $http, $ionicLoading, $timeout, AuthService) {
+.controller('SignUpCtrl', function($scope, $http, $q, $ionicLoading, $timeout, AuthService) {
 	$scope.signup = {
 		'mobile' : null,
-		'password' : null
+		'password' : null,
+		'signupCode' : null
 	};
+
+	var checkMobile = function(mobile) {
+		var defer = $q.defer();
+		$http.get('/signupCheck/' + mobile).success(function(data, status, headers, config) {
+			if ("success" == data.result) {
+				defer.resolve(true);
+			} else {
+				popWarning('该手机号已被注册', $timeout, $ionicLoading);
+				defer.resolve(false);
+			}
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+			defer.reject();
+		});
+		return defer.promise;
+	}
+
+	$scope.getSignupCode = function() {
+		var mobile = $scope.signup.mobile;
+		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
+			return;
+		}
+		checkMobile(mobile).then(function(mobileValid) {
+			console.log(mobileValid);
+			if (mobileValid) {
+				$http.get('/signupSms/' + mobile).success(function(data, status, headers, config) {
+					if ("success" == data.result) {
+						popWarning('验证码已发送', $timeout, $ionicLoading);
+					} else {
+						popWarning('验证码发送失败', $timeout, $ionicLoading);
+					}
+				}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+		});
+	}
 
 	$scope.submit = function() {
 		var mobile = $scope.signup.mobile;
 		var password = $scope.signup.password;
-		if (!mobile || !password) {
+		var signupCode = $scope.signup.signupCode;
+		if (!mobile || !password || !signupCode) {
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
@@ -356,11 +397,15 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			popWarning('请输入至少六位数的密码', $timeout, $ionicLoading);
 			return;
 		}
-		AuthService.signup($scope.signup);
+		checkMobile(mobile).then(function(mobileValid) {
+			if (mobileValid) {
+				AuthService.signup($scope.signup);
+			}
+		});
 	};
 
 	$scope.$on('event:auth-signup-failed', function(e, status) {
-		var error = "注册失败";
+		var error = "注册失败，验证码错误";
 		popWarning(error, $timeout, $ionicLoading);
 	});
 
@@ -399,5 +444,5 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	});
 	$timeout(function() {
 		$ionicLoading.hide();
-	}, 800);
+	}, 1000);
 }

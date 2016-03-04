@@ -13,6 +13,9 @@ import com.dajia.vo.PaginationVO;
 
 public class CommonUtils {
 
+	public static String return_val_success = "success";
+	public static String return_val_failed = "failed";
+
 	public static Long beijing_city_key = 110100L;
 	public static Long shanghai_city_key = 310100L;
 
@@ -23,6 +26,8 @@ public class CommonUtils {
 	public static String sms_app_key = "appkey_alidayu";
 	public static String sms_app_secret = "secret_alidayu";
 	public static String sms_template_signup = "SMS_5435124";
+
+	public static String cache_name_signup_code = "sms_signup_code";
 
 	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
 		PaginationVO pv = new PaginationVO();

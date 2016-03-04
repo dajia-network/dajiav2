@@ -25,6 +25,14 @@ public class UserService {
 	@Autowired
 	private UserRepo userRepo;
 
+	public String checkMobile(String mobile) {
+		String returnVal = CommonUtils.return_val_failed;
+		if (null == userRepo.findByMobile(mobile)) {
+			returnVal = CommonUtils.return_val_success;
+		}
+		return returnVal;
+	}
+
 	public User userSignup(User user, HttpServletRequest request) {
 		user.password = EncodingUtil.encode("SHA1", user.password);
 		user.userName = UserUtils.generateUserName(user.mobile);

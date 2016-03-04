@@ -120,4 +120,6 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 	var appVersion = navigator.appVersion;
 	console.log(appVersion);
 	$httpProvider.defaults.withCredentials = true;
+	$ionicConfigProvider.backButton.text('返回').icon('ion-chevron-left');
+	$ionicConfigProvider.tabs.position('bottom');
 });

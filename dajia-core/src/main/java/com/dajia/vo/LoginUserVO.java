@@ -15,6 +15,8 @@ public class LoginUserVO {
 
 	public String mobile;
 
+	public String signupCode;
+
 	public Date loginDate;
 
 	public String loginIP;
