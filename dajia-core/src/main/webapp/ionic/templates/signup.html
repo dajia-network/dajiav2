@@ -8,16 +8,16 @@
 		<label class="item item-input"> <span class="input-label">手机号码</span> 
 		<input type="text" ng-model="signup.mobile" />
 		</label> 
-		<label class="item item-input"> <span class="input-label">验证码</span> 
-		<input type="text" ng-model="signup.signupCode" placeholder="手机短信获取" />
-		</label>
 		<label class="item item-input"> <span class="input-label">登录密码</span> 
 		<input type="text" ng-model="signup.password" placeholder="不少于6位" />
+		</label>
+		<label class="item item-input"> <span class="input-label">验证码</span> 
+		<input type="text" ng-model="signup.signupCode" placeholder="手机短信获取" />
 		</label>
 	</div>
 	<div class="row">
 		<div class="col text-center">
-			<button class="button button-block button-assertive" ng-click="getSignupCode()">发送手机验证码</button>
+			<button id="smsBtn" ng-disabled="smsBtnDisable" class="button button-block button-stable" ng-click="getSignupCode()">{{smsBtnTxt}}</button>
 		</div>
 		<div class="col text-center">
 			<button class="button button-block button-assertive" ng-click="submit()">注册</button>

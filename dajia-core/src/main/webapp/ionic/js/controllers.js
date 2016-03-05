@@ -340,6 +340,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		'password' : null,
 		'signupCode' : null
 	};
+	$scope.smsBtnTxt = '发送手机验证码';
+	$scope.smsBtnDisable = false;
+	var smsBtn = angular.element(document.querySelector('#smsBtn'));
 
 	var checkMobile = function(mobile) {
 		var defer = $q.defer();
@@ -365,8 +368,21 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			return;
 		}
 		checkMobile(mobile).then(function(mobileValid) {
-			console.log(mobileValid);
 			if (mobileValid) {
+				var counter = 60;
+				var onTimeout = function() {
+					counter--;
+					if (counter == 0) {
+						$scope.smsBtnTxt = '发送手机验证码';
+						$scope.smsBtnDisable = false;
+						return false;
+					}
+					$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
+					mytimeout = $timeout(onTimeout, 1000);
+				}
+				var mytimeout = $timeout(onTimeout, 1000);
+				$scope.smsBtnDisable = true;
+				
 				$http.get('/signupSms/' + mobile).success(function(data, status, headers, config) {
 					if ("success" == data.result) {
 						popWarning('验证码已发送', $timeout, $ionicLoading);

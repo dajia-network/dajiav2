@@ -44,6 +44,13 @@ module.exports = [
         "file": "plugins/cordova-plugin-splashscreen/src/browser/SplashScreenProxy.js",
         "id": "cordova-plugin-splashscreen.SplashScreenProxy",
         "runs": true
+    },
+    {
+        "file": "plugins/net.yoik.cordova.plugins.screenorientation/www/screenorientation.js",
+        "id": "net.yoik.cordova.plugins.screenorientation.screenorientation",
+        "clobbers": [
+            "cordova.plugins.screenorientation"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -53,7 +60,8 @@ module.exports.metadata =
     "cordova-plugin-console": "1.0.1",
     "cordova-plugin-device": "1.0.1",
     "cordova-plugin-splashscreen": "2.1.0",
-    "cordova-plugin-whitelist": "1.0.0"
+    "cordova-plugin-whitelist": "1.0.0",
+    "net.yoik.cordova.plugins.screenorientation": "1.3.4"
 }
 // BOTTOM OF METADATA
 });
