@@ -317,7 +317,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.$on('event:auth-loginConfirmed', function() {
 		$scope.closeModal('login');
 		popWarning('登陆成功', $timeout, $ionicLoading);
-		$window.location.reload();
+		$timeout(function() {
+			$window.location.reload();
+		}, 500);
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {
@@ -460,5 +462,5 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	});
 	$timeout(function() {
 		$ionicLoading.hide();
-	}, 1000);
+	}, 1500);
 }

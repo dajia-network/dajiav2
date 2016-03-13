@@ -44,11 +44,17 @@
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>alidayu</groupId>
 			<artifactId>alidayu</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>Pingplusplus</groupId>
+			<artifactId>pingpp-java</artifactId>
+			<version>2.1.2</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 
