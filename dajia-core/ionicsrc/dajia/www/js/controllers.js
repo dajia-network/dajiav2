@@ -198,6 +198,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('订单页面...')
 	modalInit($scope, $ionicModal, 'login');
+	$scope.userContact = {};
 	$scope.order = {
 		'quantity' : 1,
 		'unitPrice' : 0,
@@ -223,25 +224,27 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	});
 	$http.get('/locations').success(function(data, status, headers, config) {
 		$scope.provinces = data;
-		$scope.userContact = $scope.loginuser.userContact;
-		$scope.provinces.forEach(function(p) {
-			if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
-				$scope.userContact.province = p;
-				p.children.forEach(function(c) {
-					if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
-						$scope.userContact.city = c;
-						c.children.forEach(function(d) {
-							if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
-								$scope.userContact.district = d;
-								return;
-							}
-						});
-						return;
-					}
-				});
-				return;
-			}
-		});
+		if ($scope.loginuser.userContact != null) {
+			$scope.userContact = $scope.loginuser.userContact;
+			$scope.provinces.forEach(function(p) {
+				if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
+					$scope.userContact.province = p;
+					p.children.forEach(function(c) {
+						if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
+							$scope.userContact.city = c;
+							c.children.forEach(function(d) {
+								if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
+									$scope.userContact.district = d;
+									return;
+								}
+							});
+							return;
+						}
+					});
+					return;
+				}
+			});
+		}
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
@@ -276,7 +279,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		});
 	}
 	$scope.add = function() {
-		if ($scope.order.quantity >= quota) {
+		if ($scope.order.quantity >= quota && quota != null) {
 			popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
 			return;
 		}
@@ -317,7 +320,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.$on('event:auth-loginConfirmed', function() {
 		$scope.closeModal('login');
 		popWarning('登陆成功', $timeout, $ionicLoading);
-		$window.location.reload();
+		$timeout(function() {
+			$window.location.reload();
+		}, 500);
 	});
 
 	$scope.$on('event:auth-login-failed', function(e, status) {
@@ -340,6 +345,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		'password' : null,
 		'signupCode' : null
 	};
+	$scope.smsBtnTxt = '发送手机验证码';
+	$scope.smsBtnDisable = false;
+	var smsBtn = angular.element(document.querySelector('#smsBtn'));
 
 	var checkMobile = function(mobile) {
 		var defer = $q.defer();
@@ -365,8 +373,21 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			return;
 		}
 		checkMobile(mobile).then(function(mobileValid) {
-			console.log(mobileValid);
 			if (mobileValid) {
+				var counter = 60;
+				var onTimeout = function() {
+					counter--;
+					if (counter == 0) {
+						$scope.smsBtnTxt = '发送手机验证码';
+						$scope.smsBtnDisable = false;
+						return false;
+					}
+					$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
+					mytimeout = $timeout(onTimeout, 1000);
+				}
+				var mytimeout = $timeout(onTimeout, 1000);
+				$scope.smsBtnDisable = true;
+
 				$http.get('/signupSms/' + mobile).success(function(data, status, headers, config) {
 					if ("success" == data.result) {
 						popWarning('验证码已发送', $timeout, $ionicLoading);
@@ -444,5 +465,5 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	});
 	$timeout(function() {
 		$ionicLoading.hide();
-	}, 1000);
+	}, 1500);
 }

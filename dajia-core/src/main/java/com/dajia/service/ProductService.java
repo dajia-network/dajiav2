@@ -181,9 +181,11 @@ public class ProductService {
 				soldNeeded = price.sold;
 			}
 		}
-		product.targetPrice = targetPrice;
-		product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
-		product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+		if (null != product.originalPrice) {
+			product.targetPrice = targetPrice;
+			product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
+			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+		}
 		return product;
 	}
 
