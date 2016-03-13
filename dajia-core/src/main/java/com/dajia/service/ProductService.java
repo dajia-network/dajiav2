@@ -154,7 +154,6 @@ public class ProductService {
 	public void syncProducts(List<Product> products) {
 		for (Product product : products) {
 			Product p = productRepo.findByRefId(product.refId);
-			p.productImages.size();
 			if (null != p) {
 				try {
 					CommonUtils.copyProductProperties(product, p);
