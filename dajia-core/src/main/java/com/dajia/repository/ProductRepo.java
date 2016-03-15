@@ -12,9 +12,9 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
 
 	public Product findByRefId(String refId);
 
-	public List<Product> findByIsActiveOrderByExpiredDateAsc(String isActive);
+	public List<Product> findByProductStatusAndIsActiveOrderByExpiredDateAsc(Integer productStatus, String isActive);
 
 	public Page<Product> findByIsActiveOrderByExpiredDateAsc(String isActive, Pageable pageable);
 
-	public List<Product> findByProductIdIn(List<Long> productIds);
+	public List<Product> findByProductIdInAndIsActive(List<Long> productIds, String isActive);
 }

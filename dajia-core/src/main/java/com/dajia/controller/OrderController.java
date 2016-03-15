@@ -25,7 +25,7 @@ import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.UserContactService;
-import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 
 @RestController
@@ -64,7 +64,7 @@ public class OrderController extends BaseController {
 		order.quantity = orderVO.quantity;
 		order.productId = orderVO.productId;
 		order.orderDate = new Date();
-		order.orderStatus = CommonUtils.OrderStatus.PAIED.getKey();
+		order.orderStatus = OrderStatus.PAIED.getKey();
 		order.userId = user.userId;
 		order.contactId = uc.contactId;
 		order.paymentId = 0L;

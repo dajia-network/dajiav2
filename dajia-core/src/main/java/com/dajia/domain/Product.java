@@ -80,6 +80,9 @@ public class Product extends BaseModel {
 	@Transient
 	public boolean isFav;
 
+	@Transient
+	public String status4Show;
+
 	@Column(name = "img_url")
 	public String imgUrl;
 

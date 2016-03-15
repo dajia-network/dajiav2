@@ -27,6 +27,8 @@ import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.ActiveStatus;
+import com.dajia.util.CommonUtils.ProductStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -163,7 +165,9 @@ public class ProductService {
 				}
 				productRepo.save(p);
 			} else {
+				// new product from KDT
 				product.originalPrice = product.currentPrice;
+				product.productStatus = ProductStatus.DISABLE.getKey();
 				productRepo.save(product);
 			}
 		}
@@ -172,6 +176,8 @@ public class ProductService {
 	public Product loadProductDetail(Long pid) {
 		Product product = productRepo.findOne(pid);
 		product.productImages.size();
+
+		product.status4Show = getProductStatusStr(product.productStatus);
 
 		BigDecimal targetPrice = product.originalPrice;
 		long soldNeeded = 0L;
@@ -190,9 +196,8 @@ public class ProductService {
 	}
 
 	public List<Product> loadAllProducts() {
-		// Pageable pageable = new PageRequest(1, 20);
-		List<Product> products = (List<Product>) productRepo
-				.findByIsActiveOrderByExpiredDateAsc(CommonUtils.ActiveStatus.YES.toString());
+		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
+				ProductStatus.ENABLE.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
 			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
 		}
@@ -201,8 +206,10 @@ public class ProductService {
 
 	public Page<Product> loadProductsByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<Product> products = productRepo.findByIsActiveOrderByExpiredDateAsc(
-				CommonUtils.ActiveStatus.YES.toString(), pageable);
+		Page<Product> products = productRepo.findByIsActiveOrderByExpiredDateAsc(ActiveStatus.YES.toString(), pageable);
+		for (Product product : products) {
+			product.status4Show = getProductStatusStr(product.productStatus);
+		}
 		return products;
 	}
 
@@ -225,7 +232,8 @@ public class ProductService {
 		for (UserFavourite favourite : favourites) {
 			productIds.add(favourite.productId);
 		}
-		List<Product> products = (List<Product>) productRepo.findByProductIdIn(productIds);
+		List<Product> products = (List<Product>) productRepo.findByProductIdInAndIsActive(productIds,
+				ActiveStatus.YES.toString());
 		return products;
 	}
 
@@ -260,5 +268,15 @@ public class ProductService {
 		map = mapper.readValue(jsonStr, HashMap.class);
 		Map itemMap = (Map) map.get("response");
 		return ApiKdtUtils.productMapper(itemMap);
+	}
+
+	public String getProductStatusStr(Integer key) {
+		String returnStr = null;
+		if (key.equals(ProductStatus.DISABLE.getKey())) {
+			returnStr = ProductStatus.DISABLE.getValue();
+		} else if (key.equals(ProductStatus.ENABLE.getKey())) {
+			returnStr = ProductStatus.ENABLE.getValue();
+		}
+		return returnStr;
 	}
 }

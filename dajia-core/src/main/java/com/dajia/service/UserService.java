@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.dajia.domain.User;
 import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 
@@ -60,8 +61,7 @@ public class UserService {
 
 	public Page<User> loadUsersByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateDesc(CommonUtils.ActiveStatus.YES.toString(),
-				pageable);
+		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateDesc(ActiveStatus.YES.toString(), pageable);
 		return users;
 	}
 }

@@ -95,6 +95,9 @@ public class CommonUtils {
 		if (null != req.expiredDate) {
 			persist.expiredDate = req.expiredDate;
 		}
+		if (null != req.productStatus) {
+			persist.productStatus = req.productStatus;
+		}
 		if (null != req.originalPrice) {
 			persist.originalPrice = req.originalPrice;
 		}
@@ -164,6 +167,25 @@ public class CommonUtils {
 		private String value;
 
 		private OrderStatus(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum ProductStatus {
+		DISABLE(1, "下架"), ENABLE(2, "上架");
+		private Integer key;
+		private String value;
+
+		private ProductStatus(Integer key, String value) {
 			this.key = key;
 			this.value = value;
 		}

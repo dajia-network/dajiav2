@@ -54,7 +54,6 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 					function(data, status, headers, config) {
 						$scope.newSold = null;
 						$scope.newPrice = null;
-						console.log(data);
 						var product = data;
 						if (null == product.startDate) {
 							product.startDate = new Date();

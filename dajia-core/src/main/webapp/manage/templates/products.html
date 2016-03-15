@@ -24,6 +24,7 @@
 				<th data-field="sold">销量</th>
 				<th data-field="startDate">起始时间</th>
 				<th data-field="expiredDate">过期时间</th>
+				<th data-field="productStatus">产品状态</th>
 				<th>操作</th>
 			</tr>
 		</thead>
@@ -37,8 +38,8 @@
 				<td>{{product.sold}}</td>
 				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
 				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-				<td><button type="button" class="btn btn-primary btn-sm"
-						ng-click="editProduct(product.productId);">编辑</button>
+				<td>{{product.status4Show}}</td>
+				<td><button type="button" class="btn btn-primary btn-sm" ng-click="editProduct(product.productId);">编辑</button>
 					<button type="button" class="btn btn-primary btn-sm" ng-click="bot(product.productId);">BOT+1</button></td>
 			</tr>
 		</tbody>

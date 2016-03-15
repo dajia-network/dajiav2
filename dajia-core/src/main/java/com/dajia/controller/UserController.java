@@ -32,6 +32,7 @@ import com.dajia.service.FavouriteService;
 import com.dajia.service.SmsService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.LocationType;
 import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LocationVO;
@@ -135,12 +136,9 @@ public class UserController extends BaseController {
 
 	@RequestMapping("/locations")
 	public @ResponseBody List<LocationVO> getLocationMap() {
-		List<Location> provinces = locationRepo.findByLocationTypeOrderByLocationKey(CommonUtils.LocationType.PROVINCE
-				.toString());
-		List<Location> cities = locationRepo.findByLocationTypeOrderByLocationKey(CommonUtils.LocationType.CITY
-				.toString());
-		List<Location> districts = locationRepo.findByLocationTypeOrderByLocationKey(CommonUtils.LocationType.AREA
-				.toString());
+		List<Location> provinces = locationRepo.findByLocationTypeOrderByLocationKey(LocationType.PROVINCE.toString());
+		List<Location> cities = locationRepo.findByLocationTypeOrderByLocationKey(LocationType.CITY.toString());
+		List<Location> districts = locationRepo.findByLocationTypeOrderByLocationKey(LocationType.AREA.toString());
 
 		List<LocationVO> locationMap = new ArrayList<LocationVO>();
 		for (Location province : provinces) {

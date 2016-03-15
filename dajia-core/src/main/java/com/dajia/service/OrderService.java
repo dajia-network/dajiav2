@@ -19,6 +19,7 @@ import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 
@@ -42,7 +43,7 @@ public class OrderService {
 	public UserOrder generateRobotOrder(Long productId, Integer quantity) {
 		Product product = productRepo.findOne(productId);
 		UserOrder order = new UserOrder();
-		order.orderStatus = CommonUtils.OrderStatus.PAIED.getKey();
+		order.orderStatus = OrderStatus.PAIED.getKey();
 		order.orderDate = new Date();
 		order.quantity = quantity;
 		order.unitPrice = product.currentPrice;
@@ -90,7 +91,7 @@ public class OrderService {
 
 	public Page<UserOrder> loadOrdersByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<UserOrder> orders = orderRepo.findByIsActiveOrderByOrderDateDesc(CommonUtils.ActiveStatus.YES.toString(),
+		Page<UserOrder> orders = orderRepo.findByIsActiveOrderByOrderDateDesc(ActiveStatus.YES.toString(),
 				pageable);
 		for (UserOrder order : orders) {
 			order.orderStatus4Show = getOrderStatusStr(order.orderStatus);
