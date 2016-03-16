@@ -181,7 +181,7 @@ public class CommonUtils {
 	}
 
 	public enum ProductStatus {
-		DISABLE(1, "下架"), ENABLE(2, "上架");
+		INVALID(1, "下架"), VALID(2, "上架"), EXPIRED(3, "过期");
 		private Integer key;
 		private String value;
 

@@ -167,7 +167,7 @@ public class ProductService {
 			} else {
 				// new product from KDT
 				product.originalPrice = product.currentPrice;
-				product.productStatus = ProductStatus.DISABLE.getKey();
+				product.productStatus = ProductStatus.INVALID.getKey();
 				productRepo.save(product);
 			}
 		}
@@ -197,7 +197,7 @@ public class ProductService {
 
 	public List<Product> loadAllProducts() {
 		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
-				ProductStatus.ENABLE.getKey(), ActiveStatus.YES.toString());
+				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
 			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
 		}
@@ -272,10 +272,12 @@ public class ProductService {
 
 	public String getProductStatusStr(Integer key) {
 		String returnStr = null;
-		if (key.equals(ProductStatus.DISABLE.getKey())) {
-			returnStr = ProductStatus.DISABLE.getValue();
-		} else if (key.equals(ProductStatus.ENABLE.getKey())) {
-			returnStr = ProductStatus.ENABLE.getValue();
+		if (key.equals(ProductStatus.INVALID.getKey())) {
+			returnStr = ProductStatus.INVALID.getValue();
+		} else if (key.equals(ProductStatus.VALID.getKey())) {
+			returnStr = ProductStatus.VALID.getValue();
+		} else if (key.equals(ProductStatus.EXPIRED.getKey())) {
+			returnStr = ProductStatus.EXPIRED.getValue();
 		}
 		return returnStr;
 	}
