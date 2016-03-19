@@ -1,24 +1,26 @@
-angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl', function($scope, $http) {
-	console.log('产品列表...');
-	var loadProducts = function() {
-		return $http.get('/products/').success(function(data, status, headers, config) {
-			$scope.products = data;
-			$scope.$broadcast('scroll.refreshComplete');
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
-		});
-	}
-	loadProducts();
-	$scope.doRefresh = function() {
-		loadProducts();
-	};
-})
+angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
+		function($scope, $http, $ionicLoading) {
+			console.log('产品列表...');
+			popLoading($ionicLoading);
+			var loadProducts = function() {
+				return $http.get('/products/').success(function(data, status, headers, config) {
+					$scope.products = data;
+					$scope.$broadcast('scroll.refreshComplete');
+					$ionicLoading.hide();
+				});
+			}
+			loadProducts();
+			$scope.doRefresh = function() {
+				loadProducts();
+			};
+		})
 
 .controller(
 		'ProdDetailCtrl',
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal, $ionicLoading) {
 			console.log('产品详情...')
+			popLoading($ionicLoading);
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($scope, $ionicModal, 'login');
@@ -81,17 +83,17 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 								}
 							}
 						}
+						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;
 						}, 1000);
-					}).error(function(data, status, headers, config) {
-				console.log('request failed...');
-			});
+					});
 			$scope.progressValue = 0;
 		})
 
-.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout) {
+.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度列表...');
+	popLoading($ionicLoading);
 	$scope.loginUser = $cookies.get('dajia_user');
 	modalInit($scope, $ionicModal, 'login');
 	$scope.login = function() {
@@ -109,8 +111,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			});
 			$scope.myOrders = orders;
 			$scope.$broadcast('scroll.refreshComplete');
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
+			$ionicLoading.hide();
 		});
 	}
 	if ($scope.loginUser != null) {
@@ -121,15 +122,15 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 })
 
-.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout) {
+.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度详情...')
+	popLoading($ionicLoading);
 	$scope.order = {};
 	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
 		var order = data;
 		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
 		$scope.order = order;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
+		$ionicLoading.hide();
 	});
 	$scope.order.progressValue = 0;
 })
@@ -147,13 +148,13 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	}
 })
 
-.controller('MyFavCtrl', function($scope, $http) {
+.controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
 	console.log('我的收藏...');
+	popLoading($ionicLoading);
 	var loadFavs = function() {
 		return $http.get('/user/favourites').success(function(data, status, headers, config) {
 			$scope.products = data;
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
+			$ionicLoading.hide();
 		});
 	}
 	loadFavs();
@@ -197,6 +198,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('订单页面...')
+	popLoading($ionicLoading);
 	modalInit($scope, $ionicModal, 'login');
 	$scope.userContact = {};
 	$scope.order = {
@@ -213,8 +215,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		$scope.order.productId = product.productId;
 		$scope.order.unitPrice = product.currentPrice;
 		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
+		$ionicLoading.hide();
 	});
 	$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 		var loginuser = data;
@@ -466,4 +467,10 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	$timeout(function() {
 		$ionicLoading.hide();
 	}, 1500);
+}
+
+var popLoading = function($ionicLoading) {
+	$ionicLoading.show({
+		template : '加载中...'
+	});
 }
