@@ -1,8 +1,8 @@
 angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
 		function($scope, $http, $ionicLoading) {
 			console.log('产品列表...');
-			popLoading($ionicLoading);
 			var loadProducts = function() {
+				popLoading($ionicLoading);
 				return $http.get('/products/').success(function(data, status, headers, config) {
 					$scope.products = data;
 					$scope.$broadcast('scroll.refreshComplete');
@@ -20,7 +20,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal, $ionicLoading) {
 			console.log('产品详情...')
-			popLoading($ionicLoading);
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($scope, $ionicModal, 'login');
@@ -36,6 +35,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				console.log('request failed...');
 			});
 
+			popLoading($ionicLoading);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
 						var product = data;
@@ -93,7 +93,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度列表...');
-	popLoading($ionicLoading);
 	$scope.loginUser = $cookies.get('dajia_user');
 	modalInit($scope, $ionicModal, 'login');
 	$scope.login = function() {
@@ -104,6 +103,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		}
 	}
 	var loadProgress = function() {
+		popLoading($ionicLoading);
 		$http.get('/user/progress').success(function(data, status, headers, config) {
 			var orders = data;
 			orders.forEach(function(o) {
@@ -124,8 +124,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度详情...')
-	popLoading($ionicLoading);
 	$scope.order = {};
+	popLoading($ionicLoading);
 	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
 		var order = data;
 		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
@@ -150,8 +150,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
 	console.log('我的收藏...');
-	popLoading($ionicLoading);
 	var loadFavs = function() {
+		popLoading($ionicLoading);
 		return $http.get('/user/favourites').success(function(data, status, headers, config) {
 			$scope.products = data;
 			$ionicLoading.hide();
