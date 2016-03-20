@@ -146,6 +146,13 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$window.location.href = '#/tab/mine/fav';
 		}
 	}
+	$scope.myPass = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/password';
+		}
+	}
 	$scope.logout = function() {
 		if (loginUser == null) {
 			$window.location.reload();
