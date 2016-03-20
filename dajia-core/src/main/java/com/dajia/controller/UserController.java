@@ -84,6 +84,14 @@ public class UserController extends BaseController {
 		return loginUser;
 	}
 
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+	public @ResponseBody ReturnVO userLogout(@RequestBody String userMobile, HttpServletRequest request) {
+		String result = userService.userLogout(userMobile, request);
+		ReturnVO rv = new ReturnVO();
+		rv.result = result;
+		return rv;
+	}
+
 	@RequestMapping(value = "/signup", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userSignup(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
 		// check sms signup_code

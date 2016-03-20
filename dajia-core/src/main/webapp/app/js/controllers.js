@@ -22,7 +22,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			console.log('产品详情...')
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
-			modalInit($scope, $ionicModal, 'login');
+			modalInit($rootScope, $ionicModal, 'login');
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -94,7 +94,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度列表...');
 	$scope.loginUser = $cookies.get('dajia_user');
-	modalInit($scope, $ionicModal, 'login');
+	modalInit($rootScope, $ionicModal, 'login');
 	$scope.login = function() {
 		if ($scope.loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');
@@ -135,17 +135,31 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.order.progressValue = 0;
 })
 
-.controller('MineCtrl', function($scope, $rootScope, $window, $cookies) {
+.controller('MineCtrl', function($scope, $rootScope, $window, $cookies, $timeout, $ionicLoading, AuthService) {
 	console.log('我的打价...');
 	$scope.userName = $cookies.get('dajia_username');
+	var loginUser = $cookies.get('dajia_user');
 	$scope.myFav = function() {
-		var loginUser = $cookies.get('dajia_user');
 		if (loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');
 		} else {
 			$window.location.href = '#/tab/mine/fav';
 		}
 	}
+	$scope.logout = function() {
+		if (loginUser == null) {
+			$window.location.reload();
+		} else {
+			AuthService.logout(loginUser);
+		}
+	};
+	$scope.$on('event:auth-logout-complete', function() {
+		popWarning('退出登录成功', $timeout, $ionicLoading);
+		$timeout(function() {
+			$window.location.reload();
+		}, 500);
+		// $scope.openModal('login');
+	});
 })
 
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
@@ -199,7 +213,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('订单页面...')
 	popLoading($ionicLoading);
-	modalInit($scope, $ionicModal, 'login');
+	modalInit($rootScope, $ionicModal, 'login');
 	$scope.userContact = {};
 	$scope.order = {
 		'quantity' : 1,
@@ -295,8 +309,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	}
 })
 
-.controller('SignInCtrl', function($scope, $window, $ionicLoading, $timeout, AuthService, $ionicModal) {
-	modalInit($scope, $ionicModal, 'signup');
+.controller('SignInCtrl', function($scope, $rootScope, $window, $ionicLoading, $timeout, $ionicModal, AuthService) {
+	modalInit($rootScope, $ionicModal, 'signup');
 	$scope.login = {
 		'mobile' : null,
 		'password' : null
@@ -332,11 +346,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			error = "用户名或密码错误";
 		}
 		popWarning(error, $timeout, $ionicLoading);
-	});
-
-	$scope.$on('event:auth-logout-complete', function() {
-		// $state.go("home");
-		$scope.openModal();
 	});
 })
 
@@ -441,22 +450,22 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	AuthService.logout();
 });
 
-var modalInit = function($scope, $ionicModal, modalType) {
+var modalInit = function($rootScope, $ionicModal, modalType) {
 	// console.log($ionicModal);
 	$ionicModal.fromTemplateUrl('templates/' + modalType + '.html', {
-		scope : $scope,
+		scope : $rootScope,
 		animation : 'slide-in-up'
 	}).then(function(modal) {
-		$scope['modal_' + modalType] = modal;
+		$rootScope['modal_' + modalType] = modal;
 	});
-	$scope.openModal = function(type) {
-		$scope['modal_' + type].show();
+	$rootScope.openModal = function(type) {
+		$rootScope['modal_' + type].show();
 	};
-	$scope.closeModal = function(type) {
-		$scope['modal_' + type].hide();
+	$rootScope.closeModal = function(type) {
+		$rootScope['modal_' + type].hide();
 	};
-	$scope.$on('$destroy', function() {
-		$scope['modal_' + modalType].remove();
+	$rootScope.$on('$destroy', function() {
+		$rootScope['modal_' + modalType].remove();
 	});
 }
 

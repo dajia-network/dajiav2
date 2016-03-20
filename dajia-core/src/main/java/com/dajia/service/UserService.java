@@ -59,6 +59,15 @@ public class UserService {
 		return user;
 	}
 
+	public String userLogout(String mobile, HttpServletRequest request) {
+		String returnVal = CommonUtils.return_val_failed;
+		if (null != userRepo.findByMobile(mobile)) {
+			request.getSession().setAttribute(UserUtils.session_user, null);
+			returnVal = CommonUtils.return_val_success;
+		}
+		return returnVal;
+	}
+
 	public Page<User> loadUsersByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateDesc(ActiveStatus.YES.toString(), pageable);
