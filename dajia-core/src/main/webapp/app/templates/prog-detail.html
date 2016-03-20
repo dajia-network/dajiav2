@@ -30,7 +30,8 @@
 				</div>
 		        <p>当前价格：<span class="assertive">￥{{order.product.currentPrice}}</span></p>
         		<p>可退差价：<span class="assertive">￥{{(order.unitPrice-order.product.currentPrice)*order.quantity}}</span></p>
-        		<p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        		<p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        		<p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}} ({{order.product.status4Show}})</p>
 			</div>
 		</div>
   		<div class="card">

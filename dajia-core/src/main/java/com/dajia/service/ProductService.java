@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,8 +150,8 @@ public class ProductService {
 	}
 
 	public void syncProductsAll() {
-		List<Product> productList = this.loadProductsAllFromApiKdt();
-		this.syncProducts(productList);
+		List<Product> products = this.loadProductsAllFromApiKdt();
+		this.syncProducts(products);
 	}
 
 	public void syncProducts(List<Product> products) {
@@ -195,7 +196,7 @@ public class ProductService {
 		return product;
 	}
 
-	public List<Product> loadAllProducts() {
+	public List<Product> loadAllValidProducts() {
 		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
@@ -234,7 +235,21 @@ public class ProductService {
 		}
 		List<Product> products = (List<Product>) productRepo.findByProductIdInAndIsActive(productIds,
 				ActiveStatus.YES.toString());
+		for (Product product : products) {
+			product.status4Show = getProductStatusStr(product.productStatus);
+		}
 		return products;
+	}
+
+	public void updateProductExpireStatus(Date date) {
+		List<Product> products = this.loadAllValidProducts();
+		for (Product product : products) {
+			if (null == product.expiredDate || product.expiredDate.before(date)) {
+				logger.info("Product " + product.name + " (" + product.productId + ") is expired.");
+				product.productStatus = ProductStatus.EXPIRED.getKey();
+				productRepo.save(product);
+			}
+		}
 	}
 
 	private void calcCurrentPrice(Product product) {
@@ -270,7 +285,7 @@ public class ProductService {
 		return ApiKdtUtils.productMapper(itemMap);
 	}
 
-	public String getProductStatusStr(Integer key) {
+	private String getProductStatusStr(Integer key) {
 		String returnStr = null;
 		if (key.equals(ProductStatus.INVALID.getKey())) {
 			returnStr = ProductStatus.INVALID.getValue();
