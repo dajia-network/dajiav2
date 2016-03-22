@@ -4,9 +4,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,12 +19,16 @@ public class WechatController extends BaseController {
 	Logger logger = LoggerFactory.getLogger(WechatController.class);
 
 	@RequestMapping("/wechat")
-	public @ResponseBody String signupSms(@PathVariable("signature") String signature,
-			@PathVariable("timestamp") String timestamp, @PathVariable("nonce") String nonce,
-			@PathVariable("echostr") String echostr) {
+	public @ResponseBody String wechatShakeHand(HttpServletRequest request) {
+		String signature = request.getParameter("signature");
+		String timestamp = request.getParameter("timestamp");
+		String nonce = request.getParameter("nonce");
+		String echostr = request.getParameter("echostr");
+
 		logger.info("signature: " + signature);
 		logger.info("timestamp: " + timestamp);
 		logger.info("nonce: " + nonce);
+
 		String token = CommonUtils.wechat_api_token;
 		String tmpStr = "";
 		try {
@@ -34,8 +39,8 @@ public class WechatController extends BaseController {
 
 		logger.info("+++++++++++++++++++++tmpStr   " + tmpStr);
 		logger.info("---------------------signature   " + signature);
-		
-		if (tmpStr.equals(signature)) {
+
+		if (!tmpStr.isEmpty() && tmpStr.equals(signature)) {
 			return echostr;
 		} else {
 			return "Validation Failed.";
@@ -43,6 +48,9 @@ public class WechatController extends BaseController {
 	}
 
 	private String getSHA1(String token, String timestamp, String nonce) throws NoSuchAlgorithmException {
+		if (null == token || null == timestamp || null == nonce) {
+			return "";
+		}
 		String[] array = new String[] { token, timestamp, nonce };
 		StringBuffer sb = new StringBuffer();
 		// String sort
