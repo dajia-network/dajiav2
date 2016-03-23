@@ -1,8 +1,12 @@
 <ion-view>
-  <ion-nav-title>
-    <span>我的订单</span>
-  </ion-nav-title>
-  <ion-nav-bar class="bar-assertive"></ion-nav-bar>
+	<ion-nav-title>
+	  <span>我的订单</span>
+	</ion-nav-title>
+	<ion-nav-bar class="bar-assertive">
+		<ion-nav-back-button>
+			返回
+		</ion-nav-back-button>
+	</ion-nav-bar>
   <ion-content>            
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
