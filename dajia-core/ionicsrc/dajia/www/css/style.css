@@ -55,6 +55,13 @@ a:hover,a:focus {
 	border-color: #ef473a;
 }
 
+.tabs-stable>.tabs, .tabs.tabs-stable {
+    border-color: #b2b2b2;
+    background-color: #f8f8f8;
+    background-image: linear-gradient(0deg,#b2b2b2,#b2b2b2 50%,transparent 50%);
+    color: #ef473a;
+}
+
 .platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader) {
     height: 44px;
 }
