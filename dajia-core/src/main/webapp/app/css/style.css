@@ -46,6 +46,15 @@ a:hover,a:focus {
 	text-decoration: none;
 }
 
+.tabs-striped.tabs-stable .tab-item.activated,.tabs-striped.tabs-stable .tab-item.active,.tabs-striped.tabs-stable .tab-item.tab-item-active
+	{
+	margin-top: -2px;
+	color: #ef473a;
+	border-style: solid;
+	border-width: 2px 0 0 0;
+	border-color: #ef473a;
+}
+
 .platform-ios.platform-cordova:not(.fullscreen) .bar-header:not(.bar-subheader) {
     height: 44px;
 }

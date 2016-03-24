@@ -4,7 +4,7 @@ Each tab's child <ion-nav-view> directive will have its own
 navigation history that also transitions its views in and out.
 -->
 <!--ion-tabs class="tabs-icon-top tabs-color-active-assertive"-->
-<ion-tabs class="tabs-icon-top tabs-assertive">
+<ion-tabs class="tabs-icon-top tabs-stable">
 
   <!-- Products Tab -->
   <ion-tab title="打价首页" icon-off="ion-ios-home-outline" icon-on="ion-ios-home" href="#/tab/prod">
@@ -17,7 +17,7 @@ navigation history that also transitions its views in and out.
   </ion-tab>
 
   <!-- Mine Tab -->
-  <ion-tab title="我是打手" icon-off="ion-ios-person-outline" icon-on="ion-ios-person" href="#/tab/mine">
+  <ion-tab title="我是打手" icon-off="ion-ios-person-outline" icon-on="ion-ios-person assertive" href="#/tab/mine">
     <ion-nav-view name="tab-mine"></ion-nav-view>
   </ion-tab>
 
