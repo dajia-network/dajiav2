@@ -1,7 +1,7 @@
-angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route) {
+angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
 	console.log('ProductsCtrl...');
 	$http.get('/products/1').success(function(data, status, headers, config) {
-		console.log(data);
+		$scope.alerts = [];
 		$scope.syncBtnTxt = '同步数据';
 		$scope.pager = data;
 		$scope.products = data.results;
@@ -13,16 +13,40 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 			$http.get('/sync/').success(function(data, status, headers, config) {
 				console.log(data);
 				$scope.syncBtnTxt = '同步数据';
+				$scope.alerts.push({
+					type : 'success',
+					msg : '同步数据成功'
+				});
+				$timeout(function() {
+					$route.reload();
+				}, 1000);
+
 			}).error(function(data, status, headers, config) {
 				console.log('request failed...');
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '同步数据失败'
+				});
 			});
+		};
+		$scope.closeAlert = function(index) {
+			$scope.alerts.splice(index, 1);
 		};
 		$scope.bot = function(pid) {
 			$http.get('/robotorder/' + pid).success(function(data, status, headers, config) {
-				console.log(data);
-				$route.reload();
+				$scope.alerts.push({
+					type : 'success',
+					msg : '机器打价成功'
+				});
+				$timeout(function() {
+					$route.reload();
+				}, 1000);
 			}).error(function(data, status, headers, config) {
 				console.log('request failed...');
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '机器打价失败'
+				});
 			});
 		}
 	}).error(function(data, status, headers, config) {
