@@ -1,75 +1,84 @@
 angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
 	console.log('ProductsCtrl...');
-	$http.get('/products/1').success(function(data, status, headers, config) {
-		$scope.alerts = [];
-		$scope.syncBtnTxt = '同步数据';
-		$scope.pager = data;
-		$scope.products = data.results;
-		$scope.editProduct = function(pid) {
-			window.location.href = '#/product/' + pid;
-		};
-		$scope.sync = function() {
-			$scope.syncBtnTxt = '进行中...';
-			$http.get('/sync/').success(function(data, status, headers, config) {
-				console.log(data);
-				$scope.syncBtnTxt = '同步数据';
-				$scope.alerts.push({
-					type : 'success',
-					msg : '同步数据成功'
-				});
-				$timeout(function() {
-					$route.reload();
-				}, 1000);
+	$scope.loadPage = function(pageNum) {
+		$http.get('/products/' + pageNum).success(function(data, status, headers, config) {
+			$scope.alerts = [];
+			$scope.syncBtnTxt = '同步数据';
+			$scope.pager = data;
+			$scope.products = data.results;
+			$scope.editProduct = function(pid) {
+				window.location.href = '#/product/' + pid;
+			};
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.loadPage(1);
+	$scope.sync = function() {
+		$scope.syncBtnTxt = '进行中...';
+		$http.get('/sync/').success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.syncBtnTxt = '同步数据';
+			$scope.alerts.push({
+				type : 'success',
+				msg : '同步数据成功'
+			});
+			$timeout(function() {
+				$route.reload();
+			}, 1000);
 
-			}).error(function(data, status, headers, config) {
-				console.log('request failed...');
-				$scope.alerts.push({
-					type : 'danger',
-					msg : '同步数据失败'
-				});
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+			$scope.alerts.push({
+				type : 'danger',
+				msg : '同步数据失败'
 			});
-		};
-		$scope.closeAlert = function(index) {
-			$scope.alerts.splice(index, 1);
-		};
-		$scope.bot = function(pid) {
-			$http.get('/robotorder/' + pid).success(function(data, status, headers, config) {
-				$scope.alerts.push({
-					type : 'success',
-					msg : '机器打价成功'
-				});
-				$timeout(function() {
-					$route.reload();
-				}, 1000);
-			}).error(function(data, status, headers, config) {
-				console.log('request failed...');
-				$scope.alerts.push({
-					type : 'danger',
-					msg : '机器打价失败'
-				});
+		});
+	};
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	};
+	$scope.bot = function(pid) {
+		$http.get('/robotorder/' + pid).success(function(data, status, headers, config) {
+			$scope.alerts.push({
+				type : 'success',
+				msg : '机器打价成功'
 			});
-		}
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
+			$timeout(function() {
+				$route.reload();
+			}, 1000);
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+			$scope.alerts.push({
+				type : 'danger',
+				msg : '机器打价失败'
+			});
+		});
+	}
 }).controller('OrdersCtrl', function($scope, $http) {
 	console.log('OrdersCtrl...');
-	$http.get('/orders/1').success(function(data, status, headers, config) {
-		console.log(data);
-		$scope.pager = data;
-		$scope.orders = data.results;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
+	$scope.loadPage = function(pageNum) {
+		$http.get('/orders/' + pageNum).success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.pager = data;
+			$scope.orders = data.results;
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.loadPage(1);
 }).controller('ClientsCtrl', function($scope, $http) {
 	console.log('ClientsCtrl...');
-	$http.get('/users/1').success(function(data, status, headers, config) {
-		console.log(data);
-		$scope.pager = data;
-		$scope.users = data.results;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
+	$scope.loadPage = function(pageNum) {
+		$http.get('/users/' + pageNum).success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.pager = data;
+			$scope.users = data.results;
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.loadPage(1);
 }).controller(
 		'ProductDetailCtrl',
 		function($scope, $http, $routeParams, $route) {
