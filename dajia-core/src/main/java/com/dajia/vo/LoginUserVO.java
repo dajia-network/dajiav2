@@ -21,5 +21,7 @@ public class LoginUserVO {
 
 	public String loginIP;
 
+	public String isAdmin;
+
 	public UserContact userContact;
 }

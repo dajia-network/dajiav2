@@ -35,7 +35,10 @@ public class User extends BaseModel {
 
 	@Column(name = "wechat")
 	public String wechat;
-	
+
+	@Column(name = "is_admin")
+	public String isAdmin;
+
 	@Column(name = "ref_user_id")
 	public Long refUserId;
 

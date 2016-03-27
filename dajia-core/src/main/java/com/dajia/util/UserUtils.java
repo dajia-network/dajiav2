@@ -35,6 +35,9 @@ public class UserUtils {
 	}
 
 	public static LoginUserVO addLoginSession(LoginUserVO loginUser, User user, HttpServletRequest request) {
+		if (null == user) {
+			return null;
+		}
 		if (null == loginUser) {
 			loginUser = new LoginUserVO();
 		}
@@ -42,6 +45,7 @@ public class UserUtils {
 		loginUser.mobile = user.mobile;
 		loginUser.userName = user.userName;
 		loginUser.password = user.password;
+		loginUser.isAdmin = user.isAdmin;
 		request.getSession().setAttribute(UserUtils.session_user, loginUser);
 		return loginUser;
 	}

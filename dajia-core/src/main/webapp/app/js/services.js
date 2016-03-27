@@ -22,13 +22,17 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 		},
 		login : function(login) {
 			$http.post('/login', login).success(function(data, status, headers, config) {
-				$cookies.put('dajia_user', data['mobile'], {
-					path : '/'
-				});
-				$cookies.put('dajia_username', data['userName'], {
-					path : '/'
-				});
-				authService.loginConfirmed();
+				if (data == null || data.length == 0) {
+					$rootScope.$broadcast('event:auth-login-failed', status);
+				} else {
+					$cookies.put('dajia_user', data['mobile'], {
+						path : '/'
+					});
+					$cookies.put('dajia_username', data['userName'], {
+						path : '/'
+					});
+					authService.loginConfirmed();
+				}
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-login-failed', status);
 			});

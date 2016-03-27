@@ -1,9 +1,8 @@
-angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
+angular.module('DajiaAdmin.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
 	console.log('ProductsCtrl...');
+	$scope.syncBtnTxt = '同步数据';
 	$scope.loadPage = function(pageNum) {
-		$http.get('/products/' + pageNum).success(function(data, status, headers, config) {
-			$scope.alerts = [];
-			$scope.syncBtnTxt = '同步数据';
+		$http.get('/admin/products/' + pageNum).success(function(data, status, headers, config) {
 			$scope.pager = data;
 			$scope.products = data.results;
 			$scope.editProduct = function(pid) {
@@ -15,8 +14,9 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 	}
 	$scope.loadPage(1);
 	$scope.sync = function() {
+		$scope.alerts = [];
 		$scope.syncBtnTxt = '进行中...';
-		$http.get('/sync/').success(function(data, status, headers, config) {
+		$http.get('/admin/sync/').success(function(data, status, headers, config) {
 			console.log(data);
 			$scope.syncBtnTxt = '同步数据';
 			$scope.alerts.push({
@@ -39,7 +39,8 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 		$scope.alerts.splice(index, 1);
 	};
 	$scope.bot = function(pid) {
-		$http.get('/robotorder/' + pid).success(function(data, status, headers, config) {
+		$scope.alerts = [];
+		$http.get('/admin/robotorder/' + pid).success(function(data, status, headers, config) {
 			$scope.alerts.push({
 				type : 'success',
 				msg : '机器打价成功'
@@ -58,7 +59,7 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 }).controller('OrdersCtrl', function($scope, $http) {
 	console.log('OrdersCtrl...');
 	$scope.loadPage = function(pageNum) {
-		$http.get('/orders/' + pageNum).success(function(data, status, headers, config) {
+		$http.get('/admin/orders/' + pageNum).success(function(data, status, headers, config) {
 			console.log(data);
 			$scope.pager = data;
 			$scope.orders = data.results;
@@ -70,7 +71,7 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 }).controller('ClientsCtrl', function($scope, $http) {
 	console.log('ClientsCtrl...');
 	$scope.loadPage = function(pageNum) {
-		$http.get('/users/' + pageNum).success(function(data, status, headers, config) {
+		$http.get('/admin/users/' + pageNum).success(function(data, status, headers, config) {
 			console.log(data);
 			$scope.pager = data;
 			$scope.users = data.results;
@@ -83,7 +84,7 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 		'ProductDetailCtrl',
 		function($scope, $http, $routeParams, $route) {
 			console.log('ProductDetailCtrl...');
-			$http.get('/product/' + $routeParams.pid).success(
+			$http.get('/admin/product/' + $routeParams.pid).success(
 					function(data, status, headers, config) {
 						$scope.newSold = null;
 						$scope.newPrice = null;
@@ -104,17 +105,40 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 							window.location.href = 'https://koudaitong.com/v2/showcase/goods/edit#id=' + refId;
 						};
 						$scope.addPrice = function() {
-							if (null != $scope.newSold && $scope.newSold != 0 && null != $scope.newPrice
-									&& $scope.newPrice != 0) {
-								var priceObj = {
-									sold : $scope.newSold,
-									targetPrice : $scope.newPrice
-								};
-								if (null == $scope.product.prices) {
-									$scope.product.prices = [];
+							$scope.alerts = [];
+							if (!$scope.product.stock || !$scope.product.originalPrice) {
+								$scope.formIncomplete();
+							} else {
+								if (null != $scope.newSold && $scope.newSold != 0 && null != $scope.newPrice
+										&& $scope.newPrice != 0) {
+									var priceObj = {
+										sold : $scope.newSold,
+										targetPrice : $scope.newPrice
+									};
+									if (null == $scope.product.prices) {
+										$scope.product.prices = [];
+									}
+									$scope.product.prices.push(priceObj);
+									$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
+											function(data, status, headers, config) {
+												$route.reload();
+											}).error(function(data, status, headers, config) {
+										console.log('product update failed...');
+										console.log(data.message);
+									});
 								}
-								$scope.product.prices.push(priceObj);
-								$http.post('/product/' + $routeParams.pid, $scope.product).success(
+							}
+						};
+						$scope.removePrice = function(priceId) {
+							if (!$scope.product.stock || !$scope.product.originalPrice) {
+								$scope.formIncomplete();
+							} else {
+								for (var i = $scope.product.prices.length - 1; i >= 0; i--) {
+									if ($scope.product.prices[i].priceId == priceId) {
+										$scope.product.prices.splice(i, 1);
+									}
+								}
+								$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
 										function(data, status, headers, config) {
 											$route.reload();
 										}).error(function(data, status, headers, config) {
@@ -123,30 +147,68 @@ angular.module('DajiaMana.controllers', []).controller('ProductsCtrl', function(
 								});
 							}
 						};
-						$scope.removePrice = function(priceId) {
-							for (var i = $scope.product.prices.length - 1; i >= 0; i--) {
-								if ($scope.product.prices[i].priceId == priceId) {
-									$scope.product.prices.splice(i, 1);
-								}
-							}
-							$http.post('/product/' + $routeParams.pid, $scope.product).success(
-									function(data, status, headers, config) {
-										$route.reload();
-									}).error(function(data, status, headers, config) {
-								console.log('product update failed...');
-								console.log(data.message);
-							});
-						};
 						$scope.submit = function() {
-							$http.post('/product/' + $routeParams.pid, $scope.product).success(
-									function(data, status, headers, config) {
-										window.location = '#';
-									}).error(function(data, status, headers, config) {
-								console.log('product update failed...');
-								console.log(data.message);
-							});
+							$scope.alerts = [];
+							if (!$scope.product.stock || !$scope.product.originalPrice) {
+								$scope.formIncomplete();
+							} else {
+								$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
+										function(data, status, headers, config) {
+											window.location = '#';
+										}).error(function(data, status, headers, config) {
+									console.log('product update failed...');
+									console.log(data.message);
+								});
+							}
 						}
 					}).error(function(data, status, headers, config) {
 				console.log('request failed...');
 			});
+			$scope.formIncomplete = function() {
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '缺少必填项'
+				});
+			}
+			$scope.closeAlert = function(index) {
+				$scope.alerts.splice(index, 1);
+			}
+		}).controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout) {
+	$scope.login = {
+		'mobile' : null,
+		'password' : null
+	};
+	$scope.submit = function() {
+		$scope.alerts = [];
+		if (!$scope.login.mobile || !$scope.login.password) {
+			$scope.alerts.push({
+				type : 'danger',
+				msg : '请输入完整信息'
+			});
+			return;
+		}
+
+		$http.post('/login', $scope.login).success(function(data, status, headers, config) {
+			if (data == null || data.length == 0 || data.isAdmin != 'Y') {
+				$scope.loginFail();
+			} else {
+				$scope.alerts.push({
+					type : 'success',
+					msg : '登录成功'
+				});
+				window.location.href = "#";
+			}
+		}).error(function(data, status, headers, config) {
+			$scope.loginFail();
 		});
+	};
+	$scope.loginFail = function() {
+		$scope.alerts.push({
+			type : 'danger',
+			msg : '登录失败。密码错误或没有管理员权限'
+		});
+	}
+	$scope.closeAlert = function(index) {
+		$scope.alerts.splice(index, 1);
+	}
+});

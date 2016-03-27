@@ -40,13 +40,13 @@ public class AdminController extends BaseController {
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping("/robotorder/{pid}")
+	@RequestMapping("/admin/robotorder/{pid}")
 	public @ResponseBody UserOrder robotOrder(@PathVariable("pid") Long pid) {
 		UserOrder order = orderService.generateRobotOrder(pid, 1);
 		return order;
 	}
 
-	@RequestMapping("/sync")
+	@RequestMapping("/admin/sync")
 	public @ResponseBody Map<String, String> syncAllProducts() {
 		productService.syncProductsAll();
 		Map<String, String> map = new HashMap<String, String>();
@@ -54,14 +54,20 @@ public class AdminController extends BaseController {
 		return map;
 	}
 
-	@RequestMapping("/products/{page}")
+	@RequestMapping("/admin/products/{page}")
 	public PaginationVO<Product> productsByPage(@PathVariable("page") Integer pageNum) {
 		Page<Product> products = productService.loadProductsByPage(pageNum);
 		PaginationVO<Product> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}
 
-	@RequestMapping(value = "/product/{pid}", method = RequestMethod.POST)
+	@RequestMapping("/admin/product/{pid}")
+	public Product product(@PathVariable("pid") Long pid) {
+		Product product = productService.loadProductDetail(pid);
+		return product;
+	}
+
+	@RequestMapping(value = "/admin/product/{pid}", method = RequestMethod.POST)
 	public @ResponseBody Product modifyProduct(@PathVariable("pid") Long pid, @RequestBody Product productVO) {
 		if (pid == productVO.productId) {
 			Product product = productRepo.findOne(pid);
@@ -73,14 +79,14 @@ public class AdminController extends BaseController {
 		}
 	}
 
-	@RequestMapping("/users/{page}")
+	@RequestMapping("/admin/users/{page}")
 	public PaginationVO<User> usersByPage(@PathVariable("page") Integer pageNum) {
 		Page<User> users = userService.loadUsersByPage(pageNum);
 		PaginationVO<User> page = CommonUtils.generatePaginationVO(users, pageNum);
 		return page;
 	}
 
-	@RequestMapping("/orders/{page}")
+	@RequestMapping("/admin/orders/{page}")
 	public PaginationVO<UserOrder> ordersByPage(@PathVariable("page") Integer pageNum) {
 		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum);
 		PaginationVO<UserOrder> page = CommonUtils.generatePaginationVO(orders, pageNum);

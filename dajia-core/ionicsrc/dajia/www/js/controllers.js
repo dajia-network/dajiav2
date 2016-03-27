@@ -105,6 +105,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	var loadProgress = function() {
 		popLoading($ionicLoading);
 		$http.get('/user/progress').success(function(data, status, headers, config) {
+			console.log(data);
 			var orders = data;
 			orders.forEach(function(o) {
 				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
@@ -119,7 +120,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	}
 	$scope.doRefresh = function() {
 		loadProgress();
-	};
+	}
+	$scope.goHome = function() {
+		$window.location.href = "#/tab/prod";
+	}
 })
 
 .controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
@@ -219,6 +223,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
 	console.log('订单页面...')
+	var productReady = false;
+	var locationReady = false;
 	popLoading($ionicLoading);
 	modalInit($rootScope, $ionicModal, 'login');
 	$scope.userContact = {};
@@ -236,7 +242,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		$scope.order.productId = product.productId;
 		$scope.order.unitPrice = product.currentPrice;
 		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
-		$ionicLoading.hide();
+		if (locationReady) {
+			$ionicLoading.hide();
+		}
+		productReady = true;
 	});
 	$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 		var loginuser = data;
@@ -257,6 +266,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							c.children.forEach(function(d) {
 								if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
 									$scope.userContact.district = d;
+									if (productReady) {
+										$ionicLoading.hide();
+									}
+									locationReady = true;
 									return;
 								}
 							});

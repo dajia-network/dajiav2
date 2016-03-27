@@ -78,8 +78,12 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request) {
+	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request,
+			HttpServletResponse response) {
 		User user = userService.userLogin(loginUser.mobile, loginUser.password, request, false);
+		// if (null == user) {
+		// response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		// }
 		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
 	}
