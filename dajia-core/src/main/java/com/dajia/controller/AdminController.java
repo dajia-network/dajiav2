@@ -3,6 +3,8 @@ package com.dajia.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,8 +89,9 @@ public class AdminController extends BaseController {
 	}
 
 	@RequestMapping("/admin/orders/{page}")
-	public PaginationVO<UserOrder> ordersByPage(@PathVariable("page") Integer pageNum) {
-		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum);
+	public PaginationVO<UserOrder> ordersByPage(@PathVariable("page") Integer pageNum, HttpServletRequest request) {
+		String filterVal = request.getParameter("filter");
+		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum, filterVal);
 		PaginationVO<UserOrder> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		return page;
 	}

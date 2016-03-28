@@ -14,6 +14,11 @@
 </nav>
 
 <div class="container">
+	<div class="btn-group">
+        <label class="btn btn-default" ng-model="orderFilter" uib-btn-radio="'all'" ng-click="loadPage(1)">全部订单</label>
+        <label class="btn btn-default" ng-model="orderFilter" uib-btn-radio="'real'" ng-click="loadPage(1)">排除机器订单</label>
+    </div>
+    <p></p>
 	<table class="table table-striped">
 		<thead>
 			<tr>
