@@ -92,10 +92,14 @@ public class OrderService {
 	public Page<UserOrder> loadOrdersByPage(Integer pageNum, String filter) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<UserOrder> orders = null;
+		if (null == filter) {
+			filter = "real";
+		}
 		if (filter.equals("all")) {
 			orders = orderRepo.findByIsActiveOrderByOrderDateDesc(ActiveStatus.YES.toString(), pageable);
 		} else if (filter.equals("real")) {
-			orders = orderRepo.findByUserIdNotAndIsActiveOrderByOrderDateDesc(0L, ActiveStatus.YES.toString(), pageable);
+			orders = orderRepo
+					.findByUserIdNotAndIsActiveOrderByOrderDateDesc(0L, ActiveStatus.YES.toString(), pageable);
 		}
 		for (UserOrder order : orders) {
 			order.orderStatus4Show = getOrderStatusStr(order.orderStatus);

@@ -220,8 +220,8 @@ public class ProductService {
 			if (null == product.sold) {
 				product.sold = 0L;
 			}
-			product.sold += 1;
-			product.stock -= 1;
+			product.sold += quantity;
+			product.stock -= quantity;
 			calcCurrentPrice(product);
 		}
 		productRepo.save(product);
