@@ -19,6 +19,9 @@ public class UserOrder extends BaseModel {
 	@GeneratedValue
 	public Long orderId;
 
+	@Column(name = "tracking_id")
+	public String trackingId;
+
 	@Column(name = "product_id", nullable = false)
 	public Long productId;
 

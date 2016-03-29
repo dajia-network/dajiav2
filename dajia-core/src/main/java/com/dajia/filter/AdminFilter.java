@@ -28,7 +28,7 @@ public class AdminFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
 			ServletException {
-		logger.info("in AdminFilter...");
+		// logger.info("in AdminFilter...");
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpSession session = request.getSession(true);
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);

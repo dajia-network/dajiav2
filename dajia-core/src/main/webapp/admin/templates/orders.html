@@ -6,7 +6,7 @@
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8">
 			<ul class="nav navbar-nav">
 			<li><a href="#/products">产品</a></li>
-			<li class="active"><a href="#">订单</a></li>
+			<li class="active"><a href="#/orders">订单</a></li>
 			<li><a href="#/clients">客户</a></li>
 			</ul>
 		</div>
@@ -23,6 +23,7 @@
 		<thead>
 			<tr>
 				<th data-field="orderId">ID</th>
+				<th data-field="trackingId">订单编号</th>
 				<th data-field="productInfo4Show">产品名</th>
 				<th data-field="quantity">购买数量</th>
 				<th data-field="unitPrice">购买单价</th>
@@ -37,6 +38,7 @@
 		<tbody>
 			<tr ng-repeat="order in orders">
 				<td>{{order.orderId}}</td>
+				<td>{{order.trackingId}}</td>
 				<td>{{order.productInfo4Show}}</td>
 				<td>{{order.quantity}}</td>
 				<td>￥{{order.unitPrice}}</td>
