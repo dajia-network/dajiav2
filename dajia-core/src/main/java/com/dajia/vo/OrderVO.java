@@ -10,13 +10,23 @@ public class OrderVO {
 
 	public Long orderId;
 
+	public String trackingId;
+
 	public Integer quantity;
 
 	public Long productId;
 
+	public Long userId;
+
+	public String userName;
+
 	public BigDecimal unitPrice;
 
 	public BigDecimal totalPrice;
+
+	public String comments;
+
+	public String userComments;
 
 	public String orderStatus4Show;
 

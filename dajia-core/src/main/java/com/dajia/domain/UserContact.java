@@ -51,7 +51,7 @@ public class UserContact extends BaseModel {
 	@JoinColumn(name = "district", referencedColumnName = "id")
 	public Location district;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
 	public User user;
 }

@@ -1,0 +1,94 @@
+<nav class="navbar navbar-default navbar-static-top">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a href="#" class="navbar-brand">打价网管理后台</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8">
+			<ul class="nav navbar-nav">
+				<li><a href="#/products">产品</a></li>
+				<li class="active"><a href="#/orders">订单</a></li>
+				<li><a href="#/clients">客户</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<div class="container">
+	<div>
+		<uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+	</div>
+
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">订单编号</label>
+			<div class="col-sm-8">{{order.trackingId}}</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">订单状态</label>
+			<div class="col-sm-8">{{order.orderStatus4Show}}</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">付款方式</label>
+			<div class="col-sm-8"></div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">买家</label>
+			<div class="col-sm-8">{{order.userName}}</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">收货信息</label>
+			<div class="col-sm-8">{{order.userContact.province.locationValue}} 
+			&nbsp;{{order.userContact.city.locationValue}} 
+			&nbsp;{{order.userContact.district.locationValue}}
+			<p></p>
+			{{order.userContact.address1}}
+			<p></p>
+			{{order.userContact.address2}}
+			<p></p>
+			收件人：{{order.userContact.contactName}}
+			<p></p>
+			联系电话：{{order.userContact.contactMobile}}</div>
+			
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">买家留言</label>
+			<div class="col-sm-8">{{order.userComments}}</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-8">
+				<textarea class="form-control" rows="3"></textarea>
+			</div>
+		</div>
+
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th data-field="productName">商品名称</th>
+					<th data-field="unitPrice">单价</th>
+					<th data-field="quantity">数量</th>
+					<th data-field="totalPrice">小计</th>
+					<th data-field="postFee">运费</th>
+					<th data-field="expiredDate">到期时间</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>{{order.product.name}}</td>
+					<td>￥{{order.unitPrice}}</td>
+					<td>{{order.quantity}}</td>
+					<td>￥{{order.totalPrice}}</td>
+					<td>{{order.product.postFee}}</td>
+					<td>{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="form-group">
+			<div class="col-sm-offset-2 col-sm-10">
+				<button class="btn btn-primary">发货</button>
+				<a class="btn btn-default" href="#/orders" role="button">返回</a>
+			</div>
+		</div>
+	</form>
+</div>

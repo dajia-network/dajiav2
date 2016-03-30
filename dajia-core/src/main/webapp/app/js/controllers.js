@@ -131,6 +131,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.order = {};
 	popLoading($ionicLoading);
 	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
+		console.log(data);
 		var order = data;
 		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
 		$scope.order = order;

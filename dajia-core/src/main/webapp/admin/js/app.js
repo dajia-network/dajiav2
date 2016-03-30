@@ -12,6 +12,9 @@ angular.module('DajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'DajiaAdmin.controller
 			}).when('/product/:pid', {
 				templateUrl : './templates/productDetail.html',
 				controller : 'ProductDetailCtrl'
+			}).when('/order/:orderId', {
+				templateUrl : './templates/orderDetail.html',
+				controller : 'OrderDetailCtrl'
 			}).when('/login', {
 				templateUrl : './templates/login.html',
 				controller : 'SignInCtrl'

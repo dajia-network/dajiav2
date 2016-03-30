@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
-import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
@@ -38,9 +37,6 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
-
-	@Autowired
-	private UserContactRepo userContactRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -105,7 +101,7 @@ public class OrderController extends BaseController {
 		if (null != ov.product) {
 			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
 		}
-		ov.userContact = userContactRepo.findOne(order.contactId);
+		orderService.fillOrderVO(ov, order);
 		return ov;
 	}
 }

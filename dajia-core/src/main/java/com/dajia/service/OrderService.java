@@ -16,6 +16,7 @@ import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
@@ -35,6 +36,9 @@ public class OrderService {
 
 	@Autowired
 	private UserRepo userRepo;
+
+	@Autowired
+	private UserContactRepo userContactRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -80,11 +84,15 @@ public class OrderService {
 	public OrderVO convertOrderVO(UserOrder order) {
 		OrderVO ov = new OrderVO();
 		ov.orderId = order.orderId;
+		ov.userId = order.userId;
+		ov.trackingId = order.trackingId;
 		ov.productId = order.productId;
 		ov.quantity = order.quantity;
 		ov.orderDate = order.orderDate;
 		ov.unitPrice = order.unitPrice;
 		ov.totalPrice = order.totalPrice;
+		ov.comments = order.comments;
+		ov.userComments = order.userComments;
 		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
 		return ov;
 	}
@@ -107,11 +115,16 @@ public class OrderService {
 			if (null != p) {
 				order.productInfo4Show = p.name;
 			}
-			User u = userRepo.findOne(order.userId);
+			User u = userRepo.findByUserId(order.userId);
 			if (null != u) {
 				order.userInfo4Show = u.userName;
 			}
 		}
 		return orders;
+	}
+
+	public void fillOrderVO(OrderVO ov, UserOrder order) {
+		ov.userContact = userContactRepo.findOne(order.contactId);
+		ov.userName = ov.userContact.user.userName;
 	}
 }

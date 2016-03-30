@@ -20,10 +20,14 @@ import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.UserContactRepo;
+import com.dajia.repository.UserOrderRepo;
+import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
+import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
 
 @RestController
@@ -32,6 +36,9 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private ProductRepo productRepo;
+
+	@Autowired
+	private UserOrderRepo orderRepo;
 
 	@Autowired
 	private OrderService orderService;
@@ -94,5 +101,20 @@ public class AdminController extends BaseController {
 		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum, filterVal);
 		PaginationVO<UserOrder> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		return page;
+	}
+
+	@RequestMapping("/admin/order/{orderId}")
+	public OrderVO order(@PathVariable("orderId") Long orderId) {
+		UserOrder order = orderRepo.findOne(orderId);
+		if (null == order) {
+			return null;
+		}
+		OrderVO ov = orderService.convertOrderVO(order);
+		ov.product = productService.loadProductDetail(order.productId);
+		if (null != ov.product) {
+			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
+		}
+		orderService.fillOrderVO(ov, order);
+		return ov;
 	}
 }

@@ -69,9 +69,9 @@ public class CommonUtils {
 	}
 
 	public static void copyProductProperties(Product src, Product target) {
-		target.name = src.name;
+		// target.name = src.name;
 		target.description = src.description;
-		target.postFee = src.postFee;
+		// target.postFee = src.postFee;
 		target.imgUrl = src.imgUrl;
 		target.imgThumbUrl = src.imgThumbUrl;
 		if (null != src.productImages && src.productImages.size() > 0) {
@@ -84,6 +84,9 @@ public class CommonUtils {
 	}
 
 	public static void updateProductWithReq(Product persist, Product req) {
+		if (null != req.name) {
+			persist.name = req.name;
+		}
 		if (null != req.brief) {
 			persist.brief = req.brief;
 		}
@@ -105,8 +108,11 @@ public class CommonUtils {
 		if (null != req.originalPrice) {
 			persist.originalPrice = req.originalPrice;
 		}
-		if (null != req.originalPrice) {
-			persist.currentPrice = req.originalPrice;
+		// if (null != req.currentPrice) {
+		// persist.currentPrice = req.currentPrice;
+		// }
+		if (null != req.postFee) {
+			persist.postFee = req.postFee;
 		}
 		if (null != req.prices && req.prices.size() > 0) {
 			if (null != persist.prices) {

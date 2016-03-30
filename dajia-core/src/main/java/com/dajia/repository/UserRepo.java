@@ -8,6 +8,8 @@ import com.dajia.domain.User;
 
 public interface UserRepo extends CrudRepository<User, Long> {
 
+	public User findByUserId(Long userId);
+
 	public User findByMobile(String mobile);
 
 	public Page<User> findByIsActiveOrderByCreatedDateDesc(String isActive, Pageable pageable);
