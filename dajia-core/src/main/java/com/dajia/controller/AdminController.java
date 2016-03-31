@@ -20,13 +20,12 @@ import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
-import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
-import com.dajia.repository.UserRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
+import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
 
@@ -116,5 +115,23 @@ public class AdminController extends BaseController {
 		}
 		orderService.fillOrderVO(ov, order);
 		return ov;
+	}
+
+	@RequestMapping("/admin/order/{orderId}/deliver")
+	public UserOrder deliverOrder(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
+		String logisticTrackingId = request.getParameter("lti");
+		UserOrder order = orderRepo.findOne(orderId);
+		order.orderStatus = OrderStatus.DELEVERING.getKey();
+		order.logisticTrackingId = logisticTrackingId;
+		orderRepo.save(order);
+		return order;
+	}
+
+	@RequestMapping("/admin/order/{orderId}/close")
+	public UserOrder closeOrder(@PathVariable("orderId") Long orderId) {
+		UserOrder order = orderRepo.findOne(orderId);
+		order.orderStatus = OrderStatus.CLOSED.getKey();
+		orderRepo.save(order);
+		return order;
 	}
 }

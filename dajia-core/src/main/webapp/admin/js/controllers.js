@@ -188,10 +188,37 @@ angular.module('DajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
-	$scope.formIncomplete = function() {
+	$scope.deliverOrder = function(orderId) {
+		$scope.alerts = [];
+		if (!$scope.order.logisticTrackingId) {
+			$scope.missLogistic();
+		} else {
+			$http.get('/admin/order/' + $routeParams.orderId + '/deliver', {
+				params : {
+					lti : $scope.order.logisticTrackingId
+				}
+			}).success(function(data, status, headers, config) {
+				$scope.order = data;
+				console.log($scope.order);
+				$route.reload();
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+		}
+	}
+	$scope.closeOrder = function(orderId) {
+		$http.get('/admin/order/' + $routeParams.orderId + '/close').success(function(data, status, headers, config) {
+			$scope.order = data;
+			console.log($scope.order);
+			$route.reload();
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.missLogistic = function() {
 		$scope.alerts.push({
 			type : 'danger',
-			msg : '缺少必填项'
+			msg : '请填写快递单号'
 		});
 	}
 	$scope.closeAlert = function(index) {

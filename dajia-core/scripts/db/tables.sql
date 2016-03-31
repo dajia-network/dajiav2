@@ -110,6 +110,8 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
     deliver_date TIMESTAMP NULL,
     close_date TIMESTAMP NULL,
     pay_type INT,
+    logistic_agent VARCHAR(100) NULL,
+    logistic_tracking_id VARCHAR(200) NULL,
     comments VARCHAR(4000) NULL,
     user_comments VARCHAR(4000) NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,

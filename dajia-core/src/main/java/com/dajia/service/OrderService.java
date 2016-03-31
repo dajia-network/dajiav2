@@ -91,8 +91,11 @@ public class OrderService {
 		ov.orderDate = order.orderDate;
 		ov.unitPrice = order.unitPrice;
 		ov.totalPrice = order.totalPrice;
+		ov.logisticAgent = order.logisticAgent;
+		ov.logisticTrackingId = order.logisticTrackingId;
 		ov.comments = order.comments;
 		ov.userComments = order.userComments;
+		ov.orderStatus = order.orderStatus;
 		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
 		return ov;
 	}

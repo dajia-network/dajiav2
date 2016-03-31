@@ -179,7 +179,7 @@ public class CommonUtils {
 	}
 
 	public enum OrderStatus {
-		PENDING_PAY(1, "待付款"), PAIED(2, "已付款"), DELEVERING(3, "已发货"), DELEVRIED(4, "已签收"), CLOSED(5, "已完成"), CANCELLED(
+		PENDING_PAY(1, "待付款"), PAIED(2, "待发货"), DELEVERING(3, "已发货"), DELEVRIED(4, "已签收"), CLOSED(5, "已关闭"), CANCELLED(
 				6, "已取消");
 		private Integer key;
 		private String value;

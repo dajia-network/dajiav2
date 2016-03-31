@@ -58,12 +58,18 @@ public class UserOrder extends BaseModel {
 	@Column(name = "close_date")
 	public Date closeDate;
 
+	@Column(name = "logistic_agent")
+	public String logisticAgent;
+
+	@Column(name = "logistic_tracking_id")
+	public String logisticTrackingId;
+
 	@Column(name = "comments")
 	public String comments;
 
 	@Column(name = "user_comments")
 	public String userComments;
-	
+
 	@Transient
 	public String orderStatus4Show;
 
