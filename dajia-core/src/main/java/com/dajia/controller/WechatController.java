@@ -1,5 +1,6 @@
 package com.dajia.controller;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -8,38 +9,35 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import com.dajia.service.ApiService;
 import com.dajia.util.CommonUtils;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @RestController
 public class WechatController extends BaseController {
 	Logger logger = LoggerFactory.getLogger(WechatController.class);
 
+	@Autowired
+	private ApiService apiService;
+
 	@RequestMapping("/wechatoauth")
 	public @ResponseBody String wechatOauth(HttpServletRequest request) {
 		String code = request.getParameter("code");
 		String state = request.getParameter("state");
-		String requestTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code="
-				+ code + "&grant_type=authorization_code";
-		RestTemplate restTemplate = new RestTemplate();
-		JsonObject returnObj = restTemplate.getForObject(requestTokenUrl, JsonObject.class);
-		logger.info("request token: " + returnObj.toString());
-		String accessToken = "";
-		String openId = "";
-		if (returnObj.has("access_token") && returnObj.has("openid")) {
-			accessToken = returnObj.get("access_token").toString();
-			openId = returnObj.get("openid").toString();
-		}
-		if (!accessToken.isEmpty() && !openId.isEmpty()) {
-			String requestUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + accessToken
-					+ "&openid=" + openId + "&lang=zh_CN";
-			returnObj = restTemplate.getForObject(requestTokenUrl, JsonObject.class);
-			logger.info("request token: " + returnObj.toString());
+		try {
+			apiService.loadWechatUserInfo(code);
+		} catch (JsonParseException e) {
+			logger.error(e.getMessage(), e);
+		} catch (JsonMappingException e) {
+			logger.error(e.getMessage(), e);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
 		}
 		return "";
 	}

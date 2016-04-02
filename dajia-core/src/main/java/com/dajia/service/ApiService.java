@@ -97,4 +97,28 @@ public class ApiService {
 		}
 		return returnStr;
 	}
+
+	public String loadWechatUserInfo(String code) throws JsonParseException, JsonMappingException, IOException {
+		String requestTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code="
+				+ code + "&grant_type=authorization_code";
+		RestTemplate restTemplate = new RestTemplate();
+		String retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
+		logger.info("request token: " + retrunJsonStr);
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map = mapper.readValue(retrunJsonStr, HashMap.class);
+		String accessToken = "";
+		String openId = "";
+		if (map.containsKey("access_token") && map.containsKey("openid")) {
+			accessToken = map.get("access_token").toString();
+			openId = map.get("openid").toString();
+		}
+		if (!accessToken.isEmpty() && !openId.isEmpty()) {
+			String requestUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + accessToken
+					+ "&openid=" + openId + "&lang=zh_CN";
+			retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
+			logger.info("request userInfo: " + retrunJsonStr);
+		}
+		return "";
+	}
 }
