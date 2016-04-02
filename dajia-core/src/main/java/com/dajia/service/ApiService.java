@@ -17,6 +17,7 @@ import com.dajia.domain.Property;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
+import com.dajia.util.CommonUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,7 +100,9 @@ public class ApiService {
 	}
 
 	public String loadWechatUserInfo(String code) throws JsonParseException, JsonMappingException, IOException {
-		String requestTokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code="
+		String appkey = propertyRepo.findByPropertyKey(CommonUtils.sms_app_key).propertyValue;
+		String secret = propertyRepo.findByPropertyKey(CommonUtils.sms_app_secret).propertyValue;
+		String requestTokenUrl = CommonUtils.wechat_get_token_url + "?appid=" + appkey + "&secret=" + secret + "&code="
 				+ code + "&grant_type=authorization_code";
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
@@ -114,9 +117,9 @@ public class ApiService {
 			openId = map.get("openid").toString();
 		}
 		if (!accessToken.isEmpty() && !openId.isEmpty()) {
-			String requestUserInfoUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + accessToken
+			String requestUserInfoUrl = CommonUtils.wechat_get_userinfo_url + "?access_token=" + accessToken
 					+ "&openid=" + openId + "&lang=zh_CN";
-			retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
+			retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
 			logger.info("request userInfo: " + retrunJsonStr);
 		}
 		return "";
