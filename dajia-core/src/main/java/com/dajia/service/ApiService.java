@@ -100,8 +100,8 @@ public class ApiService {
 	}
 
 	public String loadWechatUserInfo(String code) throws JsonParseException, JsonMappingException, IOException {
-		String appkey = propertyRepo.findByPropertyKey(CommonUtils.sms_app_key).propertyValue;
-		String secret = propertyRepo.findByPropertyKey(CommonUtils.sms_app_secret).propertyValue;
+		String appkey = propertyRepo.findByPropertyKey(CommonUtils.wechat_app_key).propertyValue;
+		String secret = propertyRepo.findByPropertyKey(CommonUtils.wechat_secret).propertyValue;
 		String requestTokenUrl = CommonUtils.wechat_get_token_url + "?appid=" + appkey + "&secret=" + secret + "&code="
 				+ code + "&grant_type=authorization_code";
 		logger.info("request token url: " + requestTokenUrl);
