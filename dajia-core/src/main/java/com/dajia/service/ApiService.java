@@ -104,9 +104,10 @@ public class ApiService {
 		String secret = propertyRepo.findByPropertyKey(CommonUtils.sms_app_secret).propertyValue;
 		String requestTokenUrl = CommonUtils.wechat_get_token_url + "?appid=" + appkey + "&secret=" + secret + "&code="
 				+ code + "&grant_type=authorization_code";
+		logger.info("request token url: " + requestTokenUrl);
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
-		logger.info("request token: " + retrunJsonStr);
+		logger.info("request token result: " + retrunJsonStr);
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> map = new HashMap<String, Object>();
 		map = mapper.readValue(retrunJsonStr, HashMap.class);
@@ -119,8 +120,9 @@ public class ApiService {
 		if (!accessToken.isEmpty() && !openId.isEmpty()) {
 			String requestUserInfoUrl = CommonUtils.wechat_get_userinfo_url + "?access_token=" + accessToken
 					+ "&openid=" + openId + "&lang=zh_CN";
+			logger.info("request userInfo url: " + requestUserInfoUrl);
 			retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
-			logger.info("request userInfo: " + retrunJsonStr);
+			logger.info("request userInfo result: " + retrunJsonStr);
 		}
 		return "";
 	}
