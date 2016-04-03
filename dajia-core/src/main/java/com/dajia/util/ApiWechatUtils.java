@@ -11,6 +11,8 @@ public class ApiWechatUtils {
 	public static final String wechat_app_key = "appkey_wechat";
 	public static final String wechat_secret = "secret_wechat";
 	public static final String wechat_oauth_type = "Wechat";
+	public static final String wechat_oauth_url = "https://open.weixin.qq.com/connect/oauth2/authorize";
+	public static final String wechat_callback_url = "http%3A%2F%2F51daja.com%2Fwechatoauth";
 
 	public static void updateWechatUserInfo(User user, Map<String, String> userInfoMap) {
 		user.userName = userInfoMap.get("nickname");
@@ -19,5 +21,11 @@ public class ApiWechatUtils {
 		user.country = userInfoMap.get("country");
 		user.province = userInfoMap.get("province");
 		user.city = userInfoMap.get("city");
+	}
+
+	public static String getOauthUrl(String appId) {
+		String url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+				+ "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+		return url;
 	}
 }

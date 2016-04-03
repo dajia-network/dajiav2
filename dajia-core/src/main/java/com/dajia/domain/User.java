@@ -21,10 +21,10 @@ public class User extends BaseModel {
 	@GeneratedValue
 	public Long userId;
 
-	@Column(name = "mobile", nullable = false)
+	@Column(name = "mobile")
 	public String mobile;
 
-	@Column(name = "password", nullable = false)
+	@Column(name = "password")
 	public String password;
 
 	@Column(name = "username")

@@ -122,8 +122,11 @@ public class UserController extends BaseController {
 
 	@RequestMapping("/user/loginuserinfo")
 	public @ResponseBody LoginUserVO getSessionUser(HttpServletRequest request, HttpServletResponse response) {
+		LoginUserVO loginUser = (LoginUserVO) request.getSession(true).getAttribute(UserUtils.session_user);
+		if (null == loginUser) {
+			return null;
+		}
 		User user = this.getLoginUser(request, response, userRepo, true);
-		LoginUserVO loginUser = new LoginUserVO();
 		UserUtils.copyUserProperties(user, loginUser);
 		// get default userContact
 		if (null != user.userContacts && user.userContacts.size() > 0) {

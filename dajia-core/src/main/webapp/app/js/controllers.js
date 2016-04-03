@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
-		function($scope, $http, $ionicLoading) {
+		function($scope, $http, $cookies, $ionicLoading) {
 			console.log('产品列表...');
 			var loadProducts = function() {
 				popLoading($ionicLoading);
@@ -10,12 +10,14 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				});
 			}
 			var checkOauthLogin = function() {
-				if ($cookies.get('dajia_user')) {
-					$http.get('session.json').then(function(r) {
-						console.log(r);
-						if (null != r['oauthLogin']) {
-							AuthService.oauthLogin(r);
+				if (!$cookies.get('dajia_user')) {
+					$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+						var loginuser = data;
+						if (null != loginuser['userId']) {
+							AuthService.oauthLogin(loginuser);
 						}
+					}).error(function(data, status, headers, config) {
+						console.log('request failed...');
 					});
 				}
 			}
@@ -358,6 +360,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 	$scope.signup = function() {
 		$scope.openModal('signup');
+	}
+
+	$scope.wechatLogin = function() {
+		$window.location.href = '/wechat/login';
 	}
 
 	$scope.$on('event:auth-loginRequired', function(e, rejection) {

@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.User;
 import com.dajia.service.ApiService;
@@ -35,8 +34,14 @@ public class WechatController extends BaseController {
 	@Autowired
 	private UserService userService;
 
+	@RequestMapping("/wechat/login")
+	public String wechatLogin(HttpServletRequest request) {
+		String url = apiService.getWechatOauthUrl();
+		return "redirect:" + url;
+	}
+
 	@RequestMapping("/wechatoauth")
-	public @ResponseBody String wechatOauth(HttpServletRequest request) {
+	public String wechatOauth(HttpServletRequest request) {
 		LoginUserVO loginUser = null;
 		String code = request.getParameter("code");
 		// String state = request.getParameter("state");

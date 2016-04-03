@@ -133,4 +133,9 @@ public class ApiService {
 			return null;
 		}
 	}
+
+	public String getWechatOauthUrl() {
+		String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
+		return ApiWechatUtils.getOauthUrl(appkey);
+	}
 }
