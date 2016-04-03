@@ -62,6 +62,16 @@ public class UserService {
 		return user;
 	}
 
+	public User oauthLogin(String oauthType, String oauthUserId, HttpServletRequest request) {
+		User user = userRepo.findByOauthUserIdAndOauthType(oauthUserId, oauthType);
+		if (null != user) {
+			user.lastVisitIP = request.getRemoteAddr();
+			user.lastVisitDate = new Date();
+			userRepo.save(user);
+		}
+		return user;
+	}
+
 	public User userLogin(String mobile, String password, HttpServletRequest request, boolean authIgnore) {
 		User user = userRepo.findByMobile(mobile);
 		password = EncodingUtil.encode("SHA1", password);

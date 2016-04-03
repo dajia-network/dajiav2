@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS dajia.user (
     head_img_url VARCHAR(500) NULL,
     is_admin VARCHAR(5) NOT NULL DEFAULT 'N',
 	oauth_type VARCHAR(50) NULL,
-	oauth_user_id BIGINT(25) NULL,
+	oauth_user_id VARCHAR(50) NULL,
 	last_visit_date TIMESTAMP NULL,
 	last_visit_ip VARCHAR(20) NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,

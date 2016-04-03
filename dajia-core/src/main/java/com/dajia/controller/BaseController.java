@@ -21,7 +21,11 @@ public class BaseController {
 		HttpSession session = request.getSession(true);
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
 		if (null != loginUser) {
-			user = userRepo.findByMobile(loginUser.mobile);
+			if (null != loginUser.mobile) {
+				user = userRepo.findByMobile(loginUser.mobile);
+			} else {
+				user = userRepo.findByOauthUserIdAndOauthType(loginUser.oauthUserId, loginUser.oauthType);
+			}
 		}
 		if (null == user && returnFailCode) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

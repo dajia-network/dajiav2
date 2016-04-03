@@ -40,13 +40,28 @@ public class AuthFilter implements Filter {
 			// auto login base on user cookies
 			Cookie[] cookies = request.getCookies();
 			if (null != cookies) {
+				String userType = "normal";
+				for (Cookie cookie : cookies) {
+					String name = cookie.getName();
+					if (name.equals("dajia_usertype")) {
+						userType = cookie.getValue();
+					}
+				}
 				for (Cookie cookie : cookies) {
 					String name = cookie.getName();
 					if (name.equals("dajia_user")) {
-						String mobile = cookie.getValue();
-						User user = userService.userLogin(mobile, null, request, true);
-						if (null != user) {
-							loginUser = UserUtils.addLoginSession(loginUser, user, request);
+						if (userType.equalsIgnoreCase("normal")) {
+							String mobile = cookie.getValue();
+							User user = userService.userLogin(mobile, null, request, true);
+							if (null != user) {
+								loginUser = UserUtils.addLoginSession(loginUser, user, request);
+							}
+						} else {
+							String oauthUserId = cookie.getValue();
+							User user = userService.oauthLogin(userType, oauthUserId, request);
+							if (null != user) {
+								loginUser = UserUtils.addLoginSession(loginUser, user, request);
+							}
 						}
 					}
 				}
