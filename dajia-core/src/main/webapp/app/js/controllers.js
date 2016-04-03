@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
-		function($scope, $http, $cookies, $ionicLoading) {
+		function($scope, $http, $cookies, $ionicLoading, AuthService) {
 			console.log('产品列表...');
 			var loadProducts = function() {
 				popLoading($ionicLoading);
