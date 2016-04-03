@@ -293,6 +293,11 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 					return;
 				}
 			});
+		} else {
+			if (productReady) {
+				$ionicLoading.hide();
+			}
+			locationReady = true;
 		}
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
