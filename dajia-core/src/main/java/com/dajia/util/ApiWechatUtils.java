@@ -15,7 +15,7 @@ public class ApiWechatUtils {
 	public static void updateWechatUserInfo(User user, Map<String, String> userInfoMap) {
 		user.userName = userInfoMap.get("nickname");
 		user.headImgUrl = userInfoMap.get("headimgurl");
-		user.sex = userInfoMap.get("sex");
+		user.sex = String.valueOf(userInfoMap.get("sex"));
 		user.country = userInfoMap.get("country");
 		user.province = userInfoMap.get("province");
 		user.city = userInfoMap.get("city");
