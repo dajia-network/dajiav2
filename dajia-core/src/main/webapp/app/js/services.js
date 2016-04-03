@@ -41,7 +41,7 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 			});
 		},
 		oauthLogin : function(data) {
-			var loginUser = data['user'];
+			var loginUser = data;
 			$cookies.put('dajia_user', loginUser['oauthUserId'], {
 				path : '/'
 			});
