@@ -17,6 +17,7 @@ import com.dajia.domain.Property;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
+import com.dajia.util.ApiWechatUtils;
 import com.dajia.util.CommonUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -99,31 +100,37 @@ public class ApiService {
 		return returnStr;
 	}
 
-	public String loadWechatUserInfo(String code) throws JsonParseException, JsonMappingException, IOException {
-		String appkey = propertyRepo.findByPropertyKey(CommonUtils.wechat_app_key).propertyValue;
-		String secret = propertyRepo.findByPropertyKey(CommonUtils.wechat_secret).propertyValue;
-		String requestTokenUrl = CommonUtils.wechat_get_token_url + "?appid=" + appkey + "&secret=" + secret + "&code="
-				+ code + "&grant_type=authorization_code";
+	public Map<String, String> loadWechatUserInfo(String code) throws JsonParseException, JsonMappingException,
+			IOException {
+		String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
+		String secret = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_secret).propertyValue;
+		String requestTokenUrl = ApiWechatUtils.wechat_get_token_url + "?appid=" + appkey + "&secret=" + secret
+				+ "&code=" + code + "&grant_type=authorization_code";
 		logger.info("request token url: " + requestTokenUrl);
 		RestTemplate restTemplate = new RestTemplate();
 		String retrunJsonStr = restTemplate.getForObject(requestTokenUrl, String.class);
 		logger.info("request token result: " + retrunJsonStr);
 		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, String> map = new HashMap<String, String>();
 		map = mapper.readValue(retrunJsonStr, HashMap.class);
 		String accessToken = "";
 		String openId = "";
-		if (map.containsKey("access_token") && map.containsKey("openid")) {
+		if (null != map && map.containsKey("access_token") && map.containsKey("openid")) {
 			accessToken = map.get("access_token").toString();
 			openId = map.get("openid").toString();
+			if (!accessToken.isEmpty() && !openId.isEmpty()) {
+				String requestUserInfoUrl = ApiWechatUtils.wechat_get_userinfo_url + "?access_token=" + accessToken
+						+ "&openid=" + openId + "&lang=zh_CN";
+				logger.info("request userInfo url: " + requestUserInfoUrl);
+				retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
+				map = mapper.readValue(retrunJsonStr, HashMap.class);
+				logger.info("request userInfo result: " + retrunJsonStr);
+				return map;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
 		}
-		if (!accessToken.isEmpty() && !openId.isEmpty()) {
-			String requestUserInfoUrl = CommonUtils.wechat_get_userinfo_url + "?access_token=" + accessToken
-					+ "&openid=" + openId + "&lang=zh_CN";
-			logger.info("request userInfo url: " + requestUserInfoUrl);
-			retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
-			logger.info("request userInfo result: " + retrunJsonStr);
-		}
-		return "";
 	}
 }

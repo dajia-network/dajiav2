@@ -4,34 +4,45 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dajia.domain.User;
 import com.dajia.service.ApiService;
-import com.dajia.util.CommonUtils;
+import com.dajia.service.UserService;
+import com.dajia.util.ApiWechatUtils;
+import com.dajia.util.UserUtils;
+import com.dajia.vo.LoginUserVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-@RestController
+@Controller
 public class WechatController extends BaseController {
 	Logger logger = LoggerFactory.getLogger(WechatController.class);
 
 	@Autowired
 	private ApiService apiService;
 
+	@Autowired
+	private UserService userService;
+
 	@RequestMapping("/wechatoauth")
 	public @ResponseBody String wechatOauth(HttpServletRequest request) {
+		LoginUserVO loginUser = null;
 		String code = request.getParameter("code");
-		String state = request.getParameter("state");
+		// String state = request.getParameter("state");
+		Map<String, String> userInfoMap = null;
 		try {
-			apiService.loadWechatUserInfo(code);
+			userInfoMap = apiService.loadWechatUserInfo(code);
 		} catch (JsonParseException e) {
 			logger.error(e.getMessage(), e);
 		} catch (JsonMappingException e) {
@@ -39,7 +50,13 @@ public class WechatController extends BaseController {
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 		}
-		return "";
+		if (null != userInfoMap && userInfoMap.containsKey("openid")) {
+			String openid = userInfoMap.get("openid");
+			User user = userService.oauthLogin(ApiWechatUtils.wechat_oauth_type, openid, userInfoMap, request);
+			loginUser = UserUtils.addLoginSession(loginUser, user, request);
+			request.getSession().setAttribute("oauthLogin", "success");
+		}
+		return "redirect:app/index.html";
 	}
 
 	@RequestMapping("/wechat")
@@ -53,7 +70,7 @@ public class WechatController extends BaseController {
 		logger.info("timestamp: " + timestamp);
 		logger.info("nonce: " + nonce);
 
-		String token = CommonUtils.wechat_api_token;
+		String token = ApiWechatUtils.wechat_api_token;
 		String tmpStr = "";
 		try {
 			tmpStr = getSHA1(token, timestamp, nonce);
@@ -61,8 +78,8 @@ public class WechatController extends BaseController {
 			logger.error(e.getMessage(), e);
 		}
 
-		logger.info("+++++++++++++++++++++tmpStr   " + tmpStr);
-		logger.info("---------------------signature   " + signature);
+		logger.info("+++++++++++++++++++++tmpStr " + tmpStr);
+		logger.info("---------------------signature " + signature);
 
 		if (!tmpStr.isEmpty() && tmpStr.equals(signature)) {
 			return echostr;

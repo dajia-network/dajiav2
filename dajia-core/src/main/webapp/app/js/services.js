@@ -28,6 +28,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 					$cookies.put('dajia_user', data['mobile'], {
 						path : '/'
 					});
+					$cookies.put('dajia_usertype', 'normal', {
+						path : '/'
+					});
 					$cookies.put('dajia_username', data['userName'], {
 						path : '/'
 					});
@@ -36,6 +39,19 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 			}).error(function(data, status, headers, config) {
 				$rootScope.$broadcast('event:auth-login-failed', status);
 			});
+		},
+		oauthLogin : function(data) {
+			var loginUser = data['user'];
+			$cookies.put('dajia_user', loginUser['oauthUserId'], {
+				path : '/'
+			});
+			$cookies.put('dajia_usertype', loginUser['oauthType'], {
+				path : '/'
+			});
+			$cookies.put('dajia_username', data['userName'], {
+				path : '/'
+			});
+			authService.loginConfirmed();
 		},
 		logout : function(logout) {
 			$http.post('/logout', logout).success(function(data, status) {

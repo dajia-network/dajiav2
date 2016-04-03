@@ -15,6 +15,12 @@ public class LoginUserVO {
 
 	public String mobile;
 
+	public String oauthType;
+
+	public String oauthUserId;
+
+	public String headImgUrl;
+
 	public String signupCode;
 
 	public Date loginDate;

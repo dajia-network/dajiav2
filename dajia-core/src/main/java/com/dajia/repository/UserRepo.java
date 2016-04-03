@@ -12,5 +12,7 @@ public interface UserRepo extends CrudRepository<User, Long> {
 
 	public User findByMobile(String mobile);
 
+	public User findByOauthUserIdAndOauthType(String oauthUserId, String oauthType);
+
 	public Page<User> findByIsActiveOrderByCreatedDateDesc(String isActive, Pageable pageable);
 }

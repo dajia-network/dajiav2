@@ -24,18 +24,7 @@ public class CommonUtils {
 	public static final Integer page_item_perpage = 20;
 	public static final Integer page_range_limit = 10;
 
-	public static final String sms_server_url = "http://gw.api.taobao.com/router/rest";
-	public static final String sms_app_key = "appkey_alidayu";
-	public static final String sms_app_secret = "secret_alidayu";
-	public static final String sms_template_signup = "SMS_5435124";
-
 	public static final String cache_name_signup_code = "sms_signup_code";
-
-	public static final String wechat_api_token = "dajia";
-	public static final String wechat_get_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token";
-	public static final String wechat_get_userinfo_url = "https://api.weixin.qq.com/sns/userinfo";
-	public static final String wechat_app_key = "appkey_wechat";
-	public static final String wechat_secret = "secret_wechat";
 
 	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
 		PaginationVO pv = new PaginationVO();

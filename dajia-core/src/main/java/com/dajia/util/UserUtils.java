@@ -45,6 +45,9 @@ public class UserUtils {
 		loginUser.mobile = user.mobile;
 		loginUser.userName = user.userName;
 		loginUser.password = user.password;
+		loginUser.oauthType = user.oauthType;
+		loginUser.oauthUserId = user.oauthUserId;
+		loginUser.headImgUrl = user.headImgUrl;
 		loginUser.isAdmin = user.isAdmin;
 		request.getSession().setAttribute(UserUtils.session_user, loginUser);
 		return loginUser;

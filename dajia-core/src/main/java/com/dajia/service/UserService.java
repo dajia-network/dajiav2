@@ -1,9 +1,9 @@
 package com.dajia.service;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.dajia.domain.User;
 import com.dajia.repository.UserRepo;
+import com.dajia.util.ApiWechatUtils;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.EncodingUtil;
@@ -38,8 +39,25 @@ public class UserService {
 	public User userSignup(User user, HttpServletRequest request) {
 		user.password = EncodingUtil.encode("SHA1", user.password);
 		user.userName = UserUtils.generateUserName(user.mobile);
+		user.isAdmin = "N";
 		user.lastVisitIP = request.getRemoteAddr();
 		user.lastVisitDate = new Date();
+		userRepo.save(user);
+		return user;
+	}
+
+	public User oauthLogin(String oauthType, String oauthUserId, Map<String, String> userInfoMap,
+			HttpServletRequest request) {
+		User user = userRepo.findByOauthUserIdAndOauthType(oauthUserId, oauthType);
+		if (null == user) {
+			user = new User();
+			user.oauthType = ApiWechatUtils.wechat_oauth_type;
+			user.oauthUserId = oauthUserId;
+			user.isAdmin = "N";
+		}
+		user.lastVisitIP = request.getRemoteAddr();
+		user.lastVisitDate = new Date();
+		ApiWechatUtils.updateWechatUserInfo(user, userInfoMap);
 		userRepo.save(user);
 		return user;
 	}

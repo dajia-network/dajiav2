@@ -9,6 +9,17 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 					$ionicLoading.hide();
 				});
 			}
+			var checkOauthLogin = function() {
+				if ($cookies.get('dajia_user')) {
+					$http.get('session.json').then(function(r) {
+						console.log(r);
+						if (null != r['oauthLogin']) {
+							AuthService.oauthLogin(r);
+						}
+					});
+				}
+			}
+			checkOauthLogin();
 			loadProducts();
 			$scope.doRefresh = function() {
 				loadProducts();

@@ -21,26 +21,41 @@ public class User extends BaseModel {
 	@GeneratedValue
 	public Long userId;
 
-	@Column(name = "username")
-	public String userName;
-
-	@Column(name = "email")
-	public String email;
-
 	@Column(name = "mobile", nullable = false)
 	public String mobile;
 
 	@Column(name = "password", nullable = false)
 	public String password;
 
-	@Column(name = "wechat")
-	public String wechat;
+	@Column(name = "username")
+	public String userName;
+
+	@Column(name = "email")
+	public String email;
+
+	@Column(name = "sex")
+	public String sex;
+
+	@Column(name = "country")
+	public String country;
+
+	@Column(name = "province")
+	public String province;
+
+	@Column(name = "city")
+	public String city;
+
+	@Column(name = "head_img_url")
+	public String headImgUrl;
+
+	@Column(name = "oauth_type")
+	public String oauthType;
+
+	@Column(name = "oauth_user_id")
+	public String oauthUserId;
 
 	@Column(name = "is_admin")
 	public String isAdmin;
-
-	@Column(name = "ref_user_id")
-	public Long refUserId;
 
 	@Column(name = "last_visit_date")
 	public Date lastVisitDate;

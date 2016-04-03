@@ -1,9 +1,5 @@
 package com.dajia.service;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -14,10 +10,8 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Service;
 
 import com.dajia.repository.PropertyRepo;
+import com.dajia.util.ApiAlibabaUtils;
 import com.dajia.util.CommonUtils;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
@@ -36,9 +30,9 @@ public class SmsService {
 
 	public String sendSignupMessage(String mobile, boolean allowSend) {
 		String returnStatus = CommonUtils.return_val_failed;
-		String url = CommonUtils.sms_server_url;
-		String appkey = propertyRepo.findByPropertyKey(CommonUtils.sms_app_key).propertyValue;
-		String secret = propertyRepo.findByPropertyKey(CommonUtils.sms_app_secret).propertyValue;
+		String url = ApiAlibabaUtils.sms_server_url;
+		String appkey = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_key).propertyValue;
+		String secret = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_secret).propertyValue;
 		String signupCode = CommonUtils.genRandomNum(4);
 
 		// put signup_code into cache;
@@ -51,10 +45,10 @@ public class SmsService {
 		TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
 		AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
 		req.setRecNum(mobile);
-		req.setSmsType("normal");
-		req.setSmsFreeSignName("注册验证");
+		req.setSmsType(ApiAlibabaUtils.sms_type);
+		req.setSmsFreeSignName(ApiAlibabaUtils.sms_free_sign_name);
 		req.setSmsParam("{\"code\":\"" + signupCode + "\",\"product\":\"打价网\"}");
-		req.setSmsTemplateCode(CommonUtils.sms_template_signup);
+		req.setSmsTemplateCode(ApiAlibabaUtils.sms_template_signup);
 		try {
 			if (allowSend) {
 				AlibabaAliqinFcSmsNumSendResponse response = client.execute(req);
