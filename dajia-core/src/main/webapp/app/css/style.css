@@ -77,3 +77,7 @@ a:hover,a:focus {
 button img {
     vertical-align: middle;
 }
+
+.item img {
+	max-width: 100% !important;
+}
