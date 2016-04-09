@@ -42,11 +42,4 @@ public class ServiceTests {
 	public void testSmsService() {
 		smsService.sendSignupMessage("13900000000", false);
 	}
-	
-	@Test
-	public void test() throws UnsupportedEncodingException{
-		String str ="{\"errcode\":40029,\"errmsg\":\"invalid code, hints: [ req_id: dMmava0829ns71 ]\"}";
-		//str = URLEncoder.encode(str, "UTF-8");  
-		System.out.println(str);
-	}
 }

@@ -48,6 +48,76 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				console.log('request failed...');
 			});
 
+			$scope.buyNow = function() {
+				var loginUser = $cookies.get('dajia_user');
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/prod/' + $stateParams.pid + '/order';
+				}
+			}
+
+			$scope.add2Fav = function() {
+				var loginUser = $cookies.get('dajia_user');
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					if ($scope.isFav) {
+						$http.get('/user/favourite/remove/' + $stateParams.pid).success(
+								function(data, status, headers, config) {
+									popWarning('已取消收藏', $timeout, $ionicLoading);
+									$scope.isFav = false;
+									$scope.favBtnTxt = '收藏';
+									element.removeClass('assertive');
+								}).error(function(data, status, headers, config) {
+							console.log('request failed...');
+						});
+					} else {
+						$http.get('/user/favourite/add/' + $stateParams.pid).success(
+								function(data, status, headers, config) {
+									popWarning('收藏成功', $timeout, $ionicLoading);
+									$scope.isFav = true;
+									$scope.favBtnTxt = '已收藏';
+									element.addClass('assertive');
+								}).error(function(data, status, headers, config) {
+							console.log('request failed...');
+						});
+					}
+				}
+			}
+
+			$scope.share = function() {
+				$http.get('/wechat/signature').success(function(data, status, headers, config) {
+					console.log(data);
+					wx.config({
+						debug : true,
+						appId : data['appId'],
+						timestamp : data['timestamp'],
+						nonceStr : data['nonceStr'],
+						signature : data['signature'],
+						jsApiList : [ 'onMenuShareAppMessage' ]
+					});
+					wx.checkJsApi({
+						jsApiList : [ 'onMenuShareAppMessage' ],
+						success : function(res) {
+							console.log(res);
+						}
+					});
+					wx.onMenuShareAppMessage({
+						title : 'test', // 分享标题
+						desc : '', // 分享描述
+						link : '/', // 分享链接
+						imgUrl : '', // 分享图标
+						success : function() {
+							// 用户确认分享后执行的回调函数
+						},
+						cancel : function() {
+							// 用户取消分享后执行的回调函数
+						}
+					});
+				});
+			}
+
 			popLoading($ionicLoading);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
@@ -60,42 +130,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 								/ (product.originalPrice - product.targetPrice) * 100;
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
-						$scope.buyNow = function() {
-							var loginUser = $cookies.get('dajia_user');
-							if (loginUser == null) {
-								$rootScope.$broadcast('event:auth-loginRequired');
-							} else {
-								$window.location.href = '#/tab/prod/' + $stateParams.pid + '/order';
-							}
-						}
-						$scope.add2Fav = function() {
-							var loginUser = $cookies.get('dajia_user');
-							if (loginUser == null) {
-								$rootScope.$broadcast('event:auth-loginRequired');
-							} else {
-								if ($scope.isFav) {
-									$http.get('/user/favourite/remove/' + $stateParams.pid).success(
-											function(data, status, headers, config) {
-												popWarning('已取消收藏', $timeout, $ionicLoading);
-												$scope.isFav = false;
-												$scope.favBtnTxt = '收藏';
-												element.removeClass('assertive');
-											}).error(function(data, status, headers, config) {
-										console.log('request failed...');
-									});
-								} else {
-									$http.get('/user/favourite/add/' + $stateParams.pid).success(
-											function(data, status, headers, config) {
-												popWarning('收藏成功', $timeout, $ionicLoading);
-												$scope.isFav = true;
-												$scope.favBtnTxt = '已收藏';
-												element.addClass('assertive');
-											}).error(function(data, status, headers, config) {
-										console.log('request failed...');
-									});
-								}
-							}
-						}
 						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;

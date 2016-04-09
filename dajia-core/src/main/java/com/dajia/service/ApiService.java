@@ -6,10 +6,15 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +35,9 @@ public class ApiService {
 
 	@Autowired
 	private PropertyRepo propertyRepo;
+
+	@Autowired
+	EhCacheCacheManager ehcacheManager;
 
 	public String loadApiWdToken() throws JsonParseException, JsonMappingException, IOException {
 		String token = (propertyRepo.findByPropertyKey(ApiWdUtils.token)).propertyValue;
@@ -137,5 +145,75 @@ public class ApiService {
 	public String getWechatOauthUrl() {
 		String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
 		return ApiWechatUtils.getOauthUrl(appkey);
+	}
+
+	public String getWechatAccessToken() throws JsonParseException, JsonMappingException, IOException {
+		String accessToken = null;
+		if (null == ehcacheManager.getCacheManager().getCache(CommonUtils.global_cache_key)) {
+			ehcacheManager.getCacheManager().addCache(CommonUtils.global_cache_key);
+		}
+		Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.global_cache_key);
+		if (null != cache.get(ApiWechatUtils.wechat_access_token_key)) {
+			accessToken = cache.get(ApiWechatUtils.wechat_access_token_key).getObjectValue().toString();
+		} else {
+			String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
+			String secret = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_secret).propertyValue;
+			String requestAccessTokenUrl = ApiWechatUtils.wechat_get_access_token_url + "&appid=" + appkey + "&secret="
+					+ secret;
+			logger.info("request access token url: " + requestAccessTokenUrl);
+			RestTemplate restTemplate = new RestTemplate();
+			String retrunJsonStr = restTemplate.getForObject(requestAccessTokenUrl, String.class);
+			logger.info("request access token result: " + retrunJsonStr);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, String> map = new HashMap<String, String>();
+			map = mapper.readValue(retrunJsonStr, HashMap.class);
+			accessToken = map.get(ApiWechatUtils.wechat_access_token_key);
+			cache.put(new Element(ApiWechatUtils.wechat_access_token_key, accessToken));
+		}
+		return accessToken;
+	}
+
+	public String getWechatJsapiTicket() throws JsonParseException, JsonMappingException, IOException {
+		String ticket = null;
+		if (null == ehcacheManager.getCacheManager().getCache(CommonUtils.global_cache_key)) {
+			ehcacheManager.getCacheManager().addCache(CommonUtils.global_cache_key);
+		}
+		Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.global_cache_key);
+		if (null != cache.get(ApiWechatUtils.wechat_jsapi_key)) {
+			ticket = cache.get(ApiWechatUtils.wechat_jsapi_key).getObjectValue().toString();
+		} else {
+			String accessToken = getWechatAccessToken();
+			String requestTicketUrl = ApiWechatUtils.wechat_get_jsapi_ticket_url + "?access_token=" + accessToken
+					+ "&type=jsapi";
+			logger.info("request ticket url: " + requestTicketUrl);
+			RestTemplate restTemplate = new RestTemplate();
+			String retrunJsonStr = restTemplate.getForObject(requestTicketUrl, String.class);
+			logger.info("request ticket result: " + retrunJsonStr);
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, String> map = new HashMap<String, String>();
+			map = mapper.readValue(retrunJsonStr, HashMap.class);
+			ticket = map.get(ApiWechatUtils.wechat_jsapi_key);
+			cache.put(new Element(ApiWechatUtils.wechat_jsapi_key, ticket));
+		}
+		return ticket;
+	}
+
+	public String getWechatSignature(String timestamp, String nonceStr, String url) {
+		String ticket = null;
+		try {
+			ticket = getWechatJsapiTicket();
+		} catch (JsonParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String str = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url;
+		logger.info("wechat signature str: " + str);
+		return DigestUtils.sha1Hex(str);
 	}
 }

@@ -1,7 +1,4 @@
-<ion-view>
-	<ion-nav-title>
-	  <span>{{product.name}}</span>
-	</ion-nav-title>
+<ion-view view-title="{{product.name}}">
 	<ion-nav-bar class="bar-dark">
 		<ion-nav-back-button>
 			返回
@@ -38,7 +35,7 @@
 		<div class="item tabs tabs-secondary tabs-icon-left">
 			<a class="tab-item" ng-click="add2Fav()"> <i class="icon ion-star" id="fav_icon"></i> {{favBtnTxt}}
 			</a> 
-			<a class="tab-item" href="#"> <i class="icon ion-share"></i> 分享
+			<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 分享
 			</a>
 		</div>
 	</div>

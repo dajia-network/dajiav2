@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dajia.domain.User;
+import com.dajia.repository.PropertyRepo;
 import com.dajia.service.ApiService;
 import com.dajia.service.UserService;
 import com.dajia.util.ApiWechatUtils;
+import com.dajia.util.RandomString;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -33,6 +36,9 @@ public class WechatController extends BaseController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private PropertyRepo propertyRepo;
 
 	@RequestMapping("/wechat/login")
 	public String wechatLogin(HttpServletRequest request) {
@@ -91,6 +97,20 @@ public class WechatController extends BaseController {
 		} else {
 			return "Validation Failed.";
 		}
+	}
+
+	@RequestMapping("/wechat/signature")
+	public @ResponseBody Map<String, String> wechatSignature(HttpServletRequest request) {
+		Map<String, String> returnMap = new HashMap<String, String>();
+		String appId = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
+		String timestamp = String.valueOf(System.currentTimeMillis());
+		String nonceStr = (new RandomString(8)).nextString();
+		String signature = apiService.getWechatSignature(timestamp, nonceStr, request.getHeader("referer"));
+		returnMap.put("appId", appId);
+		returnMap.put("timestamp", timestamp);
+		returnMap.put("nonceStr", nonceStr);
+		returnMap.put("signature", signature);
+		return returnMap;
 	}
 
 	private String getSHA1(String token, String timestamp, String nonce) throws NoSuchAlgorithmException {

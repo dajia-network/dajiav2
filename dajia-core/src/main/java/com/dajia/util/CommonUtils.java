@@ -1,6 +1,8 @@
 package com.dajia.util;
 
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +27,13 @@ public class CommonUtils {
 	public static final Integer page_range_limit = 10;
 
 	public static final String cache_name_signup_code = "sms_signup_code";
+
+	public static final String global_cache_key = "global_cache";
+
+	public static String stringCharsetConvert(String str, String charset) {
+		ByteBuffer bf = Charset.forName(charset).encode(str);
+		return new String(bf.array());
+	}
 
 	public static PaginationVO generatePaginationVO(Page page, Integer currentPageIdx) {
 		PaginationVO pv = new PaginationVO();
