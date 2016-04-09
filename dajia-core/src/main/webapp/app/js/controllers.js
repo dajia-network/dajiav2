@@ -87,36 +87,17 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.share = function() {
-				$http.get('/wechat/signature').success(function(data, status, headers, config) {
-					console.log(data);
-					wx.config({
-						debug : true,
-						appId : data['appId'],
-						timestamp : data['timestamp'],
-						nonceStr : data['nonceStr'],
-						signature : data['signature'],
-						jsApiList : [ 'onMenuShareAppMessage' ]
-					});
-					wx.checkJsApi({
-						jsApiList : [ 'onMenuShareAppMessage' ],
-						success : function(res) {
-							console.log(res);
-						}
-					});
-					wx.ready(function() {
-						wx.onMenuShareAppMessage({
-							title : '打价网', // 分享标题
-							desc : $scope.product.name, // 分享描述
-							link : '#', // 分享链接
-							imgUrl : './img/logo.png', // 分享图标
-							success : function() {
-								// 用户确认分享后执行的回调函数
-							},
-							cancel : function() {
-								// 用户取消分享后执行的回调函数
-							}
-						});
-					});
+				wx.onMenuShareAppMessage({
+					title : '打价网',
+					desc : $scope.product.name,
+					link : '#',
+					imgUrl : 'http://51daja.com/app/img/logo.png',
+					success : function() {
+						// 用户确认分享后执行的回调函数
+					},
+					cancel : function() {
+						// 用户取消分享后执行的回调函数
+					}
 				});
 			}
 
@@ -137,6 +118,25 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							$scope.progressValue = amt;
 						}, 1000);
 					});
+
+			$http.get('/wechat/signature').success(function(data, status, headers, config) {
+				console.log(data);
+				wx.config({
+					debug : true,
+					appId : data['appId'],
+					timestamp : data['timestamp'],
+					nonceStr : data['nonceStr'],
+					signature : data['signature'],
+					jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage' ]
+				});
+				wx.checkJsApi({
+					jsApiList : [ 'onMenuShareAppMessage' ],
+					success : function(res) {
+						console.log(res);
+					}
+				});
+			});
+			
 			$scope.progressValue = 0;
 		})
 
