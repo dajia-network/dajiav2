@@ -87,35 +87,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.share = function() {
-				$http.get('/wechat/signature').success(function(data, status, headers, config) {
-					console.log(data);
-					wx.config({
-						debug : true,
-						appId : data['appId'],
-						timestamp : data['timestamp'],
-						nonceStr : data['nonceStr'],
-						signature : data['signature'],
-						jsApiList : [ 'onMenuShareAppMessage' ]
-					});
-					wx.checkJsApi({
-						jsApiList : [ 'onMenuShareAppMessage' ],
-						success : function(res) {
-							console.log(res);
-						}
-					});
-					wx.onMenuShareAppMessage({
-						title : 'test', // 分享标题
-						desc : '', // 分享描述
-						link : '/', // 分享链接
-						imgUrl : '', // 分享图标
-						success : function() {
-							// 用户确认分享后执行的回调函数
-						},
-						cancel : function() {
-							// 用户取消分享后执行的回调函数
-						}
-					});
-				});
+				popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
 			}
 
 			popLoading($ionicLoading);
@@ -135,6 +107,54 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							$scope.progressValue = amt;
 						}, 1000);
 					});
+
+			$http.get('/wechat/signature').success(function(data, status, headers, config) {
+				console.log(data);
+				wx.config({
+					appId : data['appId'],
+					timestamp : data['timestamp'],
+					nonceStr : data['nonceStr'],
+					signature : data['signature'],
+					jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline' ]
+				});
+				wx.checkJsApi({
+					jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline' ],
+					success : function(res) {
+						console.log(res);
+					}
+				});
+				wx.ready(function() {
+					wx.onMenuShareAppMessage({
+						title : '打价网',
+						desc : $scope.product.name,
+						link : window.location.href,
+						imgUrl : 'http://51daja.com/app/img/logo.png',
+						trigger : function() {
+							console.log('click');
+						},
+						success : function() {
+							popWarning('分享成功！', $timeout, $ionicLoading);
+						},
+						cancel : function() {
+							console.log('cancel');
+						}
+					});
+					wx.onMenuShareTimeline({
+						title : '打价网 - ' + $scope.product.name,
+						link : window.location.href,
+						imgUrl : 'http://51daja.com/app/img/logo.png',
+						trigger : function() {
+							console.log('click');
+						},
+						success : function() {
+							popWarning('分享成功！', $timeout, $ionicLoading);
+						},
+						cancel : function() {
+							console.log('cancel');
+						}
+					});
+				});
+			});
 			$scope.progressValue = 0;
 		})
 

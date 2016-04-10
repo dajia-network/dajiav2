@@ -87,21 +87,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.share = function() {
-				wx.onMenuShareAppMessage({
-					title : '打价网',
-					desc : $scope.product.name,
-					link : '#',
-					imgUrl : 'http://51daja.com/app/img/logo.png',
-					trigger : function() {
-						console.log('click');
-					},
-					success : function() {
-						console.log('success');
-					},
-					cancel : function() {
-						console.log('cancel');
-					}
-				});
+				popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
 			}
 
 			popLoading($ionicLoading);
@@ -125,20 +111,48 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$http.get('/wechat/signature').success(function(data, status, headers, config) {
 				console.log(data);
 				wx.config({
-					debug : true,
 					appId : data['appId'],
 					timestamp : data['timestamp'],
 					nonceStr : data['nonceStr'],
 					signature : data['signature'],
-					jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage' ]
+					jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline' ]
 				});
 				wx.checkJsApi({
-					jsApiList : [ 'onMenuShareAppMessage' ],
+					jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline' ],
 					success : function(res) {
 						console.log(res);
 					}
 				});
 				wx.ready(function() {
+					wx.onMenuShareAppMessage({
+						title : '打价网',
+						desc : $scope.product.name,
+						link : window.location.href,
+						imgUrl : 'http://51daja.com/app/img/logo.png',
+						trigger : function() {
+							console.log('click');
+						},
+						success : function() {
+							popWarning('分享成功！', $timeout, $ionicLoading);
+						},
+						cancel : function() {
+							console.log('cancel');
+						}
+					});
+					wx.onMenuShareTimeline({
+						title : '打价网 - ' + $scope.product.name,
+						link : window.location.href,
+						imgUrl : 'http://51daja.com/app/img/logo.png',
+						trigger : function() {
+							console.log('click');
+						},
+						success : function() {
+							popWarning('分享成功！', $timeout, $ionicLoading);
+						},
+						cancel : function() {
+							console.log('cancel');
+						}
+					});
 				});
 			});
 			$scope.progressValue = 0;

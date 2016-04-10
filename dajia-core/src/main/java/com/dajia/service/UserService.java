@@ -58,7 +58,6 @@ public class UserService {
 		user.lastVisitIP = request.getRemoteAddr();
 		user.lastVisitDate = new Date();
 		ApiWechatUtils.updateWechatUserInfo(user, userInfoMap);
-		logger.info(user.country);
 		userRepo.save(user);
 		return user;
 	}
