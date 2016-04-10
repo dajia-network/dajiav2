@@ -92,11 +92,14 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 					desc : $scope.product.name,
 					link : '#',
 					imgUrl : 'http://51daja.com/app/img/logo.png',
+					trigger : function() {
+						console.log('click');
+					},
 					success : function() {
-						// 用户确认分享后执行的回调函数
+						console.log('success');
 					},
 					cancel : function() {
-						// 用户取消分享后执行的回调函数
+						console.log('cancel');
 					}
 				});
 			}
@@ -135,8 +138,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 						console.log(res);
 					}
 				});
+				wx.ready(function() {
+				});
 			});
-			
 			$scope.progressValue = 0;
 		})
 
