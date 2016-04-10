@@ -43,6 +43,9 @@ public class Product extends BaseModel {
 
 	@Column(name = "sold")
 	public Long sold;
+	
+	@Column(name = "total_sold")
+	public Long totalSold;
 
 	@Column(name = "stock")
 	public Long stock;

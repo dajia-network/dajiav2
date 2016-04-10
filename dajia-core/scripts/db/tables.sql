@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS dajia.product (
     img_url VARCHAR(1000) NULL,
     img_thumb_url VARCHAR(1000) NULL,
     sold INT,
+    total_sold INT,
     stock INT,
     buy_quota INT,
     product_status INT,
@@ -106,6 +107,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	product_id BIGINT(25) NOT NULL,
 	user_contact_id BIGINT(25) NOT NULL,
     user_id BIGINT(25) NOT NULL,
+    ref_user_id BIGINT(25) NOT NULL,
     payment_id BIGINT(25) NOT NULL,
     quantity INT,
     unit_price NUMERIC(10,2),
@@ -161,4 +163,19 @@ CREATE TABLE IF NOT EXISTS dajia.user_favourite (
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(favourite_id)
+);
+
+DROP TABLE IF EXISTS dajia.user_reward;
+CREATE TABLE IF NOT EXISTS dajia.user_reward (
+	reward_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NOT NULL,
+    product_id BIGINT(25) NOT NULL,
+    reward_ratio NUMERIC(10,2),
+    reward_status INT,
+	reward_date TIMESTAMP NULL,
+	expired_date TIMESTAMP NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(reward_id)
 );

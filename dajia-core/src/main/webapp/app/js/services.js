@@ -10,6 +10,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 					$cookies.put('dajia_user', data['mobile'], {
 						path : '/'
 					});
+					$cookies.put('dajia_user_id', loginUser['userId'], {
+						path : '/'
+					});
 					$cookies.put('dajia_username', data['userName'], {
 						path : '/'
 					});
@@ -28,6 +31,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 					$cookies.put('dajia_user', data['mobile'], {
 						path : '/'
 					});
+					$cookies.put('dajia_user_id', loginUser['userId'], {
+						path : '/'
+					});
 					$cookies.put('dajia_usertype', 'normal', {
 						path : '/'
 					});
@@ -43,6 +49,9 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 		oauthLogin : function(data) {
 			var loginUser = data;
 			$cookies.put('dajia_user', loginUser['oauthUserId'], {
+				path : '/'
+			});
+			$cookies.put('dajia_user_id', loginUser['userId'], {
 				path : '/'
 			});
 			$cookies.put('dajia_usertype', loginUser['oauthType'], {

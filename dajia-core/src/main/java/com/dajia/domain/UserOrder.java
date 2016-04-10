@@ -31,6 +31,9 @@ public class UserOrder extends BaseModel {
 	@Column(name = "user_id", nullable = false)
 	public Long userId;
 
+	@Column(name = "ref_user_id")
+	public Long refUserId;
+
 	@Column(name = "payment_id", nullable = false)
 	public Long paymentId;
 
