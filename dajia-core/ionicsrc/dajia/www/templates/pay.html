@@ -1,0 +1,19 @@
+<div class="modal" ng-controller="PayCtrl">
+	<ion-header-bar>
+		<button class="button button-icon icon ion-android-cancel" ng-click="closePayModal()"></button>
+		<div class="h1 title">{{order.trackingId}} - 订单支付</div>
+	</ion-header-bar>
+	<ion-content>
+		<div class="card">
+		
+		</div>
+	</ion-content>
+	<ion-footer-bar align-title="left" class="bar-stable">
+		<div class="row noPadding">
+			<div class="col text-left">付款金额：<span class="assertive">￥{{order.totalPrice}}</span></div>
+			<div class="col noPadding text-right">
+				<button class="button button-small button-assertive" id="payBtn">确认支付</button>
+			</div>
+		</div>
+	</ion-footer-bar>
+</ion-view>

@@ -61,7 +61,7 @@ public class OrderController extends BaseController {
 		order.quantity = orderVO.quantity;
 		order.productId = orderVO.productId;
 		order.orderDate = new Date();
-		order.orderStatus = OrderStatus.PAIED.getKey();
+		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.userId = user.userId;
 		order.contactId = uc.contactId;
 		order.paymentId = 0L;
@@ -69,7 +69,7 @@ public class OrderController extends BaseController {
 		orderRepo.save(order);
 
 		// need to be moved to payment logic
-		productService.productSold(order.productId, order.quantity);
+		// productService.productSold(order.productId, order.quantity);
 
 		return order;
 	}

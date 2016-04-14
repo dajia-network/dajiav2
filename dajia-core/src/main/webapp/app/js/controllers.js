@@ -387,7 +387,12 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 		$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 			var order = data;
-			popWarning('订单编号：' + order.orderId, $timeout, $ionicLoading);
+			popWarning('订单已确认', $timeout, $ionicLoading);
+			payModalInit($scope, $ionicModal, function() {
+				console.log(order);
+				$scope.openPayModal(order);
+			});
+
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
@@ -551,6 +556,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('SignOutCtrl', function($scope, AuthService) {
 	AuthService.logout();
+})
+
+.controller('PayCtrl', function($scope, $http, $ionicLoading, $timeout) {
+	console.log('订单支付');
 });
 
 var modalInit = function($rootScope, $ionicModal, modalType) {
@@ -569,6 +578,26 @@ var modalInit = function($rootScope, $ionicModal, modalType) {
 	};
 	$rootScope.$on('$destroy', function() {
 		$rootScope['modal_' + modalType].remove();
+	});
+}
+
+var payModalInit = function($scope, $ionicModal, callback) {
+	$ionicModal.fromTemplateUrl('templates/pay.html', {
+		scope : $scope,
+		animation : 'slide-in-up'
+	}).then(function(modal) {
+		$scope.payModal = modal;
+		callback();
+	});
+	$scope.openPayModal = function(order) {
+		$scope.order = order;
+		$scope.payModal.show();
+	};
+	$scope.closePayModal = function() {
+		$scope.payModal.hide();
+	};
+	$scope.$on('$destroy', function() {
+		$scope.payModal.remove();
 	});
 }
 
