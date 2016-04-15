@@ -305,7 +305,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.order = {
 		'quantity' : 1,
 		'unitPrice' : 0,
-		'totalPrice' : 0
+		'totalPrice' : 0,
+		'payType' : 1
 	};
 	var quota = 5;
 	$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
@@ -386,12 +387,26 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		$scope.order.userContact = $scope.userContact;
 
 		$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
-			var order = data;
-			popWarning('订单已确认', $timeout, $ionicLoading);
-			payModalInit($scope, $ionicModal, function() {
-				console.log(order);
-				$scope.openPayModal(order);
+			var charge = data;
+			console.log(charge);
+			pingpp.createPayment(charge, function(result, error) {
+				if (result == "success") {
+					// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在 extra
+					// 中对应的URL 跳转。
+					console.log('wechat pay success');
+				} else if (result == "fail") {
+					// charge 不正确或者微信公众账号支付失败时会在此处返回
+					console.log('payment failed');
+				} else if (result == "cancel") {
+					// 微信公众账号支付取消支付
+					console.log('wechat pay cancelled');
+				}
 			});
+			// popWarning('订单已确认', $timeout, $ionicLoading);
+			// payModalInit($scope, $ionicModal, function() {
+			// console.log(order);
+			// $scope.openPayModal(order);
+			// });
 
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
@@ -558,8 +573,12 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	AuthService.logout();
 })
 
-.controller('PayCtrl', function($scope, $http, $ionicLoading, $timeout) {
-	console.log('订单支付');
+.controller('PayCtrl', function($scope, $http, $ionicLoading, $timeout, $document) {
+	console.log('订单支付...');
+	$scope.confirmPay = function(order) {
+		console.log(order);
+		var payBtn = angular.element(document.querySelector('#payBtn'));
+	}
 });
 
 var modalInit = function($rootScope, $ionicModal, modalType) {

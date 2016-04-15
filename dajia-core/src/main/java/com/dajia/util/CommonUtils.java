@@ -108,6 +108,9 @@ public class CommonUtils {
 			persist.productStatus = req.productStatus;
 		}
 		if (null != req.originalPrice) {
+			if (!persist.originalPrice.equals(req.originalPrice)) {
+				persist.currentPrice = req.originalPrice;
+			}
 			persist.originalPrice = req.originalPrice;
 		}
 		// if (null != req.currentPrice) {
@@ -217,5 +220,34 @@ public class CommonUtils {
 		public String getValue() {
 			return value;
 		}
+	}
+
+	public enum PayType {
+		WECHAT(1, "wx_pub"), ALIPAY(2, "alipay_wap");
+		private Integer key;
+		private String value;
+
+		private PayType(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public static String getPayTypeStr(Integer key) {
+		String returnStr = null;
+		if (key.equals(PayType.WECHAT.getKey())) {
+			returnStr = PayType.WECHAT.getValue();
+		} else if (key.equals(PayType.ALIPAY.getKey())) {
+			returnStr = PayType.ALIPAY.getValue();
+		}
+		return returnStr;
 	}
 }

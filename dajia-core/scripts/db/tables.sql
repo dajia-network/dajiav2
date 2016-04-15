@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
     logistic_tracking_id VARCHAR(200) NULL,
     comments VARCHAR(4000) NULL,
     user_comments VARCHAR(4000) NULL,
+    pingxx_charge VARCHAR(4000) NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',

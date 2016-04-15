@@ -19,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Property;
+import com.dajia.domain.UserOrder;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.util.ApiKdtUtils;
+import com.dajia.util.ApiPingppUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.ApiWechatUtils;
 import com.dajia.util.CommonUtils;
@@ -28,6 +30,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kdt.api.KdtApiClient;
+import com.pingplusplus.Pingpp;
+import com.pingplusplus.exception.PingppException;
+import com.pingplusplus.model.Charge;
 
 @Service
 public class ApiService {
@@ -215,5 +220,34 @@ public class ApiService {
 		String str = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url;
 		logger.info("wechat signature str: " + str);
 		return DigestUtils.sha1Hex(str);
+	}
+
+	public Charge getPingppCharge(UserOrder order, String channel, String openId) throws PingppException {
+		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
+		Map<String, Object> chargeParams = new HashMap<String, Object>();
+		chargeParams.put("order_no", order.trackingId);
+		chargeParams.put("amount", 1);// hard code as 1 during testing phase
+		Map<String, String> app = new HashMap<String, String>();
+		app.put("id", "app_DifDeLWjfrz9Wf9y");
+		chargeParams.put("app", app);
+		chargeParams.put("channel", channel);
+		chargeParams.put("currency", "cny");
+		chargeParams.put("client_ip", "127.0.0.1");
+		chargeParams.put("subject", "打价网");
+		chargeParams.put("body", "test");
+		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
+			Map<String, Object> extraParams = new HashMap<String, Object>();
+			extraParams.put("success_url", "http://51daja.com/app/index.html#/tab/prog");
+			extraParams.put("cancel_url", "http://51daja.com/app");
+			chargeParams.put("extra", extraParams);
+		}
+		if (channel.equalsIgnoreCase(CommonUtils.PayType.WECHAT.getValue())) {
+			Map<String, Object> extraParams = new HashMap<String, Object>();
+			extraParams.put("open_id", openId);
+			chargeParams.put("extra", extraParams);
+		}
+		Charge charge = Charge.create(chargeParams);
+		logger.info("Ping++ Charge: " + charge.toString());
+		return charge;
 	}
 }

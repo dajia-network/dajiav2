@@ -67,6 +67,9 @@ public class UserOrder extends BaseModel {
 	@Column(name = "logistic_tracking_id")
 	public String logisticTrackingId;
 
+	@Column(name = "pingxx_charge")
+	public String pingxxCharge;
+
 	@Column(name = "comments")
 	public String comments;
 

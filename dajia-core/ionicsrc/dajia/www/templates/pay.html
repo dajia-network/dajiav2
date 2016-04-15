@@ -12,7 +12,7 @@
 		<div class="row noPadding">
 			<div class="col text-left">付款金额：<span class="assertive">￥{{order.totalPrice}}</span></div>
 			<div class="col noPadding text-right">
-				<button class="button button-small button-assertive" id="payBtn">确认支付</button>
+				<button class="button button-small button-assertive" id="payBtn" ng-click="confirmPay(order)">确认支付</button>
 			</div>
 		</div>
 	</ion-footer-bar>

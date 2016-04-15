@@ -71,12 +71,17 @@
 				提示：如果截止日期前商品价格被打得更低，我们将向您返还差额。
 			</p>
 		</div>
+		<div class="item item-divider">
+		  支付方式
+		</div>
+		<ion-radio ng-model="order.payType" ng-value="1">微信支付</ion-radio>
+		<ion-radio ng-model="order.payType" ng-value="2">支付宝</ion-radio>
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
 			<div class="col text-left">合计金额：<span class="assertive">￥{{order.totalPrice}}</span></div>
 			<div class="col noPadding text-right">
-				<button class="button button-small button-assertive" ng-click="submit()">确认订单</button>
+				<button class="button button-small button-assertive" ng-click="submit()">确认购买</button>
 			</div>
 		</div>
 	</ion-footer-bar>

@@ -16,6 +16,8 @@ public class OrderVO {
 
 	public Integer orderStatus;
 
+	public Integer payType;
+
 	public Long productId;
 
 	public Long userId;
@@ -27,7 +29,7 @@ public class OrderVO {
 	public BigDecimal totalPrice;
 
 	public String logisticAgent;
-	
+
 	public String logisticTrackingId;
 
 	public String comments;
