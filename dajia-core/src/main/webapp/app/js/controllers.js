@@ -391,7 +391,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			console.log(charge);
 			pingpp.createPayment(charge, function(result, error) {
 				alert(result);
-				alert(error);
+				alert(error.toString);
 				if (result == "success") {
 					// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在 extra
 					// 中对应的URL 跳转。
