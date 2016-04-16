@@ -390,6 +390,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			var charge = data;
 			console.log(charge);
 			pingpp.createPayment(charge, function(result, error) {
+				alert(result);
+				alert(error);
 				if (result == "success") {
 					// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在 extra
 					// 中对应的URL 跳转。
@@ -425,6 +427,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$scope.order.quantity -= 1;
 			$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
 		}
+	}
+	$scope.selectAlipay = function() {
+		popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
 	}
 })
 
