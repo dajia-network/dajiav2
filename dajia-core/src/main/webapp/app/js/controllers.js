@@ -295,145 +295,152 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 })
 
-.controller('OrderCtrl', function($scope, $rootScope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
-	console.log('订单页面...')
-	var productReady = false;
-	var locationReady = false;
-	popLoading($ionicLoading);
-	modalInit($rootScope, $ionicModal, 'login');
-	$scope.userContact = {};
-	$scope.order = {
-		'quantity' : 1,
-		'unitPrice' : 0,
-		'totalPrice' : 0,
-		'payType' : 1
-	};
-	var quota = 5;
-	$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
-		var product = data;
-		$scope.orderItem = product;
-		$scope.totalPrice = product.price;
-		quota = product.buyQuota;
-		$scope.order.productId = product.productId;
-		$scope.order.unitPrice = product.currentPrice;
-		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
-		if (locationReady) {
-			$ionicLoading.hide();
-		}
-		productReady = true;
-	});
-	$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
-		var loginuser = data;
-		$scope.loginuser = loginuser;
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
-	$http.get('/locations').success(function(data, status, headers, config) {
-		$scope.provinces = data;
-		if ($scope.loginuser.userContact != null) {
-			$scope.userContact = $scope.loginuser.userContact;
-			$scope.provinces.forEach(function(p) {
-				if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
-					$scope.userContact.province = p;
-					p.children.forEach(function(c) {
-						if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
-							$scope.userContact.city = c;
-							c.children.forEach(function(d) {
-								if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
-									$scope.userContact.district = d;
-									if (productReady) {
-										$ionicLoading.hide();
-									}
-									locationReady = true;
+.controller('OrderCtrl',
+		function($scope, $rootScope, $stateParams, $http, $window, $ionicModal, $timeout, $ionicLoading) {
+			console.log('订单页面...')
+			var productReady = false;
+			var locationReady = false;
+			popLoading($ionicLoading);
+			modalInit($rootScope, $ionicModal, 'login');
+			$scope.userContact = {};
+			$scope.order = {
+				'quantity' : 1,
+				'unitPrice' : 0,
+				'totalPrice' : 0,
+				'payType' : 1
+			};
+			var quota = 5;
+			$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
+				var product = data;
+				$scope.orderItem = product;
+				$scope.totalPrice = product.price;
+				quota = product.buyQuota;
+				$scope.order.productId = product.productId;
+				$scope.order.unitPrice = product.currentPrice;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+				if (locationReady) {
+					$ionicLoading.hide();
+				}
+				productReady = true;
+			});
+			$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+				var loginuser = data;
+				$scope.loginuser = loginuser;
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+			$http.get('/locations').success(function(data, status, headers, config) {
+				$scope.provinces = data;
+				if ($scope.loginuser.userContact != null) {
+					$scope.userContact = $scope.loginuser.userContact;
+					$scope.provinces.forEach(function(p) {
+						if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
+							$scope.userContact.province = p;
+							p.children.forEach(function(c) {
+								if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
+									$scope.userContact.city = c;
+									c.children.forEach(function(d) {
+										if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
+											$scope.userContact.district = d;
+											if (productReady) {
+												$ionicLoading.hide();
+											}
+											locationReady = true;
+											return;
+										}
+									});
 									return;
 								}
 							});
 							return;
 						}
 					});
+				} else {
+					if (productReady) {
+						$ionicLoading.hide();
+					}
+					locationReady = true;
+				}
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+			$scope.submit = function() {
+				if ($scope.userContact.contactId == null) {
+					console.log('new userContact.');
+				}
+				var name = $scope.userContact.contactName;
+				var mobile = $scope.userContact.contactMobile;
+				var province = $scope.userContact.province;
+				var city = $scope.userContact.city;
+				var district = $scope.userContact.district;
+				var address = $scope.userContact.address1;
+
+				if (!name || !mobile || !province || !city || !district || !address) {
+					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-			});
-		} else {
-			if (productReady) {
-				$ionicLoading.hide();
-			}
-			locationReady = true;
-		}
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
-	$scope.submit = function() {
-		if ($scope.userContact.contactId == null) {
-			console.log('new userContact.');
-		}
-		var name = $scope.userContact.contactName;
-		var mobile = $scope.userContact.contactMobile;
-		var province = $scope.userContact.province;
-		var city = $scope.userContact.city;
-		var district = $scope.userContact.district;
-		var address = $scope.userContact.address1;
-
-		if (!name || !mobile || !province || !city || !district || !address) {
-			popWarning('请输入完整信息', $timeout, $ionicLoading);
-			return;
-		}
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (mobile.length != 11 || !mobileReg.test(mobile)) {
-			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
-			return;
-		}
-
-		$scope.order.userContact = $scope.userContact;
-
-		$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
-			var charge = data;
-			console.log(charge);
-			pingpp.createPayment(charge, function(result, error) {
-				if (result == "success") {
-					// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在 extra
-					// 中对应的URL 跳转。
-					console.log('wechat pay success');
-				} else if (result == "fail") {
-					// charge 不正确或者微信公众账号支付失败时会在此处返回
-					console.log('payment failed');
-					for (key in error) {
-						alert(key + ': ' + error[key]);
-					}
-					// alert(error['msg']);
-				} else if (result == "cancel") {
-					// 微信公众账号支付取消支付
-					console.log('wechat pay cancelled');
+				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+					return;
 				}
-			});
-			// popWarning('订单已确认', $timeout, $ionicLoading);
-			// payModalInit($scope, $ionicModal, function() {
-			// console.log(order);
-			// $scope.openPayModal(order);
-			// });
 
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
-		});
-	}
-	$scope.add = function() {
-		if ($scope.order.quantity >= quota && quota != null) {
-			popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
-			return;
-		}
-		$scope.order.quantity += 1;
-		$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
-	}
-	$scope.remove = function() {
-		if ($scope.order.quantity > 1) {
-			$scope.order.quantity -= 1;
-			$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
-		}
-	}
-	$scope.selectAlipay = function() {
-		popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
-	}
-})
+				$scope.order.userContact = $scope.userContact;
+
+				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
+					var charge = data;
+					console.log(charge);
+					alert($window.location.href);
+					pingpp.createPayment(charge, function(result, error) {
+						if (result == "success") {
+							// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
+							// extra
+							// 中对应的URL 跳转。
+							console.log('wechat pay success');
+							popWarning('支付成功', $timeout, $ionicLoading);
+							$timeout(function() {
+								$window.location.href = '#';
+							}, 2000);
+						} else if (result == "fail") {
+							// charge 不正确或者微信公众账号支付失败时会在此处返回
+							console.log('payment failed');
+							popWarning('支付出错', $timeout, $ionicLoading);
+							for (key in error) {
+								alert(key + ': ' + error[key]);
+							}
+						} else if (result == "cancel") {
+							// 微信公众账号支付取消支付
+							console.log('wechat pay cancelled');
+						}
+					});
+					// popWarning('订单已确认', $timeout, $ionicLoading);
+					// payModalInit($scope, $ionicModal, function() {
+					// console.log(order);
+					// $scope.openPayModal(order);
+					// });
+
+				}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+			$scope.add = function() {
+				if ($scope.order.quantity >= quota && quota != null) {
+					popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
+					return;
+				}
+				$scope.order.quantity += 1;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+			}
+			$scope.remove = function() {
+				if ($scope.order.quantity > 1) {
+					$scope.order.quantity -= 1;
+					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+				}
+			}
+			$scope.selectAlipay = function() {
+				popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
+			}
+		})
 
 .controller('SignInCtrl', function($scope, $rootScope, $window, $ionicLoading, $timeout, $ionicModal, AuthService) {
 	modalInit($rootScope, $ionicModal, 'signup');
