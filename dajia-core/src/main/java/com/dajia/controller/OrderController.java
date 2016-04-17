@@ -96,8 +96,7 @@ public class OrderController extends BaseController {
 	}
 
 	@RequestMapping(value = "/webhooks", method = RequestMethod.POST)
-	public void webhooks(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map)
-			throws IOException {
+	public void webhooks(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.setCharacterEncoding("UTF8");
 		// 获取头部所有信息
 		Enumeration<String> headerNames = request.getHeaderNames();
@@ -120,10 +119,10 @@ public class OrderController extends BaseController {
 		if ("charge.succeeded".equals(event.getType())) {
 			Object obj = Webhooks.getObject(eventString);
 			if (obj instanceof Charge) {
-				System.out.println("webhooks 发送了 Charge");
+				logger.info("webhooks 发送了 Charge");
 				Charge charge = (Charge) obj;
 				String trackingId = charge.getOrderNo();
-				System.out.println("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
+				logger.info("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
 				UserOrder order = orderRepo.findByTrackingId(trackingId);
 				productService.productSold(order.productId, order.quantity);
 			}
