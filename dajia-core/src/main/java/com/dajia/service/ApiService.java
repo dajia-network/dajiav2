@@ -232,7 +232,7 @@ public class ApiService {
 		chargeParams.put("app", app);
 		chargeParams.put("channel", channel);
 		chargeParams.put("currency", "cny");
-		chargeParams.put("client_ip", "127.0.0.1");
+		chargeParams.put("client_ip", "51daja.com");
 		chargeParams.put("subject", "打价网");
 		chargeParams.put("body", "test");
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
@@ -242,6 +242,7 @@ public class ApiService {
 			chargeParams.put("extra", extraParams);
 		}
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.WECHAT.getValue())) {
+			logger.info("-------charge open_id:" + openId);
 			Map<String, Object> extraParams = new HashMap<String, Object>();
 			extraParams.put("open_id", openId);
 			chargeParams.put("extra", extraParams);

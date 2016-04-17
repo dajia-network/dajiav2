@@ -23,12 +23,15 @@ import org.springframework.web.client.RestTemplate;
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.UserFavourite;
+import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
+import com.dajia.repository.UserOrderRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
+import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.util.CommonUtils.ProductStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -46,6 +49,9 @@ public class ProductService {
 
 	@Autowired
 	private UserFavouriteRepo favouriteRepo;
+
+	@Autowired
+	private UserOrderRepo orderRepo;
 
 	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
@@ -214,14 +220,17 @@ public class ProductService {
 		return products;
 	}
 
-	public void productSold(Long productId, Integer quantity) {
-		Product product = productRepo.findOne(productId);
+	@Transactional
+	public void productSold(UserOrder order) {
+		order.orderStatus = OrderStatus.PAIED.getKey();
+		orderRepo.save(order);
+		Product product = productRepo.findOne(order.productId);
 		if (null != product) {
 			if (null == product.sold) {
 				product.sold = 0L;
 			}
-			product.sold += quantity;
-			product.stock -= quantity;
+			product.sold += order.quantity;
+			product.stock -= order.quantity;
 			calcCurrentPrice(product);
 		}
 		productRepo.save(product);

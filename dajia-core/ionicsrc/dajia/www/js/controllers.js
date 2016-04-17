@@ -390,8 +390,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			var charge = data;
 			console.log(charge);
 			pingpp.createPayment(charge, function(result, error) {
-				alert(result);
-				alert(error);
 				if (result == "success") {
 					// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在 extra
 					// 中对应的URL 跳转。
@@ -399,6 +397,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				} else if (result == "fail") {
 					// charge 不正确或者微信公众账号支付失败时会在此处返回
 					console.log('payment failed');
+					for (key in error) {
+						alert(key + ': ' + error[key]);
+					}
+					// alert(error['msg']);
 				} else if (result == "cancel") {
 					// 微信公众账号支付取消支付
 					console.log('wechat pay cancelled');

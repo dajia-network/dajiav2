@@ -47,7 +47,7 @@ public class OrderService {
 	public UserOrder generateRobotOrder(Long productId, Integer quantity) {
 		Product product = productRepo.findOne(productId);
 		UserOrder order = new UserOrder();
-		order.orderStatus = OrderStatus.PAIED.getKey();
+		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.orderDate = new Date();
 		order.quantity = quantity;
 		order.unitPrice = product.currentPrice;
@@ -59,7 +59,7 @@ public class OrderService {
 		order.paymentId = 0L;
 		order.payType = 0;
 		orderRepo.save(order);
-		productService.productSold(productId, quantity);
+		productService.productSold(order);
 		return order;
 	}
 

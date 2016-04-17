@@ -35,8 +35,6 @@ import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
 import com.pingplusplus.model.Event;
-import com.pingplusplus.model.Refund;
-import com.pingplusplus.model.Summary;
 import com.pingplusplus.model.Webhooks;
 
 @RestController
@@ -124,7 +122,7 @@ public class OrderController extends BaseController {
 				String trackingId = charge.getOrderNo();
 				logger.info("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
 				UserOrder order = orderRepo.findByTrackingId(trackingId);
-				productService.productSold(order.productId, order.quantity);
+				productService.productSold(order);
 			}
 			response.setStatus(200);
 		} else if ("refund.succeeded".equals(event.getType())) {
