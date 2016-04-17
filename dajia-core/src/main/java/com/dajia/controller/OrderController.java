@@ -83,7 +83,7 @@ public class OrderController extends BaseController {
 
 		Charge charge = null;
 		try {
-			charge = apiService.getPingppCharge(order, CommonUtils.getPayTypeStr(order.payType), user.oauthUserId);
+			charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
 			order.pingxxCharge = charge.toString();
 			orderRepo.save(order);
 		} catch (PingppException e) {
@@ -130,27 +130,6 @@ public class OrderController extends BaseController {
 		} else {
 			response.setStatus(500);
 		}
-	}
-
-	@Deprecated
-	@RequestMapping(value = "/user/createCharge", method = RequestMethod.POST)
-	public Map<String, String> createCharge(HttpServletRequest request, HttpServletResponse response,
-			@RequestBody Map<String, String> map) {
-		String trackingId = map.get("order_no");
-		String channel = map.get("channel");
-		String openId = "";
-		UserOrder order = orderRepo.findByTrackingId(trackingId);
-		if (null != order) {
-			try {
-				Charge charge = apiService.getPingppCharge(order, channel, openId);
-				order.pingxxCharge = charge.toString();
-				orderRepo.save(order);
-			} catch (PingppException e) {
-				logger.error(e.getMessage(), e);
-			}
-			return map;
-		}
-		return null;
 	}
 
 	@RequestMapping("/user/progress")

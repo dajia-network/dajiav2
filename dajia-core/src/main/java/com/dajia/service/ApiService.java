@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Property;
+import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.util.ApiKdtUtils;
@@ -222,7 +223,8 @@ public class ApiService {
 		return DigestUtils.sha1Hex(str);
 	}
 
-	public Charge getPingppCharge(UserOrder order, String channel, String openId) throws PingppException {
+	public Charge getPingppCharge(UserOrder order, User user, String channel) throws PingppException {
+		String clientIp = null != user.lastVisitIP ? user.lastVisitIP : "127.0.0.1";
 		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
 		Map<String, Object> chargeParams = new HashMap<String, Object>();
 		chargeParams.put("order_no", order.trackingId);
@@ -232,7 +234,7 @@ public class ApiService {
 		chargeParams.put("app", app);
 		chargeParams.put("channel", channel);
 		chargeParams.put("currency", "cny");
-		chargeParams.put("client_ip", "51daja.com");
+		chargeParams.put("client_ip", clientIp);
 		chargeParams.put("subject", "打价网");
 		chargeParams.put("body", "test");
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
@@ -242,9 +244,9 @@ public class ApiService {
 			chargeParams.put("extra", extraParams);
 		}
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.WECHAT.getValue())) {
-			logger.info("-------charge open_id:" + openId);
+			logger.info("-------charge open_id:" + user.oauthUserId);
 			Map<String, Object> extraParams = new HashMap<String, Object>();
-			extraParams.put("open_id", openId);
+			extraParams.put("open_id", user.oauthUserId);
 			chargeParams.put("extra", extraParams);
 		}
 		Charge charge = Charge.create(chargeParams);
