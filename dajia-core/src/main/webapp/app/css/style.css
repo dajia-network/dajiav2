@@ -78,6 +78,6 @@ button img {
     vertical-align: middle;
 }
 
-.item-text-wrap img {
+.item-text-wrap p img {
 	max-width: 100% !important;
 }
