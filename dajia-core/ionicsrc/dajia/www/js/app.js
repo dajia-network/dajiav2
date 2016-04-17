@@ -60,7 +60,7 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 	})
 
 	.state('tab.prod-order', {
-		url : '/prod/:pid/order',
+		url : '/prod/order/:pid',
 		views : {
 			'tab-prod' : {
 				templateUrl : 'templates/order.html',

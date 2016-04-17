@@ -53,7 +53,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				if (loginUser == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					$window.location.href = '#/tab/prod/' + $stateParams.pid + '/order';
+					$window.location.href = '#/tab/prod/order/' + $stateParams.pid;
 				}
 			}
 
@@ -390,7 +390,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 					var charge = data;
 					console.log(charge);
-					alert($window.location.href);
 					pingpp.createPayment(charge, function(result, error) {
 						if (result == "success") {
 							// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
@@ -413,11 +412,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							console.log('wechat pay cancelled');
 						}
 					});
-					// popWarning('订单已确认', $timeout, $ionicLoading);
-					// payModalInit($scope, $ionicModal, function() {
-					// console.log(order);
-					// $scope.openPayModal(order);
-					// });
 
 				}).error(function(data, status, headers, config) {
 					console.log('request failed...');
