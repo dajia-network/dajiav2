@@ -397,7 +397,10 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				} else if (result == "fail") {
 					// charge 不正确或者微信公众账号支付失败时会在此处返回
 					console.log('payment failed');
-					alert(error.toString);
+					for (key in error) {
+						alert(key + ': ' + error[key]);
+					}
+					// alert(error['msg']);
 				} else if (result == "cancel") {
 					// 微信公众账号支付取消支付
 					console.log('wechat pay cancelled');

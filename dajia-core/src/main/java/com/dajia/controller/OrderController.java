@@ -1,7 +1,10 @@
 package com.dajia.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +34,10 @@ import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
+import com.pingplusplus.model.Event;
+import com.pingplusplus.model.Refund;
+import com.pingplusplus.model.Summary;
+import com.pingplusplus.model.Webhooks;
 
 @RestController
 public class OrderController extends BaseController {
@@ -76,9 +83,6 @@ public class OrderController extends BaseController {
 		order.trackingId = CommonUtils.genTrackingId(user.userId);
 		orderRepo.save(order);
 
-		// need to be moved to payment logic
-		// productService.productSold(order.productId, order.quantity);
-
 		Charge charge = null;
 		try {
 			charge = apiService.getPingppCharge(order, CommonUtils.getPayTypeStr(order.payType), user.oauthUserId);
@@ -91,6 +95,47 @@ public class OrderController extends BaseController {
 		return charge;
 	}
 
+	@RequestMapping(value = "/webhooks", method = RequestMethod.POST)
+	public void webhooks(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> map)
+			throws IOException {
+		request.setCharacterEncoding("UTF8");
+		// 获取头部所有信息
+		Enumeration<String> headerNames = request.getHeaderNames();
+		while (headerNames.hasMoreElements()) {
+			String key = (String) headerNames.nextElement();
+			String value = request.getHeader(key);
+			logger.info(key + " " + value);
+		}
+		// 获得 http body 内容
+		BufferedReader reader = request.getReader();
+		StringBuffer buffer = new StringBuffer();
+		String string;
+		while ((string = reader.readLine()) != null) {
+			buffer.append(string);
+		}
+		reader.close();
+		String eventString = buffer.toString();
+		// 解析异步通知数据
+		Event event = Webhooks.eventParse(eventString);
+		if ("charge.succeeded".equals(event.getType())) {
+			Object obj = Webhooks.getObject(eventString);
+			if (obj instanceof Charge) {
+				System.out.println("webhooks 发送了 Charge");
+				Charge charge = (Charge) obj;
+				String trackingId = charge.getOrderNo();
+				System.out.println("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
+				UserOrder order = orderRepo.findByTrackingId(trackingId);
+				productService.productSold(order.productId, order.quantity);
+			}
+			response.setStatus(200);
+		} else if ("refund.succeeded".equals(event.getType())) {
+			response.setStatus(200);
+		} else {
+			response.setStatus(500);
+		}
+	}
+
+	@Deprecated
 	@RequestMapping(value = "/user/createCharge", method = RequestMethod.POST)
 	public Map<String, String> createCharge(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody Map<String, String> map) {
