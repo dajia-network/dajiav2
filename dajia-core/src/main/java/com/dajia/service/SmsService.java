@@ -66,4 +66,9 @@ public class SmsService {
 		}
 		return returnStatus;
 	}
+
+	public String sendSigninMessage(String mobile, boolean allowSend) {
+		String returnStatus = CommonUtils.return_val_failed;
+		return returnStatus;
+	}
 }

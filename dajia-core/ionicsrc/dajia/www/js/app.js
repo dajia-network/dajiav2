@@ -111,6 +111,14 @@ angular.module('starter', [ 'ionic', 'ngCookies', 'starter.controllers', 'starte
 				controller : 'MyPassCtrl'
 			}
 		}
+	}).state('tab.mine-mobile', {
+		url : '/mine/bindmobile',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/bindMobile.html',
+				controller : 'BindMobileCtrl'
+			}
+		}
 	});
 
 	// if none of the above states are matched, use this as the fallback

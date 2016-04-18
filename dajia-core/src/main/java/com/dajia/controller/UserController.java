@@ -68,6 +68,14 @@ public class UserController extends BaseController {
 		rv.result = result;
 		return rv;
 	}
+	
+	@RequestMapping("/signinSms/{mobile}")
+	public @ResponseBody ReturnVO signinSms(@PathVariable("mobile") String mobile) {
+		String result = smsService.sendSigninMessage(mobile, true);
+		ReturnVO rv = new ReturnVO();
+		rv.result = result;
+		return rv;
+	}
 
 	@RequestMapping("/signupCheck/{mobile}")
 	public @ResponseBody ReturnVO signupCheck(@PathVariable("mobile") String mobile) {

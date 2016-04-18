@@ -164,137 +164,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$scope.progressValue = 0;
 		})
 
-.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
-	console.log('进度列表...');
-	$scope.loginUser = $cookies.get('dajia_user');
-	modalInit($rootScope, $ionicModal, 'login');
-	$scope.login = function() {
-		if ($scope.loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.reload();
-		}
-	}
-	var loadProgress = function() {
-		popLoading($ionicLoading);
-		$http.get('/user/progress').success(function(data, status, headers, config) {
-			console.log(data);
-			var orders = data;
-			orders.forEach(function(o) {
-				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
-			});
-			$scope.myOrders = orders;
-			$scope.$broadcast('scroll.refreshComplete');
-			$ionicLoading.hide();
-		});
-	}
-	if ($scope.loginUser != null) {
-		loadProgress();
-	}
-	$scope.doRefresh = function() {
-		loadProgress();
-	}
-	$scope.goHome = function() {
-		$window.location.href = "#/tab/prod";
-	}
-})
-
-.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
-	console.log('进度详情...')
-	$scope.order = {};
-	popLoading($ionicLoading);
-	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
-		console.log(data);
-		var order = data;
-		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
-		$scope.order = order;
-		$ionicLoading.hide();
-	});
-	$scope.order.progressValue = 0;
-})
-
-.controller('MineCtrl', function($scope, $rootScope, $window, $cookies, $timeout, $ionicLoading, AuthService) {
-	console.log('我的打价...');
-	$scope.userName = $cookies.get('dajia_username');
-	var loginUser = $cookies.get('dajia_user');
-	$scope.myFav = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/fav';
-		}
-	}
-	$scope.myPass = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/password';
-		}
-	}
-	$scope.logout = function() {
-		if (loginUser == null) {
-			$window.location.reload();
-		} else {
-			AuthService.logout(loginUser);
-		}
-	};
-	$scope.$on('event:auth-logout-complete', function() {
-		popWarning('退出登录成功', $timeout, $ionicLoading);
-		$timeout(function() {
-			$window.location.reload();
-		}, 500);
-		// $scope.openModal('login');
-	});
-})
-
-.controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
-	console.log('我的收藏...');
-	var loadFavs = function() {
-		popLoading($ionicLoading);
-		return $http.get('/user/favourites').success(function(data, status, headers, config) {
-			$scope.products = data;
-			$ionicLoading.hide();
-		});
-	}
-	loadFavs();
-	$scope.doRefresh = function() {
-		loadFavs();
-	};
-})
-
-.controller('MyPassCtrl', function($scope, $http, $timeout, $ionicLoading) {
-	console.log('修改密码...');
-	$scope.form = {};
-	$scope.submit = function() {
-		var oldPassword = $scope.form.oldPassword;
-		var newPassword = $scope.form.newPassword;
-		var newPasswordConfirm = $scope.form.newPasswordConfirm;
-		if (!oldPassword || !newPassword || !newPasswordConfirm) {
-			popWarning('请输入完整信息', $timeout, $ionicLoading);
-			return;
-		}
-		if (newPassword.length < 6) {
-			popWarning('请输入至少六位数的密码', $timeout, $ionicLoading);
-			return;
-		}
-		if (newPassword != newPasswordConfirm) {
-			popWarning('两次输入的新密码不一致', $timeout, $ionicLoading);
-			return;
-		}
-		if (newPassword == oldPassword) {
-			popWarning('新密码不能与老密码相同', $timeout, $ionicLoading);
-			return;
-		}
-		$http.post('/user/changePassword', $scope.form).success(function(data, status, headers, config) {
-			var msg = data.msg;
-			popWarning(msg, $timeout, $ionicLoading);
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
-		});
-
-	};
-})
-
 .controller('OrderCtrl',
 		function($scope, $rootScope, $stateParams, $http, $window, $ionicModal, $timeout, $ionicLoading) {
 			console.log('订单页面...')
@@ -436,49 +305,251 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 		})
 
-.controller('SignInCtrl', function($scope, $rootScope, $window, $ionicLoading, $timeout, $ionicModal, AuthService) {
-	modalInit($rootScope, $ionicModal, 'signup');
-	$scope.login = {
-		'mobile' : null,
-		'password' : null
-	};
-
-	$scope.submit = function() {
-		if (!$scope.login.mobile || !$scope.login.password) {
-			popWarning('请输入完整信息', $timeout, $ionicLoading);
-			return;
+.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
+	console.log('进度列表...');
+	$scope.loginUser = $cookies.get('dajia_user');
+	modalInit($rootScope, $ionicModal, 'login');
+	$scope.login = function() {
+		if ($scope.loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.reload();
 		}
-		AuthService.login($scope.login);
-	};
-
-	$scope.signup = function() {
-		$scope.openModal('signup');
 	}
-
-	$scope.wechatLogin = function() {
-		$window.location.href = '/wechat/login';
+	var loadProgress = function() {
+		popLoading($ionicLoading);
+		$http.get('/user/progress').success(function(data, status, headers, config) {
+			var orders = data;
+			orders.forEach(function(o) {
+				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
+			});
+			$scope.myOrders = orders;
+			$scope.$broadcast('scroll.refreshComplete');
+			$ionicLoading.hide();
+		});
 	}
+	if ($scope.loginUser != null) {
+		loadProgress();
+	}
+	$scope.doRefresh = function() {
+		loadProgress();
+	}
+	$scope.goHome = function() {
+		$window.location.href = "#/tab/prod";
+	}
+})
 
-	$scope.$on('event:auth-loginRequired', function(e, rejection) {
-		$scope.openModal('login');
+.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
+	console.log('进度详情...')
+	$scope.order = {};
+	popLoading($ionicLoading);
+	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
+		console.log(data);
+		var order = data;
+		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
+		$scope.order = order;
+		$ionicLoading.hide();
 	});
+	$scope.order.progressValue = 0;
+})
 
-	$scope.$on('event:auth-loginConfirmed', function() {
-		$scope.closeModal('login');
-		popWarning('登陆成功', $timeout, $ionicLoading);
+.controller('MineCtrl', function($scope, $rootScope, $window, $cookies, $timeout, $ionicLoading, AuthService) {
+	console.log('我的打价...');
+	$scope.userName = $cookies.get('dajia_username');
+	var loginUser = $cookies.get('dajia_user');
+	$scope.myFav = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/fav';
+		}
+	}
+	$scope.bindMobile = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/bindmobile';
+		}
+	}
+	$scope.myPass = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/password';
+		}
+	}
+	$scope.logout = function() {
+		if (loginUser == null) {
+			$window.location.reload();
+		} else {
+			AuthService.logout(loginUser);
+		}
+	};
+	$scope.$on('event:auth-logout-complete', function() {
+		popWarning('退出登录成功', $timeout, $ionicLoading);
 		$timeout(function() {
 			$window.location.reload();
 		}, 500);
-	});
-
-	$scope.$on('event:auth-login-failed', function(e, status) {
-		var error = "登录失败";
-		if (status == 401) {
-			error = "用户名或密码错误";
-		}
-		popWarning(error, $timeout, $ionicLoading);
+		// $scope.openModal('login');
 	});
 })
+
+.controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
+	console.log('我的收藏...');
+	var loadFavs = function() {
+		popLoading($ionicLoading);
+		return $http.get('/user/favourites').success(function(data, status, headers, config) {
+			$scope.products = data;
+			$ionicLoading.hide();
+		});
+	}
+	loadFavs();
+	$scope.doRefresh = function() {
+		loadFavs();
+	};
+})
+
+.controller('MyPassCtrl', function($scope, $http, $timeout, $ionicLoading) {
+	console.log('修改密码...');
+	$scope.form = {};
+	$scope.submit = function() {
+		var oldPassword = $scope.form.oldPassword;
+		var newPassword = $scope.form.newPassword;
+		var newPasswordConfirm = $scope.form.newPasswordConfirm;
+		if (!oldPassword || !newPassword || !newPasswordConfirm) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword.length < 6) {
+			popWarning('请输入至少六位数的密码', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword != newPasswordConfirm) {
+			popWarning('两次输入的新密码不一致', $timeout, $ionicLoading);
+			return;
+		}
+		if (newPassword == oldPassword) {
+			popWarning('新密码不能与老密码相同', $timeout, $ionicLoading);
+			return;
+		}
+		$http.post('/user/changePassword', $scope.form).success(function(data, status, headers, config) {
+			var msg = data.msg;
+			popWarning(msg, $timeout, $ionicLoading);
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+
+	};
+})
+
+.controller('BindMobileCtrl', function($scope, $http, $timeout, $ionicLoading) {
+	console.log('绑定手机...');
+	$scope.smsBtnTxt = '发送手机验证码';
+	$scope.smsBtnDisable = false;
+	var smsBtn = angular.element(document.querySelector('#smsBtn'));
+})
+
+.controller('SignInCtrl',
+		function($scope, $rootScope, $window, $http, $q, $ionicLoading, $timeout, $ionicModal, AuthService) {
+			$scope.login = {
+				'mobile' : null,
+				'smsCode' : null
+			};
+
+			$scope.smsBtnTxt = '发送手机验证码';
+			$scope.smsBtnDisable = false;
+			var smsBtn = angular.element(document.querySelector('#smsBtn'));
+
+			var checkMobile = function(mobile) {
+				var defer = $q.defer();
+				$http.get('/signupCheck/' + mobile).success(function(data, status, headers, config) {
+					if ("failed" == data.result) {
+						defer.resolve(true);
+					} else {
+						popWarning('该手机号未被绑定，请先用微信登录后再绑定手机', $timeout, $ionicLoading);
+						defer.resolve(false);
+					}
+				}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+					defer.reject();
+				});
+				return defer.promise;
+			}
+
+			$scope.getSigninCode = function() {
+				var mobile = $scope.login.mobile;
+				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+				if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
+					return;
+				}
+				checkMobile(mobile).then(function(mobileValid) {
+					if (mobileValid) {
+						var counter = 60;
+						var onTimeout = function() {
+							counter--;
+							if (counter == 0) {
+								$scope.smsBtnTxt = '发送手机验证码';
+								$scope.smsBtnDisable = false;
+								return false;
+							}
+							$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
+							mytimeout = $timeout(onTimeout, 1000);
+						}
+						var mytimeout = $timeout(onTimeout, 1000);
+						$scope.smsBtnDisable = true;
+
+						$http.get('/signinSms/' + mobile).success(function(data, status, headers, config) {
+							if ("success" == data.result) {
+								popWarning('验证码已发送', $timeout, $ionicLoading);
+							} else {
+								popWarning('验证码发送失败', $timeout, $ionicLoading);
+							}
+						}).error(function(data, status, headers, config) {
+							console.log('request failed...');
+						});
+					}
+				});
+			}
+
+			$scope.submit = function() {
+				if (!$scope.login.mobile || !$scope.login.smsCode) {
+					popWarning('请输入完整信息', $timeout, $ionicLoading);
+					return;
+				}
+				AuthService.login($scope.login);
+			};
+
+			$scope.$on('event:auth-loginRequired', function(e, rejection) {
+				$scope.openModal('login');
+			});
+
+			$scope.$on('event:auth-loginConfirmed', function() {
+				$scope.closeModal('login');
+				popWarning('登陆成功', $timeout, $ionicLoading);
+				$timeout(function() {
+					$window.location.reload();
+				}, 500);
+			});
+
+			$scope.$on('event:auth-login-failed', function(e, status) {
+				var error = "登录失败";
+				if (status == 401) {
+					error = "验证码错误";
+				}
+				popWarning(error, $timeout, $ionicLoading);
+			});
+
+			$scope.wechatLogin = function() {
+				$window.location.href = '/wechat/login';
+			}
+
+			// deprecated
+			modalInit($rootScope, $ionicModal, 'signup');
+			$scope.signup = function() {
+				$scope.openModal('signup');
+			}
+		})
 
 .controller('SignUpCtrl', function($scope, $http, $q, $ionicLoading, $timeout, AuthService) {
 	$scope.signup = {
