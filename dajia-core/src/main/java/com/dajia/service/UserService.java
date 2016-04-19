@@ -75,10 +75,8 @@ public class UserService {
 	public User userLogin(String mobile, String password, HttpServletRequest request, boolean authIgnore) {
 		User user = userRepo.findByMobile(mobile);
 		password = EncodingUtil.encode("SHA1", password);
-		if (null == user || !user.password.equals(password)) {
-			if (!authIgnore) {
-				return null;
-			}
+		if (null == user || !user.password.equals(password) && !authIgnore) {
+			return null;
 		} else {
 			user.lastVisitIP = request.getRemoteAddr();
 			user.lastVisitDate = new Date();

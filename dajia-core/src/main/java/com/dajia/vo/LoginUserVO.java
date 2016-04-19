@@ -23,6 +23,8 @@ public class LoginUserVO {
 
 	public String signupCode;
 
+	public String signinCode;
+
 	public Date loginDate;
 
 	public String loginIP;

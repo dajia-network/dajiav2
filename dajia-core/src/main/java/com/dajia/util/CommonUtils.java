@@ -27,6 +27,7 @@ public class CommonUtils {
 	public static final Integer page_range_limit = 10;
 
 	public static final String cache_name_signup_code = "sms_signup_code";
+	public static final String cache_name_signin_code = "sms_signin_code";
 
 	public static final String global_cache_key = "global_cache";
 

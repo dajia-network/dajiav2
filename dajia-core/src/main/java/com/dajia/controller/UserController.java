@@ -68,7 +68,7 @@ public class UserController extends BaseController {
 		rv.result = result;
 		return rv;
 	}
-	
+
 	@RequestMapping("/signinSms/{mobile}")
 	public @ResponseBody ReturnVO signinSms(@PathVariable("mobile") String mobile) {
 		String result = smsService.sendSigninMessage(mobile, true);
@@ -94,6 +94,28 @@ public class UserController extends BaseController {
 		// }
 		loginUser = UserUtils.addLoginSession(loginUser, user, request);
 		return loginUser;
+	}
+
+	@RequestMapping(value = "/smslogin", method = RequestMethod.POST)
+	public @ResponseBody LoginUserVO userSmsLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request,
+			HttpServletResponse response) {
+		if (null != ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signin_code)) {
+			Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signin_code);
+			String signinCode = cache.get(loginUser.mobile).getObjectValue().toString();
+			logger.info(signinCode);
+			if (null == signinCode || !signinCode.equals(loginUser.signinCode)) {
+				return null;
+			}
+			loginUser.loginIP = request.getRemoteAddr();
+			loginUser.loginDate = new Date();
+
+			User user = userService.userLogin(loginUser.mobile, loginUser.password, request, true);
+			loginUser = UserUtils.addLoginSession(loginUser, user, request);
+
+			return loginUser;
+		} else {
+			return null;
+		}
 	}
 
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)

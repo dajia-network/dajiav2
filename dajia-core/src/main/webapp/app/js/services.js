@@ -24,7 +24,7 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 			});
 		},
 		login : function(login) {
-			$http.post('/login', login).success(function(data, status, headers, config) {
+			$http.post('/smslogin', login).success(function(data, status, headers, config) {
 				if (data == null || data.length == 0) {
 					$rootScope.$broadcast('event:auth-login-failed', status);
 				} else {
@@ -32,9 +32,6 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 						path : '/'
 					});
 					$cookies.put('dajia_user_id', data['userId'], {
-						path : '/'
-					});
-					$cookies.put('dajia_usertype', 'normal', {
 						path : '/'
 					});
 					$cookies.put('dajia_username', data['userName'], {
@@ -51,9 +48,6 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 				path : '/'
 			});
 			$cookies.put('dajia_user_id', data['userId'], {
-				path : '/'
-			});
-			$cookies.put('dajia_usertype', data['oauthType'], {
 				path : '/'
 			});
 			$cookies.put('dajia_username', data['userName'], {

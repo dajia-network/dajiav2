@@ -453,7 +453,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		function($scope, $rootScope, $window, $http, $q, $ionicLoading, $timeout, $ionicModal, AuthService) {
 			$scope.login = {
 				'mobile' : null,
-				'smsCode' : null
+				'signinCode' : null
 			};
 
 			$scope.smsBtnTxt = '发送手机验证码';
@@ -513,7 +513,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.submit = function() {
-				if (!$scope.login.mobile || !$scope.login.smsCode) {
+				if (!$scope.login.mobile || !$scope.login.signinCode) {
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
