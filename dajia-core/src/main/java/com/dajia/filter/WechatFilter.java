@@ -36,7 +36,7 @@ public class WechatFilter implements Filter {
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		if ((null == loginUser || null == loginUser.oauthUserId) && !reqUrl.endsWith("/wechat/login")) {
+		if ((null == loginUser || null == loginUser.oauthUserId) && reqUrl.indexOf("/wechat/login") == -1) {
 			String ua = request.getHeader("user-agent").toLowerCase();
 			if (ua.indexOf("micromessenger") > 0) {// is Wechat browser
 				boolean isCookieLogin = false;
