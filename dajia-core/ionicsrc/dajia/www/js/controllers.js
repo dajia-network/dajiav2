@@ -487,7 +487,6 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			return;
 		}
 		$http.post('/bindMobile', $scope.user).success(function(data, status, headers, config) {
-			console.log(data);
 			if (null != data && data.result == "success") {
 				popWarning('已成功绑定新的手机号码', $timeout, $ionicLoading);
 				$cookies.put('dajia_user_mobile', $scope.user.mobile, {

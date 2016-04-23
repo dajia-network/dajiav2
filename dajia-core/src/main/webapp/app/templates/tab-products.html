@@ -1,20 +1,28 @@
 <ion-view view-title="打价首页"> 
   <ion-nav-bar class="bar-dark"></ion-nav-bar>
-  <ion-content>            
+  <ion-content>
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
+		<div class="item item-logo-center" align="center">
+			<img src="/app/img/logo-banner.png">
+		</div>
 	<div class="list card" ng-repeat="product in products">
-	  <!-- <div class="item item-avatar"> -->
-	  <div class="item">
-	    <!-- <img ng-src="{{product.vendorImg}}"> -->
-	    <h2>{{product.name}}</h2>
-	    <p>{{product.brief}}</p>
-	  </div>
-	
 	  <div class="item item-image">
 	    <a href="#/tab/prod/{{product.productId}}"><img ng-src="{{product.imgUrl}}"></a>
 	  </div>
-	
+	  <!-- <div class="row">
+	  	<div class="col col-50">
+	  		众打手已成功打下{{product.priceOff}}元!
+	  	</div>
+	  	<div class="col">
+			现价：{{product.currentPrice}}元
+		</div>
+	  	<div class="col">
+			<button class="button button-small button-assertive">
+				我要打价
+			</button>
+		</div>
+	  </div> -->
 	  <a class="item item-icon-right assertive" href="#/tab/prod/{{product.productId}}">
 	    <i class="icon ion-arrow-graph-down-right"></i>
 	    现在只要￥{{product.currentPrice}}（已打掉￥{{product.priceOff}}）

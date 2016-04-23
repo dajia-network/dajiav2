@@ -110,7 +110,7 @@ public class CommonUtils {
 			persist.productStatus = req.productStatus;
 		}
 		if (null != req.originalPrice) {
-			if (!persist.originalPrice.equals(req.originalPrice)) {
+			if (persist.originalPrice.compareTo(req.originalPrice) != 0) {
 				persist.currentPrice = req.originalPrice;
 			}
 			persist.originalPrice = req.originalPrice;
