@@ -7,15 +7,7 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 				if (null == data || data.length == 0) {
 					$rootScope.$broadcast('event:auth-signup-failed', status);
 				} else {
-					$cookies.put('dajia_user', data['mobile'], {
-						path : '/'
-					});
-					$cookies.put('dajia_user_id', data['userId'], {
-						path : '/'
-					});
-					$cookies.put('dajia_username', data['userName'], {
-						path : '/'
-					});
+					addCookies($cookies, data);
 					$rootScope.$broadcast('event:auth-signup-success', status);
 					authService.loginConfirmed();
 				}
@@ -28,15 +20,7 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 				if (data == null || data.length == 0) {
 					$rootScope.$broadcast('event:auth-login-failed', status);
 				} else {
-					$cookies.put('dajia_user', data['mobile'], {
-						path : '/'
-					});
-					$cookies.put('dajia_user_id', data['userId'], {
-						path : '/'
-					});
-					$cookies.put('dajia_username', data['userName'], {
-						path : '/'
-					});
+					addCookies($cookies, data);
 					authService.loginConfirmed();
 				}
 			}).error(function(data, status, headers, config) {
@@ -44,25 +28,12 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 			});
 		},
 		oauthLogin : function(data) {
-			$cookies.put('dajia_user', data['oauthUserId'], {
-				path : '/'
-			});
-			$cookies.put('dajia_user_id', data['userId'], {
-				path : '/'
-			});
-			$cookies.put('dajia_username', data['userName'], {
-				path : '/'
-			});
+			addCookies($cookies, data);
 			authService.loginConfirmed();
 		},
 		logout : function(logout) {
 			$http.post('/logout', logout).success(function(data, status) {
-				$cookies.remove('dajia_user', {
-					path : '/'
-				});
-				$cookies.remove('dajia_username', {
-					path : '/'
-				});
+				removeCookies($cookies);
 				$rootScope.$broadcast('event:auth-logout-complete');
 			});
 		},
@@ -70,5 +41,34 @@ starter.factory('AuthService', function($rootScope, $http, $cookies, authService
 			authService.loginCancelled();
 		}
 	};
+
+	var addCookies = function($cookies, data) {
+		$cookies.put('dajia_user_mobile', data['mobile'], {
+			path : '/'
+		});
+		$cookies.put('dajia_user_oauth_id', data['oauthUserId'], {
+			path : '/'
+		});
+		$cookies.put('dajia_user_id', data['userId'], {
+			path : '/'
+		});
+		$cookies.put('dajia_username', data['userName'], {
+			path : '/'
+		});
+	}
+	var removeCookies = function($cookies) {
+		$cookies.remove('dajia_user_mobile', {
+			path : '/'
+		});
+		$cookies.remove('dajia_user_oauth_id', {
+			path : '/'
+		});
+		$cookies.remove('dajia_user_id', {
+			path : '/'
+		});
+		$cookies.remove('dajia_username', {
+			path : '/'
+		});
+	}
 	return service;
 });

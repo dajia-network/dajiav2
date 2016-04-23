@@ -29,12 +29,7 @@ public class SmsService {
 	EhCacheCacheManager ehcacheManager;
 
 	public String sendSignupMessage(String mobile, boolean allowSend) {
-		String returnStatus = CommonUtils.return_val_failed;
-		String url = ApiAlibabaUtils.sms_server_url;
-		String appkey = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_key).propertyValue;
-		String secret = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_secret).propertyValue;
 		String signupCode = CommonUtils.genRandomNum(4);
-
 		// put signup_code into cache;
 		if (null == ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signup_code)) {
 			ehcacheManager.getCacheManager().addCache(CommonUtils.cache_name_signup_code);
@@ -42,38 +37,12 @@ public class SmsService {
 		Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signup_code);
 		cache.put(new Element(mobile, signupCode));
 
-		TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
-		AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
-		req.setRecNum(mobile);
-		req.setSmsType(ApiAlibabaUtils.sms_type);
-		req.setSmsFreeSignName(ApiAlibabaUtils.sms_free_sign_name_signup);
-		req.setSmsParam("{\"code\":\"" + signupCode + "\",\"product\":\"打价网\"}");
-		req.setSmsTemplateCode(ApiAlibabaUtils.sms_template_signup);
-		try {
-			if (allowSend) {
-				AlibabaAliqinFcSmsNumSendResponse response = client.execute(req);
-				String returnJsonStr = response.getBody();
-				if (returnJsonStr.indexOf("\"err_code\":\"0\"") >= 0) {
-					returnStatus = CommonUtils.return_val_success;
-				}
-			} else {
-				logger.info("Signup SMS test - Mobile: " + mobile + " / Code: " + signupCode);
-				returnStatus = CommonUtils.return_val_success;
-			}
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return returnStatus;
+		return sendSmsMessage(mobile, ApiAlibabaUtils.sms_free_sign_name_signup, ApiAlibabaUtils.sms_template_signup,
+				signupCode, allowSend);
 	}
 
 	public String sendSigninMessage(String mobile, boolean allowSend) {
-		String returnStatus = CommonUtils.return_val_failed;
-		String url = ApiAlibabaUtils.sms_server_url;
-		String appkey = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_key).propertyValue;
-		String secret = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_secret).propertyValue;
 		String signinCode = CommonUtils.genRandomNum(4);
-
 		// put signup_code into cache;
 		if (null == ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signin_code)) {
 			ehcacheManager.getCacheManager().addCache(CommonUtils.cache_name_signin_code);
@@ -81,13 +50,37 @@ public class SmsService {
 		Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_signin_code);
 		cache.put(new Element(mobile, signinCode));
 
+		return sendSmsMessage(mobile, ApiAlibabaUtils.sms_free_sign_name_signin, ApiAlibabaUtils.sms_template_signin,
+				signinCode, allowSend);
+	}
+
+	public String sendBindingMessage(String mobile, boolean allowSend) {
+		String bindingCode = CommonUtils.genRandomNum(4);
+		// put signup_code into cache;
+		if (null == ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_binding_code)) {
+			ehcacheManager.getCacheManager().addCache(CommonUtils.cache_name_binding_code);
+		}
+		Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_binding_code);
+		cache.put(new Element(mobile, bindingCode));
+
+		return sendSmsMessage(mobile, ApiAlibabaUtils.sms_free_sign_name_binding, ApiAlibabaUtils.sms_template_binding,
+				bindingCode, allowSend);
+	}
+
+	private String sendSmsMessage(String mobile, String signName, String templateCode, String codeStr, boolean allowSend) {
+		String returnStatus = CommonUtils.return_val_failed;
+		String url = ApiAlibabaUtils.sms_server_url;
+		String appkey = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_key).propertyValue;
+		String secret = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_secret).propertyValue;
+
 		TaobaoClient client = new DefaultTaobaoClient(url, appkey, secret);
 		AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
 		req.setRecNum(mobile);
 		req.setSmsType(ApiAlibabaUtils.sms_type);
-		req.setSmsFreeSignName(ApiAlibabaUtils.sms_free_sign_name_signin);
-		req.setSmsParam("{\"code\":\"" + signinCode + "\",\"product\":\"打价网\"}");
-		req.setSmsTemplateCode(ApiAlibabaUtils.sms_template_signup);
+		req.setSmsFreeSignName(signName);
+		req.setSmsParam("{\"code\":\"" + codeStr + "\",\"product\":\"打价网\"}");
+		req.setSmsTemplateCode(templateCode);
+		logger.info("Sending msg to mobile: " + mobile + " / Code: " + codeStr);
 		try {
 			if (allowSend) {
 				AlibabaAliqinFcSmsNumSendResponse response = client.execute(req);
@@ -96,12 +89,10 @@ public class SmsService {
 					returnStatus = CommonUtils.return_val_success;
 				}
 			} else {
-				logger.info("Signin SMS test - Mobile: " + mobile + " / Code: " + signinCode);
 				returnStatus = CommonUtils.return_val_success;
 			}
 		} catch (ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return returnStatus;
 	}

@@ -75,7 +75,7 @@ public class UserService {
 	public User userLogin(String mobile, String password, HttpServletRequest request, boolean authIgnore) {
 		User user = userRepo.findByMobile(mobile);
 		password = EncodingUtil.encode("SHA1", password);
-		if (null == user || !user.password.equals(password) && !authIgnore) {
+		if ((null == user || null == user.password || !user.password.equals(password)) && !authIgnore) {
 			return null;
 		} else {
 			user.lastVisitIP = request.getRemoteAddr();
@@ -86,9 +86,9 @@ public class UserService {
 		return user;
 	}
 
-	public String userLogout(String mobile, HttpServletRequest request) {
+	public String userLogout(Long userId, HttpServletRequest request) {
 		String returnVal = CommonUtils.return_val_failed;
-		if (null != userRepo.findByMobile(mobile)) {
+		if (null != userRepo.findByUserId(userId)) {
 			request.getSession().setAttribute(UserUtils.session_user, null);
 			returnVal = CommonUtils.return_val_success;
 		}
@@ -99,5 +99,16 @@ public class UserService {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<User> users = userRepo.findByIsActiveOrderByCreatedDateDesc(ActiveStatus.YES.toString(), pageable);
 		return users;
+	}
+
+	public String bindMobile(Long userId, String mobile) {
+		String returnVal = CommonUtils.return_val_failed;
+		User user = userRepo.findByUserId(userId);
+		if (null != user) {
+			user.mobile = mobile;
+			userRepo.save(user);
+			returnVal = CommonUtils.return_val_success;
+		}
+		return returnVal;
 	}
 }

@@ -77,6 +77,14 @@ public class UserController extends BaseController {
 		return rv;
 	}
 
+	@RequestMapping("/bindingSms/{mobile}")
+	public @ResponseBody ReturnVO bindingSms(@PathVariable("mobile") String mobile) {
+		String result = smsService.sendBindingMessage(mobile, true);
+		ReturnVO rv = new ReturnVO();
+		rv.result = result;
+		return rv;
+	}
+
 	@RequestMapping("/signupCheck/{mobile}")
 	public @ResponseBody ReturnVO signupCheck(@PathVariable("mobile") String mobile) {
 		String result = userService.checkMobile(mobile);
@@ -118,9 +126,30 @@ public class UserController extends BaseController {
 		}
 	}
 
+	@RequestMapping(value = "/bindMobile", method = RequestMethod.POST)
+	public @ResponseBody ReturnVO bindMobile(@RequestBody LoginUserVO loginUser, HttpServletRequest request,
+			HttpServletResponse response) {
+		ReturnVO rv = new ReturnVO();
+		rv.result = CommonUtils.return_val_failed;
+		if (null != ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_binding_code)) {
+			Cache cache = ehcacheManager.getCacheManager().getCache(CommonUtils.cache_name_binding_code);
+			String bindingCode = cache.get(loginUser.mobile).getObjectValue().toString();
+			logger.info(bindingCode);
+			if (null == loginUser.userId || null == bindingCode || !bindingCode.equals(loginUser.bindingCode)) {
+				return null;
+			}
+			String result = userService.bindMobile(loginUser.userId, loginUser.mobile);
+			rv.result = result;
+			return rv;
+		} else {
+			return null;
+		}
+	}
+
 	@RequestMapping(value = "/logout", method = RequestMethod.POST)
-	public @ResponseBody ReturnVO userLogout(@RequestBody String userMobile, HttpServletRequest request) {
-		String result = userService.userLogout(userMobile, request);
+	public @ResponseBody ReturnVO userLogout(@RequestBody Long userId, HttpServletRequest request) {
+		String result = userService.userLogout(userId, request);
+		logger.info("User " + userId + " logout: " + result);
 		ReturnVO rv = new ReturnVO();
 		rv.result = result;
 		return rv;

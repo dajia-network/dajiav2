@@ -25,6 +25,8 @@ public class LoginUserVO {
 
 	public String signinCode;
 
+	public String bindingCode;
+
 	public Date loginDate;
 
 	public String loginIP;

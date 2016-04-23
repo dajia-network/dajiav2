@@ -10,7 +10,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				});
 			}
 			var checkOauthLogin = function() {
-				if (!$cookies.get('dajia_user')) {
+				if (!$cookies.get('dajia_user_id')) {
 					$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 						var loginuser = data;
 						if (null != loginuser['userId']) {
@@ -49,8 +49,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			});
 
 			$scope.buyNow = function() {
-				var loginUser = $cookies.get('dajia_user');
-				if (loginUser == null) {
+				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
 					$window.location.href = '#/tab/prod/order/' + $stateParams.pid;
@@ -58,8 +57,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.add2Fav = function() {
-				var loginUser = $cookies.get('dajia_user');
-				if (loginUser == null) {
+				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
 					if ($scope.isFav) {
@@ -87,8 +85,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.share = function() {
-				var loginUser = $cookies.get('dajia_user');
-				if (loginUser == null) {
+				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
 					popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
@@ -268,7 +265,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							popWarning('支付成功', $timeout, $ionicLoading);
 							$timeout(function() {
 								$window.location.href = '#';
-							}, 2000);
+							}, 1000);
 						} else if (result == "fail") {
 							// charge 不正确或者微信公众账号支付失败时会在此处返回
 							console.log('payment failed');
@@ -307,7 +304,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 
 .controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
 	console.log('进度列表...');
-	$scope.loginUser = $cookies.get('dajia_user');
+	$scope.loginUser = $cookies.get('dajia_user_id');
 	modalInit($rootScope, $ionicModal, 'login');
 	$scope.login = function() {
 		if ($scope.loginUser == null) {
@@ -356,7 +353,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 .controller('MineCtrl', function($scope, $rootScope, $window, $cookies, $timeout, $ionicLoading, AuthService) {
 	console.log('我的打价...');
 	$scope.userName = $cookies.get('dajia_username');
-	var loginUser = $cookies.get('dajia_user');
+	var loginUser = $cookies.get('dajia_user_id');
 	$scope.myFav = function() {
 		if (loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');
@@ -442,11 +439,68 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	};
 })
 
-.controller('BindMobileCtrl', function($scope, $http, $timeout, $ionicLoading) {
+.controller('BindMobileCtrl', function($scope, $http, $q, $cookies, $timeout, $ionicLoading) {
 	console.log('绑定手机...');
+	var userId = $cookies.get('dajia_user_id');
+	$scope.userMobile = $cookies.get('dajia_user_mobile');
+	$scope.user = {
+		'userId' : userId,
+		'mobile' : null,
+		'bindingCode' : null
+	};
 	$scope.smsBtnTxt = '发送手机验证码';
 	$scope.smsBtnDisable = false;
 	var smsBtn = angular.element(document.querySelector('#smsBtn'));
+	var checkMobile = function(mobile) {
+		var defer = $q.defer();
+		$http.get('/signupCheck/' + mobile).success(function(data, status, headers, config) {
+			if ("success" == data.result) {
+				defer.resolve(true);
+			} else {
+				popWarning('该手机号已被其他账号绑定', $timeout, $ionicLoading);
+				defer.resolve(false);
+			}
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+			defer.reject();
+		});
+		return defer.promise;
+	}
+
+	$scope.getBindingCode = function() {
+		var mobile = $scope.user.mobile;
+		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
+			return;
+		}
+		checkMobile(mobile).then(function(mobileValid) {
+			if (mobileValid) {
+				sendSmsMessage($scope, $http, $timeout, $ionicLoading, '/bindingSms/', mobile);
+			}
+		});
+	}
+
+	$scope.submit = function() {
+		if (!$scope.user.mobile || !$scope.user.bindingCode) {
+			popWarning('请输入完整信息', $timeout, $ionicLoading);
+			return;
+		}
+		$http.post('/bindMobile', $scope.user).success(function(data, status, headers, config) {
+			console.log(data);
+			if (null != data && data.result == "success") {
+				popWarning('已成功绑定新的手机号码', $timeout, $ionicLoading);
+				$cookies.put('dajia_user_mobile', $scope.user.mobile, {
+					path : '/'
+				});
+				$scope.userMobile = $scope.user.mobile;
+				$scope.user.mobile = null;
+				$scope.user.bindingCode = null;
+			} else {
+				popWarning('绑定失败', $timeout, $ionicLoading);
+			}
+		});
+	};
 })
 
 .controller('SignInCtrl',
@@ -485,29 +539,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				}
 				checkMobile(mobile).then(function(mobileValid) {
 					if (mobileValid) {
-						var counter = 60;
-						var onTimeout = function() {
-							counter--;
-							if (counter == 0) {
-								$scope.smsBtnTxt = '发送手机验证码';
-								$scope.smsBtnDisable = false;
-								return false;
-							}
-							$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
-							mytimeout = $timeout(onTimeout, 1000);
-						}
-						var mytimeout = $timeout(onTimeout, 1000);
-						$scope.smsBtnDisable = true;
-
-						$http.get('/signinSms/' + mobile).success(function(data, status, headers, config) {
-							if ("success" == data.result) {
-								popWarning('验证码已发送', $timeout, $ionicLoading);
-							} else {
-								popWarning('验证码发送失败', $timeout, $ionicLoading);
-							}
-						}).error(function(data, status, headers, config) {
-							console.log('request failed...');
-						});
+						sendSmsMessage($scope, $http, $timeout, $ionicLoading, '/signinSms/', mobile);
 					}
 				});
 			}
@@ -586,29 +618,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 		}
 		checkMobile(mobile).then(function(mobileValid) {
 			if (mobileValid) {
-				var counter = 60;
-				var onTimeout = function() {
-					counter--;
-					if (counter == 0) {
-						$scope.smsBtnTxt = '发送手机验证码';
-						$scope.smsBtnDisable = false;
-						return false;
-					}
-					$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
-					mytimeout = $timeout(onTimeout, 1000);
-				}
-				var mytimeout = $timeout(onTimeout, 1000);
-				$scope.smsBtnDisable = true;
-
-				$http.get('/signupSms/' + mobile).success(function(data, status, headers, config) {
-					if ("success" == data.result) {
-						popWarning('验证码已发送', $timeout, $ionicLoading);
-					} else {
-						popWarning('验证码发送失败', $timeout, $ionicLoading);
-					}
-				}).error(function(data, status, headers, config) {
-					console.log('request failed...');
-				});
+				sendSmsMessage($scope, $http, $timeout, $ionicLoading, '/signupSms/', mobile);
 			}
 		});
 	}
@@ -711,5 +721,31 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 var popLoading = function($ionicLoading) {
 	$ionicLoading.show({
 		template : '加载中...'
+	});
+}
+
+var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath, mobile) {
+	var counter = 60;
+	var onTimeout = function() {
+		counter--;
+		if (counter == 0) {
+			$scope.smsBtnTxt = '发送手机验证码';
+			$scope.smsBtnDisable = false;
+			return false;
+		}
+		$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
+		mytimeout = $timeout(onTimeout, 1000);
+	}
+	var mytimeout = $timeout(onTimeout, 1000);
+	$scope.smsBtnDisable = true;
+
+	$http.get(methodPath + mobile).success(function(data, status, headers, config) {
+		if ("success" == data.result) {
+			popWarning('验证码已发送', $timeout, $ionicLoading);
+		} else {
+			popWarning('验证码发送失败', $timeout, $ionicLoading);
+		}
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
 	});
 }

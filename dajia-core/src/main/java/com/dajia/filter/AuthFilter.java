@@ -37,28 +37,29 @@ public class AuthFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 		if (null == loginUser || null == loginUser.userId) {
+			boolean loginSuccess = false;
 			// auto login base on user cookies
 			Cookie[] cookies = request.getCookies();
 			if (null != cookies) {
-				String userType = "normal";
 				for (Cookie cookie : cookies) {
 					String name = cookie.getName();
-					if (name.equals("dajia_usertype")) {
-						userType = cookie.getValue();
+					if (name.equals("dajia_user_oauth_id")) {
+						String oauthUserId = cookie.getValue();
+						User user = userService.oauthLogin("Wechat", oauthUserId, request);
+						if (null != user) {
+							loginUser = UserUtils.addLoginSession(loginUser, user, request);
+							if (null != loginUser) {
+								loginSuccess = true;
+							}
+						}
 					}
 				}
-				for (Cookie cookie : cookies) {
-					String name = cookie.getName();
-					if (name.equals("dajia_user")) {
-						if (userType.equalsIgnoreCase("normal")) {
+				if (!loginSuccess) {
+					for (Cookie cookie : cookies) {
+						String name = cookie.getName();
+						if (name.equals("dajia_user_mobile")) {
 							String mobile = cookie.getValue();
 							User user = userService.userLogin(mobile, null, request, true);
-							if (null != user) {
-								loginUser = UserUtils.addLoginSession(loginUser, user, request);
-							}
-						} else {
-							String oauthUserId = cookie.getValue();
-							User user = userService.oauthLogin(userType, oauthUserId, request);
 							if (null != user) {
 								loginUser = UserUtils.addLoginSession(loginUser, user, request);
 							}
