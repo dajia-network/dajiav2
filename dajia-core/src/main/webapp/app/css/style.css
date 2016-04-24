@@ -4,7 +4,7 @@
 }
 
 .now_price {
-	font-size: 1.8em;
+	font-size: 250% !important;
 }
 
 .row.noPadding {
@@ -98,4 +98,20 @@ button img {
     max-height: 40px;
     width: 100%;
     height: 100%;
+}
+
+.button-sqr {
+    padding: 2px 4px;
+    min-width: 28px;
+    min-height: 30px;
+    font-size: 12px;
+    line-height: 26px;
+    border-radius: 1px;
+    width:100%; 
+}
+
+.homebar {
+	margin: auto;
+	height: 100%;
+	font-size: 50%;
 }

@@ -79,6 +79,9 @@ public class Product extends BaseModel {
 
 	@Transient
 	public long soldNeeded;
+	
+	@Transient
+	public BigDecimal nextOff;
 
 	@Transient
 	public boolean isFav;

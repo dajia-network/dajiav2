@@ -4,6 +4,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			var loadProducts = function() {
 				popLoading($ionicLoading);
 				return $http.get('/products/').success(function(data, status, headers, config) {
+					console.log(data);
 					$scope.products = data;
 					$scope.$broadcast('scroll.refreshComplete');
 					$ionicLoading.hide();
@@ -264,7 +265,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							console.log('wechat pay success');
 							popWarning('支付成功', $timeout, $ionicLoading);
 							$timeout(function() {
-								$window.location.href = '#';
+								$window.location.href = "#/tab/prog";
 							}, 1000);
 						} else if (result == "fail") {
 							// charge 不正确或者微信公众账号支付失败时会在此处返回

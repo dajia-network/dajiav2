@@ -16,5 +16,7 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
 
 	public Page<Product> findByIsActiveOrderByExpiredDateAsc(String isActive, Pageable pageable);
 
+	public Page<Product> findByIsActiveOrderByStartDateDesc(String isActive, Pageable pageable);
+
 	public List<Product> findByProductIdInAndIsActive(List<Long> productIds, String isActive);
 }

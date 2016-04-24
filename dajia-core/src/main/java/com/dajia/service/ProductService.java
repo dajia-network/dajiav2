@@ -207,13 +207,14 @@ public class ProductService {
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
 			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+			product.nextOff = calcNextOff(product);
 		}
 		return products;
 	}
 
 	public Page<Product> loadProductsByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<Product> products = productRepo.findByIsActiveOrderByExpiredDateAsc(ActiveStatus.YES.toString(), pageable);
+		Page<Product> products = productRepo.findByIsActiveOrderByStartDateDesc(ActiveStatus.YES.toString(), pageable);
 		for (Product product : products) {
 			product.status4Show = getProductStatusStr(product.productStatus);
 		}
@@ -271,6 +272,18 @@ public class ProductService {
 				break;
 			}
 		}
+	}
+
+	private BigDecimal calcNextOff(Product product) {
+		List<Price> prices = product.prices;
+		long sold = product.sold == null ? 0L : product.sold + 1;
+		for (Price price : prices) {
+			if (price.sold >= sold) {
+				return product.currentPrice.add(price.targetPrice.negate()).divide(
+						new BigDecimal(price.sold - sold + 1), 2, RoundingMode.HALF_UP);
+			}
+		}
+		return null;
 	}
 
 	private List<Product> convertJson2Products(String jsonStr) throws JsonParseException, JsonMappingException,

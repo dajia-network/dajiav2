@@ -4,7 +4,7 @@
 }
 
 .now_price {
-	font-size: 1.8em;
+	font-size: 250% !important;
 }
 
 .row.noPadding {
@@ -78,6 +78,40 @@ button img {
     vertical-align: middle;
 }
 
-.item img {
+.item-text-wrap p img {
 	max-width: 100% !important;
+}
+
+.scroll-content {
+	background-color: #ebebeb;
+}
+
+.item-logo-center {
+    padding-right: 120px;
+    min-height: 55px;
+}
+
+.item-logo-center>img:first-child {
+    position: absolute;
+    top: 6px;
+    max-width: 100px;
+    max-height: 40px;
+    width: 100%;
+    height: 100%;
+}
+
+.button-sqr {
+    padding: 2px 4px;
+    min-width: 28px;
+    min-height: 30px;
+    font-size: 12px;
+    line-height: 26px;
+    border-radius: 1px;
+    width:100%; 
+}
+
+.homebar {
+	margin: auto;
+	height: 100%;
+	font-size: 50%;
 }

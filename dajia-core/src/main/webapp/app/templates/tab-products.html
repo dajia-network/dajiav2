@@ -10,23 +10,25 @@
 	  <div class="item item-image">
 	    <a href="#/tab/prod/{{product.productId}}"><img ng-src="{{product.imgUrl}}"></a>
 	  </div>
-	  <!-- <div class="row">
-	  	<div class="col col-50">
-	  		众打手已成功打下{{product.priceOff}}元!
+	  <div class="row">
+	  	<div class="col col-50 homebar">
+	  		众打手已成功打下<span class="assertive"><b>{{product.priceOff}}</b></span>元!<br/>
+	  		下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!
 	  	</div>
-	  	<div class="col">
-			现价：{{product.currentPrice}}元
+	  	<div class="col homebar">
+			<b>现价 <span class="assertive now_price">{{product.currentPrice}}</span> 元</b><br/>
+			库存 {{product.stock}}
 		</div>
-	  	<div class="col">
-			<button class="button button-small button-assertive">
+	  	<div class="col homebar" align="center">
+			<button class="button button-sqr button-assertive">
 				我要打价
 			</button>
 		</div>
-	  </div> -->
-	  <a class="item item-icon-right assertive" href="#/tab/prod/{{product.productId}}">
+	  </div> 
+	  <!-- <a class="item item-icon-right assertive" href="#/tab/prod/{{product.productId}}">
 	    <i class="icon ion-arrow-graph-down-right"></i>
 	    现在只要￥{{product.currentPrice}}（已打掉￥{{product.priceOff}}）
-	  </a>
+	  </a>-->
 	</div>
   </ion-content>
 </ion-view>
