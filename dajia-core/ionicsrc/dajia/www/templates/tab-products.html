@@ -13,6 +13,7 @@
 	  <div class="row">
 	  	<div class="col col-50 homebar">
 	  		众打手已成功打下<span class="assertive"><b>{{product.priceOff}}</b></span>元!<br/>
+		    <uib-progressbar class="progress-striped active" animate="true" max="100" value="product.progressValue" type="success"></uib-progressbar>
 	  		下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!
 	  	</div>
 	  	<div class="col homebar">
@@ -20,15 +21,11 @@
 			库存 {{product.stock}}
 		</div>
 	  	<div class="col homebar" align="center">
-			<button class="button button-sqr button-assertive">
+			<button class="button button-sqr button-assertive" ng-click="go2Product(product.productId)">
 				我要打价
 			</button>
 		</div>
-	  </div> 
-	  <!-- <a class="item item-icon-right assertive" href="#/tab/prod/{{product.productId}}">
-	    <i class="icon ion-arrow-graph-down-right"></i>
-	    现在只要￥{{product.currentPrice}}（已打掉￥{{product.priceOff}}）
-	  </a>-->
+	  </div>
 	</div>
   </ion-content>
 </ion-view>

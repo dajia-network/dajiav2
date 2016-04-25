@@ -185,20 +185,8 @@ public class ProductService {
 		product.productImages.size();
 
 		product.status4Show = getProductStatusStr(product.productStatus);
+		calcPrice(product);
 
-		BigDecimal targetPrice = product.originalPrice;
-		long soldNeeded = 0L;
-		for (Price price : product.prices) {
-			if (price.targetPrice.compareTo(targetPrice) < 0) {
-				targetPrice = price.targetPrice;
-				soldNeeded = price.sold;
-			}
-		}
-		if (null != product.originalPrice) {
-			product.targetPrice = targetPrice;
-			product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
-			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
-		}
 		return product;
 	}
 
@@ -206,8 +194,7 @@ public class ProductService {
 		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
-			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
-			product.nextOff = calcNextOff(product);
+			calcPrice(product);
 		}
 		return products;
 	}
@@ -284,6 +271,30 @@ public class ProductService {
 			}
 		}
 		return null;
+	}
+
+	private void calcPrice(Product product) {
+		BigDecimal targetPrice = product.originalPrice;
+		long soldNeeded = 0L;
+		for (Price price : product.prices) {
+			if (price.targetPrice.compareTo(targetPrice) < 0) {
+				targetPrice = price.targetPrice;
+				soldNeeded = price.sold;
+			}
+		}
+		if (null != product.originalPrice) {
+			product.targetPrice = targetPrice;
+			product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
+			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
+			product.nextOff = calcNextOff(product);
+			product.progressValue = calcProgress(product);
+		}
+	}
+
+	private long calcProgress(Product product) {
+		Double progress = product.priceOff.divide(product.originalPrice.add(product.targetPrice.negate()), 2,
+				RoundingMode.HALF_UP).doubleValue() * 100;
+		return progress.longValue();
 	}
 
 	private List<Product> convertJson2Products(String jsonStr) throws JsonParseException, JsonMappingException,

@@ -81,6 +81,9 @@ public class Product extends BaseModel {
 	public long soldNeeded;
 	
 	@Transient
+	public long progressValue;
+	
+	@Transient
 	public BigDecimal nextOff;
 
 	@Transient

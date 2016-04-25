@@ -20,7 +20,7 @@
 }
 
 .progress {
-	height: 1.4em;
+	height: 1em;
 	margin-bottom: 2px;
 }
 
@@ -113,5 +113,5 @@ button img {
 .homebar {
 	margin: auto;
 	height: 100%;
-	font-size: 80%;
+	font-size: 70%;
 }

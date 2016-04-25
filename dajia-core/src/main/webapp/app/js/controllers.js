@@ -1,5 +1,5 @@
 angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
-		function($scope, $http, $cookies, $ionicLoading, AuthService) {
+		function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
 			console.log('产品列表...');
 			var loadProducts = function() {
 				popLoading($ionicLoading);
@@ -27,6 +27,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$scope.doRefresh = function() {
 				loadProducts();
 			};
+			$scope.go2Product = function(productId) {
+				$window.location.href = '#/tab/prod/' + productId;
+			}
 		})
 
 .controller(

@@ -4,7 +4,7 @@
 }
 
 .now_price {
-	font-size: 250% !important;
+	font-size: 150% !important;
 }
 
 .row.noPadding {
@@ -20,7 +20,7 @@
 }
 
 .progress {
-	height: 1.4em;
+	height: 1em;
 	margin-bottom: 2px;
 }
 
@@ -113,5 +113,5 @@ button img {
 .homebar {
 	margin: auto;
 	height: 100%;
-	font-size: 50%;
+	font-size: 70%;
 }
