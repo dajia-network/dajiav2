@@ -292,8 +292,11 @@ public class ProductService {
 	}
 
 	private long calcProgress(Product product) {
-		Double progress = product.priceOff.divide(product.originalPrice.add(product.targetPrice.negate()), 2,
-				RoundingMode.HALF_UP).doubleValue() * 100;
+		BigDecimal totalOff = product.originalPrice.add(product.targetPrice.negate());
+		if (totalOff.longValue() == 0) {
+			return 100L;
+		}
+		Double progress = product.priceOff.divide(totalOff, 2, RoundingMode.HALF_UP).doubleValue() * 100;
 		return progress.longValue();
 	}
 
