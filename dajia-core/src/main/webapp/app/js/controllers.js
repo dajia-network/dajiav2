@@ -354,10 +354,15 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.order.progressValue = 0;
 })
 
-.controller('MineCtrl', function($scope, $rootScope, $window, $cookies, $timeout, $ionicLoading, AuthService) {
+.controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, AuthService) {
 	console.log('我的打价...');
 	$scope.userName = $cookies.get('dajia_username');
 	var loginUser = $cookies.get('dajia_user_id');
+	if (loginUser != null) {
+		$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+			$scope.headImgUrl = data.headImgUrl;
+		});
+	}
 	$scope.myFav = function() {
 		if (loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');

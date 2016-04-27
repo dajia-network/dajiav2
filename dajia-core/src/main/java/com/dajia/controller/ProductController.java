@@ -38,7 +38,7 @@ public class ProductController extends BaseController {
 
 	@RequestMapping("/products")
 	public List<Product> allProducts() {
-		List<Product> products = productService.loadAllValidProducts();
+		List<Product> products = productService.loadAllValidProductsWithPrices();
 		return products;
 	}
 

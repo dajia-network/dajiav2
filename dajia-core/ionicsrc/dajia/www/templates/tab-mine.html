@@ -2,8 +2,14 @@
   <ion-nav-bar class="bar-dark"></ion-nav-bar>
   <ion-content>
 	<button ng-if="userName" class="button button-clear button-full button-stable">
-		<i class="icon ion-person"></i>&nbsp;{{userName}}
+		     <a class="center-avatar">
+		     	<img ng-src="{{headImgUrl}}"></img>
+		     </a>
+		     &nbsp;{{userName}}
 	</button>
+	<div class="item item-logo-center" align="center">
+		
+	</div>
     <ion-list>
 		<div class="item item-divider">
 			购物信息

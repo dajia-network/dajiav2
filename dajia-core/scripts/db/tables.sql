@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS dajia.user (
 	user_id BIGINT(25) NOT NULL AUTO_INCREMENT,
 	mobile VARCHAR(20) NULL,
 	password VARCHAR(200) NULL,
-	username VARCHAR(100) NULL,
+	username VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
 	email VARCHAR(255) NULL,
     sex VARCHAR(50) NULL,
     country VARCHAR(100) NULL,

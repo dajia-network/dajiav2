@@ -193,6 +193,12 @@ public class ProductService {
 	public List<Product> loadAllValidProducts() {
 		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
+		return products;
+	}
+	
+	public List<Product> loadAllValidProductsWithPrices() {
+		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
+				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		for (Product product : products) {
 			calcPrice(product);
 		}
