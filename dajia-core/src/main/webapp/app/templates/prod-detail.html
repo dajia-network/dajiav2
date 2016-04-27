@@ -1,59 +1,53 @@
-<ion-view view-title="{{product.name}}">
+<ion-view view-title="{{product.name}}" hide-nav-bar="true">
 	<ion-nav-bar class="bar-dark">
 		<ion-nav-back-button>
 			返回
 		</ion-nav-back-button>
 	</ion-nav-bar>
-<ion-content>
-	<div class="list card">
-		<div class="item item-body">
-			<ion-slide-box on-slide-changed="slideHasChanged($index)">
-			  <ion-slide ng-repeat="prodImg in product.productImages">
-			    <img ng-src="{{prodImg.url}}" class="full-image">
-			  </ion-slide>
-			</ion-slide-box>
-			<p>{{product.name}}</p>
-			<p>
-				<span class="ori_price">￥{{product.originalPrice}}</span>&nbsp;
-				<span class="assertive now_price">￥</span>
-				<span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span>
-			</p>
-			<div>
-			    <uib-progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
-			    	<!-- <i><span count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> / {{product.targetPrice}}</i> -->
-			    </uib-progressbar>
+	<ion-content>
+		<div class="list card">
+			<div class="item item-body">
+				<div align="center">{{product.name}}<p/></div>
+				<ion-slide-box on-slide-changed="slideHasChanged($index)">
+				  <ion-slide ng-repeat="prodImg in product.productImages">
+				    <img ng-src="{{prodImg.url}}" class="full-image">
+				  </ion-slide>
+				</ion-slide-box>
+				<p>
+					<b>现价 <span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> 元</b>
+					&nbsp;<span class="ori_price">{{product.originalPrice}} 元</span>
+					<br/>
+					库存 {{product.stock}}<br/>
+					下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!
+				</p>
+				<div>
+				    <uib-progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
+				    </uib-progressbar>
+				</div>
 			</div>
-		    <ul class="row label-row">
-	            <li class="col" style="text-align: left;">原价:￥{{product.originalPrice}}</li>
-	            <li class="col" style="text-align: right;">最低价:￥{{product.targetPrice}}</li>
-	        </ul>
-			<p>
-				目前共<span class="assertive">{{product.sold}}</span>人参与打价。还需要<span class="assertive">{{product.soldNeeded}}</span>人购买就能将价格打到<span class="assertive">￥{{product.targetPrice}}</span>。
-			</p>
+		
+			<div class="item tabs tabs-secondary tabs-icon-left">
+				<a class="tab-item" ng-click="add2Fav()"> <i class="icon ion-star" id="fav_icon"></i> {{favBtnTxt}}
+				</a> 
+				<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 分享
+				</a>
+			</div>
 		</div>
-	
-		<div class="item tabs tabs-secondary tabs-icon-left">
-			<a class="tab-item" ng-click="add2Fav()"> <i class="icon ion-star" id="fav_icon"></i> {{favBtnTxt}}
-			</a> 
-			<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 分享
-			</a>
+		<div class="card">
+		  <div class="item item-divider">
+		    产品介绍
+		  </div>
+		  <div class="item item-text-wrap">
+		  	<p ng-bind-html="product.description"></p>
+		  </div>
 		</div>
-	</div>
-	<div class="card">
-	  <div class="item item-divider">
-	    产品介绍
-	  </div>
-	  <div class="item item-text-wrap">
-	  	<p ng-bind-html="product.description"></p>
-	  </div>
-	</div>
-</ion-content>
-<ion-footer-bar align-title="left" class="bar-stable">
-	<div class="row noPadding">
-		<div class="col noPadding text-right">
-			<button ng-if="product.productStatus==2" class="button button-outline button-assertive" ng-click="buyNow()">立即购买</button>
-			<span ng-if="product.productStatus!=2" class="assertive">产品已失效</span>
+	</ion-content>
+	<ion-footer-bar align-title="left" class="bar-stable">
+		<div class="row noPadding">
+			<div class="col noPadding text-right">
+				<button ng-if="product.productStatus==2" class="button button-outline button-assertive" ng-click="buyNow()">立即购买</button>
+				<span ng-if="product.productStatus!=2" class="assertive">产品已失效</span>
+			</div>
 		</div>
-	</div>
-</ion-footer-bar>
+	</ion-footer-bar>
 </ion-view>
