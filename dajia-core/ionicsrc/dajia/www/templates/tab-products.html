@@ -1,11 +1,11 @@
-<ion-view view-title="打价首页" hide-nav-bar="true"> 
+<ion-view view-title="打价网" hide-nav-bar="true"> 
   <ion-nav-bar class="bar-dark"></ion-nav-bar>
   <ion-content>
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
-		<div class="item item-logo-center" align="center">
-			<img src="/app/img/logo-banner.png">
-		</div>
+	<div class="item item-logo-center" align="center">
+		<img src="/app/img/logo-banner.png">
+	</div>
 	<div class="list card" ng-repeat="product in products">
 	  <div class="item item-image">
 	    <a href="#/tab/prod/{{product.productId}}"><img ng-src="{{product.imgUrl}}"></a>

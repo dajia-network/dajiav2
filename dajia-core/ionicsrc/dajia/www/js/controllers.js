@@ -183,11 +183,11 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var product = data;
 				$scope.orderItem = product;
-				$scope.totalPrice = product.price;
+				// $scope.totalPrice = product.price;
 				quota = product.buyQuota;
 				$scope.order.productId = product.productId;
 				$scope.order.unitPrice = product.currentPrice;
-				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + product.postFee;
 				if (locationReady) {
 					$ionicLoading.hide();
 				}

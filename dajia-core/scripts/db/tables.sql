@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS dajia.user (
 	mobile VARCHAR(20) NULL,
 	password VARCHAR(200) NULL,
 	username VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
-	email VARCHAR(255) NULL,
+	email VARCHAR(100) NULL,
     sex VARCHAR(50) NULL,
     country VARCHAR(100) NULL,
     province VARCHAR(100) NULL,
