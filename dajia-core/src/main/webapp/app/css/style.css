@@ -110,6 +110,15 @@ button img {
     width:100%; 
 }
 
+.button-sqr-sm {
+	float: right;
+    padding: 1px 10px;
+    min-height: 22px;
+    font-size: 12px;
+    line-height: 16px;
+    border-radius: 1px;
+}
+
 .homebar {
 	margin: auto;
 	height: 100%;

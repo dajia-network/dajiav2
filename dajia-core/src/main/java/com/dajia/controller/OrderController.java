@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -135,7 +134,12 @@ public class OrderController extends BaseController {
 	@RequestMapping("/user/progress")
 	public List<OrderVO> myProgress(HttpServletRequest request, HttpServletResponse response) {
 		User user = this.getLoginUser(request, response, userRepo, true);
-		List<UserOrder> orders = orderRepo.findByUserIdOrderByOrderDateDesc(user.userId);
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		List<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(user.userId,
+				orderStatusList);
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);

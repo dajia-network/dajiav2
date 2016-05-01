@@ -187,7 +187,8 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 				quota = product.buyQuota;
 				$scope.order.productId = product.productId;
 				$scope.order.unitPrice = product.currentPrice;
-				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + product.postFee;
+				$scope.order.postFee = product.postFee;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
 				if (locationReady) {
 					$ionicLoading.hide();
 				}
@@ -268,6 +269,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 							console.log('wechat pay success');
 							popWarning('支付成功', $timeout, $ionicLoading);
 							$timeout(function() {
+								$window.location.href = "#/tab/prod";
 								$window.location.href = "#/tab/prog";
 							}, 1000);
 						} else if (result == "fail") {
@@ -293,12 +295,14 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 					return;
 				}
 				$scope.order.quantity += 1;
-				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+				;
 			}
 			$scope.remove = function() {
 				if ($scope.order.quantity > 1) {
 					$scope.order.quantity -= 1;
-					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
+					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+					;
 				}
 			}
 			$scope.selectAlipay = function() {

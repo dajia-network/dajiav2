@@ -6,20 +6,31 @@
 	<div class="item item-logo-center" align="center">
 		<img src="/app/img/logo-banner.png">
 	</div>
-    <ion-list ng-if="loginUser">
-      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="order in myOrders" type="item-text-wrap" href="#/tab/prog/{{order.orderId}}">
-        <img ng-src="{{order.product.imgUrl}}" >
-        <p>{{order.product.name}}</p>
-        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
-        <p>购买价：￥{{order.unitPrice}}</p>
-        <p>购买数量：{{order.quantity}}</p>
-        <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p>
-        <p>购买日期：{{order.orderDate | date:'yyyy-MM-dd'}}</p>
-        		<p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
-        		<p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
-        <i class="icon ion-chevron-right icon-accessory"></i>
-      </ion-item>
-    </ion-list>
+	
+	<div ng-if="loginUser">
+		<div class="card" ng-repeat="order in myOrders" >
+		  <div class="item item-divider">
+		    订单号：{{order.trackingId}}
+		  </div>
+		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" href="#/tab/prog/{{order.orderId}}">
+		    <img ng-src="{{order.product.imgUrl}}" >
+	        <p>{{order.product.name}}</p>
+	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
+	        <p>数量x{{order.quantity}}  出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
+	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
+	        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
+	        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
+	        <i class="icon ion-chevron-right icon-accessory"></i>
+		  </div>
+		  <div class="item">
+		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
+		    <button class="button button-sqr-sm button-assertive" ng-click="share()">
+				叫人打价
+			</button>
+		  </div>
+		</div>
+	</div>
+	
     <div ng-if="myOrders.length==0">
     	<div class="row">
 			<div class="col text-center">
