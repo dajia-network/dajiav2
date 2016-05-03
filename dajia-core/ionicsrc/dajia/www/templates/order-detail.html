@@ -1,0 +1,49 @@
+<ion-view view-title="订单#{{order.trackingId}}" hide-nav-bar="true">
+	<ion-nav-bar class="bar-dark">
+		<ion-nav-back-button>
+			返回
+		</ion-nav-back-button>
+	</ion-nav-bar>
+	<ion-content>
+  		<div class="card">
+			<div class="item item-divider">
+			  购买详情
+			</div>
+			<div class="item item-text-wrap">
+				<div class="item noBorder item-thumbnail-left">
+					<img ng-src="{{order.product.imgUrl}}">
+					<p>{{order.product.name}}</p>
+					<p>购买价<span class="assertive">￥{{order.unitPrice}}</span></p>
+        			<p>购买数量：{{order.quantity}}</p>
+        			<p>购买日期：{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+				</div>
+			</div>
+		</div>
+  		<div class="card">
+			<div class="item item-divider">
+			  打价进度
+			</div>
+			<div class="item item-text-wrap">
+		        <p>目前共<span class="assertive">{{order.product.sold}}</span>人参与打价。</p>
+		        <div>
+				    <uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar>
+				</div>
+		        <p>当前价格：<span class="assertive">￥{{order.product.currentPrice}}</span></p>
+        		<p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p>
+        		<p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+        		<p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}} ({{order.product.status4Show}})</p>
+			</div>
+		</div>
+  		<div class="card">
+		  <div class="item item-divider">
+		    收货信息
+		  </div>
+		  <div class="item item-text-wrap">
+		    <p>收货人: {{order.userContact.contactName}}</p>
+		    <p>手机: {{order.userContact.contactMobile}}</p>
+		    <p>收货地址: {{order.userContact.address1}}&nbsp;{{order.userContact.address2}}</p>
+		    <p>订单状态: {{order.orderStatus4Show}}</p>
+		  </div>
+		</div>
+	</ion-content>
+</ion-view>

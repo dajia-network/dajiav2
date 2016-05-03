@@ -342,6 +342,9 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.goHome = function() {
 		$window.location.href = "#/tab/prod";
 	}
+	$scope.progressDetail = function(orderId) {
+		$window.location.href = "#/tab/prog/" + orderId;
+	}
 })
 
 .controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
