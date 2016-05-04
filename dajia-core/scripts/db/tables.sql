@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
     quantity INT,
     unit_price NUMERIC(10,2),
     total_price NUMERIC(10,2),
+    post_fee NUMERIC(10,2),
     order_status INT,
     order_date TIMESTAMP NULL,
     deliver_date TIMESTAMP NULL,

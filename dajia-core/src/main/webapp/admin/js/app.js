@@ -1,4 +1,4 @@
-angular.module('DajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'DajiaAdmin.controllers' ]).config(
+angular.module('dajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'dajiaAdmin.controllers' ]).config(
 		[ '$routeProvider', function($routeProvider) {
 			$routeProvider.when('/products', {
 				templateUrl : './templates/products.html',

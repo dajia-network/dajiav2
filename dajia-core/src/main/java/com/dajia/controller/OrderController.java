@@ -69,9 +69,11 @@ public class OrderController extends BaseController {
 		UserOrder order = new UserOrder();
 		order.unitPrice = orderVO.unitPrice;
 		order.totalPrice = orderVO.totalPrice;
+		order.postFee = orderVO.postFee;
 		order.quantity = orderVO.quantity;
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
+		order.userComments = orderVO.userComments;
 		order.orderDate = new Date();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.userId = user.userId;

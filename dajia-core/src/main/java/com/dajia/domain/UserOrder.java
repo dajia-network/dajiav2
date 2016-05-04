@@ -51,6 +51,9 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "total_price")
 	public BigDecimal totalPrice;
+	
+	@Column(name = "post_fee")
+	public BigDecimal postFee;
 
 	@Column(name = "order_date")
 	public Date orderDate;

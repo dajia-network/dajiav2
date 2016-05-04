@@ -1,4 +1,4 @@
-angular.module('DajiaAdmin.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
+angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
 	console.log('ProductsCtrl...');
 	$scope.syncBtnTxt = '同步数据';
 	$scope.loadPage = function(pageNum) {
@@ -179,7 +179,9 @@ angular.module('DajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			$scope.closeAlert = function(index) {
 				$scope.alerts.splice(index, 1);
 			}
-		}).controller('OrderDetailCtrl', function($scope, $http, $routeParams, $route) {
+		})
+
+.controller('OrderDetailCtrl', function($scope, $http, $routeParams, $route) {
 	console.log('OrderDetailCtrl...');
 	$scope.order = {};
 	$http.get('/admin/order/' + $routeParams.orderId).success(function(data, status, headers, config) {

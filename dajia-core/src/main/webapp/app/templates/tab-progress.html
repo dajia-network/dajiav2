@@ -24,7 +24,7 @@
 		  </div>
 		  <div class="item">
 		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
-		    <button class="button button-sqr-sm button-assertive" ng-click="share()">
+		    <button class="button button-sqr-sm button-assertive" ng-click="share(order.product.productId, order.product.name)">
 				叫人打价
 			</button>
 		  </div>

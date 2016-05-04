@@ -1,6 +1,6 @@
-var starter = angular.module('starter.services', [ 'http-auth-interceptor' ]);
+var dajia = angular.module('dajia.services', [ 'http-auth-interceptor' ]);
 
-starter.factory('AuthService', function($rootScope, $http, $cookies, authService) {
+dajia.factory('AuthService', function($rootScope, $http, $cookies, authService) {
 	var service = {
 		signup : function(signup) {
 			$http.post('/signup', signup).success(function(data, status, headers, config) {

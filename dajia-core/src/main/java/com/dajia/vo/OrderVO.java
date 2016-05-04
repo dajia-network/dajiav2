@@ -27,6 +27,8 @@ public class OrderVO {
 	public BigDecimal unitPrice;
 
 	public BigDecimal totalPrice;
+	
+	public BigDecimal postFee;
 
 	public String logisticAgent;
 

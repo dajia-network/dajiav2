@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
+angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
 		function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
 			console.log('产品列表...');
 			var loadProducts = function() {
@@ -89,40 +89,7 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 			}
 
 			$scope.share = function() {
-				if ($cookies.get('dajia_user_id') == null) {
-					$rootScope.$broadcast('event:auth-loginRequired');
-				} else {
-					popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
-					wx.onMenuShareAppMessage({
-						title : '打价网',
-						desc : $scope.product.name,
-						link : window.location.href,
-						imgUrl : 'http://51daja.com/app/img/logo.png',
-						trigger : function() {
-							console.log('click');
-						},
-						success : function() {
-							popWarning('分享成功！', $timeout, $ionicLoading);
-						},
-						cancel : function() {
-							console.log('cancel');
-						}
-					});
-					wx.onMenuShareTimeline({
-						title : '打价网 - ' + $scope.product.name,
-						link : window.location.href,
-						imgUrl : 'http://51daja.com/app/img/logo.png',
-						trigger : function() {
-							console.log('click');
-						},
-						success : function() {
-							popWarning('分享成功！', $timeout, $ionicLoading);
-						},
-						cancel : function() {
-							console.log('cancel');
-						}
-					});
-				}
+				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.product);
 			}
 
 			popLoading($ionicLoading);
@@ -345,21 +312,35 @@ angular.module('starter.controllers', [ "ui.bootstrap", "countTo" ]).controller(
 	$scope.progressDetail = function(orderId) {
 		$window.location.href = "#/tab/prog/" + orderId;
 	}
+	$scope.share = function(productId, productName) {
+		var product = {
+			'productId' : productId,
+			'name' : productName
+		};
+		shareProduct($rootScope, $cookies, $timeout, $ionicLoading, product);
+	}
 })
 
-.controller('ProgDetailCtrl', function($scope, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
-	console.log('进度详情...')
-	$scope.order = {};
-	popLoading($ionicLoading);
-	$http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
-		console.log(data);
-		var order = data;
-		order.progressValue = order.product.priceOff / (order.product.originalPrice - order.product.targetPrice) * 100;
-		$scope.order = order;
-		$ionicLoading.hide();
-	});
-	$scope.order.progressValue = 0;
-})
+.controller(
+		'ProgDetailCtrl',
+		function($scope, $rootScope, $cookies, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
+			console.log('进度详情...')
+			$scope.order = {};
+			popLoading($ionicLoading);
+			$http.get('/user/order/' + $stateParams.orderId).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						var order = data;
+						order.progressValue = order.product.priceOff
+								/ (order.product.originalPrice - order.product.targetPrice) * 100;
+						$scope.order = order;
+						$ionicLoading.hide();
+					});
+			$scope.order.progressValue = 0;
+			$scope.share = function() {
+				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product);
+			}
+		})
 
 .controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, AuthService) {
 	console.log('我的打价...');
@@ -763,4 +744,41 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	}).error(function(data, status, headers, config) {
 		console.log('request failed...');
 	});
+}
+
+var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, product) {
+	if ($cookies.get('dajia_user_id') == null) {
+		$rootScope.$broadcast('event:auth-loginRequired');
+	} else {
+		popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
+		wx.onMenuShareAppMessage({
+			title : '打价网',
+			desc : product.name,
+			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId,
+			imgUrl : 'http://51daja.com/app/img/logo.png',
+			trigger : function() {
+				console.log('click');
+			},
+			success : function() {
+				popWarning('分享成功！', $timeout, $ionicLoading);
+			},
+			cancel : function() {
+				console.log('cancel');
+			}
+		});
+		wx.onMenuShareTimeline({
+			title : '打价网 - ' + product.name,
+			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId,
+			imgUrl : 'http://51daja.com/app/img/logo.png',
+			trigger : function() {
+				console.log('click');
+			},
+			success : function() {
+				popWarning('分享成功！', $timeout, $ionicLoading);
+			},
+			cancel : function() {
+				console.log('cancel');
+			}
+		});
+	}
 }
