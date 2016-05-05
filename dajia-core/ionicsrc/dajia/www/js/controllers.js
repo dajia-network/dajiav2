@@ -358,6 +358,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$window.location.href = '#/tab/mine/fav';
 		}
 	}
+	$scope.contacts = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/contacts';
+		}
+	}
 	$scope.bindMobile = function() {
 		if (loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');
@@ -434,6 +441,19 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 		});
 
 	};
+})
+
+.controller('ManageContactCtrl', function($scope, $http, $timeout, $ionicLoading) {
+	console.log('收货地址管理...');
+	var loadContacts = function() {
+		popLoading($ionicLoading);
+		return $http.get('/user/contacts').success(function(data, status, headers, config) {
+			$scope.contacts = data;
+			console.log(data);
+			$ionicLoading.hide();
+		});
+	}
+	loadContacts();
 })
 
 .controller('BindMobileCtrl', function($scope, $http, $q, $cookies, $timeout, $ionicLoading) {

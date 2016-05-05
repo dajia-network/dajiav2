@@ -119,6 +119,14 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'BindMobileCtrl'
 			}
 		}
+	}).state('tab.mine-contact', {
+		url : '/mine/contacts',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/contact-list.html',
+				controller : 'ManageContactCtrl'
+			}
+		}
 	});
 
 	// if none of the above states are matched, use this as the fallback

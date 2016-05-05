@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Location;
+import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserFavourite;
@@ -275,5 +276,14 @@ public class UserController extends BaseController {
 			returnMap.put("msg", "修改成功");
 		}
 		return returnMap;
+	}
+
+	@RequestMapping("/user/contacts")
+	public List<UserContact> myUserContacts(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		if (null == user) {
+			return null;
+		}
+		return user.userContacts;
 	}
 }

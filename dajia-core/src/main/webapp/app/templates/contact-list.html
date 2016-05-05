@@ -1,0 +1,17 @@
+<ion-view view-title="我的收货地址" hide-nav-bar="true">
+  <ion-nav-bar class="bar-dark">
+	<ion-nav-back-button>
+		返回
+	</ion-nav-back-button>
+  </ion-nav-bar>
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-icon-right" ng-repeat="userContact in contacts" type="item-text-wrap" href="#/tab/mine/contact/{{userContact.contactId}}">
+	    <p>收货人: {{userContact.contactName}}</p>
+	    <p>手机: {{userContact.contactMobile}}</p>
+	    <p>收货地址: {{userContact.address1}}&nbsp;{{userContact.address2}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
