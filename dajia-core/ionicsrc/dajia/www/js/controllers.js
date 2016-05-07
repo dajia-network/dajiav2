@@ -443,18 +443,111 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	};
 })
 
-.controller('ManageContactCtrl', function($scope, $http, $timeout, $ionicLoading) {
-	console.log('收货地址管理...');
+.controller('ListContactCtrl', function($scope, $http, $timeout, $ionicLoading) {
+	console.log('收货地址列表...');
 	var loadContacts = function() {
 		popLoading($ionicLoading);
 		return $http.get('/user/contacts').success(function(data, status, headers, config) {
 			$scope.contacts = data;
-			console.log(data);
 			$ionicLoading.hide();
 		});
 	}
 	loadContacts();
 })
+
+.controller(
+		'EditContactCtrl',
+		function($scope, $http, $stateParams, $window, $timeout, $ionicLoading) {
+			console.log('收货地址管理...');
+			popLoading($ionicLoading);
+			$http.get('/user/contact/' + $stateParams.contactId).success(function(data, status, headers, config) {
+				console.log(data);
+				$scope.userContact = data;
+				var isNewContact = false;
+				if (data == null || data.length == 0) {
+					isNewContact = true;
+					$scope.userContact = {};
+				}
+				$http.get('/locations').success(function(data, status, headers, config) {
+					$scope.provinces = data;
+					if (!isNewContact) {
+						$scope.provinces.forEach(function(p) {
+							if (p.locationKey == $scope.userContact.province.locationKey) {
+								$scope.userContact.province = p;
+								p.children.forEach(function(c) {
+									if (c.locationKey == $scope.userContact.city.locationKey) {
+										$scope.userContact.city = c;
+										c.children.forEach(function(d) {
+											if (d.locationKey == $scope.userContact.district.locationKey) {
+												$scope.userContact.district = d;
+												$ionicLoading.hide();
+												return;
+											}
+										});
+										return;
+									}
+								});
+								return;
+							}
+						});
+					} else {
+						$ionicLoading.hide();
+					}
+				}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			});
+
+			$scope.remove = function() {
+				if ($scope.userContact.contactId != null) {
+					$http.get('/user/contact/remove/' + $stateParams.contactId).success(
+							function(data, status, headers, config) {
+								popWarning('收货信息删除成功', $timeout, $ionicLoading);
+								$window.location.href = '#/tab/mine/contacts';
+								$window.location.reload();
+							});
+				} else {
+					$window.location.href = '#/tab/mine/contacts';
+				}
+			}
+
+			$scope.markDefault = function() {
+				$http.get('/user/contact/default/' + $stateParams.contactId).success(
+						function(data, status, headers, config) {
+							popWarning('成功设置为默认收货信息', $timeout, $ionicLoading);
+							$window.location.href = '#/tab/mine/contacts';
+							$window.location.reload();
+						});
+			}
+
+			$scope.submit = function() {
+				if ($scope.userContact.contactId == null) {
+					console.log('new userContact.');
+				}
+				var name = $scope.userContact.contactName;
+				var mobile = $scope.userContact.contactMobile;
+				var province = $scope.userContact.province;
+				var city = $scope.userContact.city;
+				var district = $scope.userContact.district;
+				var address = $scope.userContact.address1;
+
+				if (!name || !mobile || !province || !city || !district || !address) {
+					popWarning('请输入完整信息', $timeout, $ionicLoading);
+					return;
+				}
+				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
+				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+					return;
+				}
+				$http.post('/user/contact/' + $stateParams.contactId, $scope.userContact).success(
+						function(data, status, headers, config) {
+							popWarning('收货信息修改成功', $timeout, $ionicLoading);
+							$window.location.href = '#/tab/mine/contacts';
+							$window.location.reload();
+						});
+			}
+		})
 
 .controller('BindMobileCtrl', function($scope, $http, $q, $cookies, $timeout, $ionicLoading) {
 	console.log('绑定手机...');
@@ -770,7 +863,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 	if ($cookies.get('dajia_user_id') == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
-		popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
+		popWarning('叫人打价信息准备完毕。请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,

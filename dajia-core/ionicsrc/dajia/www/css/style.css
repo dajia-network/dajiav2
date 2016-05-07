@@ -15,8 +15,17 @@
 	padding: 0;
 }
 
+.col.sidePadding {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
 .item.noBorder {
 	border-width: 0;
+}
+
+.item.noPadding {
+	padding: 0;
 }
 
 .progress {

@@ -23,14 +23,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Location;
-import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserFavourite;
 import com.dajia.repository.LocationRepo;
+import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.FavouriteService;
 import com.dajia.service.SmsService;
+import com.dajia.service.UserContactService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.LocationType;
@@ -48,10 +49,16 @@ public class UserController extends BaseController {
 	private UserRepo userRepo;
 
 	@Autowired
+	private UserContactRepo userContactRepo;
+
+	@Autowired
 	private LocationRepo locationRepo;
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private UserContactService userContactService;
 
 	@Autowired
 	private FavouriteService favouriteService;
@@ -285,5 +292,34 @@ public class UserController extends BaseController {
 			return null;
 		}
 		return user.userContacts;
+	}
+
+	@RequestMapping("/user/contact/{contactId}")
+	public UserContact getContact(@PathVariable("contactId") Long contactId, HttpServletRequest request,
+			HttpServletResponse response) {
+		return userContactRepo.findOne(contactId);
+	}
+
+	@RequestMapping(value = "/user/contact/remove/{contactId}", method = RequestMethod.GET)
+	public void removeContact(@PathVariable("contactId") Long contactId, HttpServletRequest request,
+			HttpServletResponse response) {
+		userContactRepo.delete(contactId);
+	}
+
+	@RequestMapping(value = "/user/contact/{contactId}", method = RequestMethod.POST)
+	public UserContact saveContact(@PathVariable("contactId") Long contactId, @RequestBody UserContact userContact,
+			HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		if (null != userContact) {
+			userContact = userContactService.updateUserContact(userContact, user);
+		}
+		return userContact;
+	}
+	
+	@RequestMapping("/user/contact/default/{contactId}")
+	public void markDefaultContact(@PathVariable("contactId") Long contactId, HttpServletRequest request,
+			HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		userContactService.markDefaultUserContact(contactId, user);
 	}
 }

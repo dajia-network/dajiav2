@@ -22,11 +22,11 @@ public class UserContactService {
 	private LocationRepo locationRepo;
 
 	public UserContact updateUserContact(UserContact userContact, User user) {
-		userContact.isDefault = "Y";
+		// userContact.isDefault = "Y";
 		userContact.province = locationRepo.findByLocationKey(userContact.province.locationKey);
 		userContact.city = locationRepo.findByLocationKey(userContact.city.locationKey);
 		userContact.district = locationRepo.findByLocationKey(userContact.district.locationKey);
-		if (null == userContact.contactId) {
+		if (null == userContact.contactId || 0L == userContact.contactId) {
 			userContact.user = user;
 			userContactRepo.save(userContact);
 			return userContact;
@@ -47,6 +47,17 @@ public class UserContactService {
 			} else {
 				return null;
 			}
+		}
+	}
+
+	public void markDefaultUserContact(Long contactId, User user) {
+		for (UserContact uc : user.userContacts) {
+			if (contactId.longValue() == uc.contactId.longValue()) {
+				uc.isDefault = "Y";
+			} else {
+				uc.isDefault = "N";
+			}
+			userContactRepo.save(uc);
 		}
 	}
 }

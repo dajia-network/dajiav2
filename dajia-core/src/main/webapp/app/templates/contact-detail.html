@@ -1,0 +1,58 @@
+<ion-view view-title="我的收货地址" hide-nav-bar="true">
+	<ion-nav-bar class="bar-dark">
+		<ion-nav-back-button>
+			返回
+		</ion-nav-back-button>
+	</ion-nav-bar>
+	<ion-content>
+		<div class="item item-divider">
+		  收货信息
+		</div>
+		<input type="hidden" ng-model="userContact.contactId">
+		<label class="item item-input">
+			<input type="text" placeholder="收货人姓名" ng-model="userContact.contactName">
+		</label>
+		<label class="item item-input">
+			<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
+		</label>
+		<label class="item item-input item-select">
+		    <div class="input-label">
+		      省
+		    </div>
+		    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
+				<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
+		    </select>
+		</label>
+		<label class="item item-input item-select">
+		    <div class="input-label">
+		      市
+		    </div>
+		    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
+		    </select>
+		</label>
+		<label class="item item-input item-select">
+		    <div class="input-label">
+		      区
+		    </div>
+		    <select ng-model="userContact.district" ng-options="district.locationValue for district in userContact.city.children" >
+		    </select>
+		</label>
+		
+		<label class="item item-input">
+			<input type="text" placeholder="详细地址" ng-model="userContact.address1">
+		</label>
+	</ion-content>
+	<ion-footer-bar align-title="left" class="bar-stable">
+		<div class="row noPadding">
+			<div class="col sidePadding text-right">
+				<button class="button button-sqr button-assertive" ng-click="remove()">删除</button>
+			</div>
+			<div class="col sidePadding text-right">
+				<button class="button button-sqr button-assertive" ng-click="submit()">修改</button>
+			</div>
+			<div class="col sidePadding text-right" ng-if="userContact.contactId!=null">
+				<button class="button button-sqr button-assertive" ng-click="markDefault()">设为默认</button>
+			</div>
+		</div>
+	</ion-footer-bar>
+</ion-view>

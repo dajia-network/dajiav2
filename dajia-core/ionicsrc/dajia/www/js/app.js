@@ -119,12 +119,20 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'BindMobileCtrl'
 			}
 		}
-	}).state('tab.mine-contact', {
+	}).state('tab.mine-contacts', {
 		url : '/mine/contacts',
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/contact-list.html',
-				controller : 'ManageContactCtrl'
+				controller : 'ListContactCtrl'
+			}
+		}
+	}).state('tab.mine-contact', {
+		url : '/mine/contact/:contactId',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/contact-detail.html',
+				controller : 'EditContactCtrl'
 			}
 		}
 	});

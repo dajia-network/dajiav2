@@ -7,9 +7,13 @@
   <ion-content>
     <ion-list>
       <ion-item class="item-icon-right" ng-repeat="userContact in contacts" type="item-text-wrap" href="#/tab/mine/contact/{{userContact.contactId}}">
-	    <p>收货人: {{userContact.contactName}}</p>
+	    <p>收货人: {{userContact.contactName}} <span ng-if="userContact.isDefault=='Y'">(默认)</span></p>
 	    <p>手机: {{userContact.contactMobile}}</p>
 	    <p>收货地址: {{userContact.address1}}&nbsp;{{userContact.address2}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+      <ion-item class="item-icon-right" type="item-text-wrap" href="#/tab/mine/contact/0">
+	    <p>新增收货地址</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
