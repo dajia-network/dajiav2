@@ -8,35 +8,45 @@
 		<div class="item item-divider">
 		  收货信息
 		</div>
-		<input type="hidden" ng-model="userContact.contactId">
-		<label class="item item-input">
-			<input type="text" placeholder="收货人姓名" ng-model="userContact.contactName">
-		</label>
-		<label class="item item-input">
-			<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
-		</label>
-		<label class="item item-input item-select">
-		    <div class="input-label">
-		      省
-		    </div>
-		    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
-				<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
-		    </select>
-		</label>
-		<label class="item item-input item-select">
-		    <div class="input-label">
-		      市
-		    </div>
-		    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
-		    </select>
-		</label>
-		<label class="item item-input item-select">
-		    <div class="input-label">
-		      区
-		    </div>
-		    <select ng-model="userContact.district" ng-options="district.locationValue for district in userContact.city.children" >
-		    </select>
-		</label>
+		<div ng-if="userContacts.length>0">
+			<label class="item item-select item-select-full">
+				<select ng-model="selectedUserContact.contactId" ng-change="changeUserContact()" ng-options="uc.contactId as uc.summary for uc in userContacts" >
+			    	<option value="">选择其他已保存收货信息</option>
+			    </select>
+		    </label>
+		</div>
+		
+		<div>
+			<input type="hidden" ng-model="userContact.contactId">
+			<label class="item item-input">
+				<input type="text" placeholder="收货人姓名" ng-model="userContact.contactName">
+			</label>
+			<label class="item item-input">
+				<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
+			</label>
+			<label class="item item-input item-select">
+			    <div class="input-label">
+			      省
+			    </div>
+			    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
+					<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
+			    </select>
+			</label>
+			<label class="item item-input item-select">
+			    <div class="input-label">
+			      市
+			    </div>
+			    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
+			    </select>
+			</label>
+			<label class="item item-input item-select">
+			    <div class="input-label">
+			      区
+			    </div>
+			    <select ng-model="userContact.district" ng-options="district.locationValue for district in userContact.city.children" >
+			    </select>
+			</label>
+		</div>
 		
 		<label class="item item-input">
 			<input type="text" placeholder="详细地址" ng-model="userContact.address1">

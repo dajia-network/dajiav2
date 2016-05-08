@@ -132,7 +132,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.progressValue = 0;
 		})
 
-.controller('OrderCtrl',
+.controller(
+		'OrderCtrl',
 		function($scope, $rootScope, $stateParams, $http, $window, $ionicModal, $timeout, $ionicLoading) {
 			console.log('订单页面...')
 			var productReady = false;
@@ -140,6 +141,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			popLoading($ionicLoading);
 			modalInit($rootScope, $ionicModal, 'login');
 			$scope.userContact = {};
+			$scope.userContacts = [];
+			$scope.selectedUserContact = {};
 			$scope.order = {
 				'quantity' : 1,
 				'unitPrice' : 0,
@@ -161,38 +164,34 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 				productReady = true;
 			});
-			$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
-				var loginuser = data;
-				$scope.loginuser = loginuser;
-			}).error(function(data, status, headers, config) {
+			$http.get('/user/loginuserinfo').success(
+					function(data, status, headers, config) {
+						var loginuser = data;
+						$scope.loginuser = loginuser;
+						if (null != $scope.loginuser.userContacts) {
+							loginuser.userContacts.forEach(function(c) {
+								var contact = {
+									contactId : c.contactId,
+									name : c.contactName,
+									mobile : c.contactMobile,
+									address : c.province.locationValue + ' ' + c.city.locationValue + ' '
+											+ c.district.locationValue + ' ' + c.address1,
+									summary : c.contactName + ' ' + c.contactMobile + ' ' + c.province.locationValue
+											+ ' ' + c.city.locationValue + ' ' + c.district.locationValue + ' '
+											+ c.address1
+								};
+								$scope.userContacts.push(contact);
+							});
+							// console.log($scope.userContacts);
+						}
+					}).error(function(data, status, headers, config) {
 				console.log('request failed...');
 			});
 			$http.get('/locations').success(function(data, status, headers, config) {
 				$scope.provinces = data;
 				if ($scope.loginuser.userContact != null) {
 					$scope.userContact = $scope.loginuser.userContact;
-					$scope.provinces.forEach(function(p) {
-						if (p.locationKey == $scope.loginuser.userContact.province.locationKey) {
-							$scope.userContact.province = p;
-							p.children.forEach(function(c) {
-								if (c.locationKey == $scope.loginuser.userContact.city.locationKey) {
-									$scope.userContact.city = c;
-									c.children.forEach(function(d) {
-										if (d.locationKey == $scope.loginuser.userContact.district.locationKey) {
-											$scope.userContact.district = d;
-											if (productReady) {
-												$ionicLoading.hide();
-											}
-											locationReady = true;
-											return;
-										}
-									});
-									return;
-								}
-							});
-							return;
-						}
-					});
+					fillLocationDropdowns($scope, $ionicLoading, locationReady);
 				} else {
 					if (productReady) {
 						$ionicLoading.hide();
@@ -263,17 +262,50 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 				$scope.order.quantity += 1;
 				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
-				;
 			}
 			$scope.remove = function() {
 				if ($scope.order.quantity > 1) {
 					$scope.order.quantity -= 1;
 					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
-					;
 				}
 			}
 			$scope.selectAlipay = function() {
 				popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
+			}
+			$scope.changeUserContact = function(uc) {
+				if (null != $scope.loginuser.userContacts && null != $scope.selectedUserContact.contactId) {
+					$scope.loginuser.userContacts.forEach(function(c) {
+						if (c.contactId == $scope.selectedUserContact.contactId) {
+							$scope.userContact = c;
+						}
+					});
+				}
+				fillLocationDropdowns($scope, $ionicLoading, locationReady);
+			}
+
+			var fillLocationDropdowns = function($scope, $ionicLoading, locationReady) {
+				$scope.provinces.forEach(function(p) {
+					if (p.locationKey == $scope.userContact.province.locationKey) {
+						$scope.userContact.province = p;
+						p.children.forEach(function(c) {
+							if (c.locationKey == $scope.userContact.city.locationKey) {
+								$scope.userContact.city = c;
+								c.children.forEach(function(d) {
+									if (d.locationKey == $scope.userContact.district.locationKey) {
+										$scope.userContact.district = d;
+										if (productReady) {
+											$ionicLoading.hide();
+										}
+										locationReady = true;
+										return;
+									}
+								});
+								return;
+							}
+						});
+						return;
+					}
+				});
 			}
 		})
 

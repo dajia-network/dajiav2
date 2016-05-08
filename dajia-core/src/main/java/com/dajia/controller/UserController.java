@@ -197,17 +197,16 @@ public class UserController extends BaseController {
 		UserUtils.copyUserProperties(user, loginUser);
 		// get default userContact
 		if (null != user.userContacts && user.userContacts.size() > 0) {
+			loginUser.userContacts = user.userContacts;
 			for (UserContact uc : user.userContacts) {
-				if (uc.isDefault.equals("Y")) {
+				if (("Y").equals(uc.isDefault)) {
 					UserContact userContactInfo = new UserContact();
 					try {
 						CommonUtils.copyProperties(uc, userContactInfo);
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error(e.getMessage(), e);
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error(e.getMessage(), e);
 					}
 					loginUser.userContact = userContactInfo;
 				}
@@ -315,7 +314,7 @@ public class UserController extends BaseController {
 		}
 		return userContact;
 	}
-	
+
 	@RequestMapping("/user/contact/default/{contactId}")
 	public void markDefaultContact(@PathVariable("contactId") Long contactId, HttpServletRequest request,
 			HttpServletResponse response) {

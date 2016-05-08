@@ -1,6 +1,7 @@
 package com.dajia.vo;
 
 import java.util.Date;
+import java.util.List;
 
 import com.dajia.domain.UserContact;
 
@@ -34,4 +35,6 @@ public class LoginUserVO {
 	public String isAdmin;
 
 	public UserContact userContact;
+
+	public List<UserContact> userContacts;
 }
