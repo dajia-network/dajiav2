@@ -109,27 +109,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 							$scope.progressValue = amt;
 						}, 1000);
 					});
-
-			$http.get('/wechat/signature').success(function(data, status, headers, config) {
-				console.log(data);
-				wx.config({
-					appId : data['appId'],
-					timestamp : data['timestamp'],
-					nonceStr : data['nonceStr'],
-					signature : data['signature'],
-					jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline' ]
-				});
-				wx.checkJsApi({
-					jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline' ],
-					success : function(res) {
-						console.log(res);
-					}
-				});
-				wx.ready(function() {
-
-				});
-			});
 			$scope.progressValue = 0;
+
+			initWechatJSAPI();
 		})
 
 .controller(
@@ -351,6 +333,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 		};
 		shareProduct($rootScope, $cookies, $timeout, $ionicLoading, product);
 	}
+	initWechatJSAPI();
 })
 
 .controller(
@@ -372,6 +355,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.share = function() {
 				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product);
 			}
+			initWechatJSAPI();
 		})
 
 .controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, AuthService) {
@@ -891,11 +875,33 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
+var initWechatJSAPI = function($http) {
+	$http.get('/wechat/signature').success(function(data, status, headers, config) {
+		console.log(data);
+		wx.config({
+			appId : data['appId'],
+			timestamp : data['timestamp'],
+			nonceStr : data['nonceStr'],
+			signature : data['signature'],
+			jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline' ]
+		});
+		wx.checkJsApi({
+			jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline' ],
+			success : function(res) {
+				console.log(res);
+			}
+		});
+		wx.ready(function() {
+
+		});
+	});
+}
+
 var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, product) {
 	if ($cookies.get('dajia_user_id') == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
-		popWarning('叫人打价信息准备完毕。请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
+		popWarning('分享信息准备完毕。请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
