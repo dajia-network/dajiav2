@@ -111,7 +111,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					});
 			$scope.progressValue = 0;
 
-			initWechatJSAPI();
+			initWechatJSAPI($http);
 		})
 
 .controller(
@@ -333,7 +333,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 		};
 		shareProduct($rootScope, $cookies, $timeout, $ionicLoading, product);
 	}
-	initWechatJSAPI();
+	initWechatJSAPI($http);
 })
 
 .controller(
@@ -355,7 +355,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.share = function() {
 				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product);
 			}
-			initWechatJSAPI();
+			initWechatJSAPI($http);
 		})
 
 .controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, AuthService) {
