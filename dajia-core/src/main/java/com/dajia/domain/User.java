@@ -1,5 +1,6 @@
 package com.dajia.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -65,4 +66,14 @@ public class User extends BaseModel {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user", fetch = FetchType.LAZY)
 	public List<UserContact> userContacts;
+
+	public List<UserContact> getUserContacts() {
+		List<UserContact> ucList = new ArrayList<UserContact>();
+		for (UserContact uc : this.userContacts) {
+			if ("Y".equalsIgnoreCase(uc.isActive)) {
+				ucList.add(uc);
+			}
+		}
+		return ucList;
+	}
 }

@@ -128,6 +128,8 @@ public class OrderService {
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
 		ov.userContact = userContactRepo.findOne(order.contactId);
-		ov.userName = ov.userContact.user.userName;
+		if (null != ov.userContact) {
+			ov.userName = ov.userContact.user.userName;
+		}
 	}
 }

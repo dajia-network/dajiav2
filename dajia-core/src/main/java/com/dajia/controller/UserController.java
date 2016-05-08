@@ -196,9 +196,9 @@ public class UserController extends BaseController {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		UserUtils.copyUserProperties(user, loginUser);
 		// get default userContact
-		if (null != user.userContacts && user.userContacts.size() > 0) {
-			loginUser.userContacts = user.userContacts;
-			for (UserContact uc : user.userContacts) {
+		if (null != user.getUserContacts() && user.getUserContacts().size() > 0) {
+			loginUser.userContacts = user.getUserContacts();
+			for (UserContact uc : user.getUserContacts()) {
 				if (("Y").equals(uc.isDefault)) {
 					UserContact userContactInfo = new UserContact();
 					try {
@@ -290,7 +290,7 @@ public class UserController extends BaseController {
 		if (null == user) {
 			return null;
 		}
-		return user.userContacts;
+		return user.getUserContacts();
 	}
 
 	@RequestMapping("/user/contact/{contactId}")
@@ -302,7 +302,7 @@ public class UserController extends BaseController {
 	@RequestMapping(value = "/user/contact/remove/{contactId}", method = RequestMethod.GET)
 	public void removeContact(@PathVariable("contactId") Long contactId, HttpServletRequest request,
 			HttpServletResponse response) {
-		userContactRepo.delete(contactId);
+		userContactService.removeUserContact(contactId);
 	}
 
 	@RequestMapping(value = "/user/contact/{contactId}", method = RequestMethod.POST)

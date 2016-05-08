@@ -51,12 +51,20 @@ public class UserContactService {
 	}
 
 	public void markDefaultUserContact(Long contactId, User user) {
-		for (UserContact uc : user.userContacts) {
+		for (UserContact uc : user.getUserContacts()) {
 			if (contactId.longValue() == uc.contactId.longValue()) {
 				uc.isDefault = "Y";
 			} else {
 				uc.isDefault = "N";
 			}
+			userContactRepo.save(uc);
+		}
+	}
+
+	public void removeUserContact(Long contactId) {
+		UserContact uc = userContactRepo.findOne(contactId);
+		if (null != uc) {
+			uc.isActive = "N";
 			userContactRepo.save(uc);
 		}
 	}
