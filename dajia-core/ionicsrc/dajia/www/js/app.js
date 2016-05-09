@@ -57,10 +57,26 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'ProdDetailCtrl'
 			}
 		}
+	}).state('tab.prod-detail-rec', {
+		url : '/prod/:pid/:refuserid',
+		views : {
+			'tab-prod' : {
+				templateUrl : 'templates/prod-detail.html',
+				controller : 'ProdDetailCtrl'
+			}
+		}
 	})
 
 	.state('tab.prod-order', {
-		url : '/prod/order/:pid',
+		url : '/prodorder/:pid',
+		views : {
+			'tab-prod' : {
+				templateUrl : 'templates/order.html',
+				controller : 'OrderCtrl'
+			}
+		}
+	}).state('tab.prod-order-rec', {
+		url : '/prodorder/:pid/:refuserid',
 		views : {
 			'tab-prod' : {
 				templateUrl : 'templates/order.html',

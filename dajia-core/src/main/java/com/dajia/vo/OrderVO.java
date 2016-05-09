@@ -27,12 +27,18 @@ public class OrderVO {
 	public BigDecimal unitPrice;
 
 	public BigDecimal totalPrice;
-	
+
 	public BigDecimal postFee;
 
 	public String logisticAgent;
 
 	public String logisticTrackingId;
+
+	public String contactName;
+
+	public String contactMobile;
+
+	public String address;
 
 	public String comments;
 

@@ -55,9 +55,11 @@ public class OrderService {
 		order.productId = productId;
 
 		order.userId = 0L;
-		order.contactId = 0L;
 		order.paymentId = 0L;
 		order.payType = 0;
+		order.contactName = "";
+		order.contactMobile = "";
+		order.address = "";
 		orderRepo.save(order);
 		productService.productSold(order);
 		return order;
@@ -93,6 +95,9 @@ public class OrderService {
 		ov.totalPrice = order.totalPrice;
 		ov.logisticAgent = order.logisticAgent;
 		ov.logisticTrackingId = order.logisticTrackingId;
+		ov.contactName = order.contactName;
+		ov.contactMobile = order.contactMobile;
+		ov.address = order.address;
 		ov.comments = order.comments;
 		ov.userComments = order.userComments;
 		ov.orderStatus = order.orderStatus;
@@ -127,9 +132,9 @@ public class OrderService {
 	}
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
-		ov.userContact = userContactRepo.findOne(order.contactId);
-		if (null != ov.userContact) {
-			ov.userName = ov.userContact.user.userName;
+		User user = userRepo.findByUserId(order.userId);
+		if (null != user) {
+			ov.userName = user.userName;
 		}
 	}
 }

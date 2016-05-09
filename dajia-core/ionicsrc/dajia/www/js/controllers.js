@@ -56,7 +56,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					$window.location.href = '#/tab/prod/order/' + $stateParams.pid;
+					var refUserId = $stateParams.refuserid;
+					if (null != refUserId && refUserId.length > 0) {
+						$window.location.href = '#/tab/prodorder/' + $stateParams.pid + '/' + refUserId;
+					} else {
+						$window.location.href = '#/tab/prodorder/' + $stateParams.pid;
+					}
 				}
 			}
 
@@ -898,14 +903,15 @@ var initWechatJSAPI = function($http) {
 }
 
 var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, product) {
-	if ($cookies.get('dajia_user_id') == null) {
+	var userId = $cookies.get('dajia_user_id');
+	if (userId == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		popWarning('分享信息准备完毕。请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
@@ -919,7 +925,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		});
 		wx.onMenuShareTimeline({
 			title : '打价网 - ' + product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');

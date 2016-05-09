@@ -77,7 +77,10 @@ public class OrderController extends BaseController {
 		order.orderDate = new Date();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.userId = user.userId;
-		order.contactId = uc.contactId;
+		order.contactName = uc.contactName;
+		order.contactMobile = uc.contactMobile;
+		order.address = uc.province.locationValue + " " + uc.city.locationValue + " " + uc.district.locationValue + " "
+				+ uc.address1;
 		order.paymentId = 0L;
 		order.trackingId = CommonUtils.genTrackingId(user.userId);
 		orderRepo.save(order);

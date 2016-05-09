@@ -25,9 +25,6 @@ public class UserOrder extends BaseModel {
 	@Column(name = "product_id", nullable = false)
 	public Long productId;
 
-	@Column(name = "user_contact_id", nullable = false)
-	public Long contactId;
-
 	@Column(name = "user_id", nullable = false)
 	public Long userId;
 
@@ -70,6 +67,15 @@ public class UserOrder extends BaseModel {
 	@Column(name = "logistic_tracking_id")
 	public String logisticTrackingId;
 
+	@Column(name = "contact_name", nullable = false)
+	public String contactName;
+
+	@Column(name = "contact_mobile", nullable = false)
+	public String contactMobile;
+
+	@Column(name = "address")
+	public String address;
+	
 	@Column(name = "pingxx_charge")
 	public String pingxxCharge;
 
