@@ -252,4 +252,23 @@ public class CommonUtils {
 		}
 		return returnStr;
 	}
+
+	public enum RewardStatus {
+		PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消");
+		private Integer key;
+		private String value;
+
+		private RewardStatus(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 }

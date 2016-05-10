@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_reward (
     user_id BIGINT(25) NOT NULL,
     product_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,
-    reward_ratio NUMERIC(10,2),
+    reward_ratio int(11),
     reward_status INT,
 	reward_date TIMESTAMP NULL,
 	expired_date TIMESTAMP NULL,

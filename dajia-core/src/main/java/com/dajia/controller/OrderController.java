@@ -74,6 +74,7 @@ public class OrderController extends BaseController {
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
 		order.userComments = orderVO.userComments;
+		order.refUserId = orderVO.refUserId;
 		order.orderDate = new Date();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.userId = user.userId;

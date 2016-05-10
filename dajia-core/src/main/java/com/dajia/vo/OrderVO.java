@@ -20,6 +20,8 @@ public class OrderVO {
 
 	public Long productId;
 
+	public Long refUserId;
+	
 	public Long userId;
 
 	public String userName;

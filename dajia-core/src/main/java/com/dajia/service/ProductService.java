@@ -24,9 +24,11 @@ import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserReward;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserOrderRepo;
+import com.dajia.repository.UserRewardRepo;
 import com.dajia.util.ApiKdtUtils;
 import com.dajia.util.ApiWdUtils;
 import com.dajia.util.CommonUtils;
@@ -52,6 +54,9 @@ public class ProductService {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private UserRewardRepo rewardRepo;
 
 	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
@@ -195,7 +200,7 @@ public class ProductService {
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
 		return products;
 	}
-	
+
 	public List<Product> loadAllValidProductsWithPrices() {
 		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
 				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
@@ -216,8 +221,10 @@ public class ProductService {
 
 	@Transactional
 	public void productSold(UserOrder order) {
+		// update order
 		order.orderStatus = OrderStatus.PAIED.getKey();
 		orderRepo.save(order);
+		// update product price
 		Product product = productRepo.findOne(order.productId);
 		if (null != product) {
 			if (null == product.sold) {
@@ -228,6 +235,13 @@ public class ProductService {
 			calcCurrentPrice(product);
 		}
 		productRepo.save(product);
+		// generate reward
+		UserReward ur = new UserReward();
+		ur.order_id = order.orderId;
+		ur.userId = order.refUserId;
+		ur.rewardRatio = 10 * order.quantity;
+		ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+		rewardRepo.save(ur);
 	}
 
 	public List<Product> loadFavProductsByUserId(Long userId) {

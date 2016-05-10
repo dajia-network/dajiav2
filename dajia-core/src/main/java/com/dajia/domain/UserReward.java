@@ -26,12 +26,12 @@ public class UserReward extends BaseModel {
 
 	@Column(name = "order_id")
 	public Long order_id;
-	
+
 	@Column(name = "reward_status")
 	public Integer rewardStatus;
 
 	@Column(name = "reward_ratio")
-	public BigDecimal rewardRatio;
+	public Integer rewardRatio;
 
 	@Column(name = "reward_date")
 	public Date rewardDate;

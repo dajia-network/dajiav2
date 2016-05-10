@@ -210,6 +210,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 
 				$scope.order.userContact = $scope.userContact;
+				var refUserId = $stateParams.refuserid;
+				if (null != refUserId) {
+					$scope.order.refUserId = refUserId;
+				}
 
 				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 					var charge = data;
