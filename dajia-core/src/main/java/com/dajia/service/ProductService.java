@@ -238,6 +238,7 @@ public class ProductService {
 		// generate reward
 		UserReward ur = new UserReward();
 		ur.order_id = order.orderId;
+		ur.productId = order.productId;
 		ur.userId = order.refUserId;
 		ur.rewardRatio = 10 * order.quantity;
 		ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();

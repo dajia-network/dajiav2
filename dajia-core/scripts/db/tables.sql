@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	order_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     tracking_id VARCHAR(50) NULL,
 	product_id BIGINT(25) NOT NULL,
-	user_contact_id BIGINT(25) NOT NULL,
+	user_contact_id BIGINT(25) NULL,
     user_id BIGINT(25) NOT NULL,
     ref_user_id BIGINT(25) NOT NULL,
     payment_id BIGINT(25) NOT NULL,
