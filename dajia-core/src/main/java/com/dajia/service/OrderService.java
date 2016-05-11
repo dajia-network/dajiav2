@@ -43,6 +43,9 @@ public class OrderService {
 	@Autowired
 	private ProductService productService;
 
+	@Autowired
+	private RewardService rewardService;
+
 	@Transactional
 	public UserOrder generateRobotOrder(Long productId, Integer quantity) {
 		Product product = productRepo.findOne(productId);
@@ -132,9 +135,14 @@ public class OrderService {
 	}
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
+		ov.product = productService.loadProductDetail(order.productId);
+		if (null != ov.product) {
+			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
+		}
 		User user = userRepo.findByUserId(order.userId);
 		if (null != user) {
 			ov.userName = user.userName;
 		}
+		ov.refUsers = rewardService.getRefUsers(ov.orderId).values();
 	}
 }

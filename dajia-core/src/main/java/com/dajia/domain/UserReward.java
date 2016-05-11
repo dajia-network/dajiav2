@@ -25,7 +25,10 @@ public class UserReward extends BaseModel {
 	public Long productId;
 
 	@Column(name = "order_id")
-	public Long order_id;
+	public Long orderId;
+
+	@Column(name = "order_user_id")
+	public Long orderUserId;
 
 	@Column(name = "reward_status")
 	public Integer rewardStatus;

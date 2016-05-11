@@ -109,10 +109,6 @@ public class AdminController extends BaseController {
 			return null;
 		}
 		OrderVO ov = orderService.convertOrderVO(order);
-		ov.product = productService.loadProductDetail(order.productId);
-		if (null != ov.product) {
-			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
-		}
 		orderService.fillOrderVO(ov, order);
 		return ov;
 	}

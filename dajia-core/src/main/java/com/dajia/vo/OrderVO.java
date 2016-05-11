@@ -1,6 +1,7 @@
 package com.dajia.vo;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 
 import com.dajia.domain.Product;
@@ -21,7 +22,7 @@ public class OrderVO {
 	public Long productId;
 
 	public Long refUserId;
-	
+
 	public Long userId;
 
 	public String userName;
@@ -53,4 +54,6 @@ public class OrderVO {
 	public UserContact userContact;
 
 	public Product product;
+
+	public Collection<LoginUserVO> refUsers;
 }

@@ -74,7 +74,9 @@ public class OrderController extends BaseController {
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
 		order.userComments = orderVO.userComments;
-		order.refUserId = orderVO.refUserId;
+		if (orderVO.refUserId.longValue() != order.userId.longValue()) {
+			order.refUserId = orderVO.refUserId;
+		}
 		order.orderDate = new Date();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.userId = user.userId;
@@ -165,10 +167,6 @@ public class OrderController extends BaseController {
 			return null;
 		}
 		OrderVO ov = orderService.convertOrderVO(order);
-		ov.product = productService.loadProductDetail(order.productId);
-		if (null != ov.product) {
-			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
-		}
 		orderService.fillOrderVO(ov, order);
 		return ov;
 	}
