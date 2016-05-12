@@ -236,14 +236,16 @@ public class ProductService {
 		}
 		productRepo.save(product);
 		// generate reward
-		UserReward ur = new UserReward();
-		ur.orderId = order.orderId;
-		ur.productId = order.productId;
-		ur.userId = order.refUserId;
-		ur.rewardRatio = 10 * order.quantity;
-		ur.expiredDate = product.expiredDate;
-		ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
-		rewardRepo.save(ur);
+		if (null != order.refUserId) {
+			UserReward ur = new UserReward();
+			ur.orderId = order.orderId;
+			ur.productId = order.productId;
+			ur.userId = order.refUserId;
+			ur.rewardRatio = 10 * order.quantity;
+			ur.expiredDate = product.expiredDate;
+			ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+			rewardRepo.save(ur);
+		}
 	}
 
 	public List<Product> loadFavProductsByUserId(Long userId) {

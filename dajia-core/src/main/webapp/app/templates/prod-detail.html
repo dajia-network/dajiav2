@@ -18,7 +18,8 @@
 					&nbsp;<span class="ori_price">{{product.originalPrice}} 元</span>
 					<br/>
 					库存 {{product.stock}}<br/>
-					下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!
+					<div ng-if="product.stock>0">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
+					<div ng-if="product.stock<=0">该商品已售罄。</div>
 				</p>
 				<div>
 				    <uib-progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
@@ -29,7 +30,7 @@
 			<div class="item tabs tabs-secondary tabs-icon-left">
 				<a class="tab-item" ng-click="add2Fav()"> <i class="icon ion-star" id="fav_icon"></i> {{favBtnTxt}}
 				</a> 
-				<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 分享
+				<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 叫人打价
 				</a>
 			</div>
 		</div>
@@ -44,8 +45,11 @@
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
-			<div class="col noPadding text-right">
-				<button ng-if="product.productStatus==2" class="button button-sqr button-assertive" ng-click="buyNow()">立即打价</button>
+			<div ng-if="product.productStatus==2&&product.stock>0" class="col noPadding text-right">
+				<button class="button button-sqr button-assertive" ng-click="buyNow()">立即打价</button>
+			</div>
+			<div ng-if="product.productStatus!=2||product.stock<=0" class="col text-right">
+				<span ng-if="product.productStatus==2&&product.stock<=0" class="assertive">打价结束</span>
 				<span ng-if="product.productStatus!=2" class="assertive">产品已失效</span>
 			</div>
 		</div>

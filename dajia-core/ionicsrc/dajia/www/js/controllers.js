@@ -4,7 +4,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			var loadProducts = function() {
 				popLoading($ionicLoading);
 				return $http.get('/products/').success(function(data, status, headers, config) {
-					console.log(data);
 					$scope.products = data;
 					$scope.$broadcast('scroll.refreshComplete');
 					$ionicLoading.hide();
@@ -218,30 +217,33 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 					var charge = data;
 					console.log(charge);
-					pingpp.createPayment(charge, function(result, error) {
-						if (result == "success") {
-							// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
-							// extra
-							// 中对应的URL 跳转。
-							console.log('wechat pay success');
-							popWarning('支付成功', $timeout, $ionicLoading);
-							$timeout(function() {
-								$window.location.href = "#/tab/prod";
-								$window.location.href = "#/tab/prog";
-							}, 1000);
-						} else if (result == "fail") {
-							// charge 不正确或者微信公众账号支付失败时会在此处返回
-							console.log('payment failed');
-							popWarning('支付出错', $timeout, $ionicLoading);
-							for (key in error) {
-								alert(key + ': ' + error[key]);
+					if (null == charge || charge.length == 0) {
+						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
+					} else {
+						pingpp.createPayment(charge, function(result, error) {
+							if (result == "success") {
+								// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
+								// extra
+								// 中对应的URL 跳转。
+								console.log('wechat pay success');
+								popWarning('支付成功', $timeout, $ionicLoading);
+								$timeout(function() {
+									$window.location.href = "#/tab/prod";
+									$window.location.href = "#/tab/prog";
+								}, 1000);
+							} else if (result == "fail") {
+								// charge 不正确或者微信公众账号支付失败时会在此处返回
+								console.log('payment failed');
+								popWarning('支付出错', $timeout, $ionicLoading);
+								for (key in error) {
+									alert(key + ': ' + error[key]);
+								}
+							} else if (result == "cancel") {
+								// 微信公众账号支付取消支付
+								console.log('wechat pay cancelled');
 							}
-						} else if (result == "cancel") {
-							// 微信公众账号支付取消支付
-							console.log('wechat pay cancelled');
-						}
-					});
-
+						});
+					}
 				}).error(function(data, status, headers, config) {
 					console.log('request failed...');
 				});
@@ -249,6 +251,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.add = function() {
 				if ($scope.order.quantity >= quota && quota != null) {
 					popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
+					return;
+				}
+				if ($scope.order.quantity > $scope.orderItem.stock) {
+					popWarning('该产品库存不足', $timeout, $ionicLoading);
 					return;
 				}
 				$scope.order.quantity += 1;
