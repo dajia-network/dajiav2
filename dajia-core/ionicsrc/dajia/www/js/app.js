@@ -111,6 +111,22 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'MineCtrl'
 			}
 		}
+	}).state('tab.mine-orders', {
+		url : '/mine/orders',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/order-list.html',
+				controller : 'MyOrdersCtrl'
+			}
+		}
+	}).state('tab.mine-order', {
+		url : '/mine/order/:orderId',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/order-detail.html',
+				controller : 'MyOrderDetailCtrl'
+			}
+		}
 	}).state('tab.mine-fav', {
 		url : '/mine/fav',
 		views : {

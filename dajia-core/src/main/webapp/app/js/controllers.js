@@ -382,6 +382,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.headImgUrl = data.headImgUrl;
 		});
 	}
+	$scope.myOrders = function() {
+		if (loginUser == null) {
+			$rootScope.$broadcast('event:auth-loginRequired');
+		} else {
+			$window.location.href = '#/tab/mine/orders';
+		}
+	}
 	$scope.myFav = function() {
 		if (loginUser == null) {
 			$rootScope.$broadcast('event:auth-loginRequired');
@@ -426,12 +433,45 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	});
 })
 
+.controller('MyOrdersCtrl', function($scope, $http, $window, $stateParams, $ionicLoading) {
+	console.log('我的订单...');
+	var loadOrders = function() {
+		popLoading($ionicLoading);
+		return $http.get('/user/myorders').success(function(data, status, headers, config) {
+			$scope.myOrders = data;
+			$scope.$broadcast('scroll.refreshComplete');
+			$ionicLoading.hide();
+		});
+	}
+	loadOrders();
+	$scope.doRefresh = function() {
+		loadOrders();
+	};
+	$scope.orderDetail = function(orderId) {
+		$window.location.href = '#/tab/mine/order/' + orderId;
+	}
+})
+
+.controller('MyOrderDetailCtrl', function($scope, $http, $stateParams, $ionicLoading) {
+	console.log('我的订单详情...');
+	var loadOrderDetail = function() {
+		popLoading($ionicLoading);
+		return $http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.order = data;
+			$ionicLoading.hide();
+		});
+	}
+	loadOrderDetail();
+})
+
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
 	console.log('我的收藏...');
 	var loadFavs = function() {
 		popLoading($ionicLoading);
 		return $http.get('/user/favourites').success(function(data, status, headers, config) {
 			$scope.products = data;
+			$scope.$broadcast('scroll.refreshComplete');
 			$ionicLoading.hide();
 		});
 	}

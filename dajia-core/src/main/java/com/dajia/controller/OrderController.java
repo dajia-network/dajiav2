@@ -174,4 +174,24 @@ public class OrderController extends BaseController {
 		orderService.fillOrderVO(ov, order);
 		return ov;
 	}
+
+	@RequestMapping("/user/myorders")
+	public List<OrderVO> myOrders(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.CLOSED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.CANCELLED.getKey());
+		List<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(user.userId,
+				orderStatusList);
+		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
+		for (UserOrder order : orders) {
+			OrderVO ov = orderService.convertOrderVO(order);
+			ov.product = productService.loadProductDetail(order.productId);
+			orderVoList.add(ov);
+		}
+		return orderVoList;
+	}
 }
