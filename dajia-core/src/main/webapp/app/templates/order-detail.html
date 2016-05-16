@@ -1,4 +1,4 @@
-<ion-view view-title="订单#{{order.trackingId}}" hide-nav-bar="true">
+<ion-view view-title="订单详情" hide-nav-bar="true">
 	<ion-nav-bar class="bar-dark">
 		<ion-nav-back-button>
 			返回
@@ -7,23 +7,12 @@
 	<ion-content>
   		<div class="card">
 			<div class="item item-divider">
-			  订单状态
+				#{{order.trackingId}}
 			</div>
 			<div class="item item-text-wrap">
-			</div>
-		</div>
-  		<div class="card">
-			<div class="item item-divider">
-			  物流信息
-			</div>
-			<div class="item item-text-wrap">
-			</div>
-		</div>
-  		<div class="card">
-			<div class="item item-divider">
-			  支付金额
-			</div>
-			<div class="item item-text-wrap">
+				<p>订单状态：{{order.orderStatus4Show}}</p>
+				<p>支付金额：{{order.totalPrice}}元</p>
+				<p ng-if="logisticTrackingId!=null">物流信息</p>
 			</div>
 		</div>
   		<div class="card">
@@ -34,6 +23,7 @@
 		    <p>收货人: {{order.contactName}}</p>
 		    <p>手机: {{order.contactMobile}}</p>
 		    <p>收货地址: {{order.address}}</p>
+		    <p>备注: {{order.userComments}}</p>
 		  </div>
 		</div>
   		<div class="card">
@@ -41,6 +31,10 @@
 			  结算
 			</div>
 			<div class="item item-text-wrap">
+				<p>商品总价：{{order.unitPrice*order.quantity}}元</p>
+				<p>运费：<span ng-if="order.postFee==null">0</span>{{order.postFee}}元</p>
+				<p>打价退款：{{order.product.priceOff*order.quantity}}元</p>
+				<p>推荐奖励：</p>
 			</div>
 		</div>
 	</ion-content>

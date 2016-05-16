@@ -96,6 +96,7 @@ public class OrderService {
 		ov.orderDate = order.orderDate;
 		ov.unitPrice = order.unitPrice;
 		ov.totalPrice = order.totalPrice;
+		ov.postFee = order.postFee;
 		ov.logisticAgent = order.logisticAgent;
 		ov.logisticTrackingId = order.logisticTrackingId;
 		ov.contactName = order.contactName;
