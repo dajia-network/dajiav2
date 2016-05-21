@@ -20,10 +20,9 @@ public class ScheduledTasks {
 	private ProductService productService;
 
 	@Scheduled(cron = "0 */5 *  * * * ")
-	public void reportCurrentByCron() {
+	public void productUpdateByCron() {
 		Date currentDate = new Date();
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
 		productService.updateProductExpireStatus(currentDate);
 	}
-
 }

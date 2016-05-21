@@ -2,6 +2,7 @@ package com.dajia.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -27,6 +28,7 @@ import com.dajia.repository.UserRepo;
 import com.dajia.service.ApiService;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
+import com.dajia.service.RefundService;
 import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
@@ -34,6 +36,7 @@ import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
 import com.pingplusplus.model.Event;
+import com.pingplusplus.model.Refund;
 import com.pingplusplus.model.Webhooks;
 
 @RestController
@@ -57,6 +60,9 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private ApiService apiService;
+
+	@Autowired
+	private RefundService refundService;
 
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public Charge submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
@@ -88,7 +94,6 @@ public class OrderController extends BaseController {
 		order.contactMobile = uc.contactMobile;
 		order.address = uc.province.locationValue + " " + uc.city.locationValue + " " + uc.district.locationValue + " "
 				+ uc.address1;
-		order.paymentId = 0L;
 		order.trackingId = CommonUtils.genTrackingId(user.userId);
 		orderRepo.save(order);
 
@@ -133,10 +138,20 @@ public class OrderController extends BaseController {
 				String trackingId = charge.getOrderNo();
 				logger.info("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
 				UserOrder order = orderRepo.findByTrackingId(trackingId);
+				order.paymentId = charge.getId();
 				productService.productSold(order);
 			}
 			response.setStatus(200);
 		} else if ("refund.succeeded".equals(event.getType())) {
+			Object obj = Webhooks.getObject(eventString);
+			if (obj instanceof Refund) {
+				logger.info("webhooks 发送了 Refund");
+				Refund refund = (Refund) obj;
+				String trackingId = refund.getOrderNo();
+				Integer amount = refund.getAmount();
+				logger.info("退款状态：" + refund.getStatus() + " 订单号：" + trackingId);
+				refundService.createRefund(trackingId, new BigDecimal(amount / 100));
+			}
 			response.setStatus(200);
 		} else {
 			response.setStatus(500);

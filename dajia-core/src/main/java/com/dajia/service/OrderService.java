@@ -2,6 +2,7 @@ package com.dajia.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
+import com.pingplusplus.exception.PingppException;
 
 @Service
 public class OrderService {
@@ -46,6 +48,9 @@ public class OrderService {
 	@Autowired
 	private RewardService rewardService;
 
+	@Autowired
+	private ApiService apiService;
+
 	@Transactional
 	public UserOrder generateRobotOrder(Long productId, Integer quantity) {
 		Product product = productRepo.findOne(productId);
@@ -58,7 +63,6 @@ public class OrderService {
 		order.productId = productId;
 
 		order.userId = 0L;
-		order.paymentId = 0L;
 		order.payType = 0;
 		order.contactName = "";
 		order.contactMobile = "";
@@ -137,13 +141,36 @@ public class OrderService {
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
 		ov.product = productService.loadProductDetail(order.productId);
-		if (null != ov.product) {
-			ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
-		}
 		User user = userRepo.findByUserId(order.userId);
 		if (null != user) {
 			ov.userName = user.userName;
 		}
 		ov.refUsers = rewardService.getRefUsers(ov.orderId).values();
+		ov.rewardValue = rewardService.calculateRewardValue(ov.userId, ov.product);
+		ov.refundValue = calculateRefundValue(ov.product, order);
+	}
+
+	private BigDecimal calculateRefundValue(Product product, UserOrder userOrder) {
+		return userOrder.unitPrice.add(product.currentPrice.negate()).multiply(new BigDecimal(userOrder.quantity));
+	}
+
+	public void orderRefund(Long productId) {
+		Product product = productService.loadProductDetail(productId);
+		List<UserOrder> orderList = orderRepo.findByProductIdAndIsActiveOrderByOrderDateDesc(productId,
+				CommonUtils.ActiveStatus.YES.toString());
+		if (null != orderList) {
+			for (UserOrder userOrder : orderList) {
+				if (null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
+					BigDecimal refundValue = calculateRefundValue(product, userOrder);
+					try {
+						apiService.applyRefund(userOrder.paymentId, refundValue);
+						logger.info("order " + userOrder.trackingId + " refund applied for "
+								+ refundValue.doubleValue());
+					} catch (PingppException e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
 	}
 }

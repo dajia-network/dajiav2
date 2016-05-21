@@ -31,6 +31,8 @@ public class CommonUtils {
 	public static final String cache_name_binding_code = "sms_binding_code";
 
 	public static final String global_cache_key = "global_cache";
+	
+	public static final Integer reward_delay_days = 7;
 
 	public static String stringCharsetConvert(String str, String charset) {
 		ByteBuffer bf = Charset.forName(charset).encode(str);

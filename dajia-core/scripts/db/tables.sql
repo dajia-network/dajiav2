@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	user_contact_id BIGINT(25) NULL,
     user_id BIGINT(25) NOT NULL,
     ref_user_id BIGINT(25) NOT NULL,
-    payment_id BIGINT(25) NOT NULL,
+    payment_id VARCHAR(50) NULL,
     quantity INT,
     unit_price NUMERIC(10,2),
     total_price NUMERIC(10,2),
@@ -185,4 +185,18 @@ CREATE TABLE IF NOT EXISTS dajia.user_reward (
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(reward_id)
+);
+
+DROP TABLE IF EXISTS dajia.user_refund;
+CREATE TABLE IF NOT EXISTS dajia.user_refund (
+	refund_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NOT NULL,
+    product_id BIGINT(25) NOT NULL,
+    order_id BIGINT(25) NOT NULL,
+    refund_value NUMERIC(10,2),
+	refund_date TIMESTAMP NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(refund_id)
 );

@@ -1,6 +1,5 @@
 package com.dajia.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;

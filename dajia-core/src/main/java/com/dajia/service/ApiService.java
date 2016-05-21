@@ -3,6 +3,7 @@ package com.dajia.service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import com.kdt.api.KdtApiClient;
 import com.pingplusplus.Pingpp;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
+import com.pingplusplus.model.Refund;
 
 @Service
 public class ApiService {
@@ -228,7 +230,8 @@ public class ApiService {
 		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
 		Map<String, Object> chargeParams = new HashMap<String, Object>();
 		chargeParams.put("order_no", order.trackingId);
-		chargeParams.put("amount", 1);// hard code as 1 during testing phase
+		Integer amt = order.totalPrice.multiply(new BigDecimal(100)).intValue();
+		chargeParams.put("amount", 2);// hard code as 1 during testing phase
 		Map<String, String> app = new HashMap<String, String>();
 		app.put("id", "app_DifDeLWjfrz9Wf9y");
 		chargeParams.put("app", app);
@@ -253,4 +256,19 @@ public class ApiService {
 		logger.info("Ping++ Charge: " + charge.toString());
 		return charge;
 	}
+
+	public Refund applyRefund(String chargeId, BigDecimal refundValue) throws PingppException {
+		Charge ch = Charge.retrieve(chargeId);
+		if (null != ch) {
+			Map<String, Object> refundMap = new HashMap<String, Object>();
+			Integer amt = refundValue.multiply(new BigDecimal(100)).intValue();
+			refundMap.put("amount", 1);// hard code as 1 during testing phase
+			refundMap.put("description", "打价差额退款");
+			Refund re = ch.getRefunds().create(refundMap);
+			return re;
+		} else {
+			return null;
+		}
+	}
+
 }

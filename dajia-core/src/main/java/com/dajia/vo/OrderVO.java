@@ -33,6 +33,10 @@ public class OrderVO {
 
 	public BigDecimal postFee;
 
+	public BigDecimal rewardValue;
+	
+	public BigDecimal refundValue;
+
 	public String logisticAgent;
 
 	public String logisticTrackingId;

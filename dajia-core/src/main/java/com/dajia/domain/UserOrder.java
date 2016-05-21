@@ -32,7 +32,7 @@ public class UserOrder extends BaseModel {
 	public Long refUserId;
 
 	@Column(name = "payment_id", nullable = false)
-	public Long paymentId;
+	public String paymentId;
 
 	@Column(name = "quantity")
 	public Integer quantity;
