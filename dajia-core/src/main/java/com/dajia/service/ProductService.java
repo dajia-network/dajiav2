@@ -12,7 +12,6 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
-import org.apache.http.client.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,6 +242,7 @@ public class ProductService {
 			ur.orderId = order.orderId;
 			ur.productId = order.productId;
 			ur.userId = order.refUserId;
+			ur.orderUserId = order.userId;
 			ur.rewardRatio = 10 * order.quantity;
 			ur.expiredDate = product.expiredDate;
 			ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();

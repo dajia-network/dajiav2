@@ -33,8 +33,8 @@
 			<div class="item item-text-wrap">
 				<p>商品总价：{{order.unitPrice*order.quantity}}元</p>
 				<p>运费：<span ng-if="order.postFee==null">0</span>{{order.postFee}}元</p>
-				<p>打价退款：{{order.refundValue}}元</p>
-				<p>推荐奖励：{{order.rewardValue}}元 (同款产品只能享受一次推荐奖励)</p>
+				<p>打价退款：{{order.refundValue.toFixed(2)}}元</p>
+				<p>推荐奖励：{{order.rewardValue.toFixed(2)}}元 (同款产品只能享受一次推荐奖励)</p>
 			</div>
 		</div>
 	</ion-content>
