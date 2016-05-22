@@ -1,6 +1,7 @@
 package com.dajia.util;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 
 import org.junit.Test;
 
@@ -16,5 +17,12 @@ public class TestUtils {
 		String password = "654321";
 		password = EncodingUtil.encode("SHA1", password);
 		System.out.println(password);
+	}
+
+	@Test
+	public void test2() {
+		Integer value = 1;
+		BigDecimal bigVal = new BigDecimal(new Double(value) / 100);
+		System.out.println(bigVal.doubleValue());
 	}
 }

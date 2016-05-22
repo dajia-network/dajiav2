@@ -29,6 +29,7 @@ import com.dajia.service.ApiService;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.RefundService;
+import com.dajia.service.RewardService;
 import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
@@ -63,6 +64,9 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private RefundService refundService;
+
+	@Autowired
+	private RewardService rewardService;
 
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public Charge submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
@@ -149,8 +153,15 @@ public class OrderController extends BaseController {
 				Refund refund = (Refund) obj;
 				String chargeId = refund.getCharge();
 				Integer amount = refund.getAmount();
-				logger.info("退款状态：" + refund.getStatus() + " ChargeId：" + chargeId);
-				refundService.createRefund(chargeId, new BigDecimal(amount / 100));
+				String desc = refund.getDescription();
+				logger.info("退款类型：" + desc + " 退款状态：" + refund.getStatus() + " ChargeId：" + chargeId);
+				if (desc.equalsIgnoreCase(CommonUtils.refund_type_refund)) {
+					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
+							CommonUtils.RefundType.REFUND.getKey());
+				} else {
+					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
+							CommonUtils.RefundType.REWARD.getKey());
+				}
 			}
 			response.setStatus(200);
 		} else {

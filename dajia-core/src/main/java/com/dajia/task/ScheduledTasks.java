@@ -25,4 +25,11 @@ public class ScheduledTasks {
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
 		productService.updateProductExpireStatus(currentDate);
 	}
+	
+	@Scheduled(cron = "0 */10 *  * * * ")
+	public void checkRewardByCron() {
+		Date currentDate = new Date();
+		logger.info("Reward check job starts at: " + dateFormat.format(currentDate));
+		
+	}
 }

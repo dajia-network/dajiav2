@@ -33,4 +33,7 @@ public class UserRefund extends BaseModel {
 	@Column(name = "refund_value")
 	public BigDecimal refundValue;
 
+	@Column(name = "refund_type")
+	public Integer refundType;
+
 }

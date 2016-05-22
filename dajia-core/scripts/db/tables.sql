@@ -194,6 +194,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_refund (
     product_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,
     refund_value NUMERIC(10,2),
+    refund_type INT,
 	refund_date TIMESTAMP NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,

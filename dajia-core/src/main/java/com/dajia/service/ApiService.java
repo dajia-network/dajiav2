@@ -257,14 +257,14 @@ public class ApiService {
 		return charge;
 	}
 
-	public Refund applyRefund(String chargeId, BigDecimal refundValue) throws PingppException {
+	public Refund applyRefund(String chargeId, BigDecimal refundValue, String refundType) throws PingppException {
 		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
 		Charge ch = Charge.retrieve(chargeId);
 		if (null != ch) {
 			Map<String, Object> refundMap = new HashMap<String, Object>();
 			Integer amt = refundValue.multiply(new BigDecimal(100)).intValue();
 			refundMap.put("amount", 1);// hard code as 1 during testing phase
-			refundMap.put("description", "打价差额退款");
+			refundMap.put("description", refundType);
 			Refund re = ch.getRefunds().create(refundMap);
 			return re;
 		} else {

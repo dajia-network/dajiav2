@@ -151,7 +151,7 @@ public class OrderService {
 			ov.userName = user.userName;
 		}
 		ov.refUsers = rewardService.getRefUsers(ov.orderId).values();
-		ov.rewardValue = rewardService.calculateRewardValue(ov.userId, ov.product);
+		ov.rewardValue = rewardService.calculateRewards(ov.userId, ov.product);
 		ov.refundValue = calculateRefundValue(ov.product, order);
 	}
 
@@ -165,13 +165,13 @@ public class OrderService {
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
 				if (null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
-					List<UserRefund> refunds = refundRepo.findByOrderIdAndIsActive(userOrder.orderId,
-							CommonUtils.ActiveStatus.YES.toString());
+					List<UserRefund> refunds = refundRepo.findByOrderIdAndRefundTypeAndIsActive(userOrder.orderId,
+							CommonUtils.RefundType.REFUND.getKey(), CommonUtils.ActiveStatus.YES.toString());
 					// one order one refund only
 					if (refunds.isEmpty()) {
 						BigDecimal refundValue = calculateRefundValue(product, userOrder);
 						try {
-							apiService.applyRefund(userOrder.paymentId, refundValue);
+							apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
 							logger.info("order " + userOrder.trackingId + " refund applied for "
 									+ refundValue.doubleValue());
 						} catch (PingppException e) {

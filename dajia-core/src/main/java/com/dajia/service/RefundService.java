@@ -27,13 +27,14 @@ public class RefundService {
 	@Autowired
 	private ProductRepo productRepo;
 
-	public void createRefund(String chargeId, BigDecimal refundValue) {
+	public void createRefund(String chargeId, BigDecimal refundValue, Integer refundType) {
 		UserOrder order = orderRepo.findByPaymentId(chargeId);
 		UserRefund refund = new UserRefund();
 		refund.productId = order.productId;
 		refund.orderId = order.orderId;
 		refund.userId = order.userId;
 		refund.refundValue = refundValue;
+		refund.refundType = refundType;
 		refund.refundDate = new Date();
 		refundRepo.save(refund);
 	}

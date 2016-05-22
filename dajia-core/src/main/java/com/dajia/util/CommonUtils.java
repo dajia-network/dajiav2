@@ -31,8 +31,11 @@ public class CommonUtils {
 	public static final String cache_name_binding_code = "sms_binding_code";
 
 	public static final String global_cache_key = "global_cache";
-	
+
 	public static final Integer reward_delay_days = 7;
+
+	public static final String refund_type_refund = "Refund";
+	public static final String refund_type_reward = "Reward";
 
 	public static String stringCharsetConvert(String str, String charset) {
 		ByteBuffer bf = Charset.forName(charset).encode(str);
@@ -261,6 +264,25 @@ public class CommonUtils {
 		private String value;
 
 		private RewardStatus(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum RefundType {
+		REFUND(0, "差价退款"), REWARD(1, "推荐奖励");
+		private Integer key;
+		private String value;
+
+		private RefundType(Integer key, String value) {
 			this.key = key;
 			this.value = value;
 		}
