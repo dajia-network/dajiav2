@@ -48,6 +48,9 @@ public class ProductService {
 	private ApiService apiService;
 
 	@Autowired
+	private OrderService orderService;
+
+	@Autowired
 	private ProductRepo productRepo;
 
 	@Autowired
@@ -275,6 +278,7 @@ public class ProductService {
 				logger.info("Product " + product.name + " (" + product.productId + ") is expired.");
 				product.productStatus = ProductStatus.EXPIRED.getKey();
 				productRepo.save(product);
+				orderService.orderRefund(product);
 			}
 		}
 	}

@@ -154,9 +154,8 @@ public class OrderService {
 		return userOrder.unitPrice.add(product.currentPrice.negate()).multiply(new BigDecimal(userOrder.quantity));
 	}
 
-	public void orderRefund(Long productId) {
-		Product product = productService.loadProductDetail(productId);
-		List<UserOrder> orderList = orderRepo.findByProductIdAndIsActiveOrderByOrderDateDesc(productId,
+	public void orderRefund(Product product) {
+		List<UserOrder> orderList = orderRepo.findByProductIdAndIsActiveOrderByOrderDateDesc(product.productId,
 				CommonUtils.ActiveStatus.YES.toString());
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
