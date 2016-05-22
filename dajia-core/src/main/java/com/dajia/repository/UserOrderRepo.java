@@ -12,6 +12,8 @@ public interface UserOrderRepo extends CrudRepository<UserOrder, Long> {
 
 	public UserOrder findByTrackingId(String trackingId);
 
+	public UserOrder findByPaymentId(String paymentId);
+
 	public List<UserOrder> findByUserIdAndOrderStatusInOrderByOrderDateDesc(Long userId, List<Integer> orderStatusList);
 
 	public List<UserOrder> findByUserIdOrderByOrderDateDesc(Long userId);

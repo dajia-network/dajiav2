@@ -27,8 +27,8 @@ public class RefundService {
 	@Autowired
 	private ProductRepo productRepo;
 
-	public void createRefund(String trackingId, BigDecimal refundValue) {
-		UserOrder order = orderRepo.findByTrackingId(trackingId);
+	public void createRefund(String chargeId, BigDecimal refundValue) {
+		UserOrder order = orderRepo.findByPaymentId(chargeId);
 		UserRefund refund = new UserRefund();
 		refund.productId = order.productId;
 		refund.orderId = order.orderId;

@@ -16,9 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserRefund;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
+import com.dajia.repository.UserRefundRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
@@ -41,6 +43,9 @@ public class OrderService {
 
 	@Autowired
 	private UserContactRepo userContactRepo;
+
+	@Autowired
+	private UserRefundRepo refundRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -160,13 +165,18 @@ public class OrderService {
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
 				if (null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
-					BigDecimal refundValue = calculateRefundValue(product, userOrder);
-					try {
-						apiService.applyRefund(userOrder.paymentId, refundValue);
-						logger.info("order " + userOrder.trackingId + " refund applied for "
-								+ refundValue.doubleValue());
-					} catch (PingppException e) {
-						logger.error(e.getMessage(), e);
+					List<UserRefund> refunds = refundRepo.findByOrderIdAndIsActive(userOrder.orderId,
+							CommonUtils.ActiveStatus.YES.toString());
+					// one order one refund only
+					if (refunds.isEmpty()) {
+						BigDecimal refundValue = calculateRefundValue(product, userOrder);
+						try {
+							apiService.applyRefund(userOrder.paymentId, refundValue);
+							logger.info("order " + userOrder.trackingId + " refund applied for "
+									+ refundValue.doubleValue());
+						} catch (PingppException e) {
+							logger.error(e.getMessage(), e);
+						}
 					}
 				}
 			}

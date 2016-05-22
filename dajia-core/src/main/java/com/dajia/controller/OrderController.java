@@ -147,10 +147,10 @@ public class OrderController extends BaseController {
 			if (obj instanceof Refund) {
 				logger.info("webhooks 发送了 Refund");
 				Refund refund = (Refund) obj;
-				String trackingId = refund.getOrderNo();
+				String chargeId = refund.getCharge();
 				Integer amount = refund.getAmount();
-				logger.info("退款状态：" + refund.getStatus() + " 订单号：" + trackingId);
-				refundService.createRefund(trackingId, new BigDecimal(amount / 100));
+				logger.info("退款状态：" + refund.getStatus() + " ChargeId：" + chargeId);
+				refundService.createRefund(chargeId, new BigDecimal(amount / 100));
 			}
 			response.setStatus(200);
 		} else {
