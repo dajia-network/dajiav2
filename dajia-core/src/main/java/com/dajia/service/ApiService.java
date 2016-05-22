@@ -258,6 +258,7 @@ public class ApiService {
 	}
 
 	public Refund applyRefund(String chargeId, BigDecimal refundValue) throws PingppException {
+		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
 		Charge ch = Charge.retrieve(chargeId);
 		if (null != ch) {
 			Map<String, Object> refundMap = new HashMap<String, Object>();
