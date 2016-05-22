@@ -84,7 +84,7 @@ public class OrderController extends BaseController {
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
 		order.userComments = orderVO.userComments;
-		if (orderVO.refUserId.longValue() != order.userId.longValue()) {
+		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
 			order.refUserId = orderVO.refUserId;
 		}
 		order.orderDate = new Date();
