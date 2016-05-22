@@ -1,6 +1,7 @@
 package com.dajia.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -74,30 +75,38 @@ public class RewardService {
 	}
 
 	public List<UserReward> getPendingPayRewards() {
-		return rewardRepo.findByRewardtDateAfterAndRewardStatusAndIsActive(new Date(),
+		return rewardRepo.findByRewardDateAfterAndRewardStatusAndIsActive(new Date(),
 				CommonUtils.RewardStatus.PENDING.getKey(), CommonUtils.ActiveStatus.YES.toString());
 	}
 
 	public void payRewards() {
 		List<UserReward> rewards = this.getPendingPayRewards();
-		Map<String, Integer> userProductMap = new HashMap<String, Integer>();
+		Map<String, List<UserReward>> userProductMap = new HashMap<String, List<UserReward>>();
 		for (UserReward userReward : rewards) {
 			String key = userReward.userId + "-" + userReward.productId;
+			List<UserReward> rwList = new ArrayList<UserReward>();
 			if (userProductMap.containsKey(key)) {
-				userProductMap.put(key, userProductMap.get(key) + userReward.rewardRatio);
+				rwList = userProductMap.get(key);
+				rwList.add(userReward);
+				userProductMap.put(key, rwList);
 			} else {
-				userProductMap.put(key, userReward.rewardRatio);
+				rwList.add(userReward);
+				userProductMap.put(key, rwList);
 			}
 		}
-		Iterator<Map.Entry<String, Integer>> iter = userProductMap.entrySet().iterator();
+		Iterator<Map.Entry<String, List<UserReward>>> iter = userProductMap.entrySet().iterator();
 		while (iter.hasNext()) {
-			Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) iter.next();
+			Map.Entry<String, List<UserReward>> entry = (Map.Entry<String, List<UserReward>>) iter.next();
 			String key = entry.getKey();
 			String keyArray[] = key.split("-");
 			if (keyArray.length == 2) {
 				Long userId = Long.valueOf(keyArray[0]);
 				Long productId = Long.valueOf(keyArray[1]);
-				Integer ratioSum = entry.getValue();
+				List<UserReward> rwList = entry.getValue();
+				Integer ratioSum = 0;
+				for (UserReward rw : rwList) {
+					ratioSum = ratioSum + rw.rewardRatio;
+				}
 				BigDecimal rewardValue = this.calculateSingleReward(productId, ratioSum);
 				UserOrder userOrder = orderRepo.findByUserIdAndProductIdAndOrderStatusAndIsActive(userId, productId,
 						CommonUtils.OrderStatus.DELEVRIED.getKey(), CommonUtils.ActiveStatus.YES.toString());
@@ -108,6 +117,15 @@ public class RewardService {
 								+ rewardValue.doubleValue());
 					} catch (PingppException e) {
 						logger.error(e.getMessage(), e);
+						for (UserReward rw : rwList) {
+							rw.rewardStatus = CommonUtils.RewardStatus.ERROR.getKey();
+							rewardRepo.save(rw);
+						}
+					}
+					// mark reward finish logic - performance to be improved
+					for (UserReward rw : rwList) {
+						rw.rewardStatus = CommonUtils.RewardStatus.COMPLETED.getKey();
+						rewardRepo.save(rw);
 					}
 				}
 			} else {

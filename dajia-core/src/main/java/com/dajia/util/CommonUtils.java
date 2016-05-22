@@ -259,7 +259,7 @@ public class CommonUtils {
 	}
 
 	public enum RewardStatus {
-		PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消");
+		PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消"), ERROR(3, "出错");
 		private Integer key;
 		private String value;
 
