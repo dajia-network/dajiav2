@@ -10,6 +10,6 @@ import com.dajia.domain.UserReward;
 public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
 	public List<UserReward> findByUserIdAndProductIdAndRewardStatus(Long userId, Long productId, Integer rewardStatus);
 
-	public List<UserReward> findByRewardDateAfterAndRewardStatusAndIsActive(Date rewardDate, Integer rewardStatus,
+	public List<UserReward> findByRewardDateBeforeAndRewardStatusAndIsActive(Date rewardDate, Integer rewardStatus,
 			String isActive);
 }

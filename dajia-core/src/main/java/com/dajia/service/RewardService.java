@@ -75,7 +75,7 @@ public class RewardService {
 	}
 
 	public List<UserReward> getPendingPayRewards() {
-		return rewardRepo.findByRewardDateAfterAndRewardStatusAndIsActive(new Date(),
+		return rewardRepo.findByRewardDateBeforeAndRewardStatusAndIsActive(new Date(),
 				CommonUtils.RewardStatus.PENDING.getKey(), CommonUtils.ActiveStatus.YES.toString());
 	}
 
