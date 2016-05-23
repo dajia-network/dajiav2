@@ -106,6 +106,9 @@ public class RewardService {
 				Integer ratioSum = 0;
 				for (UserReward rw : rwList) {
 					ratioSum = ratioSum + rw.rewardRatio;
+					if (ratioSum > 100) {
+						ratioSum = 100;
+					}
 				}
 				BigDecimal rewardValue = this.calculateSingleReward(productId, ratioSum);
 				UserOrder userOrder = orderRepo.findByUserIdAndProductIdAndOrderStatusAndIsActive(userId, productId,

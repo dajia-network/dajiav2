@@ -170,12 +170,15 @@ public class OrderService {
 					// one order one refund only
 					if (refunds.isEmpty()) {
 						BigDecimal refundValue = calculateRefundValue(product, userOrder);
-						try {
-							apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
-							logger.info("order " + userOrder.trackingId + " refund applied for "
-									+ refundValue.doubleValue());
-						} catch (PingppException e) {
-							logger.error(e.getMessage(), e);
+						if (refundValue.compareTo(new BigDecimal(0)) <= 0) {
+							try {
+								apiService
+										.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
+								logger.info("order " + userOrder.trackingId + " refund applied for "
+										+ refundValue.doubleValue());
+							} catch (PingppException e) {
+								logger.error(e.getMessage(), e);
+							}
 						}
 					}
 				}
