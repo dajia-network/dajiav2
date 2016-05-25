@@ -52,6 +52,8 @@ public class OrderVO {
 	public String userComments;
 
 	public String orderStatus4Show;
+	
+	public String logisticAgent4Show;
 
 	public Date orderDate;
 

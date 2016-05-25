@@ -295,4 +295,23 @@ public class CommonUtils {
 			return value;
 		}
 	}
+
+	public enum LogisticAgent {
+		SHUNFENG("shunfeng", "顺丰快递"), TIANTIAN("tiantian", "天天快递");
+		private String key;
+		private String value;
+
+		private LogisticAgent(String key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 }

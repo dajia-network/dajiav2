@@ -184,6 +184,13 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 .controller('OrderDetailCtrl', function($scope, $http, $routeParams, $route) {
 	console.log('OrderDetailCtrl...');
 	$scope.order = {};
+	$scope.logisticAgents = [ {
+		code : 'tiantian',
+		name : '天天快递'
+	}, {
+		code : 'shunfeng',
+		name : '顺丰快递'
+	} ];
 	$http.get('/admin/order/' + $routeParams.orderId).success(function(data, status, headers, config) {
 		$scope.order = data;
 		console.log($scope.order);
@@ -192,12 +199,13 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	});
 	$scope.deliverOrder = function(orderId) {
 		$scope.alerts = [];
-		if (!$scope.order.logisticTrackingId) {
+		if (!$scope.order.logisticTrackingId || !$scope.order.logisticAgent) {
 			$scope.missLogistic();
 		} else {
 			$http.get('/admin/order/' + $routeParams.orderId + '/deliver', {
 				params : {
-					lti : $scope.order.logisticTrackingId
+					lti : $scope.order.logisticTrackingId,
+					la : $scope.order.logisticAgent
 				}
 			}).success(function(data, status, headers, config) {
 				$scope.order = data;
@@ -220,7 +228,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	$scope.missLogistic = function() {
 		$scope.alerts.push({
 			type : 'danger',
-			msg : '请填写快递单号'
+			msg : '请填写快递相关信息'
 		});
 	}
 	$scope.closeAlert = function(index) {

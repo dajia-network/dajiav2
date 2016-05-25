@@ -116,8 +116,10 @@ public class AdminController extends BaseController {
 	@RequestMapping("/admin/order/{orderId}/deliver")
 	public UserOrder deliverOrder(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
 		String logisticTrackingId = request.getParameter("lti");
+		String logisticAgent = request.getParameter("la");
 		UserOrder order = orderRepo.findOne(orderId);
 		order.orderStatus = OrderStatus.DELEVERING.getKey();
+		order.logisticAgent = logisticAgent;
 		order.logisticTrackingId = logisticTrackingId;
 		orderRepo.save(order);
 		return order;

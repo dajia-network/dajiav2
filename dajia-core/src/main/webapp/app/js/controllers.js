@@ -452,18 +452,24 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	}
 })
 
-.controller('MyOrderDetailCtrl', function($scope, $http, $stateParams, $ionicLoading) {
-	console.log('我的订单详情...');
-	var loadOrderDetail = function() {
-		popLoading($ionicLoading);
-		return $http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
-			console.log(data);
-			$scope.order = data;
-			$ionicLoading.hide();
-		});
-	}
-	loadOrderDetail();
-})
+.controller(
+		'MyOrderDetailCtrl',
+		function($scope, $http, $stateParams, $window, $ionicLoading) {
+			console.log('我的订单详情...');
+			var loadOrderDetail = function() {
+				popLoading($ionicLoading);
+				return $http.get('/user/order/' + $stateParams.orderId).success(
+						function(data, status, headers, config) {
+							console.log(data);
+							$scope.order = data;
+							$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type="
+									+ data.logisticAgent + "&postid=" + data.logisticTrackingId + "&callbackurl="
+									+ $window.location.href;
+							$ionicLoading.hide();
+						});
+			}
+			loadOrderDetail();
+		})
 
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
 	console.log('我的收藏...');

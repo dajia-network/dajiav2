@@ -24,6 +24,7 @@ import com.dajia.repository.UserRefundRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
+import com.dajia.util.CommonUtils.LogisticAgent;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
@@ -95,6 +96,16 @@ public class OrderService {
 		return returnStr;
 	}
 
+	public String getLogisticAgentStr(String key) {
+		String returnStr = null;
+		if (key.equals(LogisticAgent.TIANTIAN.getKey())) {
+			returnStr = LogisticAgent.TIANTIAN.getValue();
+		} else if (key.equals(LogisticAgent.SHUNFENG.getKey())) {
+			returnStr = LogisticAgent.SHUNFENG.getValue();
+		}
+		return returnStr;
+	}
+
 	public OrderVO convertOrderVO(UserOrder order) {
 		OrderVO ov = new OrderVO();
 		ov.orderId = order.orderId;
@@ -115,6 +126,7 @@ public class OrderService {
 		ov.userComments = order.userComments;
 		ov.orderStatus = order.orderStatus;
 		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
+		ov.logisticAgent4Show = this.getLogisticAgentStr(order.logisticAgent);
 		return ov;
 	}
 

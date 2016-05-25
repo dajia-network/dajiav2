@@ -12,8 +12,16 @@
 			<div class="item item-text-wrap">
 				<p>订单状态：{{order.orderStatus4Show}}</p>
 				<p>支付金额：{{order.totalPrice}}元</p>
-				<p ng-if="logisticTrackingId!=null">物流信息</p>
 			</div>
+		</div>
+  		<div class="card" ng-if="order.logisticTrackingId!=null">
+		  <div class="item item-divider">
+		    物流信息
+		  </div>
+		  <div class="item item-text-wrap">
+		    <p>快递公司: {{order.logisticAgent4Show}}</p>
+		    <p>快递单号: <a ng-href="{{checkLogisticUrl}}">{{order.logisticTrackingId}}</a></p>
+		  </div>
 		</div>
   		<div class="card">
 		  <div class="item item-divider">
