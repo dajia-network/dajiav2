@@ -963,7 +963,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
