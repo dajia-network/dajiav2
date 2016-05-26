@@ -21,6 +21,7 @@ import com.dajia.repository.PropertyRepo;
 import com.dajia.service.ApiService;
 import com.dajia.service.UserService;
 import com.dajia.util.ApiWechatUtils;
+import com.dajia.util.CommonUtils;
 import com.dajia.util.RandomString;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
@@ -42,7 +43,8 @@ public class WechatController extends BaseController {
 
 	@RequestMapping("/wechat/login")
 	public String wechatLogin(HttpServletRequest request) {
-		String url = apiService.getWechatOauthUrl();
+		String refUserId = request.getParameter(CommonUtils.ref_user_id);
+		String url = apiService.getWechatOauthUrl(refUserId);
 		return "redirect:" + url;
 	}
 
@@ -50,7 +52,8 @@ public class WechatController extends BaseController {
 	public String wechatOauth(HttpServletRequest request) {
 		LoginUserVO loginUser = null;
 		String code = request.getParameter("code");
-		// String state = request.getParameter("state");
+		String refUserId = request.getParameter("state");
+		logger.info("get state from Wechat: " + refUserId);
 		Map<String, String> userInfoMap = null;
 		try {
 			userInfoMap = apiService.loadWechatUserInfo(code);
@@ -67,7 +70,7 @@ public class WechatController extends BaseController {
 			loginUser = UserUtils.addLoginSession(loginUser, user, request);
 			request.getSession().setAttribute("oauthLogin", "success");
 		}
-		return "redirect:app/index.html";
+		return "redirect:app/index.html?refUserId=" + refUserId;
 	}
 
 	@RequestMapping("/wechat")

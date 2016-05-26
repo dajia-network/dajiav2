@@ -37,6 +37,8 @@ public class CommonUtils {
 	public static final String refund_type_refund = "Refund";
 	public static final String refund_type_reward = "Reward";
 
+	public static final String ref_user_id = "refUserId";
+
 	public static String stringCharsetConvert(String str, String charset) {
 		ByteBuffer bf = Charset.forName(charset).encode(str);
 		return new String(bf.array());

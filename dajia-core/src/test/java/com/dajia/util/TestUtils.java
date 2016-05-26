@@ -25,4 +25,10 @@ public class TestUtils {
 		BigDecimal bigVal = new BigDecimal(new Double(value) / 100);
 		System.out.println(bigVal.doubleValue());
 	}
+
+	@Test
+	public void test3() {
+		String str = "redirect:app/index.html#" + null;
+		System.out.println(str);
+	}
 }

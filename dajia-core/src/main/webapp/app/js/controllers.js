@@ -55,12 +55,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					var refUserId = $stateParams.refuserid;
-					if (null != refUserId && refUserId.length > 0) {
-						$window.location.href = '#/tab/prodorder/' + $stateParams.pid + '/' + refUserId;
-					} else {
-						$window.location.href = '#/tab/prodorder/' + $stateParams.pid;
-					}
+					$window.location.href = '#/tab/prodorder/' + $stateParams.pid;
 				}
 			}
 
@@ -209,7 +204,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 
 				$scope.order.userContact = $scope.userContact;
-				var refUserId = $stateParams.refuserid;
+				var refUserId = getURLParameter('refUserId');
+				console.log(refUserId);
 				if (null != refUserId) {
 					$scope.order.refUserId = refUserId;
 				}
@@ -981,7 +977,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		});
 		wx.onMenuShareTimeline({
 			title : '打价网 - ' + product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
@@ -994,4 +990,10 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			}
 		});
 	}
+}
+
+var getURLParameter = function(name) {
+	return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [ , "" ])[1]
+			.replace(/\+/g, '%20'))
+			|| null;
 }

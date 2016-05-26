@@ -98,10 +98,12 @@ public class OrderService {
 
 	public String getLogisticAgentStr(String key) {
 		String returnStr = null;
-		if (key.equals(LogisticAgent.TIANTIAN.getKey())) {
-			returnStr = LogisticAgent.TIANTIAN.getValue();
-		} else if (key.equals(LogisticAgent.SHUNFENG.getKey())) {
-			returnStr = LogisticAgent.SHUNFENG.getValue();
+		if (null != key) {
+			if (key.equals(LogisticAgent.TIANTIAN.getKey())) {
+				returnStr = LogisticAgent.TIANTIAN.getValue();
+			} else if (key.equals(LogisticAgent.SHUNFENG.getKey())) {
+				returnStr = LogisticAgent.SHUNFENG.getValue();
+			}
 		}
 		return returnStr;
 	}

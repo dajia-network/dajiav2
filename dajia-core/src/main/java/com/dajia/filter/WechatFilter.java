@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.dajia.domain.User;
 import com.dajia.service.UserService;
+import com.dajia.util.CommonUtils;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 
@@ -64,7 +65,12 @@ public class WechatFilter implements Filter {
 					}
 				}
 				if (!isCookieLogin) {
-					response.sendRedirect("/wechat/login");
+					String refUserId = request.getParameter(CommonUtils.ref_user_id);
+					if (null != refUserId && !refUserId.isEmpty()) {
+						response.sendRedirect("/wechat/login?refUserId=" + refUserId);
+					} else {
+						response.sendRedirect("/wechat/login");
+					}
 					return;
 				}
 			}
