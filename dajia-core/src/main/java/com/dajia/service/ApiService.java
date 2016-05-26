@@ -152,7 +152,9 @@ public class ApiService {
 
 	public String getWechatOauthUrl(String refUserId) {
 		String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
-		return ApiWechatUtils.getOauthUrl(appkey, refUserId);
+		String oauthUrl = ApiWechatUtils.getOauthUrl(appkey, refUserId);
+		logger.info("oauthUrl: " + oauthUrl);
+		return oauthUrl;
 	}
 
 	public String getWechatAccessToken() throws JsonParseException, JsonMappingException, IOException {

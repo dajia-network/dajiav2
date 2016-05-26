@@ -44,6 +44,7 @@ public class WechatController extends BaseController {
 	@RequestMapping("/wechat/login")
 	public String wechatLogin(HttpServletRequest request) {
 		String refUserId = request.getParameter(CommonUtils.ref_user_id);
+		logger.info("refUserId:" + refUserId);
 		String url = apiService.getWechatOauthUrl(refUserId);
 		return "redirect:" + url;
 	}

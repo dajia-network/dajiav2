@@ -66,6 +66,7 @@ public class WechatFilter implements Filter {
 				}
 				if (!isCookieLogin) {
 					String refUserId = request.getParameter(CommonUtils.ref_user_id);
+					logger.info("refUserId:" + refUserId);
 					if (null != refUserId && !refUserId.isEmpty()) {
 						response.sendRedirect("/wechat/login?refUserId=" + refUserId);
 					} else {
