@@ -197,8 +197,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+				
+				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
@@ -608,8 +608,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+				
+				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
@@ -652,8 +652,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 	$scope.getBindingCode = function() {
 		var mobile = $scope.user.mobile;
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+		
+		if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
@@ -714,8 +714,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 			$scope.getSigninCode = function() {
 				var mobile = $scope.login.mobile;
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+				
+				if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
@@ -793,8 +793,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 	$scope.getSignupCode = function() {
 		var mobile = $scope.signup.mobile;
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+		
+		if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
@@ -813,8 +813,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (mobile.length != 11 || !mobileReg.test(mobile)) {
+		
+		if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
