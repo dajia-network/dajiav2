@@ -46,7 +46,10 @@
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
 			<div ng-if="product.productStatus==2&&product.stock>0" class="col noPadding text-right">
-				<button class="button button-sqr button-assertive" ng-click="buyNow()">立即打价</button>
+				<button class="button backBtn" ng-click="back()">
+					<i class="icon ion-chevron-left"></i> 返回
+				</button>
+				<button class="button button-sqr button-assertive submitBtn" ng-click="buyNow()">立即打价</button>
 			</div>
 			<div ng-if="product.productStatus!=2||product.stock<=0" class="col text-right">
 				<span ng-if="product.productStatus==2&&product.stock<=0" class="assertive">打价结束</span>

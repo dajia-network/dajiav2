@@ -134,7 +134,7 @@ button img {
 	font-size: 70%;
 }
 
-.center-avatar >img:first-child {
+.center-avatar>img:first-child {
     top: 16px;
     left: 16px;
     max-width: 40px;
@@ -144,6 +144,18 @@ button img {
     border-radius: 50%;
 }
 
+.center-avatar.margin>img:first-child {
+	margin: 6px;
+}
+
 .item-select-full select {
     max-width: 100%;
+}
+
+.button.backBtn {
+	width: 25%;
+}
+
+.button.submitBtn {
+	width: 73%;
 }

@@ -94,7 +94,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.prog-detail', {
-		url : '/prog/:orderId',
+		url : '/prog/:trackingId',
 		views : {
 			'tab-prog' : {
 				templateUrl : 'templates/prog-detail.html',
@@ -120,7 +120,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-order', {
-		url : '/mine/order/:orderId',
+		url : '/mine/order/:trackingId',
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/order-detail.html',

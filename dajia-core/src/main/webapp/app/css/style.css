@@ -151,3 +151,11 @@ button img {
 .item-select-full select {
     max-width: 100%;
 }
+
+.button.backBtn {
+	width: 25%;
+}
+
+.button.submitBtn {
+	width: 73%;
+}

@@ -55,12 +55,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					var refUserId = $stateParams.refuserid;
-					if (null != refUserId && refUserId.length > 0) {
-						$window.location.href = '#/tab/prodorder/' + $stateParams.pid + '/' + refUserId;
-					} else {
-						$window.location.href = '#/tab/prodorder/' + $stateParams.pid;
-					}
+					$window.location.href = '#/tab/prodorder/' + $stateParams.pid;
 				}
 			}
 
@@ -91,11 +86,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					}
 				}
 			}
-
 			$scope.share = function() {
 				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.product);
 			}
-
+			$scope.back = function() {
+				$window.location.replace('#/tab/prod');
+			}
 			popLoading($ionicLoading);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
@@ -202,14 +198,15 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+
+				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
 
 				$scope.order.userContact = $scope.userContact;
-				var refUserId = $stateParams.refuserid;
+				var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
+				console.log(refUserId);
 				if (null != refUserId) {
 					$scope.order.refUserId = refUserId;
 				}
@@ -228,8 +225,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 								console.log('wechat pay success');
 								popWarning('支付成功', $timeout, $ionicLoading);
 								$timeout(function() {
-									$window.location.href = "#/tab/prod";
-									$window.location.href = "#/tab/prog";
+									if (null != charge['order_no']) {
+										$window.location.href = "#/tab/prog/" + charge['order_no'];
+									} else {
+										$window.location.href = "#/tab/prog";
+									}
 								}, 1000);
 							} else if (result == "fail") {
 								// charge 不正确或者微信公众账号支付失败时会在此处返回
@@ -338,8 +338,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	$scope.goHome = function() {
 		$window.location.href = "#/tab/prod";
 	}
-	$scope.progressDetail = function(orderId) {
-		$window.location.href = "#/tab/prog/" + orderId;
+	$scope.progressDetail = function(trackingId) {
+		$window.location.href = "#/tab/prog/" + trackingId;
 	}
 	$scope.share = function(productId, productName) {
 		var product = {
@@ -353,11 +353,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 .controller(
 		'ProgDetailCtrl',
-		function($scope, $rootScope, $cookies, $stateParams, $http, $ionicModal, $timeout, $ionicLoading) {
+		function($scope, $rootScope, $cookies, $stateParams, $http, $window, $ionicModal, $timeout, $ionicLoading) {
 			console.log('进度详情...')
 			$scope.order = {};
 			popLoading($ionicLoading);
-			$http.get('/user/order/' + $stateParams.orderId).success(
+			$http.get('/user/order/' + $stateParams.trackingId).success(
 					function(data, status, headers, config) {
 						console.log(data);
 						var order = data;
@@ -369,6 +369,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
 				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product);
+			}
+			$scope.back = function() {
+				$window.location.replace('#/tab/prog');
 			}
 			initWechatJSAPI($http);
 		})
@@ -447,23 +450,29 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	$scope.doRefresh = function() {
 		loadOrders();
 	};
-	$scope.orderDetail = function(orderId) {
-		$window.location.href = '#/tab/mine/order/' + orderId;
+	$scope.orderDetail = function(trackingId) {
+		$window.location.href = '#/tab/mine/order/' + trackingId;
 	}
 })
 
-.controller('MyOrderDetailCtrl', function($scope, $http, $stateParams, $ionicLoading) {
-	console.log('我的订单详情...');
-	var loadOrderDetail = function() {
-		popLoading($ionicLoading);
-		return $http.get('/user/order/' + $stateParams.orderId).success(function(data, status, headers, config) {
-			console.log(data);
-			$scope.order = data;
-			$ionicLoading.hide();
-		});
-	}
-	loadOrderDetail();
-})
+.controller(
+		'MyOrderDetailCtrl',
+		function($scope, $http, $stateParams, $window, $ionicLoading) {
+			console.log('我的订单详情...');
+			var loadOrderDetail = function() {
+				popLoading($ionicLoading);
+				return $http.get('/user/order/' + $stateParams.trackingId).success(
+						function(data, status, headers, config) {
+							console.log(data);
+							$scope.order = data;
+							$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type="
+									+ data.logisticAgent + "&postid=" + data.logisticTrackingId + "&callbackurl="
+									+ $window.location.href;
+							$ionicLoading.hide();
+						});
+			}
+			loadOrderDetail();
+		})
 
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
 	console.log('我的收藏...');
@@ -606,8 +615,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (mobile.length != 11 || !mobileReg.test(mobile)) {
+
+				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
@@ -650,8 +659,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 	$scope.getBindingCode = function() {
 		var mobile = $scope.user.mobile;
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+
+		if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
@@ -712,8 +721,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 			$scope.getSigninCode = function() {
 				var mobile = $scope.login.mobile;
-				var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-				if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+
+				if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
@@ -791,8 +800,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 	$scope.getSignupCode = function() {
 		var mobile = $scope.signup.mobile;
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+
+		if (!mobile || mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
@@ -811,8 +820,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			popWarning('请输入完整信息', $timeout, $ionicLoading);
 			return;
 		}
-		var mobileReg = /^(((13[0-9]{1})|159|153)+\d{8})$/;
-		if (mobile.length != 11 || !mobileReg.test(mobile)) {
+
+		if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
@@ -961,7 +970,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
@@ -975,7 +984,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		});
 		wx.onMenuShareTimeline({
 			title : '打价网 - ' + product.name,
-			link : 'http://51daja.com/app/index.html#/tab/prod/' + product.productId + '/' + userId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');

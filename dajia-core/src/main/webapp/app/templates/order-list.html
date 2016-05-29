@@ -11,7 +11,7 @@
 		  <div class="item item-divider">
 		    订单号：{{order.trackingId}}
 		  </div>
-		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.orderId)">
+		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
 		    <img ng-src="{{order.product.imgUrl}}" >
 	        <p>{{order.product.name}}</p>
 	        <p>数量x{{order.quantity}}  实付: {{order.totalPrice}}元</p>

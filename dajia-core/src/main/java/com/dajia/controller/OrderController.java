@@ -190,9 +190,9 @@ public class OrderController extends BaseController {
 		return progressList;
 	}
 
-	@RequestMapping("/user/order/{oid}")
-	public OrderVO orderDetail(@PathVariable("oid") Long oid) {
-		UserOrder order = orderRepo.findOne(oid);
+	@RequestMapping("/user/order/{trackingId}")
+	public OrderVO orderDetail(@PathVariable("trackingId") String trackingId) {
+		UserOrder order = orderRepo.findByTrackingId(trackingId);
 		if (null == order) {
 			return null;
 		}

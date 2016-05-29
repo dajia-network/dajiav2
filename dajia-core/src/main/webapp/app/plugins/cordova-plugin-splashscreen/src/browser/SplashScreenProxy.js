@@ -26,7 +26,7 @@ var splash = null; //
 var localSplash; // the image to display
 var localSplashImage;
 var bgColor = "#ffffff";
-var imageSrc = 'img/logo.png';
+var imageSrc = 'img/loading.png';
 var splashScreenDelay = 3000; // in milliseconds
 var showSplashScreen = true; // show splashcreen by default
 var configHelper = cordova.require('cordova/confighelper');
