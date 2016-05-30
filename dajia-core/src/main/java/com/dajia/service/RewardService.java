@@ -2,6 +2,7 @@ package com.dajia.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,26 +45,46 @@ public class RewardService {
 	@Autowired
 	private ApiService apiService;
 
-	public Map<Long, LoginUserVO> getRefUsers(Long orderId) {
+	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId) {
 		UserOrder order = orderRepo.findOne(orderId);
-		Map<Long, LoginUserVO> refUserMap = new HashMap<Long, LoginUserVO>();
-		List<UserReward> rewardList = rewardRepo.findByUserIdAndProductIdAndRewardStatus(order.userId, order.productId,
-				CommonUtils.RewardStatus.PENDING.getKey());
+		Map<Long, LoginUserVO> rdUserMap = new HashMap<Long, LoginUserVO>();
+		List<UserReward> rewardList = rewardRepo.findByRefUserIdAndProductIdAndRewardStatus(order.userId,
+				order.productId, CommonUtils.RewardStatus.PENDING.getKey());
 		for (UserReward userReward : rewardList) {
 			if (null != userReward.orderUserId) {
 				User user = userRepo.findByUserId(userReward.orderUserId);
 				LoginUserVO userVO = new LoginUserVO();
 				userVO.userName = user.userName;
 				userVO.headImgUrl = user.headImgUrl;
-				refUserMap.put(user.userId, userVO);
+				rdUserMap.put(user.userId, userVO);
 			}
 		}
-		return refUserMap;
+		return rdUserMap;
+	}
+
+	public void createReward(UserOrder order, Product product) {
+		List<UserReward> rewardList = rewardRepo.findByOrderUserIdAndProductIdAndRewardStatus(order.userId,
+				product.productId, CommonUtils.RewardStatus.PENDING.getKey());
+		if (null == rewardList || rewardList.isEmpty()) {
+			UserReward ur = new UserReward();
+			ur.orderId = order.orderId;
+			ur.productId = order.productId;
+			ur.refUserId = order.refUserId;
+			ur.orderUserId = order.userId;
+			ur.rewardRatio = 10; // ignore quantity
+			ur.expiredDate = product.expiredDate;
+			ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+			Calendar c = Calendar.getInstance();
+			c.setTime(ur.expiredDate);
+			c.add(Calendar.DATE, CommonUtils.reward_delay_days);
+			ur.rewardDate = c.getTime();
+			rewardRepo.save(ur);
+		}
 	}
 
 	public BigDecimal calculateRewards(Long userId, Product product) {
 		BigDecimal rewardValue = new BigDecimal(0);
-		List<UserReward> rewardList = rewardRepo.findByUserIdAndProductIdAndRewardStatus(userId, product.productId,
+		List<UserReward> rewardList = rewardRepo.findByRefUserIdAndProductIdAndRewardStatus(userId, product.productId,
 				CommonUtils.RewardStatus.PENDING.getKey());
 		if (null != rewardList && !rewardList.isEmpty()) {
 			for (UserReward userReward : rewardList) {
@@ -83,7 +104,7 @@ public class RewardService {
 		List<UserReward> rewards = this.getPendingPayRewards();
 		Map<String, List<UserReward>> userProductMap = new HashMap<String, List<UserReward>>();
 		for (UserReward userReward : rewards) {
-			String key = userReward.userId + "-" + userReward.productId;
+			String key = userReward.refUserId + "-" + userReward.productId;
 			List<UserReward> rwList = new ArrayList<UserReward>();
 			if (userProductMap.containsKey(key)) {
 				rwList = userProductMap.get(key);

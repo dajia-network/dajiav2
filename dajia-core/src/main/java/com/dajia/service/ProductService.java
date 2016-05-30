@@ -51,6 +51,9 @@ public class ProductService {
 	private OrderService orderService;
 
 	@Autowired
+	private RewardService rewardService;
+
+	@Autowired
 	private ProductRepo productRepo;
 
 	@Autowired
@@ -239,21 +242,10 @@ public class ProductService {
 			calcCurrentPrice(product);
 		}
 		productRepo.save(product);
-		// generate reward
+
 		if (null != order.refUserId) {
-			UserReward ur = new UserReward();
-			ur.orderId = order.orderId;
-			ur.productId = order.productId;
-			ur.userId = order.refUserId;
-			ur.orderUserId = order.userId;
-			ur.rewardRatio = 10 * order.quantity;
-			ur.expiredDate = product.expiredDate;
-			ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
-			Calendar c = Calendar.getInstance();
-			c.setTime(ur.expiredDate);
-			c.add(Calendar.DATE, CommonUtils.reward_delay_days);
-			ur.rewardDate = c.getTime();
-			rewardRepo.save(ur);
+			// generate reward
+			rewardService.createReward(order, product);
 		}
 	}
 

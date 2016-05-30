@@ -61,5 +61,5 @@ public class OrderVO {
 
 	public Product product;
 
-	public Collection<LoginUserVO> refUsers;
+	public Collection<LoginUserVO> rewardSrcUsers;
 }

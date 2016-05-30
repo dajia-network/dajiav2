@@ -13,17 +13,18 @@
 		    订单号：{{order.trackingId}}
 		  </div>
 		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId)">
-		    <img ng-src="{{order.product.imgUrl}}" >
+		    <img ng-src="{{order.product.imgUrl}}" />
 	        <p>{{order.product.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
-	        <p>数量x{{order.quantity}}  出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
+	        <p>数量 x {{order.quantity}}</p>
+	        <p>出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
 	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
-	        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
-	        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
+	        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
 	        <i class="icon ion-chevron-right icon-accessory"></i>
 		  </div>
 		  <div class="item">
-		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
+		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买&nbsp;
+		    <span ng-if="order.product.productStatus==3">({{order.product.status4Show}})</span>
 		    <!-- <button class="button button-sqr-sm button-assertive" ng-click="share(order.product.productId, order.product.name)">
 				叫人打价
 			</button> -->

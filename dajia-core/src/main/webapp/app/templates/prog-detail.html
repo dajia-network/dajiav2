@@ -10,23 +10,24 @@
 		</div>
 		<div class="card">
 		  <div class="item item-divider">
-		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
+		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买&nbsp;
+		    <span ng-if="order.product.productStatus==3">({{order.product.status4Show}})</span>
 		  </div>
 		  <div class="item item-thumbnail-left" type="item-text-wrap" ng-click="progressDetail(order.orderId)">
 		    <img ng-src="{{order.product.imgUrl}}" >
 	        <p>{{order.product.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
-	        <p>数量x{{order.quantity}}  出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
+	        <p>数量 x {{order.quantity}}</p>
+	        <p>出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
 	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
-	        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
-	        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
+	        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
 		  </div>
 		  <div class="item item-text-wrap" align="center">
 		  	<span class="assertive">成功叫来1人打价，享额外折扣10%</span><br/>
 		  	<span class="assertive">成功叫来10人打价，该商品免单!</span>
 		  	<div class="row">
-		  		<div class="col-xs-2" ng-repeat="refUser in order.refUsers">
-		  			<a class="center-avatar margin"><img ng-src="{{refUser.headImgUrl}}"></img></a>
+		  		<div class="col-xs-2" ng-repeat="rewardSrcUser in order.rewardSrcUsers">
+		  			<a class="center-avatar margin"><img ng-src="{{rewardSrcUser.headImgUrl}}"></img></a>
 		  		</div>
 		  	</div>
 		  </div>

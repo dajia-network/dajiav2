@@ -18,7 +18,7 @@ public class UserReward extends BaseModel {
 	public Long rewardId;
 
 	@Column(name = "user_id")
-	public Long userId;
+	public Long refUserId;
 
 	@Column(name = "product_id")
 	public Long productId;

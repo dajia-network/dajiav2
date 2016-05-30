@@ -164,7 +164,7 @@ public class OrderService {
 		if (null != user) {
 			ov.userName = user.userName;
 		}
-		ov.refUsers = rewardService.getRefUsers(ov.orderId).values();
+		ov.rewardSrcUsers = rewardService.getRewardSrcUsers(ov.orderId).values();
 		ov.rewardValue = rewardService.calculateRewards(ov.userId, ov.product);
 		ov.refundValue = calculateRefundValue(ov.product, order);
 	}
