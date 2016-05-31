@@ -27,9 +27,16 @@ public class ApiWechatUtils {
 		user.city = CommonUtils.stringCharsetConvert(userInfoMap.get("city"), "ISO-8859-1");
 	}
 
-	public static String getOauthUrl(String appId, String refUserId) {
-		String url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
-				+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "#wechat_redirect";
+	public static String getOauthUrl(String appId, String refUserId, String productId) {
+		String url = "";
+		if (null != refUserId && !refUserId.isEmpty() && !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
+			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+					+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId
+					+ "#wechat_redirect";
+		} else {
+			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+					+ "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
+		}
 		return url;
 	}
 }

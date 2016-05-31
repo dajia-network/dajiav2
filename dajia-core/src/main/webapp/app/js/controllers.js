@@ -206,8 +206,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 				$scope.order.userContact = $scope.userContact;
 				var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
-				console.log(refUserId);
-				if (null != refUserId) {
+				var productId = DajiaGlobal.utils.getURLParameter('productId');
+				if (null != refUserId && productId == $scope.order.productId) {
+					console.log("refUserId:" + refUserId);
 					$scope.order.refUserId = refUserId;
 				}
 
@@ -972,7 +973,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
-			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
+					+ '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
@@ -986,7 +988,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		});
 		wx.onMenuShareTimeline({
 			title : '打价网 - ' + product.name,
-			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
+					+ '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');

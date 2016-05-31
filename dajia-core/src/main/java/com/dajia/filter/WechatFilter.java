@@ -66,9 +66,11 @@ public class WechatFilter implements Filter {
 				}
 				if (!isCookieLogin) {
 					String refUserId = request.getParameter(CommonUtils.ref_user_id);
-					logger.info("refUserId:" + refUserId);
-					if (null != refUserId && !refUserId.isEmpty() && !refUserId.equalsIgnoreCase("null")) {
-						response.sendRedirect("/wechat/login?refUserId=" + refUserId);
+					String productId = request.getParameter(CommonUtils.product_id);
+					logger.info("refUserId:" + refUserId + "||productId:" + productId);
+					if (null != refUserId && !refUserId.isEmpty()
+							&& !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
+						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&prodcutId=" + productId);
 					} else {
 						response.sendRedirect("/wechat/login");
 					}

@@ -206,8 +206,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 
 				$scope.order.userContact = $scope.userContact;
 				var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
-				console.log(refUserId);
-				if (null != refUserId) {
+				var productId = DajiaGlobal.utils.getURLParameter('productId');
+				if (null != refUserId && productId == $scope.order.productId) {
+					console.log("refUserId:" + refUserId);
 					$scope.order.refUserId = refUserId;
 				}
 
@@ -218,27 +219,29 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
 					} else {
 						pingpp.createPayment(charge, function(result, error) {
-							if (result == "success") {
+							if (result == 'success') {
 								// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
 								// extra
 								// 中对应的URL 跳转。
 								console.log('wechat pay success');
 								popWarning('支付成功', $timeout, $ionicLoading);
 								$timeout(function() {
-									if (null != charge['order_no']) {
+									if (null != charge['orderNo']) {
+										$window.location.replace('#/tab/prod');
 										$window.location.href = "#/tab/prog/" + charge['order_no'];
 									} else {
+										$window.location.replace('#/tab/prod');
 										$window.location.href = "#/tab/prog";
 									}
 								}, 1000);
-							} else if (result == "fail") {
+							} else if (result == 'fail') {
 								// charge 不正确或者微信公众账号支付失败时会在此处返回
 								console.log('payment failed');
 								popWarning('支付出错', $timeout, $ionicLoading);
 								for (key in error) {
 									alert(key + ': ' + error[key]);
 								}
-							} else if (result == "cancel") {
+							} else if (result == 'cancel') {
 								// 微信公众账号支付取消支付
 								console.log('wechat pay cancelled');
 							}
@@ -336,10 +339,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 		loadProgress();
 	}
 	$scope.goHome = function() {
-		$window.location.href = "#/tab/prod";
+		$window.location.href = '#/tab/prod';
 	}
 	$scope.progressDetail = function(trackingId) {
-		$window.location.href = "#/tab/prog/" + trackingId;
+		$window.location.href = '#/tab/prog/' + trackingId;
 	}
 	$scope.share = function(productId, productName) {
 		var product = {
@@ -677,7 +680,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			return;
 		}
 		$http.post('/bindMobile', $scope.user).success(function(data, status, headers, config) {
-			if (null != data && data.result == "success") {
+			if (null != data && data.result == 'success') {
 				popWarning('已成功绑定新的手机号码', $timeout, $ionicLoading);
 				$cookies.put('dajia_user_mobile', $scope.user.mobile, {
 					path : '/'
@@ -754,9 +757,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 			});
 
 			$scope.$on('event:auth-login-failed', function(e, status) {
-				var error = "登录失败";
+				var error = '登录失败';
 				if (status == 401) {
-					error = "验证码错误";
+					error = '验证码错误';
 				}
 				popWarning(error, $timeout, $ionicLoading);
 			});
@@ -837,7 +840,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 	};
 
 	$scope.$on('event:auth-signup-failed', function(e, status) {
-		var error = "注册失败，验证码错误";
+		var error = '注册失败，验证码错误';
 		popWarning(error, $timeout, $ionicLoading);
 	});
 
@@ -970,7 +973,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		wx.onMenuShareAppMessage({
 			title : '打价网',
 			desc : product.name,
-			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
+					+ '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');
@@ -984,7 +988,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		});
 		wx.onMenuShareTimeline({
 			title : '打价网 - ' + product.name,
-			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '#/tab/prod/' + product.productId,
+			link : 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
+					+ '#/tab/prod/' + product.productId,
 			imgUrl : 'http://51daja.com/app/img/logo.png',
 			trigger : function() {
 				console.log('click');

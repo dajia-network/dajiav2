@@ -44,8 +44,9 @@ public class WechatController extends BaseController {
 	@RequestMapping("/wechat/login")
 	public String wechatLogin(HttpServletRequest request) {
 		String refUserId = request.getParameter(CommonUtils.ref_user_id);
+		String productId = request.getParameter(CommonUtils.product_id);
 		logger.info("refUserId:" + refUserId);
-		String url = apiService.getWechatOauthUrl(refUserId);
+		String url = apiService.getWechatOauthUrl(refUserId, productId);
 		return "redirect:" + url;
 	}
 
@@ -53,8 +54,8 @@ public class WechatController extends BaseController {
 	public String wechatOauth(HttpServletRequest request) {
 		LoginUserVO loginUser = null;
 		String code = request.getParameter("code");
-		String refUserId = request.getParameter("state");
-		logger.info("get state from Wechat: " + refUserId);
+		String state = request.getParameter("state");
+		logger.info("get state from Wechat: " + state);
 		Map<String, String> userInfoMap = null;
 		try {
 			userInfoMap = apiService.loadWechatUserInfo(code);
@@ -71,7 +72,16 @@ public class WechatController extends BaseController {
 			loginUser = UserUtils.addLoginSession(loginUser, user, request);
 			request.getSession().setAttribute("oauthLogin", "success");
 		}
-		return "redirect:app/index.html?refUserId=" + refUserId;
+		if (null != state && !state.equalsIgnoreCase(CommonUtils.state_string)) {
+			String[] stateArray = state.split("_");
+			if (stateArray.length == 2) {
+				String refUserId = stateArray[0];
+				String productId = stateArray[1];
+				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "#/tab/prod/"
+						+ productId;
+			}
+		}
+		return "redirect:app/index.html";
 	}
 
 	@RequestMapping("/wechat")
