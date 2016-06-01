@@ -7,17 +7,17 @@ navigation history that also transitions its views in and out.
 <ion-tabs class="tabs-icon-top tabs-stable" ng-controller="TabsCtrl">
 
   <!-- Products Tab -->
-  <ion-tab title="打价首页" icon-off="ion-ios-home-outline" icon-on="ion-ios-home" href="#/tab/prod" on-select="select('product')">
+  <ion-tab title="打价首页" icon-off="ion-ios-home-outline" icon-on="ion-ios-home" href="#/tab/prod" ng-click="select('product')">
     <ion-nav-view name="tab-prod"></ion-nav-view>
   </ion-tab>
 
   <!-- Progress Tab -->
-  <ion-tab title="打价实况" icon-off="ion-ios-timer-outline" icon-on="ion-ios-timer" href="#/tab/prog" on-select="select('progress')">
+  <ion-tab title="打价实况" icon-off="ion-ios-timer-outline" icon-on="ion-ios-timer" href="#/tab/prog" ng-click="select('progress')">
     <ion-nav-view name="tab-prog"></ion-nav-view>
   </ion-tab>
 
   <!-- Mine Tab -->
-  <ion-tab title="我是打手" icon-off="ion-ios-person-outline" icon-on="ion-ios-person" href="#/tab/mine" on-select="select('mine')">
+  <ion-tab title="我是打手" icon-off="ion-ios-person-outline" icon-on="ion-ios-person" href="#/tab/mine" ng-click="select('mine')">
     <ion-nav-view name="tab-mine"></ion-nav-view>
   </ion-tab>
 
