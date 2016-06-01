@@ -70,7 +70,7 @@ public class WechatFilter implements Filter {
 					logger.info("refUserId:" + refUserId + "||productId:" + productId);
 					if (null != refUserId && !refUserId.isEmpty()
 							&& !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
-						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&prodcutId=" + productId);
+						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId);
 					} else {
 						response.sendRedirect("/wechat/login");
 					}

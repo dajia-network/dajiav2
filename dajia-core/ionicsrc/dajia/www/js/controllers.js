@@ -1,35 +1,48 @@
-angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('ProdCtrl',
-		function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
-			console.log('产品列表...');
-			var loadProducts = function() {
-				popLoading($ionicLoading);
-				return $http.get('/products/').success(function(data, status, headers, config) {
-					$scope.products = data;
-					$scope.$broadcast('scroll.refreshComplete');
-					$ionicLoading.hide();
-				});
-			}
-			var checkOauthLogin = function() {
-				if (!$cookies.get('dajia_user_id')) {
-					$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
-						var loginuser = data;
-						if (null != loginuser['userId']) {
-							AuthService.oauthLogin(loginuser);
-						}
-					}).error(function(data, status, headers, config) {
-						console.log('request failed...');
-					});
+angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
+
+.controller('TabsCtrl', function($scope, $window) {
+	$scope.select = function(tab) {
+		if (tab == 'product') {
+			$window.location.href = '#/tab/prod';
+		} else if (tab == 'progress') {
+			$window.location.href = '#/tab/prog';
+		} else if (tab == 'mine') {
+			$window.location.href = '#/tab/mine';
+		}
+	}
+})
+
+.controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
+	console.log('产品列表...');
+	var loadProducts = function() {
+		popLoading($ionicLoading);
+		return $http.get('/products/').success(function(data, status, headers, config) {
+			$scope.products = data;
+			$scope.$broadcast('scroll.refreshComplete');
+			$ionicLoading.hide();
+		});
+	}
+	var checkOauthLogin = function() {
+		if (!$cookies.get('dajia_user_id')) {
+			$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+				var loginuser = data;
+				if (null != loginuser['userId']) {
+					AuthService.oauthLogin(loginuser);
 				}
-			}
-			checkOauthLogin();
-			loadProducts();
-			$scope.doRefresh = function() {
-				loadProducts();
-			};
-			$scope.go2Product = function(productId) {
-				$window.location.href = '#/tab/prod/' + productId;
-			}
-		})
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+		}
+	}
+	checkOauthLogin();
+	loadProducts();
+	$scope.doRefresh = function() {
+		loadProducts();
+	};
+	$scope.go2Product = function(productId) {
+		$window.location.href = '#/tab/prod/' + productId;
+	}
+})
 
 .controller(
 		'ProdDetailCtrl',
@@ -200,7 +213,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 
 				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
-					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
 
@@ -620,7 +633,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 				}
 
 				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
-					popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
 				$http.post('/user/contact/' + $stateParams.contactId, $scope.userContact).success(
@@ -825,7 +838,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ]).controller('P
 		}
 
 		if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
-			popWarning('请数据正确的手机号码', $timeout, $ionicLoading);
+			popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 			return;
 		}
 		if (password.length < 6) {
