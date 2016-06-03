@@ -107,7 +107,8 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	product_id BIGINT(25) NOT NULL,
 	user_contact_id BIGINT(25) NULL,
     user_id BIGINT(25) NOT NULL,
-    ref_user_id BIGINT(25) NOT NULL,
+    ref_user_id BIGINT(25) NULL,
+    ref_order_id BIGINT(25) NULL,
     payment_id VARCHAR(50) NULL,
     quantity INT,
     unit_price NUMERIC(10,2),
@@ -173,7 +174,8 @@ CREATE TABLE IF NOT EXISTS dajia.user_favourite (
 DROP TABLE IF EXISTS dajia.user_reward;
 CREATE TABLE IF NOT EXISTS dajia.user_reward (
 	reward_id BIGINT(25) NOT NULL AUTO_INCREMENT,
-    user_id BIGINT(25) NOT NULL,
+    ref_user_id BIGINT(25) NOT NULL,
+    ref_order_id BIGINT(25) NOT NULL,
     product_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,
     order_user_id BIGINT(25) NOT NULL,

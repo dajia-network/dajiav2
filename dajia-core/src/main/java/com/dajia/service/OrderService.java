@@ -165,7 +165,7 @@ public class OrderService {
 			ov.userName = user.userName;
 		}
 		ov.rewardSrcUsers = rewardService.getRewardSrcUsers(ov.orderId).values();
-		ov.rewardValue = rewardService.calculateRewards(ov.userId, ov.product);
+		ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.product);
 		ov.refundValue = calculateRefundValue(ov.product, order);
 	}
 

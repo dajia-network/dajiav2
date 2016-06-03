@@ -90,6 +90,7 @@ public class OrderController extends BaseController {
 		order.userComments = orderVO.userComments;
 		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
 			order.refUserId = orderVO.refUserId;
+			order.refOrderId = orderVO.refOrderId;
 		}
 		order.orderDate = new Date();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();

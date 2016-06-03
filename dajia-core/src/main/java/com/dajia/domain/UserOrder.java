@@ -31,6 +31,9 @@ public class UserOrder extends BaseModel {
 	@Column(name = "ref_user_id")
 	public Long refUserId;
 
+	@Column(name = "ref_order_id")
+	public Long refOrderId;
+
 	@Column(name = "payment_id", nullable = false)
 	public String paymentId;
 
@@ -48,7 +51,7 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "total_price")
 	public BigDecimal totalPrice;
-	
+
 	@Column(name = "post_fee")
 	public BigDecimal postFee;
 
@@ -75,7 +78,7 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "address")
 	public String address;
-	
+
 	@Column(name = "pingxx_charge")
 	public String pingxxCharge;
 

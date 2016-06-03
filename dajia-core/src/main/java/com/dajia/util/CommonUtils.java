@@ -39,6 +39,7 @@ public class CommonUtils {
 
 	public static final String ref_user_id = "refUserId";
 	public static final String product_id = "productId";
+	public static final String order_id = "orderId";
 	public static final String null_string = "null";
 	public static final String state_string = "STATE";
 

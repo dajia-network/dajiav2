@@ -22,6 +22,8 @@ public class OrderVO {
 	public Long productId;
 
 	public Long refUserId;
+	
+	public Long refOrderId;
 
 	public Long userId;
 

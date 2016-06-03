@@ -150,9 +150,9 @@ public class ApiService {
 		}
 	}
 
-	public String getWechatOauthUrl(String refUserId, String productId) {
+	public String getWechatOauthUrl(String refUserId, String productId, String orderId) {
 		String appkey = propertyRepo.findByPropertyKey(ApiWechatUtils.wechat_app_key).propertyValue;
-		String oauthUrl = ApiWechatUtils.getOauthUrl(appkey, refUserId, productId);
+		String oauthUrl = ApiWechatUtils.getOauthUrl(appkey, refUserId, productId, orderId);
 		logger.info("oauthUrl: " + oauthUrl);
 		return oauthUrl;
 	}

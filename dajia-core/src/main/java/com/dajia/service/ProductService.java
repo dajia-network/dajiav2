@@ -243,7 +243,7 @@ public class ProductService {
 		}
 		productRepo.save(product);
 
-		if (null != order.refUserId) {
+		if (null != order.refUserId && null != order.refOrderId) {
 			// generate reward
 			rewardService.createReward(order, product);
 		}

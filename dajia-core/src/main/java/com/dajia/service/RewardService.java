@@ -46,10 +46,9 @@ public class RewardService {
 	private ApiService apiService;
 
 	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId) {
-		UserOrder order = orderRepo.findOne(orderId);
 		Map<Long, LoginUserVO> rdUserMap = new HashMap<Long, LoginUserVO>();
-		List<UserReward> rewardList = rewardRepo.findByRefUserIdAndProductIdAndRewardStatus(order.userId,
-				order.productId, CommonUtils.RewardStatus.PENDING.getKey());
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndRewardStatus(orderId,
+				CommonUtils.RewardStatus.PENDING.getKey());
 		for (UserReward userReward : rewardList) {
 			if (null != userReward.orderUserId) {
 				User user = userRepo.findByUserId(userReward.orderUserId);
@@ -70,6 +69,7 @@ public class RewardService {
 			ur.orderId = order.orderId;
 			ur.productId = order.productId;
 			ur.refUserId = order.refUserId;
+			ur.refOrderId = order.refOrderId;
 			ur.orderUserId = order.userId;
 			ur.rewardRatio = 10; // ignore quantity
 			ur.expiredDate = product.expiredDate;
@@ -82,9 +82,9 @@ public class RewardService {
 		}
 	}
 
-	public BigDecimal calculateRewards(Long userId, Product product) {
+	public BigDecimal calculateRewards(Long orderId, Product product) {
 		BigDecimal rewardValue = new BigDecimal(0);
-		List<UserReward> rewardList = rewardRepo.findByRefUserIdAndProductIdAndRewardStatus(userId, product.productId,
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndRewardStatus(orderId,
 				CommonUtils.RewardStatus.PENDING.getKey());
 		if (null != rewardList && !rewardList.isEmpty()) {
 			for (UserReward userReward : rewardList) {
@@ -102,9 +102,9 @@ public class RewardService {
 
 	public void payRewards() {
 		List<UserReward> rewards = this.getPendingPayRewards();
-		Map<String, List<UserReward>> userProductMap = new HashMap<String, List<UserReward>>();
+		Map<Long, List<UserReward>> userProductMap = new HashMap<Long, List<UserReward>>();
 		for (UserReward userReward : rewards) {
-			String key = userReward.refUserId + "-" + userReward.productId;
+			Long key = userReward.refOrderId;
 			List<UserReward> rwList = new ArrayList<UserReward>();
 			if (userProductMap.containsKey(key)) {
 				rwList = userProductMap.get(key);
@@ -115,45 +115,38 @@ public class RewardService {
 				userProductMap.put(key, rwList);
 			}
 		}
-		Iterator<Map.Entry<String, List<UserReward>>> iter = userProductMap.entrySet().iterator();
+		Iterator<Map.Entry<Long, List<UserReward>>> iter = userProductMap.entrySet().iterator();
 		while (iter.hasNext()) {
-			Map.Entry<String, List<UserReward>> entry = (Map.Entry<String, List<UserReward>>) iter.next();
-			String key = entry.getKey();
-			String keyArray[] = key.split("-");
-			if (keyArray.length == 2) {
-				Long userId = Long.valueOf(keyArray[0]);
-				Long productId = Long.valueOf(keyArray[1]);
-				List<UserReward> rwList = entry.getValue();
-				Integer ratioSum = 0;
-				for (UserReward rw : rwList) {
-					ratioSum = ratioSum + rw.rewardRatio;
-					if (ratioSum > 100) {
-						ratioSum = 100;
-					}
+			Map.Entry<Long, List<UserReward>> entry = (Map.Entry<Long, List<UserReward>>) iter.next();
+			Long orderId = entry.getKey();
+			List<UserReward> rwList = entry.getValue();
+			Integer ratioSum = 0;
+			for (UserReward rw : rwList) {
+				ratioSum = ratioSum + rw.rewardRatio;
+				if (ratioSum > 100) {
+					ratioSum = 100;
 				}
-				BigDecimal rewardValue = this.calculateSingleReward(productId, ratioSum);
-				UserOrder userOrder = orderRepo.findByUserIdAndProductIdAndOrderStatusAndIsActive(userId, productId,
-						CommonUtils.OrderStatus.DELEVRIED.getKey(), CommonUtils.ActiveStatus.YES.toString());
-				if (null != userOrder && null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
-					try {
-						apiService.applyRefund(userOrder.paymentId, rewardValue, CommonUtils.refund_type_reward);
-						logger.info("order " + userOrder.trackingId + " reward applied for "
-								+ rewardValue.doubleValue());
-					} catch (PingppException e) {
-						logger.error(e.getMessage(), e);
-						for (UserReward rw : rwList) {
-							rw.rewardStatus = CommonUtils.RewardStatus.ERROR.getKey();
-							rewardRepo.save(rw);
-						}
-					}
-					// mark reward finish logic - performance to be improved
+			}
+			Long productId = rwList.get(0).productId;
+			BigDecimal rewardValue = this.calculateSingleReward(productId, ratioSum);
+			UserOrder userOrder = orderRepo.findByOrderIdAndOrderStatusAndIsActive(orderId,
+					CommonUtils.OrderStatus.DELEVRIED.getKey(), CommonUtils.ActiveStatus.YES.toString());
+			if (null != userOrder && null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
+				try {
+					apiService.applyRefund(userOrder.paymentId, rewardValue, CommonUtils.refund_type_reward);
+					logger.info("order " + userOrder.trackingId + " reward applied for " + rewardValue.doubleValue());
+				} catch (PingppException e) {
+					logger.error(e.getMessage(), e);
 					for (UserReward rw : rwList) {
-						rw.rewardStatus = CommonUtils.RewardStatus.COMPLETED.getKey();
+						rw.rewardStatus = CommonUtils.RewardStatus.ERROR.getKey();
 						rewardRepo.save(rw);
 					}
 				}
-			} else {
-				logger.error("Check reward error, key: " + key);
+				// mark reward finish logic - performance to be improved
+				for (UserReward rw : rwList) {
+					rw.rewardStatus = CommonUtils.RewardStatus.COMPLETED.getKey();
+					rewardRepo.save(rw);
+				}
 			}
 		}
 	}
