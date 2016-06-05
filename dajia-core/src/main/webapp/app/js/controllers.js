@@ -240,7 +240,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								$timeout(function() {
 									if (null != charge['orderNo']) {
 										$window.location.replace('#/tab/prod');
-										$window.location.href = "#/tab/prog/" + charge['order_no'];
+										$window.location.href = "#/tab/prog/" + charge['orderNo'];
 									} else {
 										$window.location.replace('#/tab/prod');
 										$window.location.href = "#/tab/prog";
@@ -963,13 +963,14 @@ var initWechatJSAPI = function($http, product) {
 				console.log(res);
 			}
 		});
-		wx.ready(function(product) {
+		wx.ready(function() {
 			simpleShare(product);
 		});
 	});
 }
 
 var simpleShare = function(product) {
+	console.log(product);
 	var shareLink = 'http://51daja.com/app/index.html?productId=' + product.productId + '#/tab/prod/'
 			+ product.productId;
 	wx.onMenuShareAppMessage({

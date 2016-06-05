@@ -169,3 +169,7 @@ button img {
 .assertive, a.assertive {
     color: #ee385d;
 }
+
+.button.button-assertive.active,.button.button-assertive.activated {
+	background-color: #e0133d;
+}
