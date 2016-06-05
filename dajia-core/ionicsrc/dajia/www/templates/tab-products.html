@@ -16,8 +16,8 @@
 		    <uib-progressbar class="progress-striped active" animate="true" max="100" value="product.progressValue" type="success"></uib-progressbar>
 	  		<div ng-if="product.stock>0">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
 	  	</div>
-	  	<div class="col homebar">
-			<b>现价 <span class="assertive now_price">{{product.currentPrice}}</span> 元</b><br/>
+	  	<div class="col homebar text-center">
+			<b><span class="assertive now_price">{{product.currentPrice}}</span> 元</b><br/>
 			库存 {{product.stock}}
 		</div>
 	  	<div class="col homebar" align="center">

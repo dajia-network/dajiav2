@@ -67,12 +67,12 @@ public class WechatFilter implements Filter {
 				if (!isCookieLogin) {
 					String refUserId = request.getParameter(CommonUtils.ref_user_id);
 					String productId = request.getParameter(CommonUtils.product_id);
-					String orderId = request.getParameter(CommonUtils.order_id);
+					String refOrderId = request.getParameter(CommonUtils.ref_order_id);
 					logger.info("refUserId:" + refUserId + "||productId:" + productId);
 					if (null != refUserId && !refUserId.isEmpty()
 							&& !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
 						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId
-								+ "&refOrderId=" + orderId);
+								+ "&refOrderId=" + refOrderId);
 					} else {
 						response.sendRedirect("/wechat/login");
 					}

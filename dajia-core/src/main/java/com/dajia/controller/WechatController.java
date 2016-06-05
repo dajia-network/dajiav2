@@ -45,9 +45,9 @@ public class WechatController extends BaseController {
 	public String wechatLogin(HttpServletRequest request) {
 		String refUserId = request.getParameter(CommonUtils.ref_user_id);
 		String productId = request.getParameter(CommonUtils.product_id);
-		String orderId = request.getParameter(CommonUtils.order_id);
-		logger.info("refUserId:" + refUserId + "||productId:" + productId + "||orderId:" + orderId);
-		String url = apiService.getWechatOauthUrl(refUserId, productId, orderId);
+		String refOrderId = request.getParameter(CommonUtils.ref_order_id);
+		logger.info("refUserId:" + refUserId + "||productId:" + productId + "||refOrderId:" + refOrderId);
+		String url = apiService.getWechatOauthUrl(refUserId, productId, refOrderId);
 		return "redirect:" + url;
 	}
 
@@ -78,9 +78,9 @@ public class WechatController extends BaseController {
 			if (stateArray.length == 3) {
 				String refUserId = stateArray[0];
 				String productId = stateArray[1];
-				String orderId = stateArray[2];
-				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&orderId="
-						+ orderId + "#/tab/prod/" + productId;
+				String refOrderId = stateArray[2];
+				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
+						+ refOrderId + "#/tab/prod/" + productId;
 			}
 		}
 		return "redirect:app/index.html";
