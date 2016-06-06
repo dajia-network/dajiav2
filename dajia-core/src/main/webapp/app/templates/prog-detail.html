@@ -18,7 +18,7 @@
 	        <p>{{order.product.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 	        <p>数量 x {{order.quantity}}</p>
-	        <p>出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
+	        <p>出价:{{order.unitPrice}}元&nbsp;&nbsp;&nbsp;现价:<span class="assertive">{{order.product.currentPrice}}元</span></p>
 	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
 	        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
 		  </div>
