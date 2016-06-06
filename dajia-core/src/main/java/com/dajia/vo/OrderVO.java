@@ -3,6 +3,7 @@ package com.dajia.vo;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import com.dajia.domain.Product;
 import com.dajia.domain.UserContact;
@@ -22,7 +23,7 @@ public class OrderVO {
 	public Long productId;
 
 	public Long refUserId;
-	
+
 	public Long refOrderId;
 
 	public Long userId;
@@ -36,7 +37,7 @@ public class OrderVO {
 	public BigDecimal postFee;
 
 	public BigDecimal rewardValue;
-	
+
 	public BigDecimal refundValue;
 
 	public String logisticAgent;
@@ -54,7 +55,7 @@ public class OrderVO {
 	public String userComments;
 
 	public String orderStatus4Show;
-	
+
 	public String logisticAgent4Show;
 
 	public Date orderDate;
@@ -64,4 +65,6 @@ public class OrderVO {
 	public Product product;
 
 	public Collection<LoginUserVO> rewardSrcUsers;
+
+	public List<ProgressVO> progressList;
 }

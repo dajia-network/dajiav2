@@ -268,7 +268,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					popWarning('该产品每个账号限购' + quota + '件', $timeout, $ionicLoading);
 					return;
 				}
-				if ($scope.order.quantity > $scope.orderItem.stock) {
+				if ($scope.order.quantity + 1 > $scope.orderItem.stock) {
 					popWarning('该产品库存不足', $timeout, $ionicLoading);
 					return;
 				}
@@ -365,7 +365,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			console.log('进度详情...')
 			$scope.order = {};
 			popLoading($ionicLoading);
-			$http.get('/user/order/' + $stateParams.trackingId).success(
+			$http.get('/user/progress/' + $stateParams.trackingId).success(
 					function(data, status, headers, config) {
 						console.log(data);
 						var order = data;

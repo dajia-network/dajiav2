@@ -50,8 +50,8 @@
 					<i class="icon ion-chevron-left"></i> 返回
 				</button>
 				<button ng-if="product.productStatus==2&&product.stock>0" class="button button-sqr button-assertive submitBtn" ng-click="buyNow()">立即打价</button>
-				<button ng-if="product.productStatus==2&&product.stock<=0" class="button">打价结束</button>
-				<button ng-if="product.productStatus!=2" class="button submitBtn">产品已失效</button>
+				<button ng-if="product.productStatus==2&&product.stock<=0" disabled="true" class="button submitBtn">打价结束</button>
+				<button ng-if="product.productStatus!=2" disabled="true" class="button submitBtn">产品已失效</button>
 			</div>
 		</div>
 	</ion-footer-bar>

@@ -173,3 +173,16 @@ button img {
 .button.button-assertive.active,.button.button-assertive.activated {
 	background-color: #e0133d;
 }
+
+.item-progress{
+	font-size: 90%;
+	border: 0px;
+	padding: 0px 16px 16px 16px;
+}
+
+.item-note-progress {
+    float: left;
+    width: 100%;
+    color: #aaa;
+    font-size: 12px;
+}

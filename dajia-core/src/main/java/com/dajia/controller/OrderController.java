@@ -193,12 +193,13 @@ public class OrderController extends BaseController {
 
 	@RequestMapping("/user/order/{trackingId}")
 	public OrderVO orderDetail(@PathVariable("trackingId") String trackingId) {
-		UserOrder order = orderRepo.findByTrackingId(trackingId);
-		if (null == order) {
-			return null;
-		}
-		OrderVO ov = orderService.convertOrderVO(order);
-		orderService.fillOrderVO(ov, order);
+		OrderVO ov = orderService.getOrderDetailByTrackingId(trackingId);
+		return ov;
+	}
+
+	@RequestMapping("/user/progress/{trackingId}")
+	public OrderVO progressDetail(@PathVariable("trackingId") String trackingId) {
+		OrderVO ov = orderService.getOrderDetailByTrackingId4Progress(trackingId);
 		return ov;
 	}
 

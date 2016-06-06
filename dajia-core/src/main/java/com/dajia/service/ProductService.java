@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.UserOrder;
-import com.dajia.domain.UserReward;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserOrderRepo;
@@ -239,7 +237,10 @@ public class ProductService {
 			}
 			product.sold += order.quantity;
 			product.stock -= order.quantity;
-			calcCurrentPrice(product);
+			if (product.stock < 0L) {
+				product.stock = 0L;
+			}
+			calcCurrentPrice(product, order.quantity);
 		}
 		productRepo.save(product);
 
@@ -275,13 +276,13 @@ public class ProductService {
 		}
 	}
 
-	private void calcCurrentPrice(Product product) {
+	private void calcCurrentPrice(Product product, Integer quantity) {
 		List<Price> prices = product.prices;
 		for (Price price : prices) {
 			if (price.sold >= product.sold) {
 				BigDecimal priceOff = product.currentPrice.add(price.targetPrice.negate()).divide(
 						new BigDecimal(price.sold - product.sold + 1), 2, RoundingMode.HALF_UP);
-				product.currentPrice = product.currentPrice.add(priceOff.negate());
+				product.currentPrice = product.currentPrice.add(priceOff.multiply(new BigDecimal(quantity)).negate());
 				break;
 			}
 		}

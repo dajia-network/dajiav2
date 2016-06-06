@@ -1,8 +1,11 @@
 package com.dajia.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +20,20 @@ import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserRefund;
+import com.dajia.domain.UserReward;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRefundRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.repository.UserRewardRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.LogisticAgent;
 import com.dajia.util.CommonUtils.OrderStatus;
+import com.dajia.vo.LoginUserVO;
 import com.dajia.vo.OrderVO;
+import com.dajia.vo.ProgressVO;
 import com.pingplusplus.exception.PingppException;
 
 @Service
@@ -47,6 +54,9 @@ public class OrderService {
 
 	@Autowired
 	private UserRefundRepo refundRepo;
+
+	@Autowired
+	private UserRewardRepo rewardRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -164,7 +174,6 @@ public class OrderService {
 		if (null != user) {
 			ov.userName = user.userName;
 		}
-		ov.rewardSrcUsers = rewardService.getRewardSrcUsers(ov.orderId).values();
 		ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.product);
 		ov.refundValue = calculateRefundValue(ov.product, order);
 	}
@@ -198,5 +207,57 @@ public class OrderService {
 				}
 			}
 		}
+	}
+
+	public OrderVO getOrderDetailByTrackingId(String trackingId) {
+		UserOrder order = orderRepo.findByTrackingId(trackingId);
+		if (null == order) {
+			return null;
+		}
+		OrderVO ov = this.convertOrderVO(order);
+		this.fillOrderVO(ov, order);
+		return ov;
+	}
+
+	public OrderVO getOrderDetailByTrackingId4Progress(String trackingId) {
+		OrderVO ov = this.getOrderDetailByTrackingId(trackingId);
+		Map<Long, LoginUserVO> rewardSrcUserMap = rewardService.getRewardSrcUsers(ov.orderId);
+		ov.rewardSrcUsers = rewardSrcUserMap.values();
+		Product product = productRepo.findOne(ov.productId);
+
+		List<ProgressVO> progressList = new ArrayList<ProgressVO>();
+		
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		List<UserOrder> orderList = orderRepo.findTop5ByProductIdAndOrderStatusInAndIsActiveOrderByOrderDateDesc(
+				ov.productId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
+		BigDecimal comparePrice = product.currentPrice;
+		for (UserOrder userOrder : orderList) {
+			ProgressVO pv = new ProgressVO();
+			pv.progressType = CommonUtils.refund_type_refund;
+			pv.orderId = ov.orderId;
+			pv.productId = ov.productId;
+			pv.orderDate = userOrder.orderDate;
+			pv.orderQuantity = userOrder.quantity;
+			pv.priceOff = userOrder.unitPrice.add(comparePrice.negate());
+			comparePrice = userOrder.unitPrice;
+			progressList.add(pv);
+		}
+		List<UserReward> rewardList = rewardRepo.findTop5ByRefOrderIdAndRewardStatusOrderByCreatedDateDesc(ov.orderId,
+				CommonUtils.RewardStatus.PENDING.getKey());
+		for (UserReward userReward : rewardList) {
+			ProgressVO pv = new ProgressVO();
+			pv.progressType = CommonUtils.refund_type_reward;
+			pv.orderId = ov.orderId;
+			pv.productId = ov.productId;
+			pv.orderDate = userReward.createdDate;
+			pv.orderUserName = rewardSrcUserMap.get(userReward.orderUserId).userName;
+			progressList.add(pv);
+		}
+		Collections.sort(progressList, Collections.reverseOrder());
+		ov.progressList = progressList;
+		return ov;
 	}
 }

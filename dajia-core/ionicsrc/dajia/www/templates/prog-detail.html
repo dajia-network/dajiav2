@@ -24,11 +24,25 @@
 		  </div>
 		  <div class="item item-text-wrap" align="center">
 		  	<span class="assertive">成功叫来1人打价，享额外折扣10%</span><br/>
-		  	<span class="assertive">成功叫来10人打价，此单免单!(限1件商品)</span>
+		  	<span class="assertive">成功叫来10人打价，此单免单! (限1件商品)</span>
 		  	<div class="row">
 		  		<div class="col-xs-2" ng-repeat="rewardSrcUser in order.rewardSrcUsers">
 		  			<a class="center-avatar margin"><img ng-src="{{rewardSrcUser.headImgUrl}}"></img></a>
 		  		</div>
+		  	</div>
+		  </div>
+		  <div class="item item-progress" ng-repeat="progress in order.progressList" >
+		  	<div ng-if="progress.progressType=='Refund'">
+			    一位打手购买了{{progress.orderQuantity}}件，价格下降了<span class="assertive">{{progress.priceOff}}</span>元。
+			    <span class="item-note-progress">
+			      {{progress.orderDate | date:'yyyy-MM-dd HH:mm'}}
+			    </span>
+		  	</div>
+		  	<div ng-if="progress.progressType=='Reward'">
+			    推荐好友<span class="assertive">{{progress.orderUserName}}</span>参与打价，获得<span class="assertive">10%</span>额外折扣。
+			    <span class="item-note-progress">
+			      {{progress.orderDate | date:'yyyy-MM-dd HH:mm'}}
+			    </span>
 		  	</div>
 		  </div>
 		  <div class="item item-text-wrap">
@@ -47,9 +61,11 @@
 				<button class="button backBtn" ng-click="back()">
 					<i class="icon ion-chevron-left"></i> 返回
 				</button>
-				<button class="button button-sqr button-assertive submitBtn" ng-click="share()">
+				<button ng-if="order.product.productStatus==2&&order.product.stock>0" class="button button-sqr button-assertive submitBtn" ng-click="share()">
 					<i class="icon ion-share"></i> 叫人打价
 				</button>
+				<button ng-if="order.product.productStatus==2&&order.product.stock<=0" disabled="true" class="button submitBtn">打价结束</button>
+				<button ng-if="order.product.productStatus!=2" disabled="true" class="button submitBtn">产品已失效</button>
 			</div>
 		</div>
 	</ion-footer-bar>
