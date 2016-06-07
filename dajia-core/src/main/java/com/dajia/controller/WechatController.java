@@ -81,6 +81,8 @@ public class WechatController extends BaseController {
 				String refOrderId = stateArray[2];
 				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
 						+ refOrderId + "#/tab/prod/" + productId;
+			} else if (!state.equalsIgnoreCase(CommonUtils.state_string)) {
+				return "redirect:app/index.html#/tab/prod/" + state;
 			}
 		}
 		return "redirect:app/index.html";

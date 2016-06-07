@@ -39,7 +39,9 @@ public class WechatFilter implements Filter {
 
 		if ((null == loginUser || null == loginUser.oauthUserId) && reqUrl.indexOf("/wechat/login") == -1) {
 			String ua = request.getHeader("user-agent");
-			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {// is Wechat browser
+			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {// is
+																				// Wechat
+																				// browser
 				boolean isCookieLogin = false;
 				Cookie[] cookies = request.getCookies();
 				if (null != cookies) {
@@ -73,6 +75,9 @@ public class WechatFilter implements Filter {
 							&& !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
 						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId
 								+ "&refOrderId=" + refOrderId);
+					} else if (null != productId && !productId.isEmpty()
+							&& !productId.equalsIgnoreCase(CommonUtils.null_string)) {
+						response.sendRedirect("/wechat/login?productId=" + productId);
 					} else {
 						response.sendRedirect("/wechat/login");
 					}

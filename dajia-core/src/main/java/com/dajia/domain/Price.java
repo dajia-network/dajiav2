@@ -27,7 +27,7 @@ public class Price extends BaseModel {
 	public int sort;
 
 	@Column(name = "sold")
-	public int sold;
+	public Long sold;
 
 	@Column(name = "target_price")
 	public BigDecimal targetPrice;

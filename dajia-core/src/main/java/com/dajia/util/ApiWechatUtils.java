@@ -31,8 +31,11 @@ public class ApiWechatUtils {
 		String url = "";
 		if (null != refUserId && !refUserId.isEmpty() && !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
 			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
-					+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId + "_" + refOrderId
-					+ "#wechat_redirect";
+					+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId + "_"
+					+ refOrderId + "#wechat_redirect";
+		} else if (null != productId && !productId.isEmpty() && !productId.equalsIgnoreCase(CommonUtils.null_string)) {
+			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+					+ "&response_type=code&scope=snsapi_userinfo&state=" + productId + "#wechat_redirect";
 		} else {
 			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
 					+ "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";

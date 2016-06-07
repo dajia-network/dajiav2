@@ -276,9 +276,14 @@ public class ProductService {
 		}
 	}
 
-	private void calcCurrentPrice(Product product, Integer quantity) {
+	private void calcCurrentPrice(Product product, int quantity) {
 		List<Price> prices = product.prices;
 		for (Price price : prices) {
+			// for edge logic
+			if (price.sold < product.sold && price.sold > product.sold - quantity) {
+				product.currentPrice = price.targetPrice;
+				quantity = product.sold.intValue() - price.sold.intValue();
+			}
 			if (price.sold >= product.sold) {
 				BigDecimal priceOff = product.currentPrice.add(price.targetPrice.negate()).divide(
 						new BigDecimal(price.sold - product.sold + 1), 2, RoundingMode.HALF_UP);
