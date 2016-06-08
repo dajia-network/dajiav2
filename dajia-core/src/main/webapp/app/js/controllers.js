@@ -22,19 +22,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$ionicLoading.hide();
 		});
 	}
-	var checkOauthLogin = function() {
-		if (!$cookies.get('dajia_user_id')) {
-			$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
-				var loginuser = data;
-				if (null != loginuser['userId']) {
-					AuthService.oauthLogin(loginuser);
-				}
-			}).error(function(data, status, headers, config) {
-				console.log('request failed...');
-			});
-		}
-	}
-	checkOauthLogin();
+	checkOauthLogin($cookies);
 	loadProducts();
 	$scope.doRefresh = function() {
 		loadProducts();
@@ -106,6 +94,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$window.location.replace('#/tab/prod');
 			}
 			popLoading($ionicLoading);
+			checkOauthLogin($cookies);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
 						var product = data;
@@ -967,6 +956,19 @@ var initWechatJSAPI = function($http, product) {
 			simpleShare(product);
 		});
 	});
+}
+
+var checkOauthLogin = function($cookies) {
+	if (!$cookies.get('dajia_user_id')) {
+		$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+			var loginuser = data;
+			if (null != loginuser['userId']) {
+				AuthService.oauthLogin(loginuser);
+			}
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
 }
 
 var simpleShare = function(product) {
