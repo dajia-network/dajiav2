@@ -22,7 +22,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$ionicLoading.hide();
 		});
 	}
-	checkOauthLogin($cookies);
+	checkOauthLogin($cookies, $http);
 	loadProducts();
 	$scope.doRefresh = function() {
 		loadProducts();
@@ -94,7 +94,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$window.location.replace('#/tab/prod');
 			}
 			popLoading($ionicLoading);
-			checkOauthLogin($cookies);
+			checkOauthLogin($cookies, $http);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
 						var product = data;
@@ -958,7 +958,7 @@ var initWechatJSAPI = function($http, product) {
 	});
 }
 
-var checkOauthLogin = function($cookies) {
+var checkOauthLogin = function($cookies, $http) {
 	if (!$cookies.get('dajia_user_id')) {
 		$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 			var loginuser = data;
