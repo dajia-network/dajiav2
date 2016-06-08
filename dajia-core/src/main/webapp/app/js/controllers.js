@@ -22,7 +22,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$ionicLoading.hide();
 		});
 	}
-	checkOauthLogin($cookies, $http);
+	checkOauthLogin($cookies, $http, AuthService);
 	loadProducts();
 	$scope.doRefresh = function() {
 		loadProducts();
@@ -35,7 +35,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 .controller(
 		'ProdDetailCtrl',
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
-				$ionicModal, $ionicLoading) {
+				$ionicModal, $ionicLoading, AuthService) {
 			console.log('产品详情...')
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
@@ -94,7 +94,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$window.location.replace('#/tab/prod');
 			}
 			popLoading($ionicLoading);
-			checkOauthLogin($cookies, $http);
+			checkOauthLogin($cookies, $http, AuthService);
 			$http.get('/product/' + $stateParams.pid).success(
 					function(data, status, headers, config) {
 						var product = data;
@@ -958,7 +958,7 @@ var initWechatJSAPI = function($http, product) {
 	});
 }
 
-var checkOauthLogin = function($cookies, $http) {
+var checkOauthLogin = function($cookies, $http, AuthService) {
 	if (!$cookies.get('dajia_user_id')) {
 		$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
 			var loginuser = data;
