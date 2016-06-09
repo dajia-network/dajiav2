@@ -402,7 +402,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			popLoading($ionicLoading);
 			$http.get('/user/progress/' + $stateParams.trackingId).success(
 					function(data, status, headers, config) {
-						console.log(data);
+						// console.log(data);
 						var order = data;
 						order.progressValue = order.product.priceOff
 								/ (order.product.originalPrice - order.product.targetPrice) * 100;
@@ -413,6 +413,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
 				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product, $scope.order);
+			}
+			$scope.orderDetail = function(trackingId) {
+				$window.location.href = '#/tab/mine/order/' + trackingId;
 			}
 			$scope.back = function() {
 				$window.location.replace('#/tab/prog');
@@ -529,7 +532,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				popLoading($ionicLoading);
 				return $http.get('/user/order/' + $stateParams.trackingId).success(
 						function(data, status, headers, config) {
-							console.log(data);
 							$scope.order = data;
 							$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type="
 									+ data.logisticAgent + "&postid=" + data.logisticTrackingId + "&callbackurl="
@@ -1012,7 +1014,7 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 
 var initWechatJSAPI = function($http, product) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
-		console.log(data);
+		// console.log(data);
 		wx.config({
 			appId : data['appId'],
 			timestamp : data['timestamp'],

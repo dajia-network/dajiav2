@@ -217,6 +217,24 @@ public class CommonUtils {
 		}
 	}
 
+	public static String getOrderStatusStr(Integer key) {
+		String returnStr = null;
+		if (key.equals(OrderStatus.PENDING_PAY.getKey())) {
+			returnStr = OrderStatus.PENDING_PAY.getValue();
+		} else if (key.equals(OrderStatus.PAIED.getKey())) {
+			returnStr = OrderStatus.PAIED.getValue();
+		} else if (key.equals(OrderStatus.DELEVERING.getKey())) {
+			returnStr = OrderStatus.DELEVERING.getValue();
+		} else if (key.equals(OrderStatus.DELEVRIED.getKey())) {
+			returnStr = OrderStatus.DELEVRIED.getValue();
+		} else if (key.equals(OrderStatus.CLOSED.getKey())) {
+			returnStr = OrderStatus.CLOSED.getValue();
+		} else if (key.equals(OrderStatus.CANCELLED.getKey())) {
+			returnStr = OrderStatus.CANCELLED.getValue();
+		}
+		return returnStr;
+	}
+
 	public enum ProductStatus {
 		INVALID(1, "下架"), VALID(2, "上架"), EXPIRED(3, "已过期");
 		private Integer key;
@@ -320,5 +338,17 @@ public class CommonUtils {
 		public String getValue() {
 			return value;
 		}
+	}
+
+	public static String getLogisticAgentStr(String key) {
+		String returnStr = null;
+		if (null != key) {
+			if (key.equals(LogisticAgent.TIANTIAN.getKey())) {
+				returnStr = LogisticAgent.TIANTIAN.getValue();
+			} else if (key.equals(LogisticAgent.SHUNFENG.getKey())) {
+				returnStr = LogisticAgent.SHUNFENG.getValue();
+			}
+		}
+		return returnStr;
 	}
 }

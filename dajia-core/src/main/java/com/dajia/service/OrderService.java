@@ -29,7 +29,6 @@ import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserRewardRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
-import com.dajia.util.CommonUtils.LogisticAgent;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.LoginUserVO;
 import com.dajia.vo.OrderVO;
@@ -88,36 +87,6 @@ public class OrderService {
 		return order;
 	}
 
-	public String getOrderStatusStr(Integer key) {
-		String returnStr = null;
-		if (key.equals(OrderStatus.PENDING_PAY.getKey())) {
-			returnStr = OrderStatus.PENDING_PAY.getValue();
-		} else if (key.equals(OrderStatus.PAIED.getKey())) {
-			returnStr = OrderStatus.PAIED.getValue();
-		} else if (key.equals(OrderStatus.DELEVERING.getKey())) {
-			returnStr = OrderStatus.DELEVERING.getValue();
-		} else if (key.equals(OrderStatus.DELEVRIED.getKey())) {
-			returnStr = OrderStatus.DELEVRIED.getValue();
-		} else if (key.equals(OrderStatus.CLOSED.getKey())) {
-			returnStr = OrderStatus.CLOSED.getValue();
-		} else if (key.equals(OrderStatus.CANCELLED.getKey())) {
-			returnStr = OrderStatus.CANCELLED.getValue();
-		}
-		return returnStr;
-	}
-
-	public String getLogisticAgentStr(String key) {
-		String returnStr = null;
-		if (null != key) {
-			if (key.equals(LogisticAgent.TIANTIAN.getKey())) {
-				returnStr = LogisticAgent.TIANTIAN.getValue();
-			} else if (key.equals(LogisticAgent.SHUNFENG.getKey())) {
-				returnStr = LogisticAgent.SHUNFENG.getValue();
-			}
-		}
-		return returnStr;
-	}
-
 	public OrderVO convertOrderVO(UserOrder order) {
 		OrderVO ov = new OrderVO();
 		ov.orderId = order.orderId;
@@ -137,8 +106,9 @@ public class OrderService {
 		ov.comments = order.comments;
 		ov.userComments = order.userComments;
 		ov.orderStatus = order.orderStatus;
-		ov.orderStatus4Show = this.getOrderStatusStr(order.orderStatus);
-		ov.logisticAgent4Show = this.getLogisticAgentStr(order.logisticAgent);
+		ov.orderStatus4Show = CommonUtils.getOrderStatusStr(order.orderStatus);
+		ov.logisticAgent4Show = CommonUtils.getLogisticAgentStr(order.logisticAgent);
+		ov.payType4Show = CommonUtils.getPayTypeStr(order.payType);
 		return ov;
 	}
 
@@ -161,17 +131,6 @@ public class OrderService {
 			orders = orderRepo
 					.findByUserIdNotAndIsActiveOrderByOrderDateDesc(0L, ActiveStatus.YES.toString(), pageable);
 		}
-		for (UserOrder order : orders) {
-			order.orderStatus4Show = getOrderStatusStr(order.orderStatus);
-			Product p = productService.loadProductDetail(order.productId);
-			if (null != p) {
-				order.productInfo4Show = p.name;
-			}
-			User u = userRepo.findByUserId(order.userId);
-			if (null != u) {
-				order.userInfo4Show = u.userName;
-			}
-		}
 		return orders;
 	}
 
@@ -181,8 +140,11 @@ public class OrderService {
 		if (null != user) {
 			ov.userName = user.userName;
 		}
-		ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.product);
-		ov.refundValue = calculateRefundValue(ov.product, order);
+		if (null != ov.product) {
+			ov.productInfo4Show = ov.product.name;
+			ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.product);
+			ov.refundValue = calculateRefundValue(ov.product, order);
+		}
 	}
 
 	private BigDecimal calculateRefundValue(Product product, UserOrder userOrder) {

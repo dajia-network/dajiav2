@@ -21,43 +21,47 @@
 	<form class="form-horizontal">
 		<div class="form-group">
 			<label class="col-sm-2 control-label">订单编号</label>
-			<div class="col-sm-8">{{order.trackingId}}</div>
+			<div class="col-sm-8">
+				<input readonly type="text" class="form-control" id="name" ng-model="order.trackingId">
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">订单状态</label>
-			<div class="col-sm-8">{{order.orderStatus4Show}}</div>
+			<div class="col-sm-8">
+				<input readonly type="text" class="form-control" id="name" ng-model="order.orderStatus4Show">
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">付款方式</label>
-			<div class="col-sm-8"></div>
+			<div class="col-sm-8">
+				<input readonly type="text" class="form-control" id="name" ng-model="order.payType4Show">
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">买家</label>
-			<div class="col-sm-8">{{order.userName}}</div>
+			<div class="col-sm-8">
+				<input readonly type="text" class="form-control" id="name" ng-model="order.userName">
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">收货信息</label>
-			<div class="col-sm-8">{{order.userContact.province.locationValue}} 
-			&nbsp;{{order.userContact.city.locationValue}} 
-			&nbsp;{{order.userContact.district.locationValue}}
-			<p></p>
-			{{order.userContact.address1}}
-			<p></p>
-			{{order.userContact.address2}}
-			<p></p>
-			收件人：{{order.userContact.contactName}}
-			<p></p>
-			联系电话：{{order.userContact.contactMobile}}</div>
-			
+			<div class="col-sm-8">
+			    <p>收货人: {{order.contactName}}</p>
+			    <p>手机: {{order.contactMobile}}</p>
+			    <p>收货地址: {{order.address}}</p>
+			    <p>备注: {{order.userComments}}</p>
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">买家留言</label>
-			<div class="col-sm-8">{{order.userComments}}</div>
+			<div class="col-sm-8">
+				<textarea readonly class="form-control" rows="3" ng-model="order.userComments"></textarea>
+			</div>
 		</div>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">备注</label>
 			<div class="col-sm-8">
-				<textarea class="form-control" rows="3"></textarea>
+				<textarea class="form-control" rows="3" ng-model="order.comments"></textarea>
 			</div>
 		</div>
 
@@ -102,6 +106,7 @@
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button class="btn btn-primary" ng-disabled="order.orderStatus!=2" ng-click="deliverOrder(order.orderId)">发货</button>
+				<button class="btn btn-primary" ng-click="addComments(order.orderId)">添加备注</button>
 				<button class="btn btn-primary" ng-click="closeOrder(order.orderId)">关闭订单</button>
 				<a class="btn btn-default" href="#/orders" role="button">返回</a>
 			</div>

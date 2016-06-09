@@ -54,9 +54,13 @@ public class OrderVO {
 
 	public String userComments;
 
+	public String payType4Show;
+
 	public String orderStatus4Show;
 
 	public String logisticAgent4Show;
+
+	public String productInfo4Show;
 
 	public Date orderDate;
 

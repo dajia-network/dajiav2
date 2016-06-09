@@ -45,7 +45,7 @@
 				<td>￥{{order.unitPrice}}</td>
 				<td>￥{{order.postFee}}</td>
 				<td>￥{{order.totalPrice}}</td>
-				<td>{{order.userInfo4Show}}</td>
+				<td>{{order.userName}}</td>
 				<td>{{order.orderStatus4Show}}</td>
 				<td>{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
 				<td><button type="button" class="btn btn-primary btn-sm" ng-if="order.userId!=0" ng-click="viewOrder(order.orderId);">处理</button>

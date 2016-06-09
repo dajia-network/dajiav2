@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "user_order")
@@ -87,13 +86,4 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "user_comments")
 	public String userComments;
-
-	@Transient
-	public String orderStatus4Show;
-
-	@Transient
-	public String userInfo4Show;
-
-	@Transient
-	public String productInfo4Show;
 }

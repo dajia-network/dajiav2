@@ -225,10 +225,34 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			console.log('request failed...');
 		});
 	}
+	$scope.addComments = function(orderId) {
+		$scope.alerts = [];
+		if (!$scope.order.comments) {
+			$scope.missComments();
+		} else {
+			$http.get('/admin/order/' + $routeParams.orderId + '/comments', {
+				params : {
+					comments : $scope.order.comments
+				}
+			}).success(function(data, status, headers, config) {
+				$scope.order = data;
+				console.log($scope.order);
+				$route.reload();
+			}).error(function(data, status, headers, config) {
+				console.log('request failed...');
+			});
+		}
+	}
 	$scope.missLogistic = function() {
 		$scope.alerts.push({
 			type : 'danger',
 			msg : '请填写快递相关信息'
+		});
+	}
+	$scope.missComments = function() {
+		$scope.alerts.push({
+			type : 'danger',
+			msg : '请填写备注信息'
 		});
 	}
 	$scope.closeAlert = function(index) {

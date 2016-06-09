@@ -9,9 +9,6 @@
 	
 	<div ng-if="loginUser">
 		<div class="card" ng-repeat="order in myOrders" >
-		  <div class="item item-divider">
-		    订单号：{{order.trackingId}}
-		  </div>
 		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId)">
 		    <img ng-src="{{order.product.imgUrl}}" />
 	        <p>{{order.product.name}}</p>

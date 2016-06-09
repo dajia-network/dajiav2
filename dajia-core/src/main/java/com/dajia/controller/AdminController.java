@@ -1,6 +1,8 @@
 package com.dajia.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,10 +97,17 @@ public class AdminController extends BaseController {
 	}
 
 	@RequestMapping("/admin/orders/{page}")
-	public PaginationVO<UserOrder> ordersByPage(@PathVariable("page") Integer pageNum, HttpServletRequest request) {
+	public PaginationVO<OrderVO> ordersByPage(@PathVariable("page") Integer pageNum, HttpServletRequest request) {
 		String filterVal = request.getParameter("filter");
 		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum, filterVal);
-		PaginationVO<UserOrder> page = CommonUtils.generatePaginationVO(orders, pageNum);
+		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
+		for (UserOrder order : orders) {
+			OrderVO ov = orderService.convertOrderVO(order);
+			orderService.fillOrderVO(ov, order);
+			orderVoList.add(ov);
+		}
+		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
+		page.results = orderVoList;
 		return page;
 	}
 
@@ -121,6 +130,16 @@ public class AdminController extends BaseController {
 		order.orderStatus = OrderStatus.DELEVERING.getKey();
 		order.logisticAgent = logisticAgent;
 		order.logisticTrackingId = logisticTrackingId;
+		orderRepo.save(order);
+		return order;
+	}
+	
+	@RequestMapping("/admin/order/{orderId}/comments")
+	public UserOrder addComments(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
+		String comments = request.getParameter("comments");
+		UserOrder order = orderRepo.findOne(orderId);
+		order.orderStatus = OrderStatus.DELEVERING.getKey();
+		order.comments = comments;
 		orderRepo.save(order);
 		return order;
 	}
