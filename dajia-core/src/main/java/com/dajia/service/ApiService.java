@@ -45,6 +45,9 @@ public class ApiService {
 	private PropertyRepo propertyRepo;
 
 	@Autowired
+	private OrderService orderService;
+
+	@Autowired
 	EhCacheCacheManager ehcacheManager;
 
 	public String loadApiWdToken() throws JsonParseException, JsonMappingException, IOException {
@@ -241,7 +244,7 @@ public class ApiService {
 		chargeParams.put("currency", "cny");
 		chargeParams.put("client_ip", clientIp);
 		chargeParams.put("subject", "打价网");
-		chargeParams.put("body", "test");
+		chargeParams.put("body", orderService.generateOrderInfoStr(order));
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
 			Map<String, Object> extraParams = new HashMap<String, Object>();
 			extraParams.put("success_url", "http://51daja.com/app/index.html#/tab/prog");

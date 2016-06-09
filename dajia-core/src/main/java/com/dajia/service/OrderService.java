@@ -229,4 +229,19 @@ public class OrderService {
 		ov.progressList = progressList;
 		return ov;
 	}
+
+	public String generateOrderInfoStr(UserOrder order) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("oid:");
+		sb.append(order.trackingId);
+		sb.append("|uid:");
+		sb.append(order.userId);
+		sb.append("|pid:");
+		sb.append(order.productId);
+		sb.append("|cname:");
+		sb.append(order.contactName);
+		sb.append("|cmobile:");
+		sb.append(order.contactMobile);
+		return sb.toString();
+	}
 }
