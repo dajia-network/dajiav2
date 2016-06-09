@@ -82,7 +82,7 @@ public class WechatController extends BaseController {
 				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
 						+ refOrderId + "#/tab/prod/" + productId;
 			} else if (!state.equalsIgnoreCase(CommonUtils.state_string)) {
-				return "redirect:app/index.html#/tab/prod/" + state;
+				return "redirect:app/index.html?productId=" + state + "#/tab/prod/" + state;
 			}
 		}
 		return "redirect:app/index.html";

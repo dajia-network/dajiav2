@@ -30,6 +30,8 @@
 			</button> -->
 		  </div>
 		</div>
+		<ion-infinite-scroll immediate-check="false" ng-if="page.hasMore" on-infinite="loadMore()">
+		</ion-infinite-scroll>
 	</div>
 	
     <div ng-if="myOrders.length==0">
@@ -40,7 +42,7 @@
 		</div>
 	    <div class="row">
 			<div class="col text-center">
-				<button class="button button-outline button-assertive" ng-click="goHome()">去打价</button>
+				<button class="button button-outline button-assertive" ng-click="goHome()">去逛逛</button>
 			</div>
 		</div>
     </div>

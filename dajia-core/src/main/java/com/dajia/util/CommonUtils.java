@@ -24,6 +24,7 @@ public class CommonUtils {
 	public static final Long shanghai_city_key = 310100L;
 
 	public static final Integer page_item_perpage = 20;
+	public static final Integer page_item_perpage_5 = 5;
 	public static final Integer page_range_limit = 10;
 
 	public static final String cache_name_signup_code = "sms_signup_code";

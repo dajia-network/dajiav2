@@ -142,6 +142,13 @@ public class OrderService {
 		return ov;
 	}
 
+	public Page<UserOrder> loadOrdersByUserIdByPage(Long userId, List<Integer> orderStatusList, Integer pageNum) {
+		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
+		Page<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(userId, orderStatusList,
+				pageable);
+		return orders;
+	}
+
 	public Page<UserOrder> loadOrdersByPage(Integer pageNum, String filter) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<UserOrder> orders = null;
@@ -226,7 +233,7 @@ public class OrderService {
 		Product product = productRepo.findOne(ov.productId);
 
 		List<ProgressVO> progressList = new ArrayList<ProgressVO>();
-		
+
 		List<Integer> orderStatusList = new ArrayList<Integer>();
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());

@@ -14,21 +14,43 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
 	console.log('产品列表...');
+	$scope.products = [];
+	$scope.page = {
+		hasMore : false,
+		pageNo : 1
+	};
 	var loadProducts = function() {
-		popLoading($ionicLoading);
-		return $http.get('/products/').success(function(data, status, headers, config) {
-			$scope.products = data;
-			$scope.$broadcast('scroll.refreshComplete');
-			$ionicLoading.hide();
+		return $http.get('/products/' + $scope.page.pageNo).success(function(data, status, headers, config) {
+			// console.log(data);
+			$scope.page.hasMore = data.hasNext;
+			$scope.page.pageNo = data.currentPage;
+			$scope.products = $scope.products.concat(data.results);
 		});
 	}
 	checkOauthLogin($cookies, $http, AuthService);
-	loadProducts();
+	popLoading($ionicLoading);
+	loadProducts().then()
+	{
+		$ionicLoading.hide();
+	}
 	$scope.doRefresh = function() {
-		loadProducts();
-	};
+		$scope.products = [];
+		$scope.page.pageNo = 1;
+		loadProducts().then()
+		{
+			$scope.$broadcast('scroll.refreshComplete');
+		}
+	}
 	$scope.go2Product = function(productId) {
 		$window.location.href = '#/tab/prod/' + productId;
+	}
+	$scope.loadMore = function() {
+		console.log('load more...');
+		$scope.page.pageNo += 1;
+		loadProducts().then()
+		{
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+		}
 	}
 })
 
@@ -321,23 +343,47 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$window.location.reload();
 		}
 	}
+	$scope.page = {
+		hasMore : false,
+		pageNo : 1
+	};
 	var loadProgress = function() {
-		popLoading($ionicLoading);
-		$http.get('/user/progress').success(function(data, status, headers, config) {
-			var orders = data;
-			orders.forEach(function(o) {
-				o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
+		return $http.get('/user/progresses/' + $scope.page.pageNo).success(function(data, status, headers, config) {
+			$scope.page.hasMore = data.hasNext;
+			$scope.page.pageNo = data.currentPage;
+			if (null == $scope.myOrders) {
+				$scope.myOrders = [];
+			}
+			$scope.myOrders = $scope.myOrders.concat(data.results);
+			$scope.myOrders.forEach(function(o) {
+				if (null == o.progressValue) {
+					o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
+				}
 			});
-			$scope.myOrders = orders;
-			$scope.$broadcast('scroll.refreshComplete');
-			$ionicLoading.hide();
 		});
 	}
 	if ($scope.loginUser != null) {
-		loadProgress();
+		popLoading($ionicLoading);
+		loadProgress().then()
+		{
+			$ionicLoading.hide();
+		}
 	}
 	$scope.doRefresh = function() {
-		loadProgress();
+		$scope.myOrders = null;
+		$scope.page.pageNo = 1;
+		loadProgress().then()
+		{
+			$scope.$broadcast('scroll.refreshComplete');
+		}
+	}
+	$scope.loadMore = function() {
+		console.log('load more...');
+		$scope.page.pageNo += 1;
+		loadProgress().then()
+		{
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+		}
 	}
 	$scope.goHome = function() {
 		$window.location.href = '#/tab/prod';
@@ -435,18 +481,41 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('MyOrdersCtrl', function($scope, $http, $window, $stateParams, $ionicLoading) {
 	console.log('我的订单...');
+	$scope.page = {
+		hasMore : false,
+		pageNo : 1
+	};
 	var loadOrders = function() {
-		popLoading($ionicLoading);
-		return $http.get('/user/myorders').success(function(data, status, headers, config) {
-			$scope.myOrders = data;
-			$scope.$broadcast('scroll.refreshComplete');
-			$ionicLoading.hide();
+		return $http.get('/user/myorders/' + $scope.page.pageNo).success(function(data, status, headers, config) {
+			$scope.page.hasMore = data.hasNext;
+			$scope.page.pageNo = data.currentPage;
+			if (null == $scope.myOrders) {
+				$scope.myOrders = [];
+			}
+			$scope.myOrders = $scope.myOrders.concat(data.results);
 		});
 	}
-	loadOrders();
+	popLoading($ionicLoading);
+	loadOrders().then()
+	{
+		$ionicLoading.hide();
+	}
 	$scope.doRefresh = function() {
-		loadOrders();
+		$scope.myOrders = null;
+		$scope.page.pageNo = 1;
+		loadOrders().then()
+		{
+			$scope.$broadcast('scroll.refreshComplete');
+		}
 	};
+	$scope.loadMore = function() {
+		console.log('load more...');
+		$scope.page.pageNo += 1;
+		loadOrders().then()
+		{
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+		}
+	}
 	$scope.orderDetail = function(trackingId) {
 		$window.location.href = '#/tab/mine/order/' + trackingId;
 	}
@@ -759,7 +828,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			});
 
 			$scope.wechatLogin = function() {
-				$window.location.href = '/wechat/login';
+				var productId = DajiaGlobal.utils.getURLParameter('productId');
+				if (null != productId) {
+					$window.location.href = '/wechat/login?productId=' + productId;
+				} else {
+					$window.location.href = '/wechat/login';
+				}
 			}
 
 			// deprecated

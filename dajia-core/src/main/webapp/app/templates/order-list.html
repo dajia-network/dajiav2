@@ -7,25 +7,40 @@
   <ion-content>            
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
-		<div class="card" ng-repeat="order in myOrders" >
-		  <div class="item item-divider">
-		    订单号：{{order.trackingId}}
-		  </div>
-		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
-		    <img ng-src="{{order.product.imgUrl}}" >
-	        <p>{{order.product.name}}</p>
-	        <p>数量x{{order.quantity}}  实付: {{order.totalPrice}}元</p>
-	        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
-	        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
-	        <p><span class="assertive">{{order.orderStatus4Show}}</span></p>
-	        <i class="icon ion-chevron-right icon-accessory"></i>
-		  </div>
-		  <div class="item">
-		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
-		    <button class="button button-sqr-sm button-assertive" ng-click="orderDetail(order.orderId)">
-				跟踪订单
-			</button>
-		  </div>
+	<div class="card" ng-repeat="order in myOrders" >
+	  <div class="item item-divider">
+	    订单号：{{order.trackingId}}
+	  </div>
+	  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
+	    <img ng-src="{{order.product.imgUrl}}" >
+        <p>{{order.product.name}}</p>
+        <p>数量x{{order.quantity}}  实付: {{order.totalPrice}}元</p>
+        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
+        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
+        <p><span class="assertive">{{order.orderStatus4Show}}</span></p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+	  </div>
+	  <div class="item">
+	    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
+	    <button class="button button-sqr-sm button-assertive" ng-click="orderDetail(order.orderId)">
+			跟踪订单
+		</button>
+	  </div>
+	</div>
+	<ion-infinite-scroll immediate-check="false" ng-if="page.hasMore" on-infinite="loadMore()">
+	</ion-infinite-scroll>
+		
+    <div ng-if="myOrders.length==0">
+    	<div class="row">
+			<div class="col text-center">
+				还没有参与任何打价，快去打价吧
+			</div>
 		</div>
+	    <div class="row">
+			<div class="col text-center">
+				<button class="button button-outline button-assertive" ng-click="goHome()">去逛逛</button>
+			</div>
+		</div>
+    </div>
   </ion-content>
 </ion-view>

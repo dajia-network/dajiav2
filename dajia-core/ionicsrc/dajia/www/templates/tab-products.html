@@ -30,5 +30,7 @@
 		</div>
 	  </div>
 	</div>
+	<ion-infinite-scroll immediate-check="false" ng-if="page.hasMore" on-infinite="loadMore()">
+	</ion-infinite-scroll>
   </ion-content>
 </ion-view>

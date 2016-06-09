@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,8 @@ import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.ProductService;
+import com.dajia.util.CommonUtils;
+import com.dajia.vo.PaginationVO;
 
 @RestController
 public class ProductController extends BaseController {
@@ -40,6 +43,13 @@ public class ProductController extends BaseController {
 	public List<Product> allProducts() {
 		List<Product> products = productService.loadAllValidProductsWithPrices();
 		return products;
+	}
+
+	@RequestMapping("/products/{page}")
+	public PaginationVO<Product> allProductsByPage(@PathVariable("page") Integer pageNum) {
+		Page<Product> products = productService.loadAllValidProductsWithPricesByPage(pageNum);
+		PaginationVO<Product> page = CommonUtils.generatePaginationVO(products, pageNum);
+		return page;
 	}
 
 	@RequestMapping("/product/{pid}")

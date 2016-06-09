@@ -215,6 +215,16 @@ public class ProductService {
 		return products;
 	}
 
+	public Page<Product> loadAllValidProductsWithPricesByPage(Integer pageNum) {
+		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
+		Page<Product> products = productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
+				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString(), pageable);
+		for (Product product : products) {
+			calcPrice(product);
+		}
+		return products;
+	}
+
 	public Page<Product> loadProductsByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<Product> products = productRepo.findByIsActiveOrderByStartDateDesc(ActiveStatus.YES.toString(), pageable);

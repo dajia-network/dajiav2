@@ -14,12 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dajia.domain.Product;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
@@ -34,6 +36,7 @@ import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
+import com.dajia.vo.PaginationVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
 import com.pingplusplus.model.Event;
@@ -170,15 +173,15 @@ public class OrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping("/user/progress")
-	public List<OrderVO> myProgress(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping("/user/progresses/{page}")
+	public PaginationVO<OrderVO> myProgress(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("page") Integer pageNum) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		List<Integer> orderStatusList = new ArrayList<Integer>();
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
-		List<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(user.userId,
-				orderStatusList);
+		Page<UserOrder> orders = orderService.loadOrdersByUserIdByPage(user.userId, orderStatusList, pageNum);
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
@@ -188,7 +191,31 @@ public class OrderController extends BaseController {
 			}
 			progressList.add(ov);
 		}
-		return progressList;
+		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
+		page.results = progressList;
+		return page;
+	}
+
+	@RequestMapping("/user/myorders/{page}")
+	public PaginationVO<OrderVO> myOrders(HttpServletRequest request, HttpServletResponse response,
+			@PathVariable("page") Integer pageNum) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.CLOSED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.CANCELLED.getKey());
+		Page<UserOrder> orders = orderService.loadOrdersByUserIdByPage(user.userId, orderStatusList, pageNum);
+		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
+		for (UserOrder order : orders) {
+			OrderVO ov = orderService.convertOrderVO(order);
+			ov.product = productService.loadProductDetail(order.productId);
+			orderVoList.add(ov);
+		}
+		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
+		page.results = orderVoList;
+		return page;
 	}
 
 	@RequestMapping("/user/order/{trackingId}")
@@ -201,25 +228,5 @@ public class OrderController extends BaseController {
 	public OrderVO progressDetail(@PathVariable("trackingId") String trackingId) {
 		OrderVO ov = orderService.getOrderDetailByTrackingId4Progress(trackingId);
 		return ov;
-	}
-
-	@RequestMapping("/user/myorders")
-	public List<OrderVO> myOrders(HttpServletRequest request, HttpServletResponse response) {
-		User user = this.getLoginUser(request, response, userRepo, true);
-		List<Integer> orderStatusList = new ArrayList<Integer>();
-		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
-		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
-		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
-		orderStatusList.add(CommonUtils.OrderStatus.CLOSED.getKey());
-		orderStatusList.add(CommonUtils.OrderStatus.CANCELLED.getKey());
-		List<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(user.userId,
-				orderStatusList);
-		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
-		for (UserOrder order : orders) {
-			OrderVO ov = orderService.convertOrderVO(order);
-			ov.product = productService.loadProductDetail(order.productId);
-			orderVoList.add(ov);
-		}
-		return orderVoList;
 	}
 }
