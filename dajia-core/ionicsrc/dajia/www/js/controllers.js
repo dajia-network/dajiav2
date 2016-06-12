@@ -15,6 +15,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 .controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
 	console.log('产品列表...');
 	$scope.products = [];
+	$scope.countDowns = [];
+	$scope.intervals = [];
 	$scope.page = {
 		hasMore : false,
 		pageNo : 1
@@ -25,33 +27,59 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.page.hasMore = data.hasNext;
 			$scope.page.pageNo = data.currentPage;
 			$scope.products = $scope.products.concat(data.results);
+			$scope.products.forEach(function(p) {
+				var countDown = {
+					key : "tiles-" + p.productId,
+					targetDate : p.expiredDate
+				}
+				$scope.countDowns.push(countDown);
+			});
 		});
 	}
 	checkOauthLogin($cookies, $http, AuthService);
 	popLoading($ionicLoading);
-	loadProducts().then()
-	{
+	loadProducts().then(function() {
 		$ionicLoading.hide();
-	}
+	});
+
 	$scope.doRefresh = function() {
+		console.log('refresh...');
 		$scope.products = [];
 		$scope.page.pageNo = 1;
-		loadProducts().then()
-		{
+		clearCountDowns();
+		loadProducts().then(function() {
 			$scope.$broadcast('scroll.refreshComplete');
-		}
+			renderCountDown();
+		});
 	}
 	$scope.go2Product = function(productId) {
+		clearCountDowns();
 		$window.location.href = '#/tab/prod/' + productId;
 	}
 	$scope.loadMore = function() {
 		console.log('load more...');
+		clearCountDowns();
 		$scope.page.pageNo += 1;
-		loadProducts().then()
-		{
+		loadProducts().then(function() {
 			$scope.$broadcast('scroll.infiniteScrollComplete');
-		}
+			renderCountDown();
+		});
 	}
+	var renderCountDown = function() {
+		angular.element(document).ready(function() {
+			$scope.countDowns.forEach(function(cd) {
+				DajiaGlobal.utils.startCountDown(cd.key, cd.targetDate, $scope.intervals);
+			})
+		});
+	}
+	var clearCountDowns = function() {
+		$scope.intervals.forEach(function(i) {
+			clearInterval(i);
+		});
+		$scope.countDowns = [];
+		$scope.intervals = [];
+	}
+	renderCountDown();
 })
 
 .controller(
@@ -364,26 +392,23 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 	if ($scope.loginUser != null) {
 		popLoading($ionicLoading);
-		loadProgress().then()
-		{
+		loadProgress().then(function() {
 			$ionicLoading.hide();
-		}
+		});
 	}
 	$scope.doRefresh = function() {
 		$scope.myOrders = null;
 		$scope.page.pageNo = 1;
-		loadProgress().then()
-		{
+		loadProgress().then(function() {
 			$scope.$broadcast('scroll.refreshComplete');
-		}
+		});
 	}
 	$scope.loadMore = function() {
 		console.log('load more...');
 		$scope.page.pageNo += 1;
-		loadProgress().then()
-		{
+		loadProgress().then(function() {
 			$scope.$broadcast('scroll.infiniteScrollComplete');
-		}
+		});
 	}
 	$scope.goHome = function() {
 		$window.location.href = '#/tab/prod';
@@ -499,25 +524,22 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		});
 	}
 	popLoading($ionicLoading);
-	loadOrders().then()
-	{
+	loadOrders().then(function() {
 		$ionicLoading.hide();
-	}
+	});
 	$scope.doRefresh = function() {
 		$scope.myOrders = null;
 		$scope.page.pageNo = 1;
-		loadOrders().then()
-		{
+		loadOrders().then(function() {
 			$scope.$broadcast('scroll.refreshComplete');
-		}
+		});
 	};
 	$scope.loadMore = function() {
 		console.log('load more...');
 		$scope.page.pageNo += 1;
-		loadOrders().then()
-		{
+		loadOrders().then(function() {
 			$scope.$broadcast('scroll.infiniteScrollComplete');
-		}
+		});
 	}
 	$scope.orderDetail = function(trackingId) {
 		$window.location.href = '#/tab/mine/order/' + trackingId;
