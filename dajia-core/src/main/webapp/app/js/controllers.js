@@ -16,6 +16,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	console.log('产品列表...');
 	$scope.products = [];
 	$scope.countDowns = [];
+	$scope.clocks = [];
 	$scope.page = {
 		hasMore : false,
 		pageNo : 1
@@ -78,12 +79,18 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						countdown : true,
 						autoStart : true
 					});
+					$scope.clocks.push(clock);
 				})
 			}, 500);
 		});
 	}
 	var clearCountDowns = function() {
 		$scope.countDowns = [];
+		$scope.clocks.forEach(function(c) {
+			c.stop();
+			c = null;
+		});
+		$scope.clocks = [];
 	}
 })
 
