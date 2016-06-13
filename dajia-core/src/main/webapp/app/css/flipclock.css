@@ -118,11 +118,6 @@
   z-index: 2; }
 
 .flip-clock-wrapper ul li a div.up {
-  -webkit-transform-origin: 50% 100%;
-  -moz-transform-origin: 50% 100%;
-  -ms-transform-origin: 50% 100%;
-  -o-transform-origin: 50% 100%;
-  transform-origin: 50% 100%;
   top: 0; }
 
 .flip-clock-wrapper ul li a div.up:after {
@@ -137,11 +132,6 @@
   background-color: rgba(0, 0, 0, 0.4); }
 
 .flip-clock-wrapper ul li a div.down {
-  -webkit-transform-origin: 50% 0;
-  -moz-transform-origin: 50% 0;
-  -ms-transform-origin: 50% 0;
-  -o-transform-origin: 50% 0;
-  transform-origin: 50% 0;
   bottom: 0;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
@@ -171,12 +161,6 @@
   z-index: 3; }
 
 .flip-clock-wrapper .flip {   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); }
-
-.flip-clock-wrapper ul.play li.flip-clock-active {
-  -webkit-animation: asd 0.5s 0.5s linear both;
-  -moz-animation: asd 0.5s 0.5s linear both;
-  animation: asd 0.5s 0.5s linear both;
-  z-index: 5; }
 
 .flip-clock-divider {
   float: left;
