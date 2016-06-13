@@ -74,7 +74,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					var dif = today.getTime() - endDate.getTime();
 					var seconds = Math.abs(dif / 1000);
 					var clockDiv = $('#' + cd.key);
-					console.log(clockDiv);
 					var clock = clockDiv.FlipClock(seconds, {
 						countdown : true,
 						autoStart : true

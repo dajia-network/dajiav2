@@ -220,12 +220,27 @@ button img {
   left: 2px; }
 
 .flip-clock-dot.top {
-	top: 17px;
+	top: 18px;
 }
 
 .flip-clock-dot.bottom {
-	bottom: 11px;
+	bottom: 12px;
 }
 
 .flip-clock-divider .flip-clock-label {
   display: none;}
+
+  
+  
+.flip-clock-wrapper ul.play li.flip-clock-active .down {
+  z-index: 2;
+  -webkit-animation: none;
+  -moz-animation: none;
+  animation: none; }
+
+
+.flip-clock-wrapper ul.play li.flip-clock-before .up {
+  z-index: 2;
+  -webkit-animation: none;
+  -moz-animation: none;
+  animation: none; }
