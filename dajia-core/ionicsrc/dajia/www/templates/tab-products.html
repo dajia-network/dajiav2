@@ -8,9 +8,7 @@
 	</div>
 	<div class="list card" ng-repeat="product in products">
 	  <div class="item item-image">
-		<div class="countdown">
-		  <div class="tiles" id="{{'tiles-' + product.productId}}"></div>
-		</div>
+		  <div class="clock" id="{{'clock-' + product.productId}}"></div>
 	    <a href="#/tab/prod/{{product.productId}}"><img ng-src="{{product.imgUrl}}"></a>
 	  </div>
 	  <div class="row">

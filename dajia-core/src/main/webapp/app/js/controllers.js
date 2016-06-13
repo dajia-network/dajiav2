@@ -12,11 +12,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 })
 
-.controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService) {
+.controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService, $timeout) {
 	console.log('产品列表...');
 	$scope.products = [];
 	$scope.countDowns = [];
-	$scope.intervals = [];
 	$scope.page = {
 		hasMore : false,
 		pageNo : 1
@@ -29,7 +28,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.products = $scope.products.concat(data.results);
 			$scope.products.forEach(function(p) {
 				var countDown = {
-					key : "tiles-" + p.productId,
+					key : "clock-" + p.productId,
 					targetDate : p.expiredDate
 				}
 				$scope.countDowns.push(countDown);
@@ -40,6 +39,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	popLoading($ionicLoading);
 	loadProducts().then(function() {
 		$ionicLoading.hide();
+		renderCountDown();
 	});
 
 	$scope.doRefresh = function() {
@@ -67,19 +67,25 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 	var renderCountDown = function() {
 		angular.element(document).ready(function() {
-			$scope.countDowns.forEach(function(cd) {
-				DajiaGlobal.utils.startCountDown(cd.key, cd.targetDate, $scope.intervals);
-			})
+			$timeout(function() {
+				$scope.countDowns.forEach(function(cd) {
+					var today = new Date();
+					var endDate = new Date(cd.targetDate);
+					var dif = today.getTime() - endDate.getTime();
+					var seconds = Math.abs(dif / 1000);
+					var clockDiv = $('#' + cd.key);
+					console.log(clockDiv);
+					var clock = clockDiv.FlipClock(seconds, {
+						countdown : true,
+						autoStart : true
+					});
+				})
+			}, 500);
 		});
 	}
 	var clearCountDowns = function() {
-		$scope.intervals.forEach(function(i) {
-			clearInterval(i);
-		});
 		$scope.countDowns = [];
-		$scope.intervals = [];
 	}
-	renderCountDown();
 })
 
 .controller(
