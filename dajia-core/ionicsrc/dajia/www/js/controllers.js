@@ -16,6 +16,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	console.log('产品列表...');
 	$scope.products = [];
 	$scope.countDowns = [];
+	$scope.clocks = [];
 	$scope.page = {
 		hasMore : false,
 		pageNo : 1
@@ -67,24 +68,26 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 	var renderCountDown = function() {
 		angular.element(document).ready(function() {
+
 			$timeout(function() {
 				$scope.countDowns.forEach(function(cd) {
-					var today = new Date();
-					var endDate = new Date(cd.targetDate);
-					var dif = today.getTime() - endDate.getTime();
-					var seconds = Math.abs(dif / 1000);
-					var clockDiv = $('#' + cd.key);
-					console.log(clockDiv);
-					var clock = clockDiv.FlipClock(seconds, {
-						countdown : true,
-						autoStart : true
-					});
+					var targetDate = new Date(cd.targetDate);
+					var countdown = document.getElementById(cd.key);
+					DajiaGlobal.utils.getCountdown(countdown, targetDate);
+					var clock = setInterval(function() {
+						DajiaGlobal.utils.getCountdown(countdown, targetDate);
+					}, 1000);
+					$scope.clocks.push(clock);
 				})
 			}, 500);
 		});
 	}
 	var clearCountDowns = function() {
+		$scope.clocks.forEach(function(c) {
+			clearInterval(c);
+		});
 		$scope.countDowns = [];
+		$scope.clocks = [];
 	}
 })
 

@@ -187,45 +187,43 @@ button img {
     font-size: 12px;
 }
 
-/* flipclock */
+/* countdown */
 
-.flip-clock-wrapper {
-  position: absolute;
-  margin: 0.5em;
+.clock{
+	position: absolute;
+	padding: 8px;
+	z-index: 1;
 }
 
-/* Skeleton */
-.flip-clock-wrapper ul {
-  margin: 2px;
-  width: 18px;
-  height: 24px;
-  border-radius: 2px;
+.clock > span{
+	width: 25px;
+	max-width: 25px;
+	font: bold 16px 'Droid Sans', Arial, sans-serif;
+	text-align: center;
+	color: #111;
+	background-color: #ddd;
+	background-image: -webkit-linear-gradient(top, #bbb, #eee); 
+	background-image:    -moz-linear-gradient(top, #bbb, #eee);
+	background-image:     -ms-linear-gradient(top, #bbb, #eee);
+	background-image:      -o-linear-gradient(top, #bbb, #eee);
+	border-top: 1px solid #fff;
+	border-radius: 3px;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.7);
+	margin: 0 5px;
+	padding: 4px 0;
+	display: inline-block;
+	position: relative;
 }
 
-.flip-clock-wrapper ul li {
-  line-height: 25px;
+.clock > span:after{
+	content:"";
+	width: 100%;
+	height: 1px;
+	background: #eee;
+	border-top: 1px solid #333;
+	display: block;
+	position: absolute;
+	top: 44%; left: 0;
 }
 
-.flip-clock-wrapper ul li a div div.inn {
-  border-radius: 2px;
-  font-size: 15px; }
-
-.flip-clock-divider {
-  width: 8px;
-  height: 25px; }
-
-.flip-clock-dot {
-  width: 4px;
-  height: 4px;
-  left: 2px; }
-
-.flip-clock-dot.top {
-	top: 18px;
-}
-
-.flip-clock-dot.bottom {
-	bottom: 12px;
-}
-
-.flip-clock-divider .flip-clock-label {
-  display: none;}
+/* countdown end*/

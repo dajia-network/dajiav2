@@ -68,28 +68,25 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 	var renderCountDown = function() {
 		angular.element(document).ready(function() {
+
 			$timeout(function() {
 				$scope.countDowns.forEach(function(cd) {
-					var today = new Date();
-					var endDate = new Date(cd.targetDate);
-					var dif = today.getTime() - endDate.getTime();
-					var seconds = Math.abs(dif / 1000);
-					var clockDiv = $('#' + cd.key);
-					var clock = clockDiv.FlipClock(seconds, {
-						countdown : true,
-						autoStart : false
-					});
+					var targetDate = new Date(cd.targetDate);
+					var countdown = document.getElementById(cd.key);
+					DajiaGlobal.utils.getCountdown(countdown, targetDate);
+					var clock = setInterval(function() {
+						DajiaGlobal.utils.getCountdown(countdown, targetDate);
+					}, 1000);
 					$scope.clocks.push(clock);
 				})
 			}, 500);
 		});
 	}
 	var clearCountDowns = function() {
-		$scope.countDowns = [];
 		$scope.clocks.forEach(function(c) {
-			c.stop();
-			c = null;
+			clearInterval(c);
 		});
+		$scope.countDowns = [];
 		$scope.clocks = [];
 	}
 })
