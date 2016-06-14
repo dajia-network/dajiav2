@@ -77,7 +77,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					var clockDiv = $('#' + cd.key);
 					var clock = clockDiv.FlipClock(seconds, {
 						countdown : true,
-						autoStart : true
+						autoStart : false
 					});
 					$scope.clocks.push(clock);
 				})
