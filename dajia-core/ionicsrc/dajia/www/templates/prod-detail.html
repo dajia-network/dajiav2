@@ -8,6 +8,7 @@
 		<div class="list card">
 			<div class="item item-body">
 				<div align="center">{{product.name}}<p/></div>
+				<div class="clock" id="clock"></div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
 				  <ion-slide ng-repeat="prodImg in product.productImages">
 				    <img ng-src="{{prodImg.url}}" class="full-image">
