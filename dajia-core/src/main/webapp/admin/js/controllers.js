@@ -101,11 +101,15 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				} else {
 					product.startDate = new Date(product.startDate);
 				}
+				product.startDate.setSeconds(0);
+				product.startDate.setMilliseconds(0);
 				if (null == product.expiredDate) {
 					product.expiredDate = new Date();
 				} else {
 					product.expiredDate = new Date(product.expiredDate);
 				}
+				product.expiredDate.setSeconds(0);
+				product.expiredDate.setMilliseconds(0);
 				$scope.product = product;
 			}).error(function(data, status, headers, config) {
 				console.log('request failed...');
