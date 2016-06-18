@@ -89,7 +89,7 @@ public class CommonUtils {
 		target.description = src.description;
 		// target.postFee = src.postFee;
 		target.imgUrl = src.imgUrl;
-		target.imgThumbUrl = src.imgThumbUrl;
+		target.imgUrl4List = src.imgUrl4List;
 		if (null != src.productImages && src.productImages.size() > 0) {
 			for (ProductImage pi : src.productImages) {
 				pi.product = target;
@@ -120,6 +120,8 @@ public class CommonUtils {
 		}
 		if (null != req.productStatus) {
 			persist.productStatus = req.productStatus;
+		} else {
+			persist.productStatus = ProductStatus.INVALID.getKey();
 		}
 		if (null != req.originalPrice) {
 			if (persist.originalPrice == null || req.originalPrice.compareTo(persist.originalPrice) != 0) {
@@ -134,12 +136,14 @@ public class CommonUtils {
 			persist.postFee = req.postFee;
 		}
 		if (null != req.prices && req.prices.size() > 0) {
+			for (Price price : req.prices) {
+				price.product = persist;
+			}
 			if (null != persist.prices) {
-				for (Price price : req.prices) {
-					price.product = persist;
-				}
 				persist.prices.clear();
 				persist.prices.addAll(req.prices);
+			} else {
+				persist.prices = req.prices;
 			}
 		}
 	}
@@ -350,5 +354,24 @@ public class CommonUtils {
 			}
 		}
 		return returnStr;
+	}
+
+	public enum ProductImageType {
+		HOME(0, "首页图"), LIST(1, "列表图"), NORMAL(1, "常规图");
+		private Integer key;
+		private String value;
+
+		private ProductImageType(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
 	}
 }

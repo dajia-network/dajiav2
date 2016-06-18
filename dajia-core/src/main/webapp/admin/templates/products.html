@@ -14,6 +14,11 @@
 </nav>
 
 <div class="container">
+	<div class="ol-sm-12" ng-if="syncBtnTxt">
+		<button type="button" class="btn btn-primary" ng-click="sync();">{{syncBtnTxt}}</button>
+		<button type="button" class="btn btn-primary" ng-click="addProduct();">新增产品</button>
+	</div>
+	<p></p>
 	<div>
 		<uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
 	</div>
@@ -35,14 +40,15 @@
 		<tbody>
 			<tr ng-repeat="product in products">
 				<td>{{product.productId}}</td>
-				<td>{{product.name}}</td>
+				<td>{{ product.name | limitTo: 10 }} {{product.name.length < 10 ? '' : '...'}}</td>
 				<td>￥{{product.currentPrice}}</td>
 				<td>{{product.stock}}</td>
 				<td>{{product.sold}}</td>
-				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm'}}</td>
+				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm'}}</td>
 				<td>{{product.status4Show}}</td>
 				<td><button type="button" class="btn btn-primary btn-sm" ng-click="editProduct(product.productId);">编辑</button>
+					<button type="button" class="btn btn-primary btn-sm" ng-confirm-click="确定要删除该产品吗?" confirmed-click="delProduct(product.productId);">删除</button>
 					<button type="button" class="btn btn-primary btn-sm" ng-click="bot(product.productId);">BOT+1</button></td>
 			</tr>
 		</tbody>
@@ -57,8 +63,5 @@
 			</a></li>
 		</ul>
 	</nav>
-	<div class="ol-sm-12" ng-if="syncBtnTxt">
-		<button type="button" class="btn btn-primary" ng-click="sync();">{{syncBtnTxt}}</button>
-	</div>
 </div>
 

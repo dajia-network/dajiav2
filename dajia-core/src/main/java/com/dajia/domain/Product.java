@@ -92,11 +92,11 @@ public class Product extends BaseModel {
 	@Transient
 	public String status4Show;
 
-	@Column(name = "img_url")
+	@Column(name = "img_url_home")
 	public String imgUrl;
 
-	@Column(name = "img_thumb_url")
-	public String imgThumbUrl;
+	@Column(name = "img_url_list")
+	public String imgUrl4List;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "product", fetch = FetchType.LAZY)
 	public List<ProductImage> productImages;

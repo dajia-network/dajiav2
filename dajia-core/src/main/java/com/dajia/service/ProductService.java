@@ -192,6 +192,9 @@ public class ProductService {
 
 	public Product loadProductDetail(Long pid) {
 		Product product = productRepo.findOne(pid);
+		if (null == product) {
+			return null;
+		}
 		product.productImages.size();
 
 		product.status4Show = getProductStatusStr(product.productStatus);
@@ -364,6 +367,9 @@ public class ProductService {
 	}
 
 	private String getProductStatusStr(Integer key) {
+		if (null == key) {
+			return null;
+		}
 		String returnStr = null;
 		if (key.equals(ProductStatus.INVALID.getKey())) {
 			returnStr = ProductStatus.INVALID.getValue();

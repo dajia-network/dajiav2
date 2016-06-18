@@ -5,9 +5,6 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		$http.get('/admin/products/' + pageNum).success(function(data, status, headers, config) {
 			$scope.pager = data;
 			$scope.products = data.results;
-			$scope.editProduct = function(pid) {
-				window.location.href = '#/product/' + pid;
-			};
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
@@ -56,6 +53,19 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			});
 		});
 	}
+	$scope.addProduct = function() {
+		window.location.href = '#/product/0';
+	}
+	$scope.editProduct = function(pid) {
+		window.location.href = '#/product/' + pid;
+	};
+	$scope.delProduct = function(pid) {
+		$http.get('/admin/product/remove/' + pid).success(function(data, status, headers, config) {
+			window.location = '#';
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	};
 }).controller('OrdersCtrl', function($scope, $http) {
 	console.log('OrdersCtrl...');
 	$scope.orderFilter = 'real';
@@ -135,7 +145,8 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 						$scope.product.prices.push(priceObj);
 						$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
 								function(data, status, headers, config) {
-									$route.reload();
+									var pid = data.productId;
+									window.location.href = '#/product/' + pid;
 								}).error(function(data, status, headers, config) {
 							console.log('product update failed...');
 							console.log(data.message);
@@ -163,7 +174,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}
 			$scope.submit = function() {
 				$scope.alerts = [];
-				if (!$scope.product.stock || !$scope.product.originalPrice) {
+				console.log($scope.product);
+				if (!$scope.product.name || !$scope.product.postFee || !$scope.product.stock
+						|| !$scope.product.originalPrice || !$scope.product.startDate || !$scope.product.expiredDate) {
 					$scope.formIncomplete();
 				} else {
 					$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(

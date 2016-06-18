@@ -30,7 +30,7 @@ public class ApiKdtUtils {
 		// product.currentPrice = new BigDecimal((String) itemMap.get("price"));
 		product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
 		product.imgUrl = (String) itemMap.get("pic_url");
-		product.imgThumbUrl = (String) itemMap.get("pic_thumb_url");
+		product.imgUrl4List = (String) itemMap.get("pic_thumb_url");
 
 		List<Map<String, String>> imgMaps = (List<Map<String, String>>) itemMap.get("item_imgs");
 		List<ProductImage> productImgs = new ArrayList<ProductImage>();

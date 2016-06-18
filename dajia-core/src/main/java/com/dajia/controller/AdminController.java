@@ -74,13 +74,32 @@ public class AdminController extends BaseController {
 	@RequestMapping("/admin/product/{pid}")
 	public Product product(@PathVariable("pid") Long pid) {
 		Product product = productService.loadProductDetail(pid);
+		if (null == product) {
+			product = new Product();
+			product.productId = 0L;
+		}
+		return product;
+	}
+
+	@RequestMapping("/admin/product/remove/{pid}")
+	public Product removeProduct(@PathVariable("pid") Long pid) {
+		Product product = productRepo.findOne(pid);
+		if (null != product) {
+			product.isActive = CommonUtils.ActiveStatus.NO.toString();
+			productRepo.save(product);
+		}
 		return product;
 	}
 
 	@RequestMapping(value = "/admin/product/{pid}", method = RequestMethod.POST)
 	public @ResponseBody Product modifyProduct(@PathVariable("pid") Long pid, @RequestBody Product productVO) {
 		if (pid == productVO.productId) {
-			Product product = productRepo.findOne(pid);
+			Product product = null;
+			if (pid.longValue() == 0L) {
+				product = new Product();
+			} else {
+				product = productRepo.findOne(pid);
+			}
 			CommonUtils.updateProductWithReq(product, productVO);
 			productRepo.save(product);
 			return product;
@@ -133,7 +152,7 @@ public class AdminController extends BaseController {
 		orderRepo.save(order);
 		return order;
 	}
-	
+
 	@RequestMapping("/admin/order/{orderId}/comments")
 	public UserOrder addComments(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
 		String comments = request.getParameter("comments");
