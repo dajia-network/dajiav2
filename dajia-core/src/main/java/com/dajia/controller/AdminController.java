@@ -162,7 +162,15 @@ public class AdminController extends BaseController {
 		orderRepo.save(order);
 		return order;
 	}
-
+	
+	@RequestMapping("/admin/order/{orderId}/finish")
+	public UserOrder finishOrder(@PathVariable("orderId") Long orderId) {
+		UserOrder order = orderRepo.findOne(orderId);
+		order.orderStatus = OrderStatus.DELEVRIED.getKey();
+		orderRepo.save(order);
+		return order;
+	}
+	
 	@RequestMapping("/admin/order/{orderId}/close")
 	public UserOrder closeOrder(@PathVariable("orderId") Long orderId) {
 		UserOrder order = orderRepo.findOne(orderId);

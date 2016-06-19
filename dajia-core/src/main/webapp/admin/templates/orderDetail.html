@@ -106,6 +106,7 @@
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button class="btn btn-primary" ng-disabled="order.orderStatus!=2" ng-click="deliverOrder(order.orderId)">发货</button>
+				<button class="btn btn-primary" ng-disabled="order.orderStatus!=3" ng-click="finishOrder(order.orderId)">已签收</button>
 				<button class="btn btn-primary" ng-click="addComments(order.orderId)">添加备注</button>
 				<button class="btn btn-primary" ng-click="closeOrder(order.orderId)">关闭订单</button>
 				<a class="btn btn-default" href="#/orders" role="button">返回</a>

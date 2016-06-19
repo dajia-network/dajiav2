@@ -233,6 +233,15 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			});
 		}
 	}
+	$scope.finishOrder = function(orderId) {
+		$http.get('/admin/order/' + $routeParams.orderId + '/finish').success(function(data, status, headers, config) {
+			$scope.order = data;
+			console.log($scope.order);
+			$route.reload();
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
 	$scope.closeOrder = function(orderId) {
 		$http.get('/admin/order/' + $routeParams.orderId + '/close').success(function(data, status, headers, config) {
 			$scope.order = data;

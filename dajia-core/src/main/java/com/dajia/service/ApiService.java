@@ -236,7 +236,7 @@ public class ApiService {
 		Map<String, Object> chargeParams = new HashMap<String, Object>();
 		chargeParams.put("order_no", order.trackingId);
 		Integer amt = order.totalPrice.multiply(new BigDecimal(100)).intValue();
-		chargeParams.put("amount", 2);// hard code as 1 during testing phase
+		chargeParams.put("amount", amt);// hard code as 1 during testing phase
 		Map<String, String> app = new HashMap<String, String>();
 		app.put("id", "app_DifDeLWjfrz9Wf9y");
 		chargeParams.put("app", app);
@@ -268,7 +268,7 @@ public class ApiService {
 		if (null != ch) {
 			Map<String, Object> refundMap = new HashMap<String, Object>();
 			Integer amt = refundValue.multiply(new BigDecimal(100)).intValue();
-			refundMap.put("amount", 1);// hard code as 1 during testing phase
+			refundMap.put("amount", amt);// hard code as 1 during testing phase
 			refundMap.put("description", refundType);
 			Refund re = ch.getRefunds().create(refundMap);
 			return re;
