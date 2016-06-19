@@ -174,6 +174,9 @@ public class ProductService {
 		for (Product product : products) {
 			Product p = productRepo.findByRefId(product.refId);
 			if (null != p) {
+				if (p.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.NO.toString())) {
+					continue; // skip inactive product
+				}
 				try {
 					CommonUtils.copyProductProperties(product, p);
 				} catch (Exception e) {
