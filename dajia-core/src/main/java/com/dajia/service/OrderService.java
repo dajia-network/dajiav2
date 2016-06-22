@@ -200,7 +200,7 @@ public class OrderService {
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
-		List<UserOrder> orderList = orderRepo.findTop5ByProductIdAndOrderStatusInAndIsActiveOrderByOrderDateDesc(
+		List<UserOrder> orderList = orderRepo.findTop5ByProductIdAndOrderStatusInAndIsActiveOrderByOrderIdDesc(
 				ov.productId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
 		BigDecimal comparePrice = product.currentPrice;
 		for (UserOrder userOrder : orderList) {
