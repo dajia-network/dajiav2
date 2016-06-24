@@ -30,18 +30,26 @@ public class ApiKdtUtils {
 		// product.currentPrice = new BigDecimal((String) itemMap.get("price"));
 		product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
 		product.imgUrl = (String) itemMap.get("pic_url");
-		product.imgUrl4List = (String) itemMap.get("pic_thumb_url");
+		// product.imgUrl4List = (String) itemMap.get("pic_thumb_url");
 
 		List<Map<String, String>> imgMaps = (List<Map<String, String>>) itemMap.get("item_imgs");
 		List<ProductImage> productImgs = new ArrayList<ProductImage>();
 		if (null != imgMaps && imgMaps.size() > 0) {
-			for (Map<String, String> imgMap : imgMaps) {
-				ProductImage pi = new ProductImage();
-				pi.url = imgMap.get("url");
-				pi.thumbUrl = imgMap.get("thumbnail");
-				pi.medUrl = imgMap.get("medium");
-				pi.product = product;
-				productImgs.add(pi);
+			for (int i = 0; i < imgMaps.size(); i++) {
+				Map<String, String> imgMap = imgMaps.get(i);
+				if (i == 0) {
+					continue;
+				} else {
+					if (null == product.imgUrl4List || product.imgUrl4List.length() == 0) {
+						product.imgUrl4List = imgMap.get("thumbnail");
+					}
+					ProductImage pi = new ProductImage();
+					pi.url = imgMap.get("url");
+					pi.thumbUrl = imgMap.get("thumbnail");
+					pi.medUrl = imgMap.get("medium");
+					pi.product = product;
+					productImgs.add(pi);
+				}
 			}
 		}
 		product.productImages = productImgs;

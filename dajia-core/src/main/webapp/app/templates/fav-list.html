@@ -9,7 +9,7 @@
   	</ion-refresher> 
     <ion-list>
       <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="product in products" type="item-text-wrap" href="#/tab/prod/{{product.productId}}">
-        <img ng-src="{{product.imgUrl}}" >
+        <img ng-src="{{product.imgUrl4List}}" >
         <p>{{product.name}}</p>
         <p>价格：￥{{product.originalPrice}}</p>
         <p>打价开始日期：{{product.startDate | date:'yyyy-MM-dd'}}</p>

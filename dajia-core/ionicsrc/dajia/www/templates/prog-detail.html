@@ -14,7 +14,7 @@
 		    <span ng-if="order.product.productStatus==3">({{order.product.status4Show}})</span>
 		  </div>
 		  <div class="item item-thumbnail-left" type="item-text-wrap" ng-click="progressDetail(order.orderId)">
-		    <img ng-src="{{order.product.imgUrl}}" >
+		    <img ng-src="{{order.product.imgUrl4List}}" >
 	        <p>{{order.product.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 	        <p>数量 x {{order.quantity}}</p>
