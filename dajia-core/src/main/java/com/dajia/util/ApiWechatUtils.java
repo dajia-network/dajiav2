@@ -29,11 +29,17 @@ public class ApiWechatUtils {
 
 	public static String getOauthUrl(String appId, String refUserId, String productId, String refOrderId) {
 		String url = "";
-		if (null != refUserId && !refUserId.isEmpty() && !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
-			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
-					+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId + "_"
-					+ refOrderId + "#wechat_redirect";
-		} else if (null != productId && !productId.isEmpty() && !productId.equalsIgnoreCase(CommonUtils.null_string)) {
+		if (!CommonUtils.checkParameterIsNull(refUserId)) {
+			if (!CommonUtils.checkParameterIsNull(refOrderId)) {
+				url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+						+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId + "_"
+						+ refOrderId + "#wechat_redirect";
+			} else {
+				url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
+						+ "&response_type=code&scope=snsapi_userinfo&state=" + refUserId + "_" + productId
+						+ "#wechat_redirect";
+			}
+		} else if (!CommonUtils.checkParameterIsNull(productId)) {
 			url = wechat_oauth_url + "?appid=" + appId + "&redirect_uri=" + wechat_callback_url
 					+ "&response_type=code&scope=snsapi_userinfo&state=" + productId + "#wechat_redirect";
 		} else {

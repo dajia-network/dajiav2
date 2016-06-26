@@ -203,3 +203,19 @@ CREATE TABLE IF NOT EXISTS dajia.user_refund (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(refund_id)
 );
+
+DROP TABLE IF EXISTS dajia.user_visit_log;
+CREATE TABLE IF NOT EXISTS dajia.user_visit_log (
+	visit_log_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NULL,
+    ref_user_id BIGINT(25) NULL,
+    product_id BIGINT(25) NULL,
+	visit_url varchar(2000) NOT NULL,
+	ref_url varchar(2000) NULL,
+	visit_ip VARCHAR(20) NULL,
+    log_type INT,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(visit_log_id)
+);

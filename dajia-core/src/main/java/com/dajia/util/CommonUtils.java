@@ -176,6 +176,10 @@ public class CommonUtils {
 		return trackingId.toString();
 	}
 
+	public static boolean checkParameterIsNull(String param) {
+		return null == param || param.isEmpty() || param.equalsIgnoreCase(null_string);
+	}
+
 	public enum ActiveStatus {
 		YES("Y"), NO("N");
 		private String key;
@@ -291,7 +295,7 @@ public class CommonUtils {
 	}
 
 	public enum RewardStatus {
-		PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消"), ERROR(3, "出错");
+		INVALID(0, "尚未生效"), PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消"), ERROR(3, "出错");
 		private Integer key;
 		private String value;
 
@@ -365,6 +369,25 @@ public class CommonUtils {
 		private String value;
 
 		private ProductImageType(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public enum LogType {
+		SIMPLE_SHARE(1, "直接分享"), REWARD_SHARE(2, "奖励分享");
+		private Integer key;
+		private String value;
+
+		private LogType(Integer key, String value) {
 			this.key = key;
 			this.value = value;
 		}

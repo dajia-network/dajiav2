@@ -73,7 +73,11 @@ public class RewardService {
 			ur.orderUserId = order.userId;
 			ur.rewardRatio = 10; // ignore quantity
 			ur.expiredDate = product.expiredDate;
-			ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+			if (null != ur.refOrderId && ur.refOrderId.longValue() != 0L) {
+				ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+			} else {
+				ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
+			}
 			Calendar c = Calendar.getInstance();
 			c.setTime(ur.expiredDate);
 			c.add(Calendar.DATE, CommonUtils.reward_delay_days);

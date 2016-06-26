@@ -20,6 +20,7 @@ import com.dajia.domain.User;
 import com.dajia.repository.PropertyRepo;
 import com.dajia.service.ApiService;
 import com.dajia.service.UserService;
+import com.dajia.service.VisitLogService;
 import com.dajia.util.ApiWechatUtils;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.RandomString;
@@ -37,6 +38,9 @@ public class WechatController extends BaseController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private VisitLogService visitLogService;
 
 	@Autowired
 	private PropertyRepo propertyRepo;
@@ -74,16 +78,29 @@ public class WechatController extends BaseController {
 			request.getSession().setAttribute("oauthLogin", "success");
 		}
 		if (null != state && !state.equalsIgnoreCase(CommonUtils.state_string)) {
+			String redirectUrl = "#";
 			String[] stateArray = state.split("_");
 			if (stateArray.length == 3) {
 				String refUserId = stateArray[0];
 				String productId = stateArray[1];
 				String refOrderId = stateArray[2];
-				return "redirect:app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
+				redirectUrl = "app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
 						+ refOrderId + "#/tab/prod/" + productId;
-			} else if (!state.equalsIgnoreCase(CommonUtils.state_string)) {
-				return "redirect:app/index.html?productId=" + state + "#/tab/prod/" + state;
+				visitLogService.addShareLog(loginUser.userId, Long.valueOf(refUserId), productId,
+						CommonUtils.LogType.REWARD_SHARE.getKey(), redirectUrl);
+			} else if (stateArray.length == 2) {
+				String refUserId = stateArray[0];
+				String productId = stateArray[1];
+				redirectUrl = "app/index.html?refUserId=" + refUserId + "&productId=" + productId + "#/tab/prod/"
+						+ productId;
+				visitLogService.addShareLog(loginUser.userId, Long.valueOf(refUserId), productId,
+						CommonUtils.LogType.SIMPLE_SHARE.getKey(), redirectUrl);
+			} else if (!CommonUtils.checkParameterIsNull(state)) {
+				redirectUrl = "app/index.html?productId=" + state + "#/tab/prod/" + state;
+				visitLogService.addShareLog(loginUser.userId, null, state, CommonUtils.LogType.SIMPLE_SHARE.getKey(),
+						redirectUrl);
 			}
+			return "redirect:" + redirectUrl;
 		}
 		return "redirect:app/index.html";
 	}

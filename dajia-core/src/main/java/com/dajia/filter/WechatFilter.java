@@ -71,12 +71,14 @@ public class WechatFilter implements Filter {
 					String productId = request.getParameter(CommonUtils.product_id);
 					String refOrderId = request.getParameter(CommonUtils.ref_order_id);
 					logger.info("refUserId:" + refUserId + "||productId:" + productId);
-					if (null != refUserId && !refUserId.isEmpty()
-							&& !refUserId.equalsIgnoreCase(CommonUtils.null_string)) {
-						response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId
-								+ "&refOrderId=" + refOrderId);
-					} else if (null != productId && !productId.isEmpty()
-							&& !productId.equalsIgnoreCase(CommonUtils.null_string)) {
+					if (!CommonUtils.checkParameterIsNull(refUserId)) {
+						if (!CommonUtils.checkParameterIsNull(refOrderId)) {
+							response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId
+									+ "&refOrderId=" + refOrderId);
+						} else {
+							response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId);
+						}
+					} else if (!CommonUtils.checkParameterIsNull(productId)) {
 						response.sendRedirect("/wechat/login?productId=" + productId);
 					} else {
 						response.sendRedirect("/wechat/login");

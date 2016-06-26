@@ -275,10 +275,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
 				var productId = DajiaGlobal.utils.getURLParameter('productId');
 				var refOrderId = DajiaGlobal.utils.getURLParameter('refOrderId');
-				if (null != refUserId && null != refOrderId && productId == $scope.order.productId) {
+				if (null != refUserId && productId == $scope.order.productId) {
 					console.log("refUserId:" + refUserId + " refOrderId:" + refOrderId);
 					$scope.order.refUserId = refUserId;
-					$scope.order.refOrderId = refOrderId;
+					if (null != refOrderId) {
+						$scope.order.refOrderId = refOrderId;
+					}
 				}
 
 				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
@@ -1089,8 +1091,15 @@ var checkOauthLogin = function($cookies, $http, AuthService) {
 
 var simpleShare = function(product) {
 	console.log(product);
-	var shareLink = 'http://51daja.com/app/index.html?productId=' + product.productId + '#/tab/prod/'
-			+ product.productId;
+	var userId = $cookies.get('dajia_user_id');
+	var shareLink = '#';
+	if (null != userId) {
+		shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
+				+ '#/tab/prod/' + product.productId;
+	} else {
+		shareLink = 'http://51daja.com/app/index.html?productId=' + product.productId + '#/tab/prod/'
+				+ product.productId;
+	}
 	wx.onMenuShareAppMessage({
 		title : '打价网',
 		desc : product.shortName,
