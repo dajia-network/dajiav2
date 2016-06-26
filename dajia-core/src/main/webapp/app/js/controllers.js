@@ -163,7 +163,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								/ (product.originalPrice - product.targetPrice) * 100;
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
-						initWechatJSAPI($http, $scope.product);
+						initWechatJSAPI($http, $cookies, $scope.product);
 						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;
@@ -452,7 +452,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						order.progressValue = order.product.priceOff
 								/ (order.product.originalPrice - order.product.targetPrice) * 100;
 						$scope.order = order;
-						initWechatJSAPI($http, $scope.order.product);
+						initWechatJSAPI($http, $cookies, $scope.order.product);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
@@ -1054,7 +1054,7 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
-var initWechatJSAPI = function($http, product) {
+var initWechatJSAPI = function($http, $cookies, product) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
 		// console.log(data);
 		wx.config({
