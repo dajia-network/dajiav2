@@ -196,6 +196,11 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			$scope.closeAlert = function(index) {
 				$scope.alerts.splice(index, 1);
 			}
+
+			$scope.homeImgUploader = {};
+			$scope.homeImgUpload = function() {
+				$scope.homeImgUploader.flow.upload();
+			}
 		})
 
 .controller('OrderDetailCtrl', function($scope, $http, $routeParams, $route) {

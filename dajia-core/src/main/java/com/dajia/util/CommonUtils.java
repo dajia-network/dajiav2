@@ -103,6 +103,9 @@ public class CommonUtils {
 		if (null != req.name) {
 			persist.name = req.name;
 		}
+		if (null != req.shortName) {
+			persist.shortName = req.shortName;
+		}
 		if (null != req.brief) {
 			persist.brief = req.brief;
 		}

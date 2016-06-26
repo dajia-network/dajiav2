@@ -22,6 +22,7 @@ public class ApiKdtUtils {
 		Product product = new Product();
 		product.refId = (String) itemMap.get(key_refid);
 		product.name = (String) itemMap.get("title");
+		product.shortName = (String) itemMap.get("title");
 		product.description = (String) itemMap.get("desc");
 		// product.stock = Long.valueOf((String) itemMap.get("num"));
 		// product.sold = ((Integer) itemMap.get("sold_num")).longValue();

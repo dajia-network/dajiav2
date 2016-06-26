@@ -1093,9 +1093,9 @@ var simpleShare = function(product) {
 			+ product.productId;
 	wx.onMenuShareAppMessage({
 		title : '打价网',
-		desc : product.name,
+		desc : product.shortName,
 		link : shareLink,
-		imgUrl : 'http://51daja.com/app/img/logo.png',
+		imgUrl : product.imgUrl4List,
 		trigger : function() {
 			console.log('click');
 		},
@@ -1107,9 +1107,9 @@ var simpleShare = function(product) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '打价网 - ' + product.name,
+		title : '打价网 - ' + product.shortName,
 		link : shareLink,
-		imgUrl : 'http://51daja.com/app/img/logo.png',
+		imgUrl : product.imgUrl4List,
 		trigger : function() {
 			console.log('click');
 		},
@@ -1138,9 +1138,9 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		}
 		wx.onMenuShareAppMessage({
 			title : '打价网',
-			desc : username + '在打价网购买了"' + product.name + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			desc : username + '在打价网购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
-			imgUrl : 'http://51daja.com/app/img/logo.png',
+			imgUrl : product.imgUrl4List,
 			trigger : function() {
 				console.log('click');
 			},
@@ -1152,9 +1152,9 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : username + '在打价网购买了"' + product.name + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			title : username + '在打价网购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
-			imgUrl : 'http://51daja.com/app/img/logo.png',
+			imgUrl : product.imgUrl4List,
 			trigger : function() {
 				console.log('click');
 			},
