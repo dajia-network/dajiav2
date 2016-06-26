@@ -1071,7 +1071,7 @@ var initWechatJSAPI = function($http, product) {
 			}
 		});
 		wx.ready(function() {
-			simpleShare(product);
+			simpleShare(product, $cookies);
 		});
 	});
 }
@@ -1089,7 +1089,7 @@ var checkOauthLogin = function($cookies, $http, AuthService) {
 	}
 }
 
-var simpleShare = function(product) {
+var simpleShare = function(product, $cookies) {
 	console.log(product);
 	var userId = $cookies.get('dajia_user_id');
 	var shareLink = '#';
