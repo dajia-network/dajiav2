@@ -148,6 +148,8 @@ public class CommonUtils {
 			} else {
 				persist.prices = req.prices;
 			}
+		} else {
+			persist.prices.clear();
 		}
 	}
 
