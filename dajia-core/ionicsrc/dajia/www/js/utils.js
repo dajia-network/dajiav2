@@ -14,6 +14,9 @@ DajiaGlobal.utils = {
 		var hours, minutes, seconds;
 		var now = new Date().getTime();
 		var seconds = (targetDate - now) / 1000;
+		if (seconds < 0) {
+			seconds = 0;
+		}
 		hours = DajiaGlobal.utils.pad(parseInt(seconds / 3600));
 		if (hours > 99) {
 			hours = 99;

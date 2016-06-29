@@ -163,13 +163,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								/ (product.originalPrice - product.targetPrice) * 100;
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
-						initWechatJSAPI($http, $scope.product);
+						initWechatJSAPI($http, $cookies, $scope.product);
 						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;
 						}, 1000);
 
-						console.log(product);
 						var targetDate = new Date(product.expiredDate);
 						var countdown = document.getElementById('clock');
 						DajiaGlobal.utils.getCountdown(countdown, targetDate);
@@ -177,6 +176,26 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							DajiaGlobal.utils.getCountdown(countdown, targetDate);
 						}, 1000);
 
+						// save share log
+						var productId = DajiaGlobal.utils.getURLParameter('productId');
+						if (null != productId) {
+							productId = Number(productId);
+							var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
+							if (null != refUserId) {
+								refUserId = Number(refUserId);
+							}
+							var userId = $cookies.get('dajia_user_id');
+							if (null != userId) {
+								userId = Number(userId);
+							}
+							var visitLog = {
+								visitUrl : window.location.href,
+								productId : productId,
+								refUserId : refUserId,
+								userId : userId
+							}
+							$http.post('/user/sharelog', visitLog);
+						}
 					});
 			$scope.progressValue = 0;
 		})
@@ -353,8 +372,16 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				}
 				fillLocationDropdowns($scope, $ionicLoading, locationReady);
 			}
+			$scope.calcPostFee = function() {
+				if ($scope.userContact.province.minPostFee > $scope.order.postFee) {
+					$scope.order.postFee = $scope.userContact.province.minPostFee;
+					$scope.orderItem.postFee = $scope.order.postFee;
+					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+				}
+			}
 
 			var fillLocationDropdowns = function($scope, $ionicLoading, locationReady) {
+				console.log($scope.provinces);
 				$scope.provinces.forEach(function(p) {
 					if (p.locationKey == $scope.userContact.province.locationKey) {
 						$scope.userContact.province = p;
@@ -368,6 +395,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 											$ionicLoading.hide();
 										}
 										locationReady = true;
+										$scope.calcPostFee();
 										return;
 									}
 								});
@@ -452,7 +480,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						order.progressValue = order.product.priceOff
 								/ (order.product.originalPrice - order.product.targetPrice) * 100;
 						$scope.order = order;
-						initWechatJSAPI($http, $scope.order.product);
+						initWechatJSAPI($http, $cookies, $scope.order.product);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
@@ -1054,7 +1082,7 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
-var initWechatJSAPI = function($http, product) {
+var initWechatJSAPI = function($http, $cookies, product) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
 		// console.log(data);
 		wx.config({

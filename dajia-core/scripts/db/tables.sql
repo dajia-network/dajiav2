@@ -152,6 +152,7 @@ CREATE TABLE IF NOT EXISTS dajia.location (
 	location_key int(11) NOT NULL,
 	location_value varchar(20) NOT NULL,
 	location_type varchar(20) NOT NULL,
+	min_post_fee int(5) NOT NULL,
 	parent_key int(11) NOT NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,

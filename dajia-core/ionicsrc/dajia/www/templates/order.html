@@ -28,7 +28,7 @@
 			    <div class="input-label">
 			      省
 			    </div>
-			    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
+			    <select ng-model="userContact.province" ng-change="calcPostFee();userContact.city=''" ng-options="province.locationValue for province in provinces" >
 					<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
 			    </select>
 			</label>
@@ -96,7 +96,7 @@
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
-			<div class="col text-left">合计金额：<span class="assertive">￥{{order.totalPrice}}</span></div>
+			<div class="col text-left">合计金额：<span class="assertive">￥{{order.totalPrice.toFixed(2)}}</span></div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">确认付款</button>
 			</div>

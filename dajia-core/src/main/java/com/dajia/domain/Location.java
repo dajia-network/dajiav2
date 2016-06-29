@@ -21,6 +21,9 @@ public class Location extends BaseModel {
 	@Column(name = "location_value", nullable = false)
 	public String locationValue;
 
+	@Column(name = "min_post_fee")
+	public Integer minPostFee;
+
 	@Column(name = "parent_key", nullable = false)
 	public Long parentKey;
 

@@ -26,6 +26,7 @@ import com.dajia.domain.Location;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserFavourite;
+import com.dajia.domain.VisitLog;
 import com.dajia.repository.LocationRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserRepo;
@@ -33,6 +34,7 @@ import com.dajia.service.FavouriteService;
 import com.dajia.service.SmsService;
 import com.dajia.service.UserContactService;
 import com.dajia.service.UserService;
+import com.dajia.service.VisitLogService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.LocationType;
 import com.dajia.util.EncodingUtil;
@@ -65,6 +67,9 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private SmsService smsService;
+
+	@Autowired
+	private VisitLogService visitLogService;
 
 	@Autowired
 	EhCacheCacheManager ehcacheManager;
@@ -226,18 +231,21 @@ public class UserController extends BaseController {
 			LocationVO pvo = new LocationVO();
 			pvo.locationKey = province.locationKey;
 			pvo.locationValue = province.locationValue;
+			pvo.minPostFee = province.minPostFee;
 			List<LocationVO> childrenCity = new ArrayList<LocationVO>();
 			for (Location city : cities) {
 				if (city.parentKey.equals(pvo.locationKey)) {
 					LocationVO cvo = new LocationVO();
 					cvo.locationKey = city.locationKey;
 					cvo.locationValue = city.locationValue;
+					cvo.minPostFee = city.minPostFee;
 					List<LocationVO> childrenDis = new ArrayList<LocationVO>();
 					for (Location district : districts) {
 						if (district.parentKey.equals(cvo.locationKey)) {
 							LocationVO dvo = new LocationVO();
 							dvo.locationKey = district.locationKey;
 							dvo.locationValue = district.locationValue;
+							dvo.minPostFee = district.minPostFee;
 							childrenDis.add(dvo);
 						}
 					}
@@ -320,5 +328,17 @@ public class UserController extends BaseController {
 			HttpServletResponse response) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		userContactService.markDefaultUserContact(contactId, user);
+	}
+
+	@RequestMapping(value = "/user/sharelog", method = RequestMethod.POST)
+	public void saveShareLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
+		String visitIp = request.getRemoteAddr();
+		Integer logType;
+		if (null != visitLog.refUserId) {
+			logType = CommonUtils.LogType.REWARD_SHARE.getKey();
+		} else {
+			logType = CommonUtils.LogType.SIMPLE_SHARE.getKey();
+		}
+		visitLogService.addShareLog(visitLog, logType, visitIp);
 	}
 }

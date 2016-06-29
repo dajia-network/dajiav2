@@ -86,19 +86,13 @@ public class WechatController extends BaseController {
 				String refOrderId = stateArray[2];
 				redirectUrl = "app/index.html?refUserId=" + refUserId + "&productId=" + productId + "&refOrderId="
 						+ refOrderId + "#/tab/prod/" + productId;
-				visitLogService.addShareLog(loginUser.userId, Long.valueOf(refUserId), productId,
-						CommonUtils.LogType.REWARD_SHARE.getKey(), redirectUrl);
 			} else if (stateArray.length == 2) {
 				String refUserId = stateArray[0];
 				String productId = stateArray[1];
 				redirectUrl = "app/index.html?refUserId=" + refUserId + "&productId=" + productId + "#/tab/prod/"
 						+ productId;
-				visitLogService.addShareLog(loginUser.userId, Long.valueOf(refUserId), productId,
-						CommonUtils.LogType.SIMPLE_SHARE.getKey(), redirectUrl);
 			} else if (!CommonUtils.checkParameterIsNull(state)) {
 				redirectUrl = "app/index.html?productId=" + state + "#/tab/prod/" + state;
-				visitLogService.addShareLog(loginUser.userId, null, state, CommonUtils.LogType.SIMPLE_SHARE.getKey(),
-						redirectUrl);
 			}
 			return "redirect:" + redirectUrl;
 		}
