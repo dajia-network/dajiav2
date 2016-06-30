@@ -8,7 +8,7 @@
 		<div class="list card">
 			<div class="item item-body">
 				<div align="center">{{product.name}}<p/></div>
-				<div class="clock" id="clock"></div>
+				<div ng-if="product.stock>0&&product.productStatus==2" class="clock" id="clock"></div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
 				  <ion-slide ng-repeat="prodImg in product.productImages">
 				    <img ng-src="{{prodImg.url}}" class="full-image">
@@ -18,8 +18,8 @@
 					<b>现价 <span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> 元</b>
 					&nbsp;<span class="ori_price">{{product.originalPrice}} 元</span>
 					<br/>
-					库存 {{product.stock}}<br/>
-					<div ng-if="product.stock>0">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
+					<span ng-if="product.stock>0&&product.productStatus==2">库存 {{product.stock}}</span><br/>
+					<div ng-if="product.stock>0&&product.productStatus==2">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
 					<div ng-if="product.stock<=0">该商品已售罄。</div>
 				</p>
 				<div>
@@ -31,7 +31,7 @@
 			<div class="item tabs tabs-secondary tabs-icon-left">
 				<a class="tab-item" ng-click="add2Fav()"> <i class="icon ion-star" id="fav_icon"></i> {{favBtnTxt}}
 				</a> 
-				<a class="tab-item" ng-click="share()"> <i class="icon ion-share"></i> 分享
+				<a class="tab-item" ng-click="share()" ng-disabled="product.stock<=0||product.productStatus!=2"> <i class="icon ion-share"></i> 分享
 				</a>
 			</div>
 		</div>

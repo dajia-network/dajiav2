@@ -222,9 +222,12 @@ public class ProductService {
 	}
 
 	public Page<Product> loadAllValidProductsWithPricesByPage(Integer pageNum) {
+		List<Integer> productStatusList = new ArrayList<Integer>();
+		productStatusList.add(ProductStatus.VALID.getKey());
+		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
-		Page<Product> products = productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
-				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString(), pageable);
+		Page<Product> products = productRepo.findByProductStatusInAndIsActiveOrderByExpiredDateAsc(productStatusList,
+				ActiveStatus.YES.toString(), pageable);
 		for (Product product : products) {
 			calcPrice(product);
 		}

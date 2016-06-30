@@ -771,6 +771,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	console.log('绑定手机...');
 	var userId = $cookies.get('dajia_user_id');
 	$scope.userMobile = $cookies.get('dajia_user_mobile');
+	if (!DajiaGlobal.utils.isValidStr($scope.userMobile)) {
+		$scope.userMobile = "未绑定";
+	}
 	$scope.user = {
 		'userId' : userId,
 		'mobile' : null,

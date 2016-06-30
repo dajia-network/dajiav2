@@ -166,6 +166,19 @@ button img {
     color: #fff;
 }
 
+.button.button-assertive.button-outline {
+	border-color: #ee385d;
+	background: transparent;
+	color: #ee385d;
+}
+
+.button.button-assertive.button-outline.active,.button.button-assertive.button-outline.activated
+	{
+	background-color: #ee385d;
+	box-shadow: none;
+	color: #fff;
+}
+
 .assertive, a.assertive {
     color: #ee385d;
 }

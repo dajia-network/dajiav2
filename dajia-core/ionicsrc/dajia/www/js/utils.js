@@ -4,6 +4,9 @@ DajiaGlobal.utils = {
 	isNotString : function(str) {
 		return (typeof str !== "string");
 	},
+	isValidStr : function(str) {
+		return (null != str && str.length > 0 && 'null' != str);
+	},
 	mobileReg : /^((13[0-9]|15[0-9]|18[0-9])+\d{8})$/,
 	getURLParameter : function(name) {
 		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [ ,
@@ -11,6 +14,9 @@ DajiaGlobal.utils = {
 				|| null;
 	},
 	getCountdown : function(countdown, targetDate) {
+		if (null == countdown) {
+			return;
+		}
 		var hours, minutes, seconds;
 		var now = new Date().getTime();
 		var seconds = (targetDate - now) / 1000;
