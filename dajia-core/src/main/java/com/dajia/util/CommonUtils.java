@@ -316,7 +316,7 @@ public class CommonUtils {
 	}
 
 	public enum RefundType {
-		REFUND(0, "差价退款"), REWARD(1, "推荐奖励");
+		REFUND(0, "差价退款"), REWARD(1, "推荐奖励"), MANNUAL(2, "人工退款");
 		private Integer key;
 		private String value;
 
@@ -332,6 +332,18 @@ public class CommonUtils {
 		public String getValue() {
 			return value;
 		}
+	}
+
+	public static String getRefundTypeStr(Integer key) {
+		String returnStr = null;
+		if (key.equals(RefundType.REFUND.getKey())) {
+			returnStr = RefundType.REFUND.getValue();
+		} else if (key.equals(RefundType.REWARD.getKey())) {
+			returnStr = RefundType.REWARD.getValue();
+		} else if (key.equals(RefundType.MANNUAL.getKey())) {
+			returnStr = RefundType.MANNUAL.getValue();
+		}
+		return returnStr;
 	}
 
 	public enum LogisticAgent {

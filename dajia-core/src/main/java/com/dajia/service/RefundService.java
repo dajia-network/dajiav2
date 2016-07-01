@@ -2,6 +2,7 @@ package com.dajia.service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import com.dajia.domain.UserRefund;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRefundRepo;
+import com.dajia.util.CommonUtils;
 
 @Service
 public class RefundService {
@@ -37,5 +39,14 @@ public class RefundService {
 		refund.refundType = refundType;
 		refund.refundDate = new Date();
 		refundRepo.save(refund);
+	}
+
+	public List<UserRefund> getRefundListByOrderId(Long orderId) {
+		List<UserRefund> refundList = refundRepo.findByOrderIdAndIsActive(orderId,
+				CommonUtils.ActiveStatus.YES.toString());
+		for (UserRefund userRefund : refundList) {
+			userRefund.refundType4Show = CommonUtils.getRefundTypeStr(userRefund.refundType);
+		}
+		return refundList;
 	}
 }

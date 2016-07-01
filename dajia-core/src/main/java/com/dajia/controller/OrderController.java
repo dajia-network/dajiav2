@@ -161,9 +161,12 @@ public class OrderController extends BaseController {
 				if (desc.equalsIgnoreCase(CommonUtils.refund_type_refund)) {
 					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.REFUND.getKey());
-				} else {
+				} else if (desc.equalsIgnoreCase(CommonUtils.refund_type_reward)) {
 					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.REWARD.getKey());
+				} else {
+					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
+							CommonUtils.RefundType.MANNUAL.getKey());
 				}
 			}
 			response.setStatus(200);

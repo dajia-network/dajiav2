@@ -25,6 +25,7 @@ import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
+import com.dajia.service.RefundService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
@@ -40,6 +41,9 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private RefundService refundService;
 
 	@Autowired
 	private OrderService orderService;
@@ -138,6 +142,7 @@ public class AdminController extends BaseController {
 		}
 		OrderVO ov = orderService.convertOrderVO(order);
 		orderService.fillOrderVO(ov, order);
+		ov.refundList = refundService.getRefundListByOrderId(orderId);
 		return ov;
 	}
 
@@ -162,7 +167,7 @@ public class AdminController extends BaseController {
 		orderRepo.save(order);
 		return order;
 	}
-	
+
 	@RequestMapping("/admin/order/{orderId}/finish")
 	public UserOrder finishOrder(@PathVariable("orderId") Long orderId) {
 		UserOrder order = orderRepo.findOne(orderId);
@@ -170,7 +175,7 @@ public class AdminController extends BaseController {
 		orderRepo.save(order);
 		return order;
 	}
-	
+
 	@RequestMapping("/admin/order/{orderId}/close")
 	public UserOrder closeOrder(@PathVariable("orderId") Long orderId) {
 		UserOrder order = orderRepo.findOne(orderId);

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.dajia.domain.Product;
 import com.dajia.domain.UserContact;
+import com.dajia.domain.UserRefund;
 
 public class OrderVO {
 
@@ -71,4 +72,6 @@ public class OrderVO {
 	public Collection<LoginUserVO> rewardSrcUsers;
 
 	public List<ProgressVO> progressList;
+
+	public List<UserRefund> refundList;
 }

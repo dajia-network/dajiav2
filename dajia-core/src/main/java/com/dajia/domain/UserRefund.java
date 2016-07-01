@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "user_refund")
@@ -35,5 +36,8 @@ public class UserRefund extends BaseModel {
 
 	@Column(name = "refund_type")
 	public Integer refundType;
+
+	@Transient
+	public String refundType4Show;
 
 }

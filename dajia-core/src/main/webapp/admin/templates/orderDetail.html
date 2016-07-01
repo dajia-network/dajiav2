@@ -89,6 +89,24 @@
 			</tbody>
 		</table>
 		
+		<table class="table table-bordered" ng-if="order.refundList!=null&&order.refundList.length>0">
+			<thead>
+				<tr>
+					<th data-field="refundValue">退款金额</th>
+					<th data-field="refundType">退款类型</th>
+					<th data-field="refundDate">退款时间</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="refund in order.refundList">
+					<td>￥{{refund.refundValue}}</td>
+					<td>{{refund.refundType4Show}}</td>
+					<td>{{refund.refundDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+				</tr>
+			</tbody>
+		</table>
+		
 		<div class="form-group">
 			<label for="brief" class="col-sm-2 control-label">快递公司</label>
 			<div class="col-sm-8">
@@ -103,6 +121,7 @@
 				<input type="text" class="form-control" id="brief" ng-model="order.logisticTrackingId">
 			</div>
 		</div>
+		
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<button class="btn btn-primary" ng-disabled="order.orderStatus!=2" ng-click="deliverOrder(order.orderId)">发货</button>
