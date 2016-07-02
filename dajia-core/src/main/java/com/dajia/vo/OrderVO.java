@@ -54,6 +54,8 @@ public class OrderVO {
 	public String comments;
 
 	public String userComments;
+	
+	public String adminComments;
 
 	public String payType4Show;
 

@@ -263,7 +263,8 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		} else {
 			$http.get('/admin/order/' + $routeParams.orderId + '/comments', {
 				params : {
-					comments : $scope.order.comments
+					comments : $scope.order.comments,
+					adminComments : $scope.order.adminComments
 				}
 			}).success(function(data, status, headers, config) {
 				$scope.order = data;

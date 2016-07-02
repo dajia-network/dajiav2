@@ -105,6 +105,7 @@ public class OrderService {
 		ov.address = order.address;
 		ov.comments = order.comments;
 		ov.userComments = order.userComments;
+		ov.adminComments = order.adminComments;
 		ov.orderStatus = order.orderStatus;
 		ov.orderStatus4Show = CommonUtils.getOrderStatusStr(order.orderStatus);
 		ov.logisticAgent4Show = CommonUtils.getLogisticAgentStr(order.logisticAgent);

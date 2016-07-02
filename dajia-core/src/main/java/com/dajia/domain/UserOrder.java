@@ -86,4 +86,7 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "user_comments")
 	public String userComments;
+
+	@Column(name = "admin_comments")
+	public String adminComments;
 }

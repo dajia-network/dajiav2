@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
     address VARCHAR(800),
     comments VARCHAR(4000) NULL,
     user_comments VARCHAR(4000) NULL,
+    admin_comments VARCHAR(4000) NULL,
     pingxx_charge VARCHAR(4000) NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,

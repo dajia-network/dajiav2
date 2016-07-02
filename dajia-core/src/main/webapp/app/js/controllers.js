@@ -592,6 +592,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	$scope.orderDetail = function(trackingId) {
 		$window.location.href = '#/tab/mine/order/' + trackingId;
 	}
+	$scope.goHome = function() {
+		$window.location.href = '#/tab/prod';
+	}
 })
 
 .controller(

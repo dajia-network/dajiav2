@@ -1,5 +1,6 @@
 package com.dajia.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -17,8 +18,8 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
 	public Page<Product> findByProductStatusAndIsActiveOrderByExpiredDateAsc(Integer productStatus, String isActive,
 			Pageable pageable);
 
-	public Page<Product> findByProductStatusInAndIsActiveOrderByExpiredDateAsc(List<Integer> productStatusList,
-			String isActive, Pageable pageable);
+	public Page<Product> findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateAsc(
+			List<Integer> productStatusList, Date startDate, String isActive, Pageable pageable);
 
 	public Page<Product> findByIsActiveOrderByExpiredDateAsc(String isActive, Pageable pageable);
 

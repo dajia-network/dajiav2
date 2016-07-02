@@ -161,9 +161,10 @@ public class AdminController extends BaseController {
 	@RequestMapping("/admin/order/{orderId}/comments")
 	public UserOrder addComments(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
 		String comments = request.getParameter("comments");
+		String adminComments = request.getParameter("adminComments");
 		UserOrder order = orderRepo.findOne(orderId);
-		order.orderStatus = OrderStatus.DELEVERING.getKey();
 		order.comments = comments;
+		order.adminComments = adminComments;
 		orderRepo.save(order);
 		return order;
 	}
