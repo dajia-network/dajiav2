@@ -194,6 +194,7 @@ public class ProductService {
 		ProductItem pi = loadProductItem(product);
 		if (null != pi) {
 			calcPrice(pi);
+			productVO.productItemId = pi.productItemId;
 			productVO.sold = pi.sold;
 			productVO.stock = pi.stock;
 			productVO.buyQuota = pi.buyQuota;
