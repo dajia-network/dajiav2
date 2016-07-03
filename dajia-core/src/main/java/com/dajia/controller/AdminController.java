@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
+import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.service.OrderService;
@@ -31,6 +33,7 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
+import com.dajia.vo.ProductVO;
 
 @RestController
 public class AdminController extends BaseController {
@@ -38,6 +41,9 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private ProductRepo productRepo;
+
+	@Autowired
+	private ProductItemRepo productItemRepo;
 
 	@Autowired
 	private UserOrderRepo orderRepo;
@@ -69,18 +75,19 @@ public class AdminController extends BaseController {
 	}
 
 	@RequestMapping("/admin/products/{page}")
-	public PaginationVO<Product> productsByPage(@PathVariable("page") Integer pageNum) {
-		Page<Product> products = productService.loadProductsByPage(pageNum);
-		PaginationVO<Product> page = CommonUtils.generatePaginationVO(products, pageNum);
+	public PaginationVO<ProductItem> productsByPage(@PathVariable("page") Integer pageNum) {
+		Page<ProductItem> products = productService.loadProductsByPage(pageNum);
+		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}
 
 	@RequestMapping("/admin/product/{pid}")
-	public Product product(@PathVariable("pid") Long pid) {
-		Product product = productService.loadProductDetail(pid);
+	public ProductVO product(@PathVariable("pid") Long pid) {
+		ProductVO product = productService.loadProductDetail(pid);
 		if (null == product) {
-			product = new Product();
+			product = new ProductVO();
 			product.productId = 0L;
+			product.productItemId = 0L;
 		}
 		return product;
 	}
@@ -90,23 +97,46 @@ public class AdminController extends BaseController {
 		Product product = productRepo.findOne(pid);
 		if (null != product) {
 			product.isActive = CommonUtils.ActiveStatus.NO.toString();
+			if (null != product.productItems)
+				for (ProductItem pi : product.productItems) {
+					pi.isActive = CommonUtils.ActiveStatus.NO.toString();
+				}
 			productRepo.save(product);
 		}
 		return product;
 	}
 
 	@RequestMapping(value = "/admin/product/{pid}", method = RequestMethod.POST)
-	public @ResponseBody Product modifyProduct(@PathVariable("pid") Long pid, @RequestBody Product productVO) {
+	public @ResponseBody ProductVO modifyProduct(@PathVariable("pid") Long pid, @RequestBody ProductVO productVO) {
 		if (pid == productVO.productId) {
 			Product product = null;
-			if (pid.longValue() == 0L) {
-				product = new Product();
-			} else {
+			if (pid.longValue() != 0L) {
 				product = productRepo.findOne(pid);
+				if (null != product.productItems && product.productItems.size() > 0) {
+					for (ProductItem pi : product.productItems) {
+						if (pi.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
+							CommonUtils.updateProductItemWithReq(pi, productVO);
+							break;
+						}
+					}
+					CommonUtils.updateProductWithReq(product, productVO);
+					productRepo.save(product);
+					return productService.convertProductVO(product);
+				}
+			} else {
+				product = new Product();
 			}
+
 			CommonUtils.updateProductWithReq(product, productVO);
+			// productRepo.save(product);
+
+			ProductItem productItem = new ProductItem();
+			CommonUtils.updateProductItemWithReq(productItem, productVO);
+			productItem.product = product;
+			product.productItems = new ArrayList<ProductItem>();
+			product.productItems.add(productItem);
 			productRepo.save(product);
-			return product;
+			return productService.convertProductVO(product);
 		} else {
 			return null;
 		}

@@ -10,19 +10,19 @@
 	<div ng-if="loginUser">
 		<div class="card" ng-repeat="order in myOrders" >
 		  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId)">
-		    <img ng-src="{{order.product.imgUrl4List}}" />
-	        <p>{{order.product.name}}</p>
+		    <img ng-src="{{order.productVO.imgUrl4List}}" />
+	        <p>{{order.productVO.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 	        <p>数量 x {{order.quantity}}</p>
-	        <p>出价:{{order.unitPrice}}元  现价:{{order.product.currentPrice}}元</p>
-	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.product.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
-	        <p>截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
+	        <p>出价:{{order.unitPrice}}元  现价:{{order.productVO.currentPrice}}元</p>
+	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.productVO.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
+	        <p>截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}}</p>
 	        <i class="icon ion-chevron-right icon-accessory"></i>
 		  </div>
 		  <div class="item">
 		    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买&nbsp;
-		    <span ng-if="order.product.productStatus==3">({{order.product.status4Show}})</span>
-		    <!-- <button class="button button-sqr-sm button-assertive" ng-click="share(order.product.productId, order.product.name)">
+		    <span ng-if="order.productVO.productStatus==3">({{order.productVO.status4Show}})</span>
+		    <!-- <button class="button button-sqr-sm button-assertive" ng-click="share(order.productVO.productId, order.productVO.name)">
 				叫人打价
 			</button> -->
 		  </div>

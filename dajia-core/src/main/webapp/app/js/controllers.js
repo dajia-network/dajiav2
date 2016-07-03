@@ -23,13 +23,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	};
 	var loadProducts = function() {
 		return $http.get('/products/' + $scope.page.pageNo).success(function(data, status, headers, config) {
-			// console.log(data);
 			$scope.page.hasMore = data.hasNext;
 			$scope.page.pageNo = data.currentPage;
 			$scope.products = $scope.products.concat(data.results);
 			$scope.products.forEach(function(p) {
 				var countDown = {
-					key : "clock-" + p.productId,
+					key : "clock-" + p.product.productId,
 					targetDate : p.expiredDate
 				}
 				$scope.countDowns.push(countDown);

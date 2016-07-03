@@ -87,12 +87,6 @@ public class ApiWdUtils {
 		Product product = new Product();
 		product.refId = (String) itemMap.get("itemid");
 		product.name = (String) itemMap.get("item_name");
-		// product.brief = (String) itemMap.get("item_desc");
-		product.stock = ((Integer) itemMap.get("stock")).longValue();
-		product.sold = ((Integer) itemMap.get("sold")).longValue();
-		product.currentPrice = new BigDecimal((String) itemMap.get("price"));
-		product.productImagesExt = (List<String>) itemMap.get("imgs");
-		product.productImagesThumbExt = (List<String>) itemMap.get("thumb_imgs");
 		return product;
 	}
 }

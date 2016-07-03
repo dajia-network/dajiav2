@@ -16,12 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.dajia.domain.Product;
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserRefund;
 import com.dajia.domain.UserReward;
-import com.dajia.repository.ProductRepo;
+import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRefundRepo;
@@ -32,6 +32,7 @@ import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.LoginUserVO;
 import com.dajia.vo.OrderVO;
+import com.dajia.vo.ProductVO;
 import com.dajia.vo.ProgressVO;
 import com.pingplusplus.exception.PingppException;
 
@@ -40,10 +41,10 @@ public class OrderService {
 	Logger logger = LoggerFactory.getLogger(OrderService.class);
 
 	@Autowired
-	private ProductRepo productRepo;
+	private UserOrderRepo orderRepo;
 
 	@Autowired
-	private UserOrderRepo orderRepo;
+	private ProductItemRepo productItemRepo;
 
 	@Autowired
 	private UserRepo userRepo;
@@ -68,14 +69,15 @@ public class OrderService {
 
 	@Transactional
 	public UserOrder generateRobotOrder(Long productId, Integer quantity) {
-		Product product = productRepo.findOne(productId);
+		ProductVO product = productService.loadProductDetail(productId);
 		UserOrder order = new UserOrder();
 		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
 		order.orderDate = new Date();
 		order.quantity = quantity;
 		order.unitPrice = product.currentPrice;
 		order.totalPrice = product.currentPrice.multiply(new BigDecimal(quantity));
-		order.productId = productId;
+		order.productId = product.productId;
+		order.productItemId = product.productItemId;
 
 		order.userId = 0L;
 		order.payType = 0;
@@ -93,6 +95,7 @@ public class OrderService {
 		ov.userId = order.userId;
 		ov.trackingId = order.trackingId;
 		ov.productId = order.productId;
+		ov.productItemId = order.productItemId;
 		ov.quantity = order.quantity;
 		ov.orderDate = order.orderDate;
 		ov.unitPrice = order.unitPrice;
@@ -136,25 +139,28 @@ public class OrderService {
 	}
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
-		ov.product = productService.loadProductDetail(order.productId);
+		ov.productVO = productService.loadProductDetail(ov.productId);
 		User user = userRepo.findByUserId(order.userId);
 		if (null != user) {
 			ov.userName = user.userName;
 		}
-		if (null != ov.product) {
-			ov.productInfo4Show = ov.product.name;
-			ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.product);
-			ov.refundValue = calculateRefundValue(ov.product, order);
+		if (null != ov.productVO) {
+			ov.productInfo4Show = ov.productVO.name;
+			ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.productVO);
+			ov.refundValue = calculateRefundValue(ov.productVO.currentPrice, order);
 		}
 	}
 
-	private BigDecimal calculateRefundValue(Product product, UserOrder userOrder) {
-		return userOrder.unitPrice.add(product.currentPrice.negate()).multiply(new BigDecimal(userOrder.quantity));
+	private BigDecimal calculateRefundValue(BigDecimal currentPrice, UserOrder userOrder) {
+		if (null == currentPrice || null == userOrder) {
+			return null;
+		}
+		return userOrder.unitPrice.add(currentPrice.negate()).multiply(new BigDecimal(userOrder.quantity));
 	}
 
-	public void orderRefund(Product product) {
-		List<UserOrder> orderList = orderRepo.findByProductIdAndIsActiveOrderByOrderDateDesc(product.productId,
-				CommonUtils.ActiveStatus.YES.toString());
+	public void orderRefund(ProductItem productItem) {
+		List<UserOrder> orderList = orderRepo.findByProductItemIdAndIsActiveOrderByOrderDateDesc(
+				productItem.productItemId, CommonUtils.ActiveStatus.YES.toString());
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
 				if (null != userOrder.paymentId && !userOrder.paymentId.isEmpty()) {
@@ -162,7 +168,7 @@ public class OrderService {
 							CommonUtils.RefundType.REFUND.getKey(), CommonUtils.ActiveStatus.YES.toString());
 					// one order one refund only
 					if (refunds.isEmpty()) {
-						BigDecimal refundValue = calculateRefundValue(product, userOrder);
+						BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder);
 						if (refundValue.compareTo(new BigDecimal(0)) <= 0) {
 							try {
 								apiService
@@ -193,7 +199,7 @@ public class OrderService {
 		OrderVO ov = this.getOrderDetailByTrackingId(trackingId);
 		Map<Long, LoginUserVO> rewardSrcUserMap = rewardService.getRewardSrcUsers(ov.orderId);
 		ov.rewardSrcUsers = rewardSrcUserMap.values();
-		Product product = productRepo.findOne(ov.productId);
+		ProductItem productItem = productItemRepo.findOne(ov.productItemId);
 
 		List<ProgressVO> progressList = new ArrayList<ProgressVO>();
 
@@ -201,14 +207,14 @@ public class OrderService {
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
-		List<UserOrder> orderList = orderRepo.findTop5ByProductIdAndOrderStatusInAndIsActiveOrderByOrderIdDesc(
-				ov.productId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
-		BigDecimal comparePrice = product.currentPrice;
+		List<UserOrder> orderList = orderRepo.findTop5ByProductItemIdAndOrderStatusInAndIsActiveOrderByOrderIdDesc(
+				ov.productItemId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
+		BigDecimal comparePrice = productItem.currentPrice;
 		for (UserOrder userOrder : orderList) {
 			ProgressVO pv = new ProgressVO();
 			pv.progressType = CommonUtils.refund_type_refund;
 			pv.orderId = ov.orderId;
-			pv.productId = ov.productId;
+			pv.productItemId = ov.productItemId;
 			pv.orderDate = userOrder.orderDate;
 			pv.orderQuantity = userOrder.quantity;
 			pv.priceOff = userOrder.unitPrice.add(comparePrice.negate());
@@ -221,7 +227,7 @@ public class OrderService {
 			ProgressVO pv = new ProgressVO();
 			pv.progressType = CommonUtils.refund_type_reward;
 			pv.orderId = ov.orderId;
-			pv.productId = ov.productId;
+			pv.productItemId = ov.productItemId;
 			pv.orderDate = userReward.createdDate;
 			pv.orderUserName = rewardSrcUserMap.get(userReward.orderUserId).userName;
 			progressList.add(pv);
@@ -237,8 +243,8 @@ public class OrderService {
 		sb.append(order.trackingId);
 		sb.append("|uid:");
 		sb.append(order.userId);
-		sb.append("|pid:");
-		sb.append(order.productId);
+		sb.append("|ptid:");
+		sb.append(order.productItemId);
 		sb.append("|cname:");
 		sb.append(order.contactName);
 		sb.append("|cmobile:");

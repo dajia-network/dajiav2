@@ -13,7 +13,9 @@ import org.springframework.data.domain.Page;
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductImage;
+import com.dajia.domain.ProductItem;
 import com.dajia.vo.PaginationVO;
+import com.dajia.vo.ProductVO;
 
 public class CommonUtils {
 
@@ -99,16 +101,7 @@ public class CommonUtils {
 		}
 	}
 
-	public static void updateProductWithReq(Product persist, Product req) {
-		if (null != req.name) {
-			persist.name = req.name;
-		}
-		if (null != req.shortName) {
-			persist.shortName = req.shortName;
-		}
-		if (null != req.brief) {
-			persist.brief = req.brief;
-		}
+	public static void updateProductItemWithReq(ProductItem persist, ProductVO req) {
 		if (null != req.stock) {
 			persist.stock = req.stock;
 		}
@@ -132,15 +125,12 @@ public class CommonUtils {
 			}
 			persist.originalPrice = req.originalPrice;
 		}
-		// if (null != req.currentPrice) {
-		// persist.currentPrice = req.currentPrice;
-		// }
 		if (null != req.postFee) {
 			persist.postFee = req.postFee;
 		}
 		if (null != req.prices && req.prices.size() > 0) {
 			for (Price price : req.prices) {
-				price.product = persist;
+				price.productItem = persist;
 			}
 			if (null != persist.prices) {
 				persist.prices.clear();
@@ -150,6 +140,18 @@ public class CommonUtils {
 			}
 		} else {
 			persist.prices.clear();
+		}
+	}
+
+	public static void updateProductWithReq(Product persist, ProductVO req) {
+		if (null != req.name) {
+			persist.name = req.name;
+		}
+		if (null != req.shortName) {
+			persist.shortName = req.shortName;
+		}
+		if (null != req.brief) {
+			persist.brief = req.brief;
 		}
 	}
 

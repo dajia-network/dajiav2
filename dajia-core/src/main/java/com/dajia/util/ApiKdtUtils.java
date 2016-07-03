@@ -1,6 +1,5 @@
 package com.dajia.util;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class ApiKdtUtils {
 		// product.buyQuota = Integer.valueOf((String)
 		// itemMap.get("buy_quota"));
 		// product.currentPrice = new BigDecimal((String) itemMap.get("price"));
-		product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
+		// product.postFee = new BigDecimal((String) itemMap.get("post_fee"));
 		product.imgUrl = (String) itemMap.get("pic_url");
 		// product.imgUrl4List = (String) itemMap.get("pic_thumb_url");
 

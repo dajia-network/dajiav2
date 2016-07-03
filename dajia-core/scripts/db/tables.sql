@@ -72,10 +72,29 @@ CREATE TABLE IF NOT EXISTS dajia.product (
 	PRIMARY KEY(product_id)
 );
 
+DROP TABLE IF EXISTS dajia.product_item;
+CREATE TABLE IF NOT EXISTS dajia.product_item (
+	product_item_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	product_id BIGINT(25) NOT NULL DEFAULT 0,
+    sold INT,
+    stock INT,
+    buy_quota INT,
+    product_status INT,
+    original_price NUMERIC(10,2),
+    current_price NUMERIC(10,2),
+    post_fee NUMERIC(10,2),
+	start_date TIMESTAMP NULL,
+	expired_date TIMESTAMP NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(product_item_id)
+);
+
 DROP TABLE IF EXISTS dajia.price;
 CREATE TABLE IF NOT EXISTS dajia.price (
 	price_id BIGINT(25) NOT NULL AUTO_INCREMENT,
-    product_id BIGINT(25) NOT NULL,
+    product_item_id BIGINT(25) NOT NULL,
     sort INT NOT NULL,
     sold INT,
     target_price NUMERIC(10,2),
@@ -105,6 +124,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	order_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     tracking_id VARCHAR(50) NULL,
 	product_id BIGINT(25) NOT NULL,
+	product_item_id BIGINT(25) NOT NULL,
 	user_contact_id BIGINT(25) NULL,
     user_id BIGINT(25) NOT NULL,
     ref_user_id BIGINT(25) NULL,
@@ -179,6 +199,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_reward (
     ref_user_id BIGINT(25) NOT NULL,
     ref_order_id BIGINT(25) NOT NULL,
     product_id BIGINT(25) NOT NULL,
+    product_item_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,
     order_user_id BIGINT(25) NOT NULL,
     reward_ratio int(11),
@@ -196,6 +217,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_refund (
 	refund_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     user_id BIGINT(25) NOT NULL,
     product_id BIGINT(25) NOT NULL,
+    product_item_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,
     refund_value NUMERIC(10,2),
     refund_type INT,
@@ -212,6 +234,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_visit_log (
     user_id BIGINT(25) NULL,
     ref_user_id BIGINT(25) NULL,
     product_id BIGINT(25) NULL,
+    product_item_id BIGINT(25) NULL,
 	visit_url varchar(2000) NOT NULL,
 	ref_url varchar(2000) NULL,
 	visit_ip VARCHAR(20) NULL,

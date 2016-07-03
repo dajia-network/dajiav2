@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.dajia.domain.UserReward;
 
 public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
-	public List<UserReward> findByRefUserIdAndProductIdAndRewardStatus(Long refUserId, Long productId,
+	public List<UserReward> findByRefUserIdAndProductItemIdAndRewardStatus(Long refUserId, Long productItemId,
 			Integer rewardStatus);
 
 	public List<UserReward> findByRefOrderIdAndRewardStatus(Long refOrderId, Integer rewardStatus);
@@ -16,7 +16,7 @@ public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
 	public List<UserReward> findTop5ByRefOrderIdAndRewardStatusOrderByCreatedDateDesc(Long refOrderId,
 			Integer rewardStatus);
 
-	public List<UserReward> findByOrderUserIdAndProductIdAndRewardStatus(Long orderUserId, Long productId,
+	public List<UserReward> findByOrderUserIdAndProductItemIdAndRewardStatus(Long orderUserId, Long productItemId,
 			Integer rewardStatus);
 
 	public List<UserReward> findByRewardDateBeforeAndRewardStatusAndIsActive(Date rewardDate, Integer rewardStatus,

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserRefund;
 
@@ -20,8 +21,10 @@ public class OrderVO {
 	public Integer orderStatus;
 
 	public Integer payType;
-
+	
 	public Long productId;
+
+	public Long productItemId;
 
 	public Long refUserId;
 
@@ -54,7 +57,7 @@ public class OrderVO {
 	public String comments;
 
 	public String userComments;
-	
+
 	public String adminComments;
 
 	public String payType4Show;
@@ -69,7 +72,7 @@ public class OrderVO {
 
 	public UserContact userContact;
 
-	public Product product;
+	public ProductVO productVO;
 
 	public Collection<LoginUserVO> rewardSrcUsers;
 

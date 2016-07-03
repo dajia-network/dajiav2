@@ -22,8 +22,10 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.UserOrder;
+import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserOrderRepo;
@@ -34,6 +36,7 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.util.CommonUtils.ProductStatus;
+import com.dajia.vo.ProductVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +56,9 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepo productRepo;
+
+	@Autowired
+	private ProductItemRepo productItemRepo;
 
 	@Autowired
 	private UserFavouriteRepo favouriteRepo;
@@ -142,29 +148,6 @@ public class ProductService {
 		return product;
 	}
 
-	@Transactional
-	public void updateProductPrice(Long productId, BigDecimal price) {
-		Product product = productRepo.findOne(productId);
-		if (null != product && null != product.refId) {
-			String token = "";
-			try {
-				token = apiService.loadApiWdToken();
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error(e.getMessage());
-			}
-			String paramStr = ApiWdUtils.updateProductParamStr(product.refId, price.toString());
-			String publicStr = ApiWdUtils.updateProductPublicStr(token);
-			String productUrl = ApiWdUtils.updateProductUrl();
-			logger.info("productUrl: " + productUrl);
-			RestTemplate restTemplate = new RestTemplate();
-			String retrunJsonStr = restTemplate.getForObject(productUrl, String.class, paramStr, publicStr);
-			logger.info("retrunJsonStr: " + retrunJsonStr);
-			product.currentPrice = price;
-			productRepo.save(product);
-		}
-	}
-
 	public void syncProductsAll() {
 		List<Product> products = this.loadProductsAllFromApiKdt();
 		this.syncProducts(products);
@@ -185,62 +168,124 @@ public class ProductService {
 				}
 				productRepo.save(p);
 			} else {
-				// new product from KDT
-				product.originalPrice = product.currentPrice;
-				product.productStatus = ProductStatus.INVALID.getKey();
 				productRepo.save(product);
 			}
 		}
 	}
 
-	public Product loadProductDetail(Long pid) {
+	public List<ProductVO> converProductVOListFromPI(List<ProductItem> productItemList) {
+		List<ProductVO> productVOList = new ArrayList<ProductVO>();
+		for (ProductItem pi : productItemList) {
+			productVOList.add(loadProductDetail(pi.product.productId));
+		}
+		return productVOList;
+	}
+
+	public List<ProductVO> converProductVOListFromP(List<Product> productList) {
+		List<ProductVO> productVOList = new ArrayList<ProductVO>();
+		for (Product p : productList) {
+			productVOList.add(loadProductDetail(p.productId));
+		}
+		return productVOList;
+	}
+
+	public ProductVO convertProductVO(Product product) {
+		ProductVO productVO = new ProductVO();
+		ProductItem pi = loadProductItem(product);
+		if (null != pi) {
+			calcPrice(pi);
+			productVO.sold = pi.sold;
+			productVO.stock = pi.stock;
+			productVO.buyQuota = pi.buyQuota;
+			productVO.productStatus = pi.productStatus;
+			productVO.originalPrice = pi.originalPrice;
+			productVO.currentPrice = pi.currentPrice;
+			productVO.postFee = pi.postFee;
+			productVO.startDate = pi.startDate;
+			productVO.expiredDate = pi.expiredDate;
+			productVO.status4Show = getProductStatusStr(pi.productStatus);
+			productVO.prices = pi.prices;
+		}
+		productVO.productId = product.productId;
+		productVO.refId = product.refId;
+		productVO.shortName = product.shortName;
+		productVO.name = product.name;
+		productVO.brief = product.brief;
+		productVO.description = product.description;
+		productVO.spec = product.spec;
+		productVO.totalSold = product.totalSold;
+		productVO.imgUrl = product.imgUrl;
+		productVO.imgUrl4List = product.imgUrl4List;
+		productVO.productImages = product.productImages;
+		return productVO;
+	}
+
+	public ProductVO loadProductDetail(Long pid) {
 		Product product = productRepo.findOne(pid);
 		if (null == product) {
 			return null;
 		}
 		product.productImages.size();
 
-		product.status4Show = getProductStatusStr(product.productStatus);
-		calcPrice(product);
-
-		return product;
+		return convertProductVO(product);
 	}
 
-	public List<Product> loadAllValidProducts() {
-		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
-				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
-		return products;
-	}
-
-	public List<Product> loadAllValidProductsWithPrices() {
-		List<Product> products = (List<Product>) productRepo.findByProductStatusAndIsActiveOrderByExpiredDateAsc(
-				ProductStatus.VALID.getKey(), ActiveStatus.YES.toString());
-		for (Product product : products) {
-			calcPrice(product);
+	public ProductItem loadProductItem(Product product) {
+		if (null == product) {
+			return null;
 		}
-		return products;
+		product.productItems.size();
+		if (null == product.productItems || product.productItems.size() == 0) {
+			return null;
+		}
+		for (ProductItem pi : product.productItems) {
+			if (pi.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
+				return pi;
+			}
+		}
+		return null;
 	}
 
-	public Page<Product> loadAllValidProductsWithPricesByPage(Integer pageNum) {
+	public List<ProductItem> loadAllValidProducts() {
+		List<ProductItem> productItems = (List<ProductItem>) productItemRepo
+				.findByProductStatusAndIsActiveOrderByExpiredDateAsc(ProductStatus.VALID.getKey(),
+						ActiveStatus.YES.toString());
+
+		return productItems;
+	}
+
+	public List<ProductVO> loadAllValidProductsWithPrices() {
+		List<ProductItem> productItems = (List<ProductItem>) productItemRepo
+				.findByProductStatusAndIsActiveOrderByExpiredDateAsc(ProductStatus.VALID.getKey(),
+						ActiveStatus.YES.toString());
+		for (ProductItem productItem : productItems) {
+			calcPrice(productItem);
+		}
+		return converProductVOListFromPI(productItems);
+	}
+
+	public Page<ProductItem> loadAllValidProductsWithPricesByPage(Integer pageNum) {
 		List<Integer> productStatusList = new ArrayList<Integer>();
 		productStatusList.add(ProductStatus.VALID.getKey());
 		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
-		Page<Product> products = productRepo.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateAsc(
-				productStatusList, new Date(), ActiveStatus.YES.toString(), pageable);
-		for (Product product : products) {
-			calcPrice(product);
+		Page<ProductItem> productItems = productItemRepo
+				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateAsc(productStatusList, new Date(),
+						ActiveStatus.YES.toString(), pageable);
+		for (ProductItem productItem : productItems) {
+			calcPrice(productItem);
 		}
-		return products;
+		return productItems;
 	}
 
-	public Page<Product> loadProductsByPage(Integer pageNum) {
+	public Page<ProductItem> loadProductsByPage(Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
-		Page<Product> products = productRepo.findByIsActiveOrderByStartDateDesc(ActiveStatus.YES.toString(), pageable);
-		for (Product product : products) {
-			product.status4Show = getProductStatusStr(product.productStatus);
+		Page<ProductItem> productItems = productItemRepo.findByIsActiveOrderByStartDateDesc(
+				ActiveStatus.YES.toString(), pageable);
+		for (ProductItem productItem : productItems) {
+			productItem.status4Show = getProductStatusStr(productItem.productStatus);
 		}
-		return products;
+		return productItems;
 	}
 
 	@Transactional
@@ -249,23 +294,23 @@ public class ProductService {
 		order.orderStatus = OrderStatus.PAIED.getKey();
 		orderRepo.save(order);
 		// update product price
-		Product product = productRepo.findOne(order.productId);
-		if (null != product) {
-			if (null == product.sold) {
-				product.sold = 0L;
+		ProductItem productItem = productItemRepo.findOne(order.productItemId);
+		if (null != productItem) {
+			if (null == productItem.sold) {
+				productItem.sold = 0L;
 			}
-			product.sold += order.quantity;
-			product.stock -= order.quantity;
-			if (product.stock < 0L) {
-				product.stock = 0L;
+			productItem.sold += order.quantity;
+			productItem.stock -= order.quantity;
+			if (productItem.stock < 0L) {
+				productItem.stock = 0L;
 			}
-			calcCurrentPrice(product, order.quantity);
+			calcCurrentPrice(productItem, order.quantity);
 		}
-		productRepo.save(product);
+		productItemRepo.save(productItem);
 
 		if (null != order.refUserId) {
 			// generate reward
-			rewardService.createReward(order, product);
+			rewardService.createReward(order, productItem);
 		}
 	}
 
@@ -277,77 +322,75 @@ public class ProductService {
 		}
 		List<Product> products = (List<Product>) productRepo.findByProductIdInAndIsActive(productIds,
 				ActiveStatus.YES.toString());
-		for (Product product : products) {
-			product.status4Show = getProductStatusStr(product.productStatus);
-		}
 		return products;
 	}
 
 	public void updateProductExpireStatus(Date date) {
-		List<Product> products = this.loadAllValidProducts();
-		for (Product product : products) {
-			if (null == product.expiredDate || product.expiredDate.before(date)) {
-				logger.info("Product " + product.name + " (" + product.productId + ") is expired.");
-				product.productStatus = ProductStatus.EXPIRED.getKey();
-				productRepo.save(product);
-				orderService.orderRefund(product);
+		List<ProductItem> productItems = this.loadAllValidProducts();
+		for (ProductItem productItem : productItems) {
+			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
+				logger.info("Product Item " + productItem.productItemId + " is expired.");
+				productItem.productStatus = ProductStatus.EXPIRED.getKey();
+				productItemRepo.save(productItem);
+				orderService.orderRefund(productItem);
 			}
 		}
 	}
 
-	private void calcCurrentPrice(Product product, int quantity) {
-		List<Price> prices = product.prices;
+	private void calcCurrentPrice(ProductItem productItem, int quantity) {
+		List<Price> prices = productItem.prices;
 		for (Price price : prices) {
 			// for edge logic
-			if (price.sold < product.sold && price.sold > product.sold - quantity) {
-				product.currentPrice = price.targetPrice;
-				quantity = product.sold.intValue() - price.sold.intValue();
+			if (price.sold < productItem.sold && price.sold > productItem.sold - quantity) {
+				productItem.currentPrice = price.targetPrice;
+				quantity = productItem.sold.intValue() - price.sold.intValue();
 			}
-			if (price.sold >= product.sold) {
-				BigDecimal priceOff = product.currentPrice.add(price.targetPrice.negate()).divide(
-						new BigDecimal(price.sold - product.sold + 1), 2, RoundingMode.HALF_UP);
-				product.currentPrice = product.currentPrice.add(priceOff.multiply(new BigDecimal(quantity)).negate());
+			if (price.sold >= productItem.sold) {
+				BigDecimal priceOff = productItem.currentPrice.add(price.targetPrice.negate()).divide(
+						new BigDecimal(price.sold - productItem.sold + 1), 2, RoundingMode.HALF_UP);
+				productItem.currentPrice = productItem.currentPrice.add(priceOff.multiply(new BigDecimal(quantity))
+						.negate());
 				break;
 			}
 		}
 	}
 
-	private BigDecimal calcNextOff(Product product) {
-		List<Price> prices = product.prices;
-		long sold = product.sold == null ? 0L : product.sold + 1;
+	private BigDecimal calcNextOff(ProductItem productItem) {
+		List<Price> prices = productItem.prices;
+		long sold = productItem.sold == null ? 0L : productItem.sold + 1;
 		for (Price price : prices) {
 			if (price.sold >= sold) {
-				return product.currentPrice.add(price.targetPrice.negate()).divide(
+				return productItem.currentPrice.add(price.targetPrice.negate()).divide(
 						new BigDecimal(price.sold - sold + 1), 2, RoundingMode.HALF_UP);
 			}
 		}
 		return null;
 	}
 
-	private void calcPrice(Product product) {
-		BigDecimal targetPrice = product.originalPrice;
+	private void calcPrice(ProductItem productItem) {
+		BigDecimal targetPrice = productItem.originalPrice;
 		long soldNeeded = 0L;
-		for (Price price : product.prices) {
+		for (Price price : productItem.prices) {
 			if (price.targetPrice.compareTo(targetPrice) < 0) {
 				targetPrice = price.targetPrice;
 				soldNeeded = price.sold;
 			}
 		}
-		if (null != product.originalPrice) {
-			product.targetPrice = targetPrice;
-			product.soldNeeded = soldNeeded - CommonUtils.getLongValue(product.sold);
-			product.priceOff = product.originalPrice.add(product.currentPrice.negate());
-			product.nextOff = calcNextOff(product);
-			product.progressValue = calcProgress(product);
+		if (null != productItem.originalPrice) {
+			productItem.targetPrice = targetPrice;
+			productItem.soldNeeded = soldNeeded - CommonUtils.getLongValue(productItem.sold);
+			productItem.priceOff = productItem.originalPrice.add(productItem.currentPrice.negate());
+			productItem.nextOff = calcNextOff(productItem);
+			productItem.progressValue = calcProgress(productItem);
 		}
 	}
 
-	private long calcProgress(Product product) {
-		BigDecimal totalOff = product.originalPrice.add(product.targetPrice.negate());
+	private long calcProgress(ProductItem productItem) {
+		BigDecimal totalOff = productItem.originalPrice.add(productItem.targetPrice.negate());
 		if (totalOff.longValue() == 0) {
 			return 100L;
 		}
-		Double progress = product.priceOff.divide(totalOff, 2, RoundingMode.HALF_UP).doubleValue() * 100;
+		Double progress = productItem.priceOff.divide(totalOff, 2, RoundingMode.HALF_UP).doubleValue() * 100;
 		return progress.longValue();
 	}
 
@@ -385,5 +428,20 @@ public class ProductService {
 			returnStr = ProductStatus.EXPIRED.getValue();
 		}
 		return returnStr;
+	}
+
+	public void removeProduct(Long productId) {
+		Product product = productRepo.findOne(productId);
+		if (null != product) {
+			product.isActive = CommonUtils.ActiveStatus.NO.toString();
+			if (null != product.productItems && product.productItems.size() > 0) {
+				for (ProductItem productItem : product.productItems) {
+					if (productItem.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
+						productItem.isActive = CommonUtils.ActiveStatus.NO.toString();
+					}
+				}
+			}
+			productRepo.save(product);
+		}
 	}
 }

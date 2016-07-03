@@ -85,12 +85,12 @@
 
 			<tbody>
 				<tr>
-					<td>{{order.product.name}}</td>
+					<td>{{order.productVO.name}}</td>
 					<td>￥{{order.unitPrice}}</td>
 					<td>{{order.quantity}}</td>
 					<td>￥{{order.totalPrice}}</td>
 					<td>￥{{order.postFee}}</td>
-					<td>{{order.product.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+					<td>{{order.productVO.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
 				</tr>
 			</tbody>
 		</table>

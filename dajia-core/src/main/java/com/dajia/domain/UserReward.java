@@ -23,8 +23,8 @@ public class UserReward extends BaseModel {
 	@Column(name = "ref_order_id")
 	public Long refOrderId;
 
-	@Column(name = "product_id")
-	public Long productId;
+	@Column(name = "product_item_id")
+	public Long productItemId;
 
 	@Column(name = "order_id")
 	public Long orderId;

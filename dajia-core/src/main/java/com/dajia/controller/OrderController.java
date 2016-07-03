@@ -78,7 +78,7 @@ public class OrderController extends BaseController {
 			uc = userContactService.updateUserContact(uc, user);
 		}
 
-		if (productService.loadProductDetail(orderVO.productId).stock <= 0) {
+		if (productService.loadProductDetail(orderVO.productItemId).stock <= 0) {
 			return null;
 		}
 
@@ -89,6 +89,7 @@ public class OrderController extends BaseController {
 		order.quantity = orderVO.quantity;
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
+		order.productItemId = orderVO.productItemId;
 		order.userComments = orderVO.userComments;
 		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
 			order.refUserId = orderVO.refUserId;
@@ -187,9 +188,9 @@ public class OrderController extends BaseController {
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.product = productService.loadProductDetail(order.productId);
-			if (null != ov.product) {
-				ov.product.priceOff = ov.product.originalPrice.add(ov.product.currentPrice.negate());
+			ov.productVO = productService.loadProductDetail(order.productItemId);
+			if (null != ov.productVO) {
+				ov.productVO.priceOff = ov.productVO.originalPrice.add(ov.productVO.currentPrice.negate());
 			}
 			progressList.add(ov);
 		}
@@ -212,7 +213,7 @@ public class OrderController extends BaseController {
 		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.product = productService.loadProductDetail(order.productId);
+			ov.productVO = productService.loadProductDetail(order.productItemId);
 			orderVoList.add(ov);
 		}
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);

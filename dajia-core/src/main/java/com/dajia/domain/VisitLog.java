@@ -22,6 +22,9 @@ public class VisitLog extends BaseModel {
 
 	@Column(name = "product_id")
 	public String productId;
+	
+	@Column(name = "product_item_id")
+	public String productItemId;
 
 	@Column(name = "visit_url")
 	public String visitUrl;

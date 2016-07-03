@@ -16,7 +16,7 @@ public interface UserOrderRepo extends CrudRepository<UserOrder, Long> {
 
 	public UserOrder findByOrderIdAndOrderStatusAndIsActive(Long orderId, Integer orderStatus, String isActive);
 
-	public UserOrder findByUserIdAndProductIdAndOrderStatusAndIsActive(Long userId, Long productId,
+	public UserOrder findByUserIdAndProductItemIdAndOrderStatusAndIsActive(Long userId, Long productItemId,
 			Integer orderStatus, String isActive);
 
 	public List<UserOrder> findByUserIdAndOrderStatusInOrderByOrderDateDesc(Long userId, List<Integer> orderStatusList);
@@ -26,9 +26,9 @@ public interface UserOrderRepo extends CrudRepository<UserOrder, Long> {
 
 	public List<UserOrder> findByUserIdOrderByOrderDateDesc(Long userId);
 
-	public List<UserOrder> findByProductIdAndIsActiveOrderByOrderDateDesc(Long productId, String isActive);
+	public List<UserOrder> findByProductItemIdAndIsActiveOrderByOrderDateDesc(Long productItemId, String isActive);
 
-	public List<UserOrder> findTop5ByProductIdAndOrderStatusInAndIsActiveOrderByOrderIdDesc(Long productId,
+	public List<UserOrder> findTop5ByProductItemIdAndOrderStatusInAndIsActiveOrderByOrderIdDesc(Long productItemId,
 			List<Integer> orderStatusList, String isActive);
 
 	public Page<UserOrder> findByIsActiveOrderByOrderDateDesc(String isActive, Pageable pageable);

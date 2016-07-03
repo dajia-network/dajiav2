@@ -12,11 +12,11 @@
 	    订单号：{{order.trackingId}}
 	  </div>
 	  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
-	    <img ng-src="{{order.product.imgUrl4List}}" >
-        <p>{{order.product.name}}</p>
+	    <img ng-src="{{order.productVO.imgUrl4List}}" >
+        <p>{{order.productVO.name}}</p>
         <p>数量x{{order.quantity}}  实付: {{order.totalPrice}}元</p>
-        <p ng-if="order.product.productStatus!=3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}}</p>
-        <p ng-if="order.product.productStatus==3">截止日期：{{order.product.expiredDate | date:'yyyy-MM-dd'}} ({{order.product.status4Show}})</p>
+        <p ng-if="order.productVO.productStatus!=3">截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}}</p>
+        <p ng-if="order.productVO.productStatus==3">截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}} ({{order.productVO.status4Show}})</p>
         <p><span class="assertive">{{order.orderStatus4Show}}</span></p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 	  </div>

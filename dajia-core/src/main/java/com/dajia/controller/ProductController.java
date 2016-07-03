@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
 import com.dajia.domain.UserFavourite;
 import com.dajia.repository.ProductRepo;
@@ -22,6 +23,7 @@ import com.dajia.repository.UserRepo;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
 import com.dajia.vo.PaginationVO;
+import com.dajia.vo.ProductVO;
 
 @RestController
 public class ProductController extends BaseController {
@@ -40,22 +42,22 @@ public class ProductController extends BaseController {
 	private ProductService productService;
 
 	@RequestMapping("/products")
-	public List<Product> allProducts() {
-		List<Product> products = productService.loadAllValidProductsWithPrices();
+	public List<ProductVO> allProducts() {
+		List<ProductVO> products = productService.loadAllValidProductsWithPrices();
 		return products;
 	}
 
 	@RequestMapping("/products/{page}")
-	public PaginationVO<Product> allProductsByPage(@PathVariable("page") Integer pageNum) {
-		Page<Product> products = productService.loadAllValidProductsWithPricesByPage(pageNum);
-		PaginationVO<Product> page = CommonUtils.generatePaginationVO(products, pageNum);
+	public PaginationVO<ProductItem> allProductsByPage(@PathVariable("page") Integer pageNum) {
+		Page<ProductItem> products = productService.loadAllValidProductsWithPricesByPage(pageNum);
+		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}
 
 	@RequestMapping("/product/{pid}")
-	public Product product(@PathVariable("pid") Long pid) {
-		Product product = productService.loadProductDetail(pid);
-		return product;
+	public ProductVO product(@PathVariable("pid") Long pid) {
+		ProductVO productVO = productService.loadProductDetail(pid);
+		return productVO;
 	}
 
 	@RequestMapping("/user/checkfav/{pid}")
@@ -71,12 +73,12 @@ public class ProductController extends BaseController {
 	}
 
 	@RequestMapping("/user/favourites")
-	public List<Product> myFavourites(HttpServletRequest request, HttpServletResponse response) {
+	public List<ProductVO> myFavourites(HttpServletRequest request, HttpServletResponse response) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		if (null == user) {
 			return null;
 		}
 		List<Product> products = productService.loadFavProductsByUserId(user.userId);
-		return products;
+		return productService.converProductVOListFromP(products);
 	}
 }

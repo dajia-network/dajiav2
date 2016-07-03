@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@JsonIgnoreProperties(value = { "product" })
+@JsonIgnoreProperties(value = { "productItem" })
 @Table(name = "price")
 public class Price extends BaseModel {
 
@@ -33,6 +33,6 @@ public class Price extends BaseModel {
 	public BigDecimal targetPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", referencedColumnName = "product_id")
-	public Product product;
+	@JoinColumn(name = "product_item_id", referencedColumnName = "product_item_id")
+	public ProductItem productItem;
 }

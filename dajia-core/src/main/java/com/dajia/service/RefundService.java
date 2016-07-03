@@ -32,7 +32,7 @@ public class RefundService {
 	public void createRefund(String chargeId, BigDecimal refundValue, Integer refundType) {
 		UserOrder order = orderRepo.findByPaymentId(chargeId);
 		UserRefund refund = new UserRefund();
-		refund.productId = order.productId;
+		refund.productItemId = order.productItemId;
 		refund.orderId = order.orderId;
 		refund.userId = order.userId;
 		refund.refundValue = refundValue;

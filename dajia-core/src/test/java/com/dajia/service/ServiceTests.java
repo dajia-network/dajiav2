@@ -35,7 +35,6 @@ public class ServiceTests {
 
 	public void testProductService() {
 		productService.syncProductsAll();
-		productService.updateProductPrice(1L, new BigDecimal("0.05"));
 	}
 
 	@Test
