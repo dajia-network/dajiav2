@@ -206,6 +206,11 @@ public class ProductService {
 			productVO.expiredDate = pi.expiredDate;
 			productVO.status4Show = getProductStatusStr(pi.productStatus);
 			productVO.prices = pi.prices;
+			productVO.targetPrice = pi.targetPrice;
+			productVO.soldNeeded = pi.soldNeeded;
+			productVO.priceOff = pi.priceOff;
+			productVO.nextOff = pi.nextOff;
+			productVO.progressValue = pi.progressValue;
 		}
 		productVO.productId = product.productId;
 		productVO.refId = product.refId;
