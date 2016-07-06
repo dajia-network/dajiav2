@@ -100,7 +100,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	$scope.loadPage(1);
 }).controller(
 		'ProductDetailCtrl',
-		function($scope, $http, $routeParams, $route) {
+		function($scope, $http, $routeParams, $route, $window) {
 			console.log('ProductDetailCtrl...');
 			$http.get('/admin/product/' + $routeParams.pid).success(function(data, status, headers, config) {
 				$scope.newSold = null;
@@ -171,6 +171,14 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 						console.log(data.message);
 					});
 				}
+			}
+			$scope.republish = function() {
+				$http.get('/admin/product/' + $routeParams.pid + '/republish').success(
+						function(data, status, headers, config) {
+							console.log(data);
+							var product = data;
+							$window.location.reload();
+						});
 			}
 			$scope.submit = function() {
 				$scope.alerts = [];

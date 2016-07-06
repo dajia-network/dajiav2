@@ -223,6 +223,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				// $scope.totalPrice = product.price;
 				quota = product.buyQuota;
 				$scope.order.productId = product.productId;
+				$scope.order.productItemId = product.productItemId;
 				$scope.order.unitPrice = product.currentPrice;
 				$scope.order.postFee = product.postFee;
 				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
@@ -269,6 +270,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				console.log('request failed...');
 			});
 			$scope.submit = function() {
+				console.log($scope.order);
 				if ($scope.userContact.contactId == null) {
 					console.log('new userContact.');
 				}

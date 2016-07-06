@@ -142,6 +142,32 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@RequestMapping("/admin/product/{pid}/republish")
+	public ProductVO productRepublish(@PathVariable("pid") Long pid) {
+		ProductVO pv = productService.loadProductDetail(pid);
+		if (null == pv) {
+			pv = new ProductVO();
+			pv.productId = 0L;
+			pv.productItemId = 0L;
+		}
+		if (pv.productStatus == CommonUtils.ProductStatus.EXPIRED.getKey()) {
+			pv.productItemId = 0L;
+			Product product = productRepo.findOne(pid);
+			for (ProductItem pi : product.productItems) {
+				if (pi.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
+					pi.isActive = CommonUtils.ActiveStatus.NO.toString();
+				}
+			}
+			ProductItem pi = new ProductItem();
+			pi.product = product;
+			pi.productStatus = CommonUtils.ProductStatus.INVALID.getKey();
+			pi.isActive = CommonUtils.ActiveStatus.YES.toString();
+			product.productItems.add(pi);
+			productRepo.save(product);
+		}
+		return pv;
+	}
+
 	@RequestMapping("/admin/users/{page}")
 	public PaginationVO<User> usersByPage(@PathVariable("page") Integer pageNum) {
 		Page<User> users = userService.loadUsersByPage(pageNum);

@@ -78,7 +78,7 @@ public class OrderController extends BaseController {
 			uc = userContactService.updateUserContact(uc, user);
 		}
 
-		if (productService.loadProductDetail(orderVO.productItemId).stock <= 0) {
+		if (productService.loadProductDetail(orderVO.productId).stock <= 0) {
 			return null;
 		}
 
