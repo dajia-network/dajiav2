@@ -214,6 +214,7 @@ public class OrderService {
 			ProgressVO pv = new ProgressVO();
 			pv.progressType = CommonUtils.refund_type_refund;
 			pv.orderId = ov.orderId;
+			pv.productId = ov.productId;
 			pv.productItemId = ov.productItemId;
 			pv.orderDate = userOrder.orderDate;
 			pv.orderQuantity = userOrder.quantity;

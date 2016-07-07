@@ -188,8 +188,8 @@ public class OrderController extends BaseController {
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.productVO = productService.loadProductDetail(order.productItemId);
-			if (null != ov.productVO) {
+			ov.productVO = productService.loadProductDetail(order.productId);
+			if (null != ov.productVO && null != ov.productVO.originalPrice && null != ov.productVO.currentPrice) {
 				ov.productVO.priceOff = ov.productVO.originalPrice.add(ov.productVO.currentPrice.negate());
 			}
 			progressList.add(ov);
@@ -213,7 +213,7 @@ public class OrderController extends BaseController {
 		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.productVO = productService.loadProductDetail(order.productItemId);
+			ov.productVO = productService.loadProductDetail(order.productId);
 			orderVoList.add(ov);
 		}
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);

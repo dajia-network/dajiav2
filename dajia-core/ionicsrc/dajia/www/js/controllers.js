@@ -226,6 +226,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$scope.order.productItemId = product.productItemId;
 				$scope.order.unitPrice = product.currentPrice;
 				$scope.order.postFee = product.postFee;
+				$scope.defaultPostFee = product.postFee;
 				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
 				if (locationReady) {
 					$ionicLoading.hide();
@@ -374,11 +375,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				fillLocationDropdowns($scope, $ionicLoading, locationReady);
 			}
 			$scope.calcPostFee = function() {
-				if ($scope.userContact.province.minPostFee > $scope.order.postFee) {
+				if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
 					$scope.order.postFee = $scope.userContact.province.minPostFee;
-					$scope.orderItem.postFee = $scope.order.postFee;
-					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+				} else {
+					$scope.order.postFee = $scope.defaultPostFee;
 				}
+				$scope.orderItem.postFee = $scope.order.postFee;
+				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
 			}
 
 			var fillLocationDropdowns = function($scope, $ionicLoading, locationReady) {
@@ -409,64 +412,68 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			}
 		})
 
-.controller('ProgCtrl', function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
-	console.log('进度列表...');
-	$scope.loginUser = $cookies.get('dajia_user_id');
-	modalInit($rootScope, $ionicModal, 'login');
-	$scope.login = function() {
-		if ($scope.loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.reload();
-		}
-	}
-	$scope.page = {
-		hasMore : false,
-		pageNo : 1
-	};
-	var loadProgress = function() {
-		return $http.get('/user/progresses/' + $scope.page.pageNo).success(function(data, status, headers, config) {
-			$scope.page.hasMore = data.hasNext;
-			$scope.page.pageNo = data.currentPage;
-			if (null == $scope.myOrders) {
-				$scope.myOrders = [];
-			}
-			$scope.myOrders = $scope.myOrders.concat(data.results);
-			$scope.myOrders.forEach(function(o) {
-				if (null == o.progressValue) {
-					o.progressValue = o.product.priceOff / (o.product.originalPrice - o.product.targetPrice) * 100;
+.controller(
+		'ProgCtrl',
+		function($scope, $rootScope, $window, $http, $cookies, $ionicModal, $timeout, $ionicLoading) {
+			console.log('进度列表...');
+			$scope.loginUser = $cookies.get('dajia_user_id');
+			modalInit($rootScope, $ionicModal, 'login');
+			$scope.login = function() {
+				if ($scope.loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.reload();
 				}
-			});
-		});
-	}
-	if ($scope.loginUser != null) {
-		popLoading($ionicLoading);
-		loadProgress().then(function() {
-			$ionicLoading.hide();
-		});
-	}
-	$scope.doRefresh = function() {
-		$scope.myOrders = null;
-		$scope.page.pageNo = 1;
-		loadProgress().then(function() {
-			$scope.$broadcast('scroll.refreshComplete');
-		});
-	}
-	$scope.loadMore = function() {
-		console.log('load more...');
-		$scope.page.pageNo += 1;
-		loadProgress().then(function() {
-			$scope.$broadcast('scroll.infiniteScrollComplete');
-		});
-	}
-	$scope.goHome = function() {
-		$window.location.href = '#/tab/prod';
-	}
-	$scope.progressDetail = function(trackingId) {
-		$window.location.href = '#/tab/prog/' + trackingId;
-	}
-	// initWechatJSAPI($http);
-})
+			}
+			$scope.page = {
+				hasMore : false,
+				pageNo : 1
+			};
+			var loadProgress = function() {
+				return $http.get('/user/progresses/' + $scope.page.pageNo).success(
+						function(data, status, headers, config) {
+							$scope.page.hasMore = data.hasNext;
+							$scope.page.pageNo = data.currentPage;
+							if (null == $scope.myOrders) {
+								$scope.myOrders = [];
+							}
+							$scope.myOrders = $scope.myOrders.concat(data.results);
+							$scope.myOrders.forEach(function(o) {
+								if (null == o.progressValue) {
+									o.progressValue = o.productVO.priceOff
+											/ (o.productVO.originalPrice - o.productVO.targetPrice) * 100;
+								}
+							});
+						});
+			}
+			if ($scope.loginUser != null) {
+				popLoading($ionicLoading);
+				loadProgress().then(function() {
+					$ionicLoading.hide();
+				});
+			}
+			$scope.doRefresh = function() {
+				$scope.myOrders = null;
+				$scope.page.pageNo = 1;
+				loadProgress().then(function() {
+					$scope.$broadcast('scroll.refreshComplete');
+				});
+			}
+			$scope.loadMore = function() {
+				console.log('load more...');
+				$scope.page.pageNo += 1;
+				loadProgress().then(function() {
+					$scope.$broadcast('scroll.infiniteScrollComplete');
+				});
+			}
+			$scope.goHome = function() {
+				$window.location.href = '#/tab/prod';
+			}
+			$scope.progressDetail = function(trackingId) {
+				$window.location.href = '#/tab/prog/' + trackingId;
+			}
+			// initWechatJSAPI($http);
+		})
 
 .controller(
 		'ProgDetailCtrl',
@@ -476,17 +483,16 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			popLoading($ionicLoading);
 			$http.get('/user/progress/' + $stateParams.trackingId).success(
 					function(data, status, headers, config) {
-						// console.log(data);
 						var order = data;
-						order.progressValue = order.product.priceOff
-								/ (order.product.originalPrice - order.product.targetPrice) * 100;
+						order.progressValue = order.productVO.priceOff
+								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
 						$scope.order = order;
-						initWechatJSAPI($http, $cookies, $scope.order.product);
+						initWechatJSAPI($http, $cookies, $scope.order.productVO);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
-				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.product, $scope.order);
+				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.productVO, $scope.order);
 			}
 			$scope.orderDetail = function(trackingId) {
 				$window.location.href = '#/tab/mine/order/' + trackingId;

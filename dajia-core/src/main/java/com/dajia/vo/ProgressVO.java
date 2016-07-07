@@ -9,6 +9,8 @@ public class ProgressVO implements Comparable<ProgressVO> {
 
 	public Long orderId;
 
+	public Long productId;
+	
 	public Long productItemId;
 
 	public Integer orderQuantity;
