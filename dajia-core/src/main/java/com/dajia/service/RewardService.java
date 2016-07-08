@@ -68,6 +68,7 @@ public class RewardService {
 		if (null == rewardList || rewardList.isEmpty()) {
 			UserReward ur = new UserReward();
 			ur.orderId = order.orderId;
+			ur.productId = order.productId;
 			ur.productItemId = order.productItemId;
 			ur.refUserId = order.refUserId;
 			ur.refOrderId = order.refOrderId;

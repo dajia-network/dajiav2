@@ -22,6 +22,9 @@ public class UserRefund extends BaseModel {
 	@Column(name = "user_id")
 	public Long userId;
 
+	@Column(name = "product_id")
+	public Long productId;
+	
 	@Column(name = "product_item_id")
 	public Long productItemId;
 
