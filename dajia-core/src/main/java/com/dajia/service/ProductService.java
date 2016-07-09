@@ -166,11 +166,10 @@ public class ProductService {
 					e.printStackTrace();
 					logger.error(e.getMessage());
 				}
-				productRepo.save(p);
+				this.initProductItems(p);
 			} else {
-				productRepo.save(product);
+				this.initProductItems(product);
 			}
-			this.initProductItems(product);
 		}
 	}
 
@@ -180,10 +179,12 @@ public class ProductService {
 			productItem.isActive = CommonUtils.ActiveStatus.YES.toString();
 			productItem.productStatus = CommonUtils.ProductStatus.INVALID.getKey();
 			productItem.product = product;
-			product.productItems = new ArrayList<ProductItem>();
+			if (null == product.productItems) {
+				product.productItems = new ArrayList<ProductItem>();
+			}
 			product.productItems.add(productItem);
-			productRepo.save(product);
 		}
+		productRepo.save(product);
 	}
 
 	public List<ProductVO> converProductVOListFromPI(List<ProductItem> productItemList) {
