@@ -375,6 +375,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				fillLocationDropdowns($scope, $ionicLoading, locationReady);
 			}
 			$scope.calcPostFee = function() {
+				if ($scope.defaultPostFee == 0) {
+					return;
+				}
 				if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
 					$scope.order.postFee = $scope.userContact.province.minPostFee;
 				} else {
@@ -501,66 +504,67 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			}
 		})
 
-.controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, $ionicModal, AuthService) {
-	console.log('我的打价...');
-	modalInit($rootScope, $ionicModal, 'login');
-	$scope.userName = $cookies.get('dajia_username');
-	var loginUser = $cookies.get('dajia_user_id');
-	if (loginUser != null) {
-		$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
-			$scope.headImgUrl = data.headImgUrl;
-		});
-	}
-	$scope.myOrders = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/orders';
-		}
-	}
-	$scope.myFav = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/fav';
-		}
-	}
-	$scope.contacts = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/contacts';
-		}
-	}
-	$scope.bindMobile = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/bindmobile';
-		}
-	}
-	$scope.myPass = function() {
-		if (loginUser == null) {
-			$rootScope.$broadcast('event:auth-loginRequired');
-		} else {
-			$window.location.href = '#/tab/mine/password';
-		}
-	}
-	$scope.logout = function() {
-		if (loginUser == null) {
-			$window.location.reload();
-		} else {
-			AuthService.logout(loginUser);
-		}
-	};
-	$scope.$on('event:auth-logout-complete', function() {
-		popWarning('退出登录成功', $timeout, $ionicLoading);
-		$timeout(function() {
-			$window.location.reload();
-		}, 500);
-		// $scope.openModal('login');
-	});
-})
+.controller('MineCtrl',
+		function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, $ionicModal, AuthService) {
+			console.log('我的打价...');
+			modalInit($rootScope, $ionicModal, 'login');
+			$scope.userName = $cookies.get('dajia_username');
+			var loginUser = $cookies.get('dajia_user_id');
+			if (loginUser != null) {
+				$http.get('/user/loginuserinfo').success(function(data, status, headers, config) {
+					$scope.headImgUrl = data.headImgUrl;
+				});
+			}
+			$scope.myOrders = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/orders';
+				}
+			}
+			$scope.myFav = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/fav';
+				}
+			}
+			$scope.contacts = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/contacts';
+				}
+			}
+			$scope.bindMobile = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/bindmobile';
+				}
+			}
+			$scope.myPass = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/password';
+				}
+			}
+			$scope.logout = function() {
+				if (loginUser == null) {
+					$window.location.reload();
+				} else {
+					AuthService.logout(loginUser);
+				}
+			};
+			$scope.$on('event:auth-logout-complete', function() {
+				popWarning('退出登录成功', $timeout, $ionicLoading);
+				$timeout(function() {
+					$window.location.reload();
+				}, 500);
+				// $scope.openModal('login');
+			});
+		})
 
 .controller('MyOrdersCtrl', function($scope, $http, $window, $stateParams, $ionicLoading) {
 	console.log('我的订单...');
@@ -1188,7 +1192,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		}
 		wx.onMenuShareAppMessage({
 			title : '打价网',
-			desc : username + '在打价网购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			desc : username + '购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {
@@ -1202,7 +1206,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : username + '在打价网购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			title : username + '购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {

@@ -129,11 +129,13 @@ public class OrderService {
 		if (null == filter) {
 			filter = "real";
 		}
+		// exclude pending payment orders
 		if (filter.equals("all")) {
-			orders = orderRepo.findByIsActiveOrderByOrderDateDesc(ActiveStatus.YES.toString(), pageable);
+			orders = orderRepo.findByOrderStatusNotAndIsActiveOrderByOrderDateDesc(
+					CommonUtils.OrderStatus.PENDING_PAY.getKey(), ActiveStatus.YES.toString(), pageable);
 		} else if (filter.equals("real")) {
-			orders = orderRepo
-					.findByUserIdNotAndIsActiveOrderByOrderDateDesc(0L, ActiveStatus.YES.toString(), pageable);
+			orders = orderRepo.findByOrderStatusNotAndUserIdNotAndIsActiveOrderByOrderDateDesc(
+					CommonUtils.OrderStatus.PENDING_PAY.getKey(), 0L, ActiveStatus.YES.toString(), pageable);
 		}
 		return orders;
 	}

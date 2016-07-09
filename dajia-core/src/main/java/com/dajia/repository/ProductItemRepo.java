@@ -18,6 +18,6 @@ public interface ProductItemRepo extends CrudRepository<ProductItem, Long> {
 
 	public Page<ProductItem> findByIsActiveOrderByStartDateDesc(String isActive, Pageable pageable);
 
-	public Page<ProductItem> findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateDesc(
+	public Page<ProductItem> findByProductStatusInAndStartDateBeforeAndIsActiveOrderByProductStatusAscExpiredDateAsc(
 			List<Integer> productStatusList, Date startDate, String isActive, Pageable pageable);
 }
