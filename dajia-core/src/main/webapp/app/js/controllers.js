@@ -501,8 +501,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			}
 		})
 
-.controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, AuthService) {
+.controller('MineCtrl', function($scope, $rootScope, $http, $window, $cookies, $timeout, $ionicLoading, $ionicModal, AuthService) {
 	console.log('我的打价...');
+	modalInit($rootScope, $ionicModal, 'login');
 	$scope.userName = $cookies.get('dajia_username');
 	var loginUser = $cookies.get('dajia_user_id');
 	if (loginUser != null) {

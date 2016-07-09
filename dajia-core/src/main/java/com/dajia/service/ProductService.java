@@ -170,6 +170,19 @@ public class ProductService {
 			} else {
 				productRepo.save(product);
 			}
+			this.initProductItems(product);
+		}
+	}
+
+	public void initProductItems(Product product) {
+		if (null == product.productItems || product.productItems.size() == 0) {
+			ProductItem productItem = new ProductItem();
+			productItem.isActive = CommonUtils.ActiveStatus.YES.toString();
+			productItem.productStatus = CommonUtils.ProductStatus.INVALID.getKey();
+			productItem.product = product;
+			product.productItems = new ArrayList<ProductItem>();
+			product.productItems.add(productItem);
+			productRepo.save(product);
 		}
 	}
 
@@ -276,8 +289,8 @@ public class ProductService {
 		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
 		Page<ProductItem> productItems = productItemRepo
-				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateDesc(productStatusList, new Date(),
-						ActiveStatus.YES.toString(), pageable);
+				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByExpiredDateDesc(productStatusList,
+						new Date(), ActiveStatus.YES.toString(), pageable);
 		for (ProductItem productItem : productItems) {
 			calcPrice(productItem);
 		}
