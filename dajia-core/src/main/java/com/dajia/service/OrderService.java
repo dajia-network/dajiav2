@@ -169,7 +169,7 @@ public class OrderService {
 					// one order one refund only
 					if (refunds.isEmpty()) {
 						BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder);
-						if (refundValue.compareTo(new BigDecimal(0)) <= 0) {
+						if (refundValue.compareTo(new BigDecimal(0)) > 0) {
 							try {
 								apiService
 										.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
