@@ -210,94 +210,102 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}
 		})
 
-.controller('OrderDetailCtrl', function($scope, $http, $routeParams, $route) {
-	console.log('OrderDetailCtrl...');
-	$scope.order = {};
-	$scope.logisticAgents = [ {
-		code : 'tiantian',
-		name : '天天快递'
-	}, {
-		code : 'shunfeng',
-		name : '顺丰快递'
-	} ];
-	$http.get('/admin/order/' + $routeParams.orderId).success(function(data, status, headers, config) {
-		$scope.order = data;
-		console.log($scope.order);
-	}).error(function(data, status, headers, config) {
-		console.log('request failed...');
-	});
-	$scope.deliverOrder = function(orderId) {
-		$scope.alerts = [];
-		if (!$scope.order.logisticTrackingId || !$scope.order.logisticAgent) {
-			$scope.missLogistic();
-		} else {
-			$http.get('/admin/order/' + $routeParams.orderId + '/deliver', {
-				params : {
-					lti : $scope.order.logisticTrackingId,
-					la : $scope.order.logisticAgent
-				}
-			}).success(function(data, status, headers, config) {
-				$scope.order = data;
-				console.log($scope.order);
-				$route.reload();
-			}).error(function(data, status, headers, config) {
+.controller(
+		'OrderDetailCtrl',
+		function($scope, $http, $routeParams, $route, $window) {
+			console.log('OrderDetailCtrl...');
+			$scope.order = {};
+			$scope.logisticAgents = [ {
+				code : 'tiantian',
+				name : '天天快递'
+			}, {
+				code : 'shunfeng',
+				name : '顺丰快递'
+			} ];
+			$http.get('/admin/order/' + $routeParams.orderId).success(
+					function(data, status, headers, config) {
+						$scope.order = data;
+						// console.log($scope.order);
+						$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type=" + data.logisticAgent
+								+ "&postid=" + data.logisticTrackingId + "&callbackurl=" + $window.location.protocol
+								+ "//" + $window.location.host + window.location.pathname;
+					}).error(function(data, status, headers, config) {
 				console.log('request failed...');
 			});
-		}
-	}
-	$scope.finishOrder = function(orderId) {
-		$http.get('/admin/order/' + $routeParams.orderId + '/finish').success(function(data, status, headers, config) {
-			$scope.order = data;
-			console.log($scope.order);
-			$route.reload();
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
-		});
-	}
-	$scope.closeOrder = function(orderId) {
-		$http.get('/admin/order/' + $routeParams.orderId + '/close').success(function(data, status, headers, config) {
-			$scope.order = data;
-			console.log($scope.order);
-			$route.reload();
-		}).error(function(data, status, headers, config) {
-			console.log('request failed...');
-		});
-	}
-	$scope.addComments = function(orderId) {
-		$scope.alerts = [];
-		if (!$scope.order.comments) {
-			$scope.missComments();
-		} else {
-			$http.get('/admin/order/' + $routeParams.orderId + '/comments', {
-				params : {
-					comments : $scope.order.comments,
-					adminComments : $scope.order.adminComments
+			$scope.deliverOrder = function(orderId) {
+				$scope.alerts = [];
+				if (!$scope.order.logisticTrackingId || !$scope.order.logisticAgent) {
+					$scope.missLogistic();
+				} else {
+					$http.get('/admin/order/' + $routeParams.orderId + '/deliver', {
+						params : {
+							lti : $scope.order.logisticTrackingId,
+							la : $scope.order.logisticAgent
+						}
+					}).success(function(data, status, headers, config) {
+						$scope.order = data;
+						console.log($scope.order);
+						$route.reload();
+					}).error(function(data, status, headers, config) {
+						console.log('request failed...');
+					});
 				}
-			}).success(function(data, status, headers, config) {
-				$scope.order = data;
-				console.log($scope.order);
-				$route.reload();
-			}).error(function(data, status, headers, config) {
-				console.log('request failed...');
-			});
-		}
-	}
-	$scope.missLogistic = function() {
-		$scope.alerts.push({
-			type : 'danger',
-			msg : '请填写快递相关信息'
-		});
-	}
-	$scope.missComments = function() {
-		$scope.alerts.push({
-			type : 'danger',
-			msg : '请填写备注信息'
-		});
-	}
-	$scope.closeAlert = function(index) {
-		$scope.alerts.splice(index, 1);
-	}
-}).controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout) {
+			}
+			$scope.finishOrder = function(orderId) {
+				$http.get('/admin/order/' + $routeParams.orderId + '/finish').success(
+						function(data, status, headers, config) {
+							$scope.order = data;
+							console.log($scope.order);
+							$route.reload();
+						}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+			$scope.closeOrder = function(orderId) {
+				$http.get('/admin/order/' + $routeParams.orderId + '/close').success(
+						function(data, status, headers, config) {
+							$scope.order = data;
+							console.log($scope.order);
+							$route.reload();
+						}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+			$scope.addComments = function(orderId) {
+				$scope.alerts = [];
+				if (!$scope.order.comments) {
+					$scope.missComments();
+				} else {
+					$http.get('/admin/order/' + $routeParams.orderId + '/comments', {
+						params : {
+							comments : $scope.order.comments,
+							adminComments : $scope.order.adminComments
+						}
+					}).success(function(data, status, headers, config) {
+						$scope.order = data;
+						console.log($scope.order);
+						$route.reload();
+					}).error(function(data, status, headers, config) {
+						console.log('request failed...');
+					});
+				}
+			}
+			$scope.missLogistic = function() {
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '请填写快递相关信息'
+				});
+			}
+			$scope.missComments = function() {
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '请填写备注信息'
+				});
+			}
+			$scope.closeAlert = function(index) {
+				$scope.alerts.splice(index, 1);
+			}
+		}).controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout) {
 	$scope.login = {
 		'mobile' : null,
 		'password' : null

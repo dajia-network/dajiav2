@@ -619,7 +619,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							$scope.order = data;
 							$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type="
 									+ data.logisticAgent + "&postid=" + data.logisticTrackingId + "&callbackurl="
-									+ $window.location.href;
+									+ $window.location.protocol + "//" + $window.location.host
+									+ window.location.pathname;
 							$ionicLoading.hide();
 						});
 			}
