@@ -7,29 +7,30 @@
 		<img src="/app/img/logo-banner.png">
 	</div>
 	<div class="list card" ng-repeat="product in products">
-	  <div class="item item-image">
-		  <div  ng-if="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.product.productId}}"></div>
-	    <a href="#/tab/prod/{{product.product.productId}}"><img ng-src="{{product.product.imgUrl}}"></a>
-	  </div>
-	  <div class="row">
-	  	<div class="col col-50 homebar">
-	  		众打手已成功打下<span class="assertive"><b>{{product.priceOff}}</b></span>元!<br/>
-		    <uib-progressbar class="progress-striped active" animate="true" max="100" value="product.progressValue" type="success"></uib-progressbar>
-	  		<div ng-if="product.stock>0&&product.productStatus==2">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
-	  	</div>
-	  	<div class="col homebar text-center">
-			<b><span class="assertive now_price">{{product.currentPrice}}</span> 元</b><br/>
-			<span ng-if="product.stock>0&&product.productStatus==2">仅剩{{product.stock}}件</span>
+		<div class="overlay" ng-if="product.productStatus!=2" ng-click="go2Product(product.product.productId)"></div>
+		<div class="item item-image">
+			<div  ng-if="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.product.productId}}"></div>
+			<a href="#/tab/prod/{{product.product.productId}}"><img ng-src="{{product.product.imgUrl}}"></a>
 		</div>
-	  	<div class="col homebar" align="center">
-			<button ng-if="product.stock>0&&product.productStatus==2" class="button button-sqr button-assertive" ng-click="go2Product(product.product.productId)">
+		<div class="row">
+		 	<div class="col col-50 homebar">
+			 	众打手已成功打下<span class="assertive"><b>{{product.priceOff}}</b></span>元!<br/>
+			    <uib-progressbar class="progress-striped active" animate="true" max="100" value="product.progressValue" type="success"></uib-progressbar>
+			 	<div ng-if="product.stock>0&&product.productStatus==2">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
+			</div>
+			<div class="col homebar text-center">
+				<b><span class="assertive now_price">{{product.currentPrice}}</span> 元</b><br/>
+				<span ng-if="product.stock>0&&product.productStatus==2">仅剩{{product.stock}}件</span>
+			</div>
+			<div class="col homebar" align="center">
+				<button ng-if="product.stock>0&&product.productStatus==2" class="button button-sqr button-assertive" ng-click="go2Product(product.product.productId)">
 				我要打价
-			</button>
-			<button ng-if="product.stock<=0||product.productStatus!=2" class="button button-sqr button-outline button-assertive" ng-click="go2Product(product.product.productId)">
+				</button>
+				<button ng-if="product.stock<=0||product.productStatus!=2" class="button button-sqr button-outline button-assertive" ng-click="go2Product(product.product.productId)">
 				我来晚了
-			</button>
+				</button>
+			</div>
 		</div>
-	  </div>
 	</div>
 	<ion-infinite-scroll immediate-check="false" ng-if="page.hasMore" on-infinite="loadMore()">
 	</ion-infinite-scroll>

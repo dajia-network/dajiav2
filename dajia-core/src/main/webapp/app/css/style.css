@@ -200,8 +200,16 @@ button img {
     font-size: 12px;
 }
 
-/* countdown */
+.overlay {
+	position: absolute;
+	background-color: gray;
+	opacity: 0.3;
+	z-index: 100;
+	height: 100%;
+	width: 100%;
+}
 
+/* countdown */
 .clock{
 	position: absolute;
 	padding: 8px;
