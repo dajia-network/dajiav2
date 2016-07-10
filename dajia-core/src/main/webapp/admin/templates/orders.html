@@ -14,10 +14,24 @@
 </nav>
 
 <div class="container">
-	<div class="btn-group">
-        <label class="btn btn-default" ng-model="orderFilter" uib-btn-radio="'all'" ng-click="loadPage(1)">全部订单</label>
-        <label class="btn btn-default" ng-model="orderFilter" uib-btn-radio="'real'" ng-click="loadPage(1)">排除机器订单</label>
-    </div>
+	<div class="row">
+		<div class="col-sm-3">
+			<div class="btn-group">
+		        <label class="btn btn-default" ng-model="orderFilter.type" uib-btn-radio="'all'" ng-click="loadPage(1)">全部订单</label>
+		        <label class="btn btn-default" ng-model="orderFilter.type" uib-btn-radio="'real'" ng-click="loadPage(1)">排除机器订单</label>
+		    </div>
+		</div>
+		<div class="col-sm-4">
+			<div class="btn-group">
+		        <label class="btn btn-default" ng-model="orderFilter.status" uib-btn-radio="-1" ng-click="loadPage(1)">全部订单</label>
+		        <label class="btn btn-default" ng-model="orderFilter.status" uib-btn-radio="2" ng-click="loadPage(1)">待发货</label>
+		        <label class="btn btn-default" ng-model="orderFilter.status" uib-btn-radio="3" ng-click="loadPage(1)">已发货</label>
+		        <label class="btn btn-default" ng-model="orderFilter.status" uib-btn-radio="4" ng-click="loadPage(1)">已签收</label>
+		        <label class="btn btn-default" ng-model="orderFilter.status" uib-btn-radio="5" ng-click="loadPage(1)">已关闭</label>
+		    </div>
+		</div>
+	</div>
+
     <p></p>
 	<table class="table table-striped">
 		<thead>
@@ -46,7 +60,7 @@
 				<td>￥{{order.postFee}}</td>
 				<td>￥{{order.totalPrice}}</td>
 				<td>{{order.userName}}</td>
-				<td>{{order.orderStatus4Show}}</td>
+				<td><span ng-class="{true: 'label-ember'}[order.orderStatus==2]">{{order.orderStatus4Show}}</span></td>
 				<td>{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
 				<td><button type="button" class="btn btn-primary btn-sm" ng-if="order.userId!=0" ng-click="viewOrder(order.orderId);">处理</button>
 				</td>

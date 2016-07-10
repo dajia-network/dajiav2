@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.dajia.domain.Product;
-import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserRefund;
 
@@ -21,7 +19,7 @@ public class OrderVO {
 	public Integer orderStatus;
 
 	public Integer payType;
-	
+
 	public Long productId;
 
 	public Long productItemId;

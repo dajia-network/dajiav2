@@ -31,6 +31,7 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.OrderFilterVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.ProductVO;
 import com.dajia.vo.ProgressVO;
@@ -123,19 +124,32 @@ public class OrderService {
 		return orders;
 	}
 
-	public Page<UserOrder> loadOrdersByPage(Integer pageNum, String filter) {
+	public Page<UserOrder> loadOrdersByPage(Integer pageNum, OrderFilterVO orderFilter) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
 		Page<UserOrder> orders = null;
-		if (null == filter) {
-			filter = "real";
+		String orderType = "all";
+		Integer orderStatus = -1;
+		if (null != orderFilter) {
+			orderType = orderFilter.type;
+			orderStatus = orderFilter.status;
+		}
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		if (orderStatus >= 0) {
+			orderStatusList.add(orderStatus);
+		} else {
+			orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.CLOSED.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.CANCELLED.getKey());
 		}
 		// exclude pending payment orders
-		if (filter.equals("all")) {
-			orders = orderRepo.findByOrderStatusNotAndIsActiveOrderByOrderDateDesc(
-					CommonUtils.OrderStatus.PENDING_PAY.getKey(), ActiveStatus.YES.toString(), pageable);
-		} else if (filter.equals("real")) {
-			orders = orderRepo.findByOrderStatusNotAndUserIdNotAndIsActiveOrderByOrderDateDesc(
-					CommonUtils.OrderStatus.PENDING_PAY.getKey(), 0L, ActiveStatus.YES.toString(), pageable);
+		if (orderType.equals("all")) {
+			orders = orderRepo.findByOrderStatusInAndIsActiveOrderByOrderDateDesc(orderStatusList,
+					ActiveStatus.YES.toString(), pageable);
+		} else if (orderType.equals("real")) {
+			orders = orderRepo.findByOrderStatusInAndUserIdNotAndIsActiveOrderByOrderDateDesc(orderStatusList, 0L,
+					ActiveStatus.YES.toString(), pageable);
 		}
 		return orders;
 	}

@@ -68,13 +68,12 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	};
 }).controller('OrdersCtrl', function($scope, $http) {
 	console.log('OrdersCtrl...');
-	$scope.orderFilter = 'real';
+	$scope.orderFilter = {
+		type : 'real',
+		status : -1
+	};
 	$scope.loadPage = function(pageNum) {
-		$http.get('/admin/orders/' + pageNum, {
-			params : {
-				filter : $scope.orderFilter
-			}
-		}).success(function(data, status, headers, config) {
+		$http.post('/admin/orders/' + pageNum, $scope.orderFilter).success(function(data, status, headers, config) {
 			// console.log(data);
 			$scope.pager = data;
 			$scope.orders = data.results;

@@ -49,7 +49,7 @@
 				<td>{{product.status4Show}}</td>
 				<td><button type="button" class="btn btn-primary btn-sm" ng-click="editProduct(product.product.productId);">编辑</button>
 					<button type="button" class="btn btn-primary btn-sm" ng-confirm-click="确定要删除该产品吗?" confirmed-click="delProduct(product.product.productId);">删除</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-click="bot(product.product.productId);">BOT+1</button></td>
+					<button type="button" class="btn btn-primary btn-sm" ng-disabled="product.productStatus!=2" ng-click="bot(product.product.productId);">BOT+1</button></td>
 			</tr>
 		</tbody>
 	</table>

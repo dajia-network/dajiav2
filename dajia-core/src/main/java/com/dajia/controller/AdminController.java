@@ -31,6 +31,7 @@ import com.dajia.service.RefundService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
+import com.dajia.vo.OrderFilterVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
 import com.dajia.vo.ProductVO;
@@ -175,10 +176,10 @@ public class AdminController extends BaseController {
 		return page;
 	}
 
-	@RequestMapping("/admin/orders/{page}")
-	public PaginationVO<OrderVO> ordersByPage(@PathVariable("page") Integer pageNum, HttpServletRequest request) {
-		String filterVal = request.getParameter("filter");
-		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum, filterVal);
+	@RequestMapping(value = "/admin/orders/{page}", method = RequestMethod.POST)
+	public PaginationVO<OrderVO> ordersByPage(@PathVariable("page") Integer pageNum, HttpServletRequest request,
+			@RequestBody OrderFilterVO orderFilter) {
+		Page<UserOrder> orders = orderService.loadOrdersByPage(pageNum, orderFilter);
 		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
