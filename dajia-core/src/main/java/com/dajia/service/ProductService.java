@@ -203,9 +203,11 @@ public class ProductService {
 		return productVOList;
 	}
 
-	public ProductVO convertProductVO(Product product) {
+	public ProductVO convertProductVO(Product product, ProductItem pi) {
 		ProductVO productVO = new ProductVO();
-		ProductItem pi = loadProductItem(product);
+		if (null == pi) {
+			pi = loadProductItem(product);
+		}
 		if (null != pi) {
 			calcPrice(pi);
 			productVO.productItemId = pi.productItemId;
@@ -247,7 +249,16 @@ public class ProductService {
 		}
 		product.productImages.size();
 
-		return convertProductVO(product);
+		return convertProductVO(product, null);
+	}
+
+	public ProductVO loadProductDetailByItemId(Long itemId) {
+		ProductItem pi = productItemRepo.findOne(itemId);
+		if (null == pi) {
+			return null;
+		}
+
+		return convertProductVO(pi.product, pi);
 	}
 
 	public ProductItem loadProductItem(Product product) {
@@ -290,8 +301,8 @@ public class ProductService {
 		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
 		Page<ProductItem> productItems = productItemRepo
-				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByProductStatusAscExpiredDateAsc(productStatusList,
-						new Date(), ActiveStatus.YES.toString(), pageable);
+				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByProductStatusAscExpiredDateAsc(
+						productStatusList, new Date(), ActiveStatus.YES.toString(), pageable);
 		for (ProductItem productItem : productItems) {
 			calcPrice(productItem);
 		}

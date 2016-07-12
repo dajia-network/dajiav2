@@ -122,7 +122,7 @@ public class AdminController extends BaseController {
 					}
 					CommonUtils.updateProductWithReq(product, productVO);
 					productRepo.save(product);
-					return productService.convertProductVO(product);
+					return productService.convertProductVO(product, null);
 				}
 			} else {
 				product = new Product();
@@ -137,7 +137,7 @@ public class AdminController extends BaseController {
 			product.productItems = new ArrayList<ProductItem>();
 			product.productItems.add(productItem);
 			productRepo.save(product);
-			return productService.convertProductVO(product);
+			return productService.convertProductVO(product, null);
 		} else {
 			return null;
 		}

@@ -155,7 +155,7 @@ public class OrderService {
 	}
 
 	public void fillOrderVO(OrderVO ov, UserOrder order) {
-		ov.productVO = productService.loadProductDetail(ov.productId);
+		ov.productVO = productService.loadProductDetailByItemId(ov.productItemId);
 		User user = userRepo.findByUserId(order.userId);
 		if (null != user) {
 			ov.userName = user.userName;
