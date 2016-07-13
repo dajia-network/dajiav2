@@ -207,6 +207,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			var locationReady = false;
 			popLoading($ionicLoading);
 			modalInit($rootScope, $ionicModal, 'login');
+			userAgreeModalInit($scope, $ionicModal);
 			$scope.userContact = {};
 			$scope.userContacts = [];
 			$scope.selectedUserContact = {};
@@ -215,6 +216,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				'unitPrice' : 0,
 				'totalPrice' : 0,
 				'payType' : 1
+			};
+			$scope.userAgree = {
+				checked : true
 			};
 			var quota = 5;
 			$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
@@ -271,7 +275,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				console.log('request failed...');
 			});
 			$scope.submit = function() {
-				console.log($scope.order);
+				// console.log($scope.order);
+				if (!$scope.userAgree.checked) {
+					popWarning('购买前请确认并同意打价网用户协议，谢谢！', $timeout, $ionicLoading);
+					return;
+				}
 				if ($scope.userContact.contactId == null) {
 					console.log('new userContact.');
 				}
@@ -1010,14 +1018,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('SignOutCtrl', function($scope, AuthService) {
 	AuthService.logout();
-})
-
-.controller('PayCtrl', function($scope, $http, $ionicLoading, $timeout, $document) {
-	console.log('订单支付...');
-	$scope.confirmPay = function(order) {
-		console.log(order);
-		var payBtn = angular.element(document.querySelector('#payBtn'));
-	}
 });
 
 var modalInit = function($rootScope, $ionicModal, modalType) {
@@ -1039,23 +1039,21 @@ var modalInit = function($rootScope, $ionicModal, modalType) {
 	});
 }
 
-var payModalInit = function($scope, $ionicModal, callback) {
-	$ionicModal.fromTemplateUrl('templates/pay.html', {
+var userAgreeModalInit = function($scope, $ionicModal) {
+	$ionicModal.fromTemplateUrl('templates/user-agreement.html', {
 		scope : $scope,
 		animation : 'slide-in-up'
 	}).then(function(modal) {
-		$scope.payModal = modal;
-		callback();
+		$scope.userAgreeModal = modal;
 	});
-	$scope.openPayModal = function(order) {
-		$scope.order = order;
-		$scope.payModal.show();
+	$scope.openUserAgreeModal = function() {
+		$scope.userAgreeModal.show();
 	};
-	$scope.closePayModal = function() {
-		$scope.payModal.hide();
+	$scope.closeUserAgreeModal = function() {
+		$scope.userAgreeModal.hide();
 	};
 	$scope.$on('$destroy', function() {
-		$scope.payModal.remove();
+		$scope.userAgreeModal.remove();
 	});
 }
 

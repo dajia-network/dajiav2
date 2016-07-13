@@ -87,6 +87,9 @@
 			<label class="item item-input">
 				<input type="text" placeholder="订单备注" ng-model="order.userComments">
 			</label>
+			<p>
+				<input type="checkbox" ng-model="userAgree.checked" checked/>&nbsp;我已阅读并同意打价网用户协议&nbsp;(<a ng-click="openUserAgreeModal();">点击显示详情</a>)
+			</p>
 		</div>
 		<div class="item item-divider">
 		  支付方式
