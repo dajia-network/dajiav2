@@ -80,7 +80,7 @@ public class RewardService {
 			ur.expiredDate = productItem.expiredDate;
 			if (null == ur.refOrderId || ur.refOrderId.longValue() == 0L) {
 				UserOrder rewardOrder = orderService.findOneOrderByProductItemIdAndUserId(ur.productItemId,
-						ur.orderUserId);
+						ur.refUserId);
 				if (null != rewardOrder) {
 					ur.refOrderId = rewardOrder.orderId;
 					ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
