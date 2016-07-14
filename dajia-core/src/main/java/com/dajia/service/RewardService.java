@@ -46,6 +46,9 @@ public class RewardService {
 	@Autowired
 	private ApiService apiService;
 
+	@Autowired
+	private OrderService orderService;
+
 	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId) {
 		Map<Long, LoginUserVO> rdUserMap = new HashMap<Long, LoginUserVO>();
 		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndRewardStatus(orderId,
@@ -75,10 +78,15 @@ public class RewardService {
 			ur.orderUserId = order.userId;
 			ur.rewardRatio = 10; // ignore quantity
 			ur.expiredDate = productItem.expiredDate;
-			if (null != ur.refOrderId && ur.refOrderId.longValue() != 0L) {
-				ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
-			} else {
-				ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
+			if (null == ur.refOrderId || ur.refOrderId.longValue() == 0L) {
+				UserOrder rewardOrder = orderService.findOneOrderByProductItemIdAndUserId(ur.productItemId,
+						ur.orderUserId);
+				if (null != rewardOrder) {
+					ur.refOrderId = rewardOrder.orderId;
+					ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+				} else {
+					ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
+				}
 			}
 			Calendar c = Calendar.getInstance();
 			c.setTime(ur.expiredDate);

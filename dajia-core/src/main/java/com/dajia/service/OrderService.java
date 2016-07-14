@@ -268,4 +268,19 @@ public class OrderService {
 		sb.append(order.contactMobile);
 		return sb.toString();
 	}
+
+	public UserOrder findOneOrderByProductItemIdAndUserId(Long productItemId, Long userId) {
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		List<UserOrder> orderList = orderRepo.findByProductItemIdAndUserIdAndOrderStatusInAndIsActiveOrderByOrderId(
+				productItemId, userId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
+		if (null != orderList) {
+			for (UserOrder userOrder : orderList) {
+				return userOrder;
+			}
+		}
+		return null;
+	}
 }

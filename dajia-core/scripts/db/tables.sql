@@ -197,7 +197,7 @@ DROP TABLE IF EXISTS dajia.user_reward;
 CREATE TABLE IF NOT EXISTS dajia.user_reward (
 	reward_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     ref_user_id BIGINT(25) NOT NULL,
-    ref_order_id BIGINT(25) NOT NULL,
+    ref_order_id BIGINT(25) NULL,
     product_id BIGINT(25) NOT NULL,
     product_item_id BIGINT(25) NOT NULL,
     order_id BIGINT(25) NOT NULL,

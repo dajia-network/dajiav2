@@ -189,7 +189,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							}
 							var visitLog = {
 								visitUrl : window.location.href,
-								productId : productId,
+								productId : product.productId,
+								productItemId : product.productItemId,
 								refUserId : refUserId,
 								userId : userId
 							}
