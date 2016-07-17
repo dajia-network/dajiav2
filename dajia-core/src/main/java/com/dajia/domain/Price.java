@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.BeanUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -35,4 +37,12 @@ public class Price extends BaseModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_item_id", referencedColumnName = "product_item_id")
 	public ProductItem productItem;
+	
+	public Price clone(){
+		Price clonePrice = new Price();
+		clonePrice.sort = this.sort;
+		clonePrice.sold = this.sold;
+		clonePrice.targetPrice = this.targetPrice;
+		return clonePrice;
+	}
 }

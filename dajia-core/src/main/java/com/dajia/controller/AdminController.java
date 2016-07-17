@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
@@ -154,15 +155,30 @@ public class AdminController extends BaseController {
 		if (pv.productStatus == CommonUtils.ProductStatus.EXPIRED.getKey()) {
 			pv.productItemId = 0L;
 			Product product = productRepo.findOne(pid);
+			List<Price> prices = null;
 			for (ProductItem pi : product.productItems) {
 				if (pi.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
 					pi.isActive = CommonUtils.ActiveStatus.NO.toString();
+					prices = new ArrayList<Price>();
+					for (Price item : pi.prices) {
+						prices.add(item.clone());
+					}
 				}
 			}
+			// init new product item
 			ProductItem pi = new ProductItem();
 			pi.product = product;
+			pi.originalPrice = pv.originalPrice;
+			pi.currentPrice = pv.originalPrice;
+			pi.postFee = pv.postFee;
 			pi.productStatus = CommonUtils.ProductStatus.INVALID.getKey();
 			pi.isActive = CommonUtils.ActiveStatus.YES.toString();
+			if (null != prices) {
+				for (Price price : prices) {
+					price.productItem = pi;
+				}
+			}
+			pi.prices = prices;
 			product.productItems.add(pi);
 			productRepo.save(product);
 		}

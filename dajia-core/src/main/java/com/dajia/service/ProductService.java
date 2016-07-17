@@ -400,19 +400,21 @@ public class ProductService {
 
 	private void calcPrice(ProductItem productItem) {
 		BigDecimal targetPrice = productItem.originalPrice;
-		long soldNeeded = 0L;
-		for (Price price : productItem.prices) {
-			if (price.targetPrice.compareTo(targetPrice) < 0) {
-				targetPrice = price.targetPrice;
-				soldNeeded = price.sold;
+		if (null != targetPrice) {
+			long soldNeeded = 0L;
+			for (Price price : productItem.prices) {
+				if (price.targetPrice.compareTo(targetPrice) < 0) {
+					targetPrice = price.targetPrice;
+					soldNeeded = price.sold;
+				}
 			}
-		}
-		if (null != productItem.originalPrice) {
-			productItem.targetPrice = targetPrice;
-			productItem.soldNeeded = soldNeeded - CommonUtils.getLongValue(productItem.sold);
-			productItem.priceOff = productItem.originalPrice.add(productItem.currentPrice.negate());
-			productItem.nextOff = calcNextOff(productItem);
-			productItem.progressValue = calcProgress(productItem);
+			if (null != productItem.currentPrice) {
+				productItem.targetPrice = targetPrice;
+				productItem.soldNeeded = soldNeeded - CommonUtils.getLongValue(productItem.sold);
+				productItem.priceOff = productItem.originalPrice.add(productItem.currentPrice.negate());
+				productItem.nextOff = calcNextOff(productItem);
+				productItem.progressValue = calcProgress(productItem);
+			}
 		}
 	}
 
