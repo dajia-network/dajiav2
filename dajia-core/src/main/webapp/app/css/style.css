@@ -209,6 +209,10 @@ button img {
 	width: 100%;
 }
 
+.qcode img {
+	width: 100%;
+}
+
 /* countdown */
 .clock{
 	position: absolute;

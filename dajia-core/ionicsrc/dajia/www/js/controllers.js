@@ -35,6 +35,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			});
 		});
 	}
+	initWechatJSAPI('home', $http);
 	checkOauthLogin($cookies, $http, AuthService);
 	popLoading($ionicLoading);
 	loadProducts().then(function() {
@@ -146,7 +147,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				}
 			}
 			$scope.share = function() {
-				popWarning('请点击右上角微信菜单-发送给朋友', $timeout, $ionicLoading);
+				popWarning('请点击右上角微信菜单-发送给朋友。如果您已购买该产品，成功推荐朋友购买后将享受额外奖励折扣。', $timeout, $ionicLoading);
 			}
 			$scope.back = function() {
 				$window.location.replace('#/tab/prod');
@@ -162,7 +163,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								/ (product.originalPrice - product.targetPrice) * 100;
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
-						initWechatJSAPI($http, $cookies, $scope.product);
+						initWechatJSAPI('product', $http, $cookies, $scope.product);
 						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;
@@ -189,7 +190,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							}
 							var visitLog = {
 								visitUrl : window.location.href,
-								productId : productId,
+								productId : product.productId,
+								productItemId : product.productItemId,
 								refUserId : refUserId,
 								userId : userId
 							}
@@ -482,7 +484,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.progressDetail = function(trackingId) {
 				$window.location.href = '#/tab/prog/' + trackingId;
 			}
-			// initWechatJSAPI($http);
 		})
 
 .controller(
@@ -497,7 +498,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
 						$scope.order = order;
-						initWechatJSAPI($http, $cookies, $scope.order.productVO);
+						initWechatJSAPI('progress', $http, $cookies, $scope.order.productVO);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
@@ -557,6 +558,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				} else {
 					$window.location.href = '#/tab/mine/password';
 				}
+			}
+			$scope.showQcode = function() {
+				$window.location.href = '#/tab/mine/qcode';
 			}
 			$scope.logout = function() {
 				if (loginUser == null) {
@@ -1016,6 +1020,14 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	});
 })
 
+.controller('QcodeCtrl', function($scope, $window) {
+	console.log('QcodeCtrl');
+
+	$scope.back = function() {
+		$window.location.replace('#/tab/mine');
+	}
+})
+
 .controller('SignOutCtrl', function($scope, AuthService) {
 	AuthService.logout();
 });
@@ -1098,7 +1110,7 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
-var initWechatJSAPI = function($http, $cookies, product) {
+var initWechatJSAPI = function(screen, $http, $cookies, product) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
 		// console.log(data);
 		wx.config({
@@ -1106,16 +1118,22 @@ var initWechatJSAPI = function($http, $cookies, product) {
 			timestamp : data['timestamp'],
 			nonceStr : data['nonceStr'],
 			signature : data['signature'],
-			jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline' ]
+			jsApiList : [ 'checkJsApi', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'onMenuShareQQ' ]
 		});
 		wx.checkJsApi({
-			jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline' ],
+			jsApiList : [ 'onMenuShareAppMessage', 'onMenuShareTimeline', 'onMenuShareQQ' ],
 			success : function(res) {
 				console.log(res);
 			}
 		});
 		wx.ready(function() {
-			simpleShare(product, $cookies);
+			if (screen == 'product') {
+				simpleShare(product, $cookies);
+			} else if (screen == 'progress') {
+				// trigger by click share button
+			} else {
+				shareHome();
+			}
 		});
 	});
 }
@@ -1133,9 +1151,52 @@ var checkOauthLogin = function($cookies, $http, AuthService) {
 	}
 }
 
+var shareHome = function() {
+	console.log('shareHome');
+	var shareLink = 'http://51daja.com/app';
+	var logoImg = 'http://51daja.com/app/img/logo.png';
+	wx.onMenuShareAppMessage({
+		title : '打价网',
+		desc : '一个可以还价的网站！~每晚8:00准时上新~',
+		link : shareLink,
+		imgUrl : logoImg,
+		success : function() {
+			console.log('success');
+		},
+		cancel : function() {
+			console.log('cancel');
+		}
+	});
+	wx.onMenuShareTimeline({
+		title : '打价网:一个可以还价的网站！~每晚8:00准时上新~',
+		link : shareLink,
+		imgUrl : logoImg,
+		success : function() {
+			console.log('success');
+		},
+		cancel : function() {
+			console.log('cancel');
+		}
+	});
+	wx.onMenuShareQQ({
+		title : '打价网',
+		desc : '一个可以还价的网站！~每晚8:00准时上新~',
+		link : shareLink,
+		imgUrl : logoImg,
+		success : function() {
+			console.log('success');
+		},
+		cancel : function() {
+			console.log('cancel');
+		}
+	});
+}
+
 var simpleShare = function(product, $cookies) {
-	console.log(product);
+	console.log('simpleShare');
+	// console.log(product);
 	var userId = $cookies.get('dajia_user_id');
+	var successMsg = '分享成功！';
 	var shareLink = '#';
 	if (null != userId) {
 		shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
@@ -1153,7 +1214,7 @@ var simpleShare = function(product, $cookies) {
 			console.log('click');
 		},
 		success : function() {
-			popWarning('分享成功！', $timeout, $ionicLoading);
+			popWarning(successMsg, $timeout, $ionicLoading);
 		},
 		cancel : function() {
 			console.log('cancel');
@@ -1163,25 +1224,37 @@ var simpleShare = function(product, $cookies) {
 		title : '打价网 - ' + product.shortName,
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
-		trigger : function() {
-			console.log('click');
-		},
 		success : function() {
-			popWarning('分享成功！', $timeout, $ionicLoading);
+			popWarning(successMsg, $timeout, $ionicLoading);
 		},
 		cancel : function() {
 			console.log('cancel');
 		}
 	});
+	wx.onMenuShareQQ({
+		title : '打价网',
+		desc : product.shortName,
+		link : shareLink,
+		imgUrl : product.imgUrl4List,
+		success : function() {
+			popWarning(successMsg, $timeout, $ionicLoading);
+		},
+		cancel : function() {
+			console.log('cancel');
+		}
+	});
+	console.log(wx);
 }
 
 var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, product, order) {
+	console.log('shareProduct');
 	var userId = $cookies.get('dajia_user_id');
 	var username = $cookies.get('dajia_username');
 	if (userId == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		popWarning('分享信息准备完毕。请点击右上角微信菜单-发送给朋友。', $timeout, $ionicLoading);
+		var successMsg = '分享成功！朋友购买后将获得额外奖励折扣！';
 		var shareLink = "";
 		if (null != order && null != product) {
 			shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
@@ -1191,28 +1264,37 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		}
 		wx.onMenuShareAppMessage({
 			title : '打价网',
-			desc : username + '购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			desc : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {
 				console.log('click');
 			},
 			success : function() {
-				popWarning('分享成功！朋友购买后将获得奖励！', $timeout, $ionicLoading);
+				popWarning(successMsg, $timeout, $ionicLoading);
 			},
 			cancel : function() {
 				console.log('cancel');
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : username + '购买了"' + product.shortName + '"，再多一人购买继续降价' + product.nextOff + '元。快来一起打价吧！',
+			title : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
-			trigger : function() {
-				console.log('click');
-			},
 			success : function() {
-				popWarning('分享成功！朋友购买后将获得奖励！', $timeout, $ionicLoading);
+				popWarning(successMsg, $timeout, $ionicLoading);
+			},
+			cancel : function() {
+				console.log('cancel');
+			}
+		});
+		wx.onMenuShareQQ({
+			title : '打价网',
+			desc : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
+			link : shareLink,
+			imgUrl : product.imgUrl4List,
+			success : function() {
+				popWarning(successMsg, $timeout, $ionicLoading);
 			},
 			cancel : function() {
 				console.log('cancel');

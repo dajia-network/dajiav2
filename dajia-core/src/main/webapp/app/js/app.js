@@ -167,6 +167,14 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'EditContactCtrl'
 			}
 		}
+	}).state('tab.mine-qcode', {
+		url : '/mine/qcode',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/qcode.html',
+				controller : 'QcodeCtrl'
+			}
+		}
 	});
 
 	// if none of the above states are matched, use this as the fallback

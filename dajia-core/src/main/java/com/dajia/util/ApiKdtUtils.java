@@ -42,6 +42,9 @@ public class ApiKdtUtils {
 				} else {
 					if (null == product.imgUrl4List || product.imgUrl4List.length() == 0) {
 						product.imgUrl4List = imgMap.get("thumbnail");
+						if (null != product.imgUrl4List) {
+							product.imgUrl4List = product.imgUrl4List.replaceAll("https://", "http://");
+						}
 					}
 					ProductImage pi = new ProductImage();
 					pi.url = imgMap.get("url");

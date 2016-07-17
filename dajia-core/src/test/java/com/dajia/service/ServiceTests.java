@@ -53,4 +53,11 @@ public class ServiceTests {
 		productItem.productItemId = 68L;
 		rewardService.createReward(order, productItem);
 	}
+
+	@Test
+	public void testReplace() {
+		String str = "https://img.yzcdn.cn/upload_files/2016/07/03/Fo19Hw9ukEF5bxQ9ncpR-TkCW-x-.jpg?imageView2/2/w/290/h/290/q/75/format/jpg";
+		str = str.replaceAll("https://", "http://");
+		System.out.println(str);
+	}
 }
