@@ -90,6 +90,7 @@ public class OrderController extends BaseController {
 		order.payType = orderVO.payType;
 		order.productId = orderVO.productId;
 		order.productItemId = orderVO.productItemId;
+		order.productDesc = orderVO.productDesc;
 		order.userComments = orderVO.userComments;
 		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
 			order.refUserId = orderVO.refUserId;

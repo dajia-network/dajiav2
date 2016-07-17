@@ -234,6 +234,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$scope.order.postFee = product.postFee;
 				$scope.defaultPostFee = product.postFee;
 				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+				$scope.order.productDesc = product.shortName;
 				if (locationReady) {
 					$ionicLoading.hide();
 				}
