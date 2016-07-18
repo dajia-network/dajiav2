@@ -34,54 +34,51 @@ public class WechatFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		String reqUrl = request.getRequestURI();
 		logger.info("requestURL: " + reqUrl);
-		if (reqUrl.toLowerCase().indexOf("/app/index.html") >= 0) {
-			HttpSession session = request.getSession(true);
-			LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
-			logger.info("hasLoginUser: " + (null != loginUser));
-			HttpServletResponse response = (HttpServletResponse) res;
+		HttpSession session = request.getSession(true);
+		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
+		logger.info("hasLoginUser: " + (null != loginUser));
+		HttpServletResponse response = (HttpServletResponse) res;
 
-			if ((null == loginUser || null == loginUser.oauthUserId)) {
-				String ua = request.getHeader("user-agent");
-				// is Wechat browser
-				logger.info("user-agent: " + ua);
-				if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {
-					boolean isCookieLogin = false;
-					Cookie[] cookies = request.getCookies();
-					if (null != cookies) {
-						for (Cookie cookie : cookies) {
-							String name = cookie.getName();
-							if (name.equals("dajia_user_oauth_id")) {
-								logger.info("user has cookies...");
-								String oauthUserId = cookie.getValue();
-								User user = userService.oauthLogin("Wechat", oauthUserId, request);
-								if (null != user) {
-									loginUser = UserUtils.addLoginSession(loginUser, user, request);
-									isCookieLogin = true;
-								}
+		if ((null == loginUser || null == loginUser.oauthUserId)) {
+			String ua = request.getHeader("user-agent");
+			// is Wechat browser
+			logger.info("user-agent: " + ua);
+			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {
+				boolean isCookieLogin = false;
+				Cookie[] cookies = request.getCookies();
+				if (null != cookies) {
+					for (Cookie cookie : cookies) {
+						String name = cookie.getName();
+						if (name.equals("dajia_user_oauth_id")) {
+							logger.info("user has cookies...");
+							String oauthUserId = cookie.getValue();
+							User user = userService.oauthLogin("Wechat", oauthUserId, request);
+							if (null != user) {
+								loginUser = UserUtils.addLoginSession(loginUser, user, request);
+								isCookieLogin = true;
 							}
 						}
 					}
-					if (!isCookieLogin) {
-						logger.info("user does not have cookies...");
-						String refUserId = request.getParameter(CommonUtils.ref_user_id);
-						String productId = request.getParameter(CommonUtils.product_id);
-						String refOrderId = request.getParameter(CommonUtils.ref_order_id);
-						logger.info("refUserId:" + refUserId + "||productId:" + productId);
-						if (!CommonUtils.checkParameterIsNull(refUserId)) {
-							if (!CommonUtils.checkParameterIsNull(refOrderId)) {
-								response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId="
-										+ productId + "&refOrderId=" + refOrderId);
-							} else {
-								response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId="
-										+ productId);
-							}
-						} else if (!CommonUtils.checkParameterIsNull(productId)) {
-							response.sendRedirect("/wechat/login?productId=" + productId);
+				}
+				if (!isCookieLogin) {
+					logger.info("user does not have cookies...");
+					String refUserId = request.getParameter(CommonUtils.ref_user_id);
+					String productId = request.getParameter(CommonUtils.product_id);
+					String refOrderId = request.getParameter(CommonUtils.ref_order_id);
+					logger.info("refUserId:" + refUserId + "||productId:" + productId);
+					if (!CommonUtils.checkParameterIsNull(refUserId)) {
+						if (!CommonUtils.checkParameterIsNull(refOrderId)) {
+							response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId
+									+ "&refOrderId=" + refOrderId);
 						} else {
-							response.sendRedirect("/wechat/login");
+							response.sendRedirect("/wechat/login?refUserId=" + refUserId + "&productId=" + productId);
 						}
-						return;
+					} else if (!CommonUtils.checkParameterIsNull(productId)) {
+						response.sendRedirect("/wechat/login?productId=" + productId);
+					} else {
+						response.sendRedirect("/wechat/login");
 					}
+					return;
 				}
 			}
 		}

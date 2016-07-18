@@ -40,7 +40,7 @@ public class ServerConfig extends WebMvcAutoConfigurationAdapter {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(wechatFilter());
 		registration.addUrlPatterns("/app");
-		registration.addUrlPatterns("/app/*");
+		registration.addUrlPatterns("/user/loginuserinfo");
 		registration.setName("wechatFilter");
 		return registration;
 	}
