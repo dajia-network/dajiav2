@@ -196,6 +196,7 @@ public class UserController extends BaseController {
 	public @ResponseBody LoginUserVO getSessionUser(HttpServletRequest request, HttpServletResponse response) {
 		LoginUserVO loginUser = (LoginUserVO) request.getSession(true).getAttribute(UserUtils.session_user);
 		if (null == loginUser) {
+			logger.info("No login user in Session...");
 			return null;
 		}
 		User user = this.getLoginUser(request, response, userRepo, true);
