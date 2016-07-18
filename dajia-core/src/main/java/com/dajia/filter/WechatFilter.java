@@ -31,6 +31,7 @@ public class WechatFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
 			ServletException {
+		logger.info("======== WechatFilter ========");
 		HttpServletRequest request = (HttpServletRequest) req;
 		String reqUrl = request.getRequestURI();
 		HttpSession session = request.getSession(true);
@@ -44,10 +45,10 @@ public class WechatFilter implements Filter {
 				boolean isCookieLogin = false;
 				Cookie[] cookies = request.getCookies();
 				if (null != cookies) {
-					logger.info("user has cookies...");
 					for (Cookie cookie : cookies) {
 						String name = cookie.getName();
 						if (name.equals("dajia_user_oauth_id")) {
+							logger.info("user has cookies...");
 							String oauthUserId = cookie.getValue();
 							User user = userService.oauthLogin("Wechat", oauthUserId, request);
 							if (null != user) {
