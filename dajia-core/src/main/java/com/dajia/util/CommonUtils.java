@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.data.domain.Page;
 
 import com.dajia.domain.Price;
@@ -193,6 +195,18 @@ public class CommonUtils {
 		} else {
 			return str;
 		}
+	}
+
+	public static String getRequestIP(HttpServletRequest request) {
+		String ipAddr;
+		ipAddr = request.getHeader("x-forwarded-for");
+		if (null == ipAddr || ipAddr.length() == 0) {
+			ipAddr = request.getHeader("X-Real-IP");
+		}
+		if (null == ipAddr || ipAddr.length() == 0) {
+			ipAddr = "127.0.0.1";
+		}
+		return ipAddr;
 	}
 
 	public enum ActiveStatus {

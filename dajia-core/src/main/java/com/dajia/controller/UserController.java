@@ -127,7 +127,7 @@ public class UserController extends BaseController {
 			if (null == signinCode || !signinCode.equals(loginUser.signinCode)) {
 				return null;
 			}
-			loginUser.loginIP = request.getRemoteAddr();
+			loginUser.loginIP = CommonUtils.getRequestIP(request);
 			loginUser.loginDate = new Date();
 
 			User user = userService.userLogin(loginUser.mobile, loginUser.password, request, true);
@@ -178,7 +178,7 @@ public class UserController extends BaseController {
 			if (null == signupCode || !signupCode.equals(loginUser.signupCode)) {
 				return null;
 			}
-			loginUser.loginIP = request.getRemoteAddr();
+			loginUser.loginIP = CommonUtils.getRequestIP(request);
 			loginUser.loginDate = new Date();
 
 			User user = new User();
@@ -332,7 +332,7 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/user/sharelog", method = RequestMethod.POST)
 	public void saveShareLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
-		String visitIp = request.getRemoteAddr();
+		String visitIp = CommonUtils.getRequestIP(request);
 		Integer logType;
 		if (null != visitLog.refUserId) {
 			logType = CommonUtils.LogType.REWARD_SHARE.getKey();

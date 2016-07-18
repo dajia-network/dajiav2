@@ -39,34 +39,26 @@ public class WechatFilter implements Filter {
 
 		if ((null == loginUser || null == loginUser.oauthUserId) && reqUrl.indexOf("/wechat/login") == -1) {
 			String ua = request.getHeader("user-agent");
-			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {// is
-																				// Wechat
-																				// browser
+			// is Wechat browser
+			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {
 				boolean isCookieLogin = false;
 				Cookie[] cookies = request.getCookies();
 				if (null != cookies) {
-					String userType = "normal";
+					logger.info("user has cookies...");
 					for (Cookie cookie : cookies) {
 						String name = cookie.getName();
-						if (name.equals("dajia_usertype")) {
-							userType = cookie.getValue();
-						}
-					}
-					for (Cookie cookie : cookies) {
-						String name = cookie.getName();
-						if (name.equals("dajia_user")) {
-							if (userType.equalsIgnoreCase("Wechat")) {
-								String oauthUserId = cookie.getValue();
-								User user = userService.oauthLogin(userType, oauthUserId, request);
-								if (null != user) {
-									loginUser = UserUtils.addLoginSession(loginUser, user, request);
-									isCookieLogin = true;
-								}
+						if (name.equals("dajia_user_oauth_id")) {
+							String oauthUserId = cookie.getValue();
+							User user = userService.oauthLogin("Wechat", oauthUserId, request);
+							if (null != user) {
+								loginUser = UserUtils.addLoginSession(loginUser, user, request);
+								isCookieLogin = true;
 							}
 						}
 					}
 				}
 				if (!isCookieLogin) {
+					logger.info("user does not have cookies...");
 					String refUserId = request.getParameter(CommonUtils.ref_user_id);
 					String productId = request.getParameter(CommonUtils.product_id);
 					String refOrderId = request.getParameter(CommonUtils.ref_order_id);

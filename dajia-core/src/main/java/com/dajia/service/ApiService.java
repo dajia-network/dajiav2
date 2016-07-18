@@ -243,7 +243,7 @@ public class ApiService {
 		chargeParams.put("channel", channel);
 		chargeParams.put("currency", "cny");
 		chargeParams.put("client_ip", clientIp);
-		chargeParams.put("subject", CommonUtils.subString(order.productDesc, 30));
+		chargeParams.put("subject", CommonUtils.subString(order.productDesc, 28));
 		chargeParams.put("body", orderService.generateOrderInfoStr(order));
 		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
 			Map<String, Object> extraParams = new HashMap<String, Object>();

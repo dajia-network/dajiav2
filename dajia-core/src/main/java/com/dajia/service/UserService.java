@@ -40,7 +40,7 @@ public class UserService {
 		user.password = EncodingUtil.encode("SHA1", user.password);
 		user.userName = UserUtils.generateUserName(user.mobile);
 		user.isAdmin = "N";
-		user.lastVisitIP = request.getRemoteAddr();
+		user.lastVisitIP = CommonUtils.getRequestIP(request);
 		user.lastVisitDate = new Date();
 		userRepo.save(user);
 		return user;
@@ -55,7 +55,7 @@ public class UserService {
 			user.oauthUserId = oauthUserId;
 			user.isAdmin = "N";
 		}
-		user.lastVisitIP = request.getRemoteAddr();
+		user.lastVisitIP = CommonUtils.getRequestIP(request);
 		user.lastVisitDate = new Date();
 		ApiWechatUtils.updateWechatUserInfo(user, userInfoMap);
 		userRepo.save(user);
@@ -65,7 +65,7 @@ public class UserService {
 	public User oauthLogin(String oauthType, String oauthUserId, HttpServletRequest request) {
 		User user = userRepo.findByOauthUserIdAndOauthType(oauthUserId, oauthType);
 		if (null != user) {
-			user.lastVisitIP = request.getRemoteAddr();
+			user.lastVisitIP = CommonUtils.getRequestIP(request);
 			user.lastVisitDate = new Date();
 			userRepo.save(user);
 		}
@@ -78,7 +78,7 @@ public class UserService {
 		if ((null == user || null == user.password || !user.password.equals(password)) && !authIgnore) {
 			return null;
 		} else {
-			user.lastVisitIP = request.getRemoteAddr();
+			user.lastVisitIP = CommonUtils.getRequestIP(request);
 			user.lastVisitDate = new Date();
 			userRepo.save(user);
 		}

@@ -170,11 +170,16 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						}, 1000);
 
 						var targetDate = new Date(product.expiredDate);
-						var countdown = document.getElementById('clock');
-						DajiaGlobal.utils.getCountdown(countdown, targetDate);
-						var clock = setInterval(function() {
-							DajiaGlobal.utils.getCountdown(countdown, targetDate);
-						}, 1000);
+						// var countdown = document.getElementById('clock-' +
+						// $scope.product.productId);
+						// console.log('clock-' + $scope.product.productId);
+						// console.log(countdown);
+						// DajiaGlobal.utils.getCountdown(countdown,
+						// targetDate);
+						// var clock = setInterval(function() {
+						// DajiaGlobal.utils.getCountdown(countdown,
+						// targetDate);
+						// }, 1000);
 
 						// save share log
 						var productId = DajiaGlobal.utils.getURLParameter('productId');
@@ -234,6 +239,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$scope.order.postFee = product.postFee;
 				$scope.defaultPostFee = product.postFee;
 				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+				$scope.order.productDesc = product.shortName;
 				if (locationReady) {
 					$ionicLoading.hide();
 				}

@@ -8,7 +8,7 @@
 		<div class="list card">
 			<div class="item item-body">
 				<div align="center">{{product.name}}<p/></div>
-				<div ng-if="product.stock>0&&product.productStatus==2" class="clock" id="clock"></div>
+				<div ng-show="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.productId}}"></div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
 				  <ion-slide ng-repeat="prodImg in product.productImages">
 				    <img ng-src="{{prodImg.url}}" class="full-image">
@@ -43,6 +43,13 @@
 		  	<p ng-bind-html="product.description"></p>
 		  </div>
 		</div>
+		<div class="card">
+		  <div class="item item-text-wrap noPadding">
+		  	<p><img src="./img/dajia_guide.jpg"></img></p>
+		  </div>
+		</div>
+		
+		
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
