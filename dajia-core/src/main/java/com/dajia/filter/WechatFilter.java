@@ -31,11 +31,12 @@ public class WechatFilter implements Filter {
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
 			ServletException {
-		logger.info("======== WechatFilter ========");
 		HttpServletRequest request = (HttpServletRequest) req;
 		String reqUrl = request.getRequestURI();
+		logger.info("requestURL: " + reqUrl);
 		HttpSession session = request.getSession(true);
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
+		logger.info("hasLoginUser: " + (null != loginUser));
 		HttpServletResponse response = (HttpServletResponse) res;
 
 		if ((null == loginUser || null == loginUser.oauthUserId) && reqUrl.indexOf("/wechat/login") == -1) {
