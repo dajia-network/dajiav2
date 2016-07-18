@@ -184,6 +184,17 @@ public class CommonUtils {
 		return null == param || param.isEmpty() || param.equalsIgnoreCase(null_string);
 	}
 
+	public static String subString(String str, int length) {
+		if (null == str) {
+			return null;
+		}
+		if (str.length() > length) {
+			return str.substring(0, length) + "...";
+		} else {
+			return str;
+		}
+	}
+
 	public enum ActiveStatus {
 		YES("Y"), NO("N");
 		private String key;
