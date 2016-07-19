@@ -56,6 +56,7 @@ public class UserService {
 			user.isAdmin = "N";
 		}
 		user.lastVisitIP = CommonUtils.getRequestIP(request);
+		logger.info(user.lastVisitIP);
 		user.lastVisitDate = new Date();
 		ApiWechatUtils.updateWechatUserInfo(user, userInfoMap);
 		userRepo.save(user);
