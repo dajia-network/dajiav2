@@ -199,9 +199,9 @@ public class CommonUtils {
 
 	public static String getRequestIP(HttpServletRequest request) {
 		String ipAddr;
-		ipAddr = request.getHeader("x-forwarded-for");
+		ipAddr = request.getHeader("X-Real-IP");
 		if (null == ipAddr || ipAddr.length() == 0) {
-			ipAddr = request.getHeader("X-Real-IP");
+			ipAddr = request.getHeader("x-forwarded-for");
 		}
 		if (null == ipAddr || ipAddr.length() == 0) {
 			ipAddr = "127.0.0.1";
