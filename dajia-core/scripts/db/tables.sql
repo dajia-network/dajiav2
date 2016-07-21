@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS dajia.user (
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(user_id),
-    UNIQUE KEY (username),
     UNIQUE KEY (email),
     UNIQUE KEY (mobile)
 );

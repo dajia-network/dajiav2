@@ -305,14 +305,57 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			$scope.closeAlert = function(index) {
 				$scope.alerts.splice(index, 1);
 			}
-		}).controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout) {
+		})
+
+.controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout, $q) {
 	$scope.login = {
 		'mobile' : null,
-		'password' : null
+		'signinCode' : null
 	};
+	$scope.alerts = [];
+	$scope.smsBtnTxt = '发送手机验证码';
+	$scope.smsBtnDisable = false;
+	var smsBtn = angular.element(document.querySelector('#smsBtn'));
+
+	var checkMobile = function(mobile) {
+		var defer = $q.defer();
+		$http.get('/signupCheck/' + mobile).success(function(data, status, headers, config) {
+			if ("failed" == data.result) {
+				defer.resolve(true);
+			} else {
+				$scope.alerts.push({
+					type : 'danger',
+					msg : '该手机号未被绑定，请先用微信登录后再绑定手机'
+				});
+				defer.resolve(false);
+			}
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+			defer.reject();
+		});
+		return defer.promise;
+	}
+
+	$scope.getSigninCode = function() {
+		var mobile = $scope.login.mobile;
+		var mobileReg = /^((13[0-9]|15[0-9]|18[0-9])+\d{8})$/;
+
+		if (!mobile || mobile.length != 11 || !mobileReg.test(mobile)) {
+			$scope.alerts.push({
+				type : 'danger',
+				msg : '请输入正确的手机号码'
+			});
+			return;
+		}
+		checkMobile(mobile).then(function(mobileValid) {
+			if (mobileValid) {
+				sendSmsMessage($scope, $http, $timeout, '/signinSms/', mobile);
+			}
+		});
+	}
+
 	$scope.submit = function() {
-		$scope.alerts = [];
-		if (!$scope.login.mobile || !$scope.login.password) {
+		if (!$scope.login.mobile || !$scope.login.signinCode) {
 			$scope.alerts.push({
 				type : 'danger',
 				msg : '请输入完整信息'
@@ -320,7 +363,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			return;
 		}
 
-		$http.post('/login', $scope.login).success(function(data, status, headers, config) {
+		$http.post('/smslogin', $scope.login).success(function(data, status, headers, config) {
 			if (data == null || data.length == 0 || data.isAdmin != 'Y') {
 				$scope.loginFail();
 			} else {
@@ -333,6 +376,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		}).error(function(data, status, headers, config) {
 			$scope.loginFail();
 		});
+
 	};
 	$scope.loginFail = function() {
 		$scope.alerts.push({
@@ -344,3 +388,35 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		$scope.alerts.splice(index, 1);
 	}
 });
+
+var sendSmsMessage = function($scope, $http, $timeout, methodPath, mobile) {
+	var counter = 30;
+	var onTimeout = function() {
+		counter--;
+		if (counter == 0) {
+			$scope.smsBtnTxt = '发送手机验证码';
+			$scope.smsBtnDisable = false;
+			return false;
+		}
+		$scope.smsBtnTxt = '发送手机验证码 (' + counter + ')';
+		mytimeout = $timeout(onTimeout, 1000);
+	}
+	var mytimeout = $timeout(onTimeout, 1000);
+	$scope.smsBtnDisable = true;
+
+	$http.get(methodPath + mobile).success(function(data, status, headers, config) {
+		if ("success" == data.result) {
+			$scope.alerts.push({
+				type : 'success',
+				msg : '验证码已发送'
+			});
+		} else {
+			$scope.alerts.push({
+				type : 'danger',
+				msg : '验证码发送失败'
+			});
+		}
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+}
