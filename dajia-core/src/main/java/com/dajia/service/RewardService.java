@@ -87,6 +87,8 @@ public class RewardService {
 				} else {
 					ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
 				}
+			}else{
+				ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
 			}
 			Calendar c = Calendar.getInstance();
 			c.setTime(ur.expiredDate);
