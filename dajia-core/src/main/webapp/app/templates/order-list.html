@@ -4,7 +4,10 @@
 			返回
 		</ion-nav-back-button>
 	</ion-nav-bar>
-  <ion-content>            
+  <ion-content>
+	<div class="item item-logo-center" align="center">
+		<img src="/app/img/logo-banner.png">
+	</div>
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
 	<div class="card" ng-repeat="order in myOrders" >

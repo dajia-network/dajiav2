@@ -283,4 +283,21 @@ public class OrderService {
 		}
 		return null;
 	}
+
+	public boolean orderValidate(UserOrder order) {
+		if (order.totalPrice.compareTo(order.unitPrice.multiply(new BigDecimal(order.quantity)).add(order.postFee)) < 0) {
+			logger.error("Total price validation failed");
+			return false;
+		}
+		ProductItem item = productItemRepo.findOne(order.productItemId);
+		if (null == item) {
+			logger.error("Product item validation failed");
+			return false;
+		}
+		if (order.unitPrice.compareTo(item.currentPrice) < 0) {
+			logger.error("Product price validation failed");
+			return false;
+		}
+		return true;
+	}
 }

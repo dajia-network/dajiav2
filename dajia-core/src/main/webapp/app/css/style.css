@@ -213,6 +213,14 @@ button img {
 	width: 100%;
 }
 
+.error {
+	margin: 30px 0px 10px;
+}
+
+.error img {
+	width: 100%;
+}
+
 /* countdown */
 .clock{
 	position: absolute;

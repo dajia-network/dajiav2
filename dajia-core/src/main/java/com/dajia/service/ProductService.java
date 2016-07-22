@@ -337,6 +337,10 @@ public class ProductService {
 			}
 			calcCurrentPrice(productItem, order.quantity);
 		}
+		// sold out logic
+		if (productItem.stock == 0) {
+			productItem.productStatus = CommonUtils.ProductStatus.EXPIRED.getKey();
+		}
 		productItemRepo.save(productItem);
 
 		if (null != order.refUserId) {

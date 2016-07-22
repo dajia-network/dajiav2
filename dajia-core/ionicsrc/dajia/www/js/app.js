@@ -65,9 +65,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'ProdDetailCtrl'
 			}
 		}
-	})
-
-	.state('tab.prod-order', {
+	}).state('tab.prod-order', {
 		url : '/prodorder/:pid',
 		views : {
 			'tab-prod' : {
@@ -83,9 +81,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'OrderCtrl'
 			}
 		}
-	})
-
-	.state('tab.prog', {
+	}).state('tab.prog', {
 		url : '/prog',
 		views : {
 			'tab-prog' : {
@@ -101,9 +97,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'ProgDetailCtrl'
 			}
 		}
-	})
-
-	.state('tab.mine', {
+	}).state('tab.mine', {
 		url : '/mine',
 		views : {
 			'tab-mine' : {
@@ -175,11 +169,24 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'QcodeCtrl'
 			}
 		}
+	}).state('error', {
+		url : '/error',
+		templateUrl : 'templates/error.html',
+		controller : 'ErrorCtrl'
 	});
 
 	// if none of the above states are matched, use this as the fallback
 	$urlRouterProvider.otherwise('/tab/prod');
 
+}).service('errorInterceptor', function($q) {
+	var service = this;
+	service.responseError = function(response) {
+		console.log(response);
+		if (response.status >= 404) {
+			window.location.href = '#/error';
+		}
+		return $q.reject(response);
+	};
 }).config(function($ionicConfigProvider, $httpProvider) {
 	var appVersion = navigator.appVersion;
 	console.log(appVersion);

@@ -645,7 +645,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			loadOrderDetail();
 		})
 
-.controller('MyFavCtrl', function($scope, $http, $ionicLoading) {
+.controller('MyFavCtrl', function($scope, $http, $ionicLoading, $window) {
 	console.log('我的收藏...');
 	var loadFavs = function() {
 		popLoading($ionicLoading);
@@ -659,6 +659,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	$scope.doRefresh = function() {
 		loadFavs();
 	};
+	$scope.goHome = function() {
+		$window.location.href = '#/tab/prod';
+	}
 })
 
 .controller('MyPassCtrl', function($scope, $http, $timeout, $ionicLoading) {
@@ -1028,7 +1031,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('QcodeCtrl', function($scope, $window) {
 	console.log('QcodeCtrl');
-
 	$scope.back = function() {
 		$window.location.replace('#/tab/mine');
 	}
@@ -1036,6 +1038,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('SignOutCtrl', function($scope, AuthService) {
 	AuthService.logout();
+})
+
+.controller('ErrorCtrl', function($scope, $window) {
+	console.log('ErrorCtrl');
+	$scope.goHome = function() {
+		$window.location.replace('#');
+	}
 });
 
 var modalInit = function($rootScope, $ionicModal, modalType) {
@@ -1212,8 +1221,8 @@ var simpleShare = function(product, $cookies) {
 				+ product.productId;
 	}
 	wx.onMenuShareAppMessage({
-		title : '打价网',
-		desc : product.shortName,
+		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		trigger : function() {
@@ -1227,7 +1236,7 @@ var simpleShare = function(product, $cookies) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '打价网 - ' + product.shortName,
+		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1238,8 +1247,8 @@ var simpleShare = function(product, $cookies) {
 		}
 	});
 	wx.onMenuShareQQ({
-		title : '打价网',
-		desc : product.shortName,
+		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1259,7 +1268,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 	if (userId == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
-		popWarning('分享信息准备完毕。请点击右上角微信菜单-发送给朋友。', $timeout, $ionicLoading);
+		popWarning('请点击右上角微信菜单-发送给朋友。', $timeout, $ionicLoading);
 		var successMsg = '分享成功！朋友购买后将获得额外奖励折扣！';
 		var shareLink = "";
 		if (null != order && null != product) {
@@ -1269,8 +1278,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			shareLink = 'http://51daja.com/app/index.html#/tab/prod/' + product.productId;
 		}
 		wx.onMenuShareAppMessage({
-			title : '打价网',
-			desc : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
+			title : '快来跟我一起亲手打出全网最低价！',
+			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {
@@ -1284,7 +1293,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
+			title : '快来跟我一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {
@@ -1295,8 +1304,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			}
 		});
 		wx.onMenuShareQQ({
-			title : '打价网',
-			desc : username + '购买了"' + product.shortName + '"，多一人购买再便宜' + product.nextOff + '元。快来一起打价吧！',
+			title : '快来跟我一起亲手打出全网最低价！',
+			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {

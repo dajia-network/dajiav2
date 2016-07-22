@@ -104,6 +104,9 @@ public class OrderController extends BaseController {
 		order.address = uc.province.locationValue + " " + uc.city.locationValue + " " + uc.district.locationValue + " "
 				+ uc.address1;
 		order.trackingId = CommonUtils.genTrackingId(user.userId);
+		if (!orderService.orderValidate(order)) {
+			return null;
+		}
 		orderRepo.save(order);
 
 		Charge charge = null;
