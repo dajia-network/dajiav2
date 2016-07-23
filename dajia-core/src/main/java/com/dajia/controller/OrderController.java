@@ -91,6 +91,7 @@ public class OrderController extends BaseController {
 		order.productId = orderVO.productId;
 		order.productItemId = orderVO.productItemId;
 		order.productDesc = orderVO.productDesc;
+		order.productShared = CommonUtils.ProductShared.NO.toString();
 		order.userComments = orderVO.userComments;
 		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
 			order.refUserId = orderVO.refUserId;
