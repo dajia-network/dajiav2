@@ -163,7 +163,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								/ (product.originalPrice - product.targetPrice) * 100;
 						$scope.countTo = product.currentPrice;
 						$scope.countFrom = product.originalPrice;
-						initWechatJSAPI('product', $http, $cookies, $scope.product);
+						initWechatJSAPI('product', $http, $cookies, $timeout, $ionicLoading, $scope.product);
 						$ionicLoading.hide();
 						$timeout(function() {
 							$scope.progressValue = amt;
@@ -500,13 +500,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
 						$scope.order = order;
 						console.log(order);
-						initWechatJSAPI('progress', $http, $cookies, $scope.order.productVO);
+						initWechatJSAPI('progress', $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
+								$scope.order, $scope, $rootScope);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
-				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
-						$scope.order);
+				popWarning('请点击右上角微信菜单-发送给朋友。有机会获取额外奖励折扣。', $timeout, $ionicLoading);
 				// shareSuccess($scope, $http, $scope.order.orderId,
 				// $scope.order.productVO.productId);
 			}
@@ -1089,7 +1089,7 @@ var popWarning = function(msg, $timeout, $ionicLoading) {
 	});
 	$timeout(function() {
 		$ionicLoading.hide();
-	}, 1500);
+	}, 2000);
 }
 
 var popLoading = function($ionicLoading) {
@@ -1124,7 +1124,7 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
-var initWechatJSAPI = function(screen, $http, $cookies, product) {
+var initWechatJSAPI = function(screen, $http, $cookies, $timeout, $ionicLoading, product, order, $scope, $rootScope) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
 		// console.log(data);
 		wx.config({
@@ -1142,9 +1142,9 @@ var initWechatJSAPI = function(screen, $http, $cookies, product) {
 		});
 		wx.ready(function() {
 			if (screen == 'product') {
-				simpleShare(product, $cookies);
+				simpleShare(product, $cookies, $timeout, $ionicLoading);
 			} else if (screen == 'progress') {
-				// trigger by click share button
+				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order);
 			} else {
 				shareHome();
 			}
@@ -1206,7 +1206,7 @@ var shareHome = function() {
 	});
 }
 
-var simpleShare = function(product, $cookies) {
+var simpleShare = function(product, $cookies, $timeout) {
 	console.log('simpleShare');
 	// console.log(product);
 	var userId = $cookies.get('dajia_user_id');
@@ -1267,7 +1267,6 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 	if (userId == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
-		popWarning('请点击右上角微信菜单-发送给朋友。', $timeout, $ionicLoading);
 		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
 		var shareLink = "";
 		if (null != order && null != product) {
