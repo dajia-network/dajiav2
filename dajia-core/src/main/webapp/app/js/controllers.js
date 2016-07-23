@@ -499,14 +499,18 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
 						$scope.order = order;
-						console.log(order);
-						initWechatJSAPI('progress', $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
-								$scope.order, $scope, $rootScope);
+						// console.log(order);
+						if (order.productVO.productStatus == 2 && order.productVO.stock) {
+							initWechatJSAPI('progress', $http, $cookies, $timeout, $ionicLoading,
+									$scope.order.productVO, $scope.order, $scope, $rootScope);
+						}
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
 				popWarning('请点击右上角微信菜单-发送给朋友。有机会获取额外奖励折扣。', $timeout, $ionicLoading);
+				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
+						$scope.order);
 				// shareSuccess($scope, $http, $scope.order.orderId,
 				// $scope.order.productVO.productId);
 			}
