@@ -29,6 +29,9 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "product_desc")
 	public String productDesc;
+	
+	@Column(name = "product_shared")
+	public String productShared;
 
 	@Column(name = "user_id", nullable = false)
 	public Long userId;

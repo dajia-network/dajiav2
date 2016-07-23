@@ -221,6 +221,14 @@ button img {
 	width: 100%;
 }
 
+.bar.bar-assertive {
+    border-color: #e42112;
+    background-color: #ee385d;
+    background-image: linear-gradient(0deg,#e42112,#e42112 50%,transparent 50%);
+    color: #fff;
+	position: relative;
+}
+
 /* countdown */
 .clock{
 	position: absolute;

@@ -334,13 +334,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								console.log('wechat pay success');
 								popWarning('支付成功', $timeout, $ionicLoading);
 								$timeout(function() {
-									if (null != charge['orderNo']) {
-										$window.location.replace('#/tab/prod');
-										$window.location.href = "#/tab/prog/" + charge['orderNo'];
-									} else {
-										$window.location.replace('#/tab/prod');
-										$window.location.href = "#/tab/prog";
-									}
+									$window.location.replace('#/tab/prod');
+									$window.location.href = "#/tab/prog";
 								}, 1000);
 							} else if (result == 'fail') {
 								// charge 不正确或者微信公众账号支付失败时会在此处返回
@@ -504,12 +499,16 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
 						$scope.order = order;
+						console.log(order);
 						initWechatJSAPI('progress', $http, $cookies, $scope.order.productVO);
 						$ionicLoading.hide();
 					});
 			$scope.order.progressValue = 0;
 			$scope.share = function() {
-				shareProduct($rootScope, $cookies, $timeout, $ionicLoading, $scope.order.productVO, $scope.order);
+				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
+						$scope.order);
+				// shareSuccess($scope, $http, $scope.order.orderId,
+				// $scope.order.productVO.productId);
 			}
 			$scope.orderDetail = function(trackingId) {
 				$window.location.href = '#/tab/mine/order/' + trackingId;
@@ -1222,7 +1221,7 @@ var simpleShare = function(product, $cookies) {
 	}
 	wx.onMenuShareAppMessage({
 		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
-		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		trigger : function() {
@@ -1236,7 +1235,7 @@ var simpleShare = function(product, $cookies) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1248,7 +1247,7 @@ var simpleShare = function(product, $cookies) {
 	});
 	wx.onMenuShareQQ({
 		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
-		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1261,7 +1260,7 @@ var simpleShare = function(product, $cookies) {
 	console.log(wx);
 }
 
-var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, product, order) {
+var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order) {
 	console.log('shareProduct');
 	var userId = $cookies.get('dajia_user_id');
 	var username = $cookies.get('dajia_username');
@@ -1269,7 +1268,7 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		popWarning('请点击右上角微信菜单-发送给朋友。', $timeout, $ionicLoading);
-		var successMsg = '分享成功！朋友购买后将获得额外奖励折扣！';
+		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
 		var shareLink = "";
 		if (null != order && null != product) {
 			shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
@@ -1278,8 +1277,8 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			shareLink = 'http://51daja.com/app/index.html#/tab/prod/' + product.productId;
 		}
 		wx.onMenuShareAppMessage({
-			title : '快来跟我一起亲手打出全网最低价！',
-			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+			title : '快来跟' + username + '一起亲手打出全网最低价！',
+			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {
@@ -1287,33 +1286,48 @@ var shareProduct = function($rootScope, $cookies, $timeout, $ionicLoading, produ
 			},
 			success : function() {
 				popWarning(successMsg, $timeout, $ionicLoading);
+				shareSuccess($scope, $http, order.orderId, product.productId);
 			},
 			cancel : function() {
 				console.log('cancel');
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : '快来跟我一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+			title : '快来跟' + username + '一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
+					+ '元~ 红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {
 				popWarning(successMsg, $timeout, $ionicLoading);
+				shareSuccess($scope, $http, order.orderId, product.productId);
 			},
 			cancel : function() {
 				console.log('cancel');
 			}
 		});
 		wx.onMenuShareQQ({
-			title : '快来跟我一起亲手打出全网最低价！',
-			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元。红红火火恍恍惚惚~',
+			title : '快来跟' + username + '一起亲手打出全网最低价！',
+			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {
 				popWarning(successMsg, $timeout, $ionicLoading);
+				shareSuccess($scope, $http, order.orderId, product.productId);
 			},
 			cancel : function() {
 				console.log('cancel');
 			}
 		});
 	}
+}
+
+var shareSuccess = function($scope, $http, orderId, productId) {
+	$scope.order.productShared = 'Y';
+	var share = {
+		params : {
+			orderId : orderId,
+			productId : productId
+		}
+	};
+	$http.get('/user/share', share);
 }

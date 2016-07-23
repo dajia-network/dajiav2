@@ -125,6 +125,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	product_id BIGINT(25) NOT NULL,
 	product_item_id BIGINT(25) NOT NULL,
     product_desc VARCHAR(800) NULL,
+    product_shared VARCHAR(5) NULL DEFAULT 'N',
 	user_contact_id BIGINT(25) NULL,
     user_id BIGINT(25) NOT NULL,
     ref_user_id BIGINT(25) NULL,

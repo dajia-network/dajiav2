@@ -97,6 +97,7 @@ public class OrderService {
 		ov.trackingId = order.trackingId;
 		ov.productId = order.productId;
 		ov.productItemId = order.productItemId;
+		ov.productShared = order.productShared;
 		ov.quantity = order.quantity;
 		ov.orderDate = order.orderDate;
 		ov.unitPrice = order.unitPrice;

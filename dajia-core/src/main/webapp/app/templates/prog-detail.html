@@ -18,10 +18,13 @@
 	        <p>{{order.productVO.name}}</p>
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 	        <p>数量 x {{order.quantity}}</p>
-	        <p>出价:{{order.unitPrice}}元&nbsp;&nbsp;&nbsp;现价:<span class="assertive">{{order.productVO.currentPrice}}元</span></p>
-	        <!-- <p>可退差价：<span class="assertive">￥{{((order.unitPrice-order.productVO.currentPrice)*order.quantity).toFixed(2)}}</span></p> -->
+	        <p>出价:{{order.unitPrice}}元&nbsp;&nbsp;&nbsp;
+	        现价:<span class="assertive">{{order.productVO.currentPrice}}元</span></p>
 	        <p>截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}}</p>
 		  </div>
+			<div class="bar bar-assertive" ng-if="order.productVO.productStatus==2&&order.productShared=='Y'">
+				<h2 class="title">底价：{{(order.productVO.targetPrice).toFixed(2)}}元（如产品售罄）</h1>
+			</div>
 		  <div class="item item-text-wrap" align="center">
 		  	<span class="assertive">成功叫来1人打价，享额外折扣10%</span><br/>
 		  	<span class="assertive">成功叫来10人打价，此单免单! (限1件商品)</span>
@@ -62,11 +65,14 @@
 				<button class="button backBtn" ng-click="back()">
 					<i class="icon ion-chevron-left"></i> 返回
 				</button>
-				<button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0" class="button button-sqr button-assertive submitBtn" ng-click="share()">
-					<i class="icon ion-share"></i> 叫人打价
+				<button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0&&order.productShared=='N'" class="button button-sqr button-assertive submitBtn" ng-click="share()">
+					<i class="icon ion-share"></i> 分享好友，查看底价！
 				</button>
-				<button ng-if="order.productVO.productStatus==2&&order.productVO.stock<=0" disabled="true" class="button submitBtn">打价结束</button>
-				<button ng-if="order.productVO.productStatus!=2" disabled="true" class="button submitBtn">产品已失效</button>
+				<button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0&&order.productShared=='Y'" class="button button-sqr button-assertive submitBtn" ng-click="share()">
+					<i class="icon ion-share"></i> 分享好友，获额外折扣！
+				</button>
+				<button ng-if="order.productVO.productStatus==3||order.productVO.stock<=0" disabled="true" class="button submitBtn">打价已结束</button>
+				<button ng-if="order.productVO.productStatus!=2&&order.productVO.productStatus!=3" disabled="true" class="button submitBtn">产品已失效</button>
 			</div>
 		</div>
 	</ion-footer-bar>

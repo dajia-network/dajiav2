@@ -236,4 +236,15 @@ public class OrderController extends BaseController {
 		OrderVO ov = orderService.getOrderDetailByTrackingId4Progress(trackingId);
 		return ov;
 	}
+
+	@RequestMapping(value = "/user/share")
+	public void saveShareLog(HttpServletRequest request) {
+		String orderId = request.getParameter("orderId");
+		String productId = request.getParameter("productId");
+		UserOrder order = orderRepo.findOne(Long.valueOf(orderId));
+		if (null != order) {
+			order.productShared = CommonUtils.ProductShared.YES.toString();
+			orderRepo.save(order);
+		}
+	}
 }

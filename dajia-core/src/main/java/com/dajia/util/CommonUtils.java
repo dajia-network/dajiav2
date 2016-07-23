@@ -222,6 +222,20 @@ public class CommonUtils {
 			return String.valueOf(this.key);
 		}
 	}
+	
+	public enum ProductShared {
+		YES("Y"), NO("N");
+		private String key;
+
+		private ProductShared(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(this.key);
+		}
+	}
 
 	public enum LocationType {
 		PROVINCE("province"), CITY("city"), AREA("area");

@@ -25,6 +25,8 @@ public class OrderVO {
 	public Long productItemId;
 
 	public String productDesc;
+	
+	public String productShared;
 
 	public Long refUserId;
 
