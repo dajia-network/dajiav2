@@ -160,16 +160,25 @@ button img {
 	width: 73%;
 }
 
+.button.cartBtn {
+	width: 34%;
+}
+.button.buyBtn {
+	width: 34%;
+}
+
 .button.button-assertive {
     border-color: transparent;
     background-color: #ee385d;
     color: #fff;
+    line-height: 33px;
 }
 
 .button.button-assertive.button-outline {
 	border-color: #ee385d;
 	background: transparent;
 	color: #ee385d;
+    line-height: 33px;
 }
 
 .button.button-assertive.button-outline.active,.button.button-assertive.button-outline.activated
