@@ -555,6 +555,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					$window.location.href = '#/tab/mine/fav';
 				}
 			}
+			$scope.myCart = function() {
+				if (loginUser == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$window.location.href = '#/tab/mine/cart';
+				}
+			}
 			$scope.contacts = function() {
 				if (loginUser == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
@@ -669,6 +676,26 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	loadFavs();
 	$scope.doRefresh = function() {
 		loadFavs();
+	};
+	$scope.goHome = function() {
+		$window.location.href = '#/tab/prod';
+	}
+})
+
+.controller('MyCartCtrl', function($scope, $http, $ionicLoading, $window) {
+	console.log('购物车...');
+	var loadMyCart = function() {
+		popLoading($ionicLoading);
+		return $http.get('/user/cart').success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.cartItems = data;
+			$scope.$broadcast('scroll.refreshComplete');
+			$ionicLoading.hide();
+		});
+	}
+	loadMyCart();
+	$scope.doRefresh = function() {
+		loadMyCart();
 	};
 	$scope.goHome = function() {
 		$window.location.href = '#/tab/prod';

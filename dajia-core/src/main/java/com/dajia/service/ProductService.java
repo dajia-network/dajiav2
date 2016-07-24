@@ -23,10 +23,12 @@ import org.springframework.web.client.RestTemplate;
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductItem;
+import com.dajia.domain.UserCart;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.UserCartRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRewardRepo;
@@ -62,6 +64,9 @@ public class ProductService {
 
 	@Autowired
 	private UserFavouriteRepo favouriteRepo;
+
+	@Autowired
+	private UserCartRepo cartRepo;
 
 	@Autowired
 	private UserOrderRepo orderRepo;
@@ -354,6 +359,17 @@ public class ProductService {
 		List<Long> productIds = new ArrayList<Long>();
 		for (UserFavourite favourite : favourites) {
 			productIds.add(favourite.productId);
+		}
+		List<Product> products = (List<Product>) productRepo.findByProductIdInAndIsActive(productIds,
+				ActiveStatus.YES.toString());
+		return products;
+	}
+
+	public List<Product> loadCartProductsByUserId(Long userId) {
+		List<UserCart> cartItems = cartRepo.findByUserIdOrderByCreatedDateDesc(userId);
+		List<Long> productIds = new ArrayList<Long>();
+		for (UserCart cartItem : cartItems) {
+			productIds.add(cartItem.productId);
 		}
 		List<Product> products = (List<Product>) productRepo.findByProductIdInAndIsActive(productIds,
 				ActiveStatus.YES.toString());

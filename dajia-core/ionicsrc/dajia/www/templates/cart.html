@@ -1,0 +1,38 @@
+<ion-view view-title="购物车" hide-nav-bar="true">
+  <ion-nav-bar class="bar-dark">
+	<ion-nav-back-button>
+		返回
+	</ion-nav-back-button>
+  </ion-nav-bar>
+  <ion-content>
+	<div class="item item-logo-center" align="center">
+		<img src="/app/img/logo-banner.png">
+	</div>
+  	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
+  	</ion-refresher> 
+    <ion-list>
+      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="product in products" type="item-text-wrap" href="#/tab/prod/{{product.productId}}">
+        <img ng-src="{{product.imgUrl4List}}" >
+        <p>{{product.name}}</p>
+        <p>价格：￥{{product.originalPrice}}</p>
+        <p>打价开始日期：{{product.startDate | date:'yyyy-MM-dd'}}</p>
+  		<p ng-if="product.productStatus!=3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}}</p>
+  		<p ng-if="product.productStatus==3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}} ({{product.status4Show}})</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+      </ion-item>
+    </ion-list>
+    
+    <div ng-if="cartItems.length==0">
+    	<div class="row">
+			<div class="col text-center">
+				购物车是空的，先去逛逛吧
+			</div>
+		</div>
+	    <div class="row">
+			<div class="col text-center">
+				<button class="button button-outline button-assertive" ng-click="goHome()">去逛逛</button>
+			</div>
+		</div>
+    </div>
+  </ion-content>
+</ion-view>

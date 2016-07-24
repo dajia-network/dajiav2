@@ -245,3 +245,16 @@ CREATE TABLE IF NOT EXISTS dajia.user_visit_log (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(visit_log_id)
 );
+
+DROP TABLE IF EXISTS dajia.user_cart;
+CREATE TABLE IF NOT EXISTS dajia.user_cart (
+	cart_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NOT NULL,
+    product_id BIGINT(25) NOT NULL,
+    product_item_id BIGINT(25) NULL,
+    quantity INT,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(cart_id)
+);

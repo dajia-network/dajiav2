@@ -129,6 +129,14 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'MyFavCtrl'
 			}
 		}
+	}).state('tab.mine-cart', {
+		url : '/mine/cart',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/cart.html',
+				controller : 'MyCartCtrl'
+			}
+		}
 	}).state('tab.mine-pass', {
 		url : '/mine/password',
 		views : {

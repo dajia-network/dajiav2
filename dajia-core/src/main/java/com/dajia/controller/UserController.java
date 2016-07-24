@@ -24,12 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Location;
 import com.dajia.domain.User;
+import com.dajia.domain.UserCart;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.VisitLog;
 import com.dajia.repository.LocationRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.service.CartService;
 import com.dajia.service.FavouriteService;
 import com.dajia.service.SmsService;
 import com.dajia.service.UserContactService;
@@ -39,6 +41,7 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.LocationType;
 import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
+import com.dajia.vo.CartItemVO;
 import com.dajia.vo.LocationVO;
 import com.dajia.vo.LoginUserVO;
 import com.dajia.vo.ReturnVO;
@@ -64,6 +67,9 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private FavouriteService favouriteService;
+
+	@Autowired
+	private CartService cartService;
 
 	@Autowired
 	private SmsService smsService;
@@ -108,6 +114,7 @@ public class UserController extends BaseController {
 
 	/*
 	 * @RequestMapping(value = "/login", method = RequestMethod.POST) public
+	 * 
 	 * @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser,
 	 * HttpServletRequest request, HttpServletResponse response) { User user =
 	 * userService.userLogin(loginUser.mobile, loginUser.password, request,
@@ -346,5 +353,36 @@ public class UserController extends BaseController {
 		String visitIp = CommonUtils.getRequestIP(request);
 		Integer logType = CommonUtils.LogType.PRODUCT_VISIT.getKey();
 		visitLogService.addVisitLog(visitLog, logType, visitIp);
+	}
+
+	@RequestMapping("/user/cart/add/{pid}")
+	public void add2Cart(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
+		UserCart cart = new UserCart();
+		User user = this.getLoginUser(request, response, userRepo, true);
+		cart.userId = user.userId;
+		cart.productId = pid;
+		cart.quantity = 1;
+		cartService.add2Cart(cart);
+	}
+
+	@RequestMapping(value = "/user/cart/edit", method = RequestMethod.POST)
+	public void editCart(@RequestBody UserCart cartItem, HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		cartService.editCart(user.userId, cartItem.cartId, cartItem.quantity);
+	}
+
+	@RequestMapping("/user/cart/remove/{pid}")
+	public void removeFromCart(@PathVariable("pid") Long pid, HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		cartService.removeFromCart(user.userId, pid);
+	}
+
+	@RequestMapping("/user/cart")
+	public List<CartItemVO> myCart(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		if (null == user) {
+			return null;
+		}
+		return cartService.getCartByUserId(user.userId);
 	}
 }

@@ -22,6 +22,7 @@ import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
+import com.dajia.vo.CartItemVO;
 import com.dajia.vo.PaginationVO;
 import com.dajia.vo.ProductVO;
 

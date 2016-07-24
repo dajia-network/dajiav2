@@ -11,6 +11,13 @@
 		     &nbsp;{{userName}}
 	</button>
     <ion-list>
+		<div class="item item-divider">
+			账号设置
+		</div>
+		<a class="item item-icon-left" ng-click="showQcode()">
+			<i class="icon ion-person-add"></i>
+			关注公众号
+		</a>
 		<!-- 
 		<a class="item item-icon-left" href="#">
 		  <i class="icon ion-chatbox-working"></i>
@@ -22,13 +29,6 @@
 			<span class="badge badge-assertive">1</span>
 		</a>
 		-->
-		<div class="item item-divider">
-			账号设置
-		</div>
-		<a class="item item-icon-left" ng-click="showQcode()">
-			<i class="icon ion-person-add"></i>
-			关注公众号
-		</a>
 		<a class="item item-icon-left" ng-click="contacts()" >
 			<i class="icon ion-home"></i>
 			收货地址管理
@@ -36,17 +36,6 @@
 		<a class="item item-icon-left" ng-click="bindMobile()" >
 			<i class="icon ion-iphone"></i>
 			绑定手机
-		</a>
-		<div class="item item-divider">
-			购物信息
-		</div>
-		<a class="item item-icon-left" ng-click="myOrders()">
-			<i class="icon ion-ios-list-outline"></i>
-			我的订单
-		</a>
-		<a class="item item-icon-left" ng-click="myFav()">
-			<i class="icon ion-ios-star"></i>
-			我的收藏
 		</a>
 		<!-- 
 		<a class="item item-icon-left" ng-click="myPass()" >
@@ -58,6 +47,23 @@
 			退出登录
 		</a>
 		-->
+		<div class="item item-divider">
+			购物信息
+		</div>
+		<!-- 
+		<a class="item item-icon-left" ng-click="myCart()">
+			<i class="icon ion-ios-cart"></i>
+			购物车
+		</a>
+		-->
+		<a class="item item-icon-left" ng-click="myOrders()">
+			<i class="icon ion-ios-list-outline"></i>
+			我的订单
+		</a>
+		<a class="item item-icon-left" ng-click="myFav()">
+			<i class="icon ion-ios-star"></i>
+			我的收藏
+		</a>
     </ion-list>
   </ion-content>
 </ion-view>
