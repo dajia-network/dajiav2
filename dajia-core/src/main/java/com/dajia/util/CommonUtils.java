@@ -222,7 +222,7 @@ public class CommonUtils {
 			return String.valueOf(this.key);
 		}
 	}
-	
+
 	public enum ProductShared {
 		YES("Y"), NO("N");
 		private String key;
@@ -438,7 +438,7 @@ public class CommonUtils {
 	}
 
 	public enum LogType {
-		SIMPLE_SHARE(1, "直接分享"), REWARD_SHARE(2, "奖励分享");
+		SIMPLE_SHARE(1, "直接分享"), REWARD_SHARE(2, "奖励分享"), PRODUCT_VISIT(3, "产品页面访问");
 		private Integer key;
 		private String value;
 

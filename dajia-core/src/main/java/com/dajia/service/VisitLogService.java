@@ -15,7 +15,7 @@ public class VisitLogService {
 	@Autowired
 	private VisitLogRepo visitLogRepo;
 
-	public void addShareLog(VisitLog visitLog, Integer logType, String visitIp) {
+	public void addVisitLog(VisitLog visitLog, Integer logType, String visitIp) {
 		visitLog.logType = logType;
 		visitLog.visitIp = visitIp;
 		visitLogRepo.save(visitLog);

@@ -107,13 +107,13 @@ public class UserController extends BaseController {
 	}
 
 	/*
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request,
-			HttpServletResponse response) {
-		User user = userService.userLogin(loginUser.mobile, loginUser.password, request, false);
-		loginUser = UserUtils.addLoginSession(loginUser, user, request);
-		return loginUser;
-	}*/
+	 * @RequestMapping(value = "/login", method = RequestMethod.POST) public
+	 * @ResponseBody LoginUserVO userLogin(@RequestBody LoginUserVO loginUser,
+	 * HttpServletRequest request, HttpServletResponse response) { User user =
+	 * userService.userLogin(loginUser.mobile, loginUser.password, request,
+	 * false); loginUser = UserUtils.addLoginSession(loginUser, user, request);
+	 * return loginUser; }
+	 */
 
 	@RequestMapping(value = "/smslogin", method = RequestMethod.POST)
 	public @ResponseBody LoginUserVO userSmsLogin(@RequestBody LoginUserVO loginUser, HttpServletRequest request,
@@ -338,6 +338,13 @@ public class UserController extends BaseController {
 		} else {
 			logType = CommonUtils.LogType.SIMPLE_SHARE.getKey();
 		}
-		visitLogService.addShareLog(visitLog, logType, visitIp);
+		visitLogService.addVisitLog(visitLog, logType, visitIp);
+	}
+
+	@RequestMapping(value = "/user/visitlog", method = RequestMethod.POST)
+	public void saveVisitLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
+		String visitIp = CommonUtils.getRequestIP(request);
+		Integer logType = CommonUtils.LogType.PRODUCT_VISIT.getKey();
+		visitLogService.addVisitLog(visitLog, logType, visitIp);
 	}
 }

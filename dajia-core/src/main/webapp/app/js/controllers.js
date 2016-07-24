@@ -183,25 +183,33 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 						// save share log
 						var productId = DajiaGlobal.utils.getURLParameter('productId');
+						var userId = $cookies.get('dajia_user_id');
+						if (null != userId) {
+							userId = Number(userId);
+						}
 						if (null != productId) {
 							productId = Number(productId);
 							var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
 							if (null != refUserId) {
 								refUserId = Number(refUserId);
 							}
-							var userId = $cookies.get('dajia_user_id');
-							if (null != userId) {
-								userId = Number(userId);
-							}
-							var visitLog = {
+							var shareLog = {
 								visitUrl : window.location.href,
 								productId : product.productId,
 								productItemId : product.productItemId,
 								refUserId : refUserId,
 								userId : userId
 							}
-							$http.post('/user/sharelog', visitLog);
+							$http.post('/user/sharelog', shareLog);
 						}
+						// save visit log
+						var visitLog = {
+							visitUrl : window.location.href,
+							productId : product.productId,
+							productItemId : product.productItemId,
+							userId : userId
+						}
+						$http.post('/user/visitlog', visitLog);
 					});
 			$scope.progressValue = 0;
 		})
