@@ -36,6 +36,7 @@ public class UserContactService {
 				try {
 					CommonUtils.copyProperties(userContact, uc);
 					userContactRepo.save(uc);
+					markDefaultUserContact(uc.contactId, user);
 				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
