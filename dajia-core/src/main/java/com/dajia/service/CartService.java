@@ -65,6 +65,7 @@ public class CartService {
 			cartItemVO.stock = pv.stock;
 			cartItemVO.productStatus = pv.productStatus;
 			cartItemVO.buyQuota = pv.buyQuota;
+			cartItemVO.imgUrl4List = pv.imgUrl4List;
 			cart.add(cartItemVO);
 		}
 		return cart;

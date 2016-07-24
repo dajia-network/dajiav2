@@ -27,4 +27,6 @@ public class CartItemVO {
 
 	public BigDecimal postFee;
 
+	public String imgUrl4List;
+
 }
