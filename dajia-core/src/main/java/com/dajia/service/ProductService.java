@@ -375,18 +375,16 @@ public class ProductService {
 	public void updateProductExpireStatus(Date date) {
 		List<ProductItem> productItems = this.loadAllValidProducts();
 		for (ProductItem productItem : productItems) {
-			if (productItem.productStatus == ProductStatus.VALID.getKey()) {
-				if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
-					logger.info("Product Item " + productItem.productItemId + " is expired.");
-					productItem.productStatus = ProductStatus.EXPIRED.getKey();
-					productItemRepo.save(productItem);
-					orderService.orderRefund(productItem);
-				} else if (productItem.stock <= 0) {
-					logger.info("Product Item " + productItem.productItemId + " is sold out.");
-					productItem.productStatus = ProductStatus.EXPIRED.getKey();
-					productItemRepo.save(productItem);
-					orderService.orderRefund(productItem);
-				}
+			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
+				logger.info("Product Item " + productItem.productItemId + " is expired.");
+				productItem.productStatus = ProductStatus.EXPIRED.getKey();
+				productItemRepo.save(productItem);
+				orderService.orderRefund(productItem);
+			} else if (productItem.stock <= 0) {
+				logger.info("Product Item " + productItem.productItemId + " is sold out.");
+				productItem.productStatus = ProductStatus.EXPIRED.getKey();
+				productItemRepo.save(productItem);
+				orderService.orderRefund(productItem);
 			}
 		}
 	}
