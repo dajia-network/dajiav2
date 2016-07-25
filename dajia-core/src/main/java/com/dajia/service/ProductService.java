@@ -342,10 +342,6 @@ public class ProductService {
 			}
 			calcCurrentPrice(productItem, order.quantity);
 		}
-		// sold out logic
-		if (productItem.stock == 0) {
-			productItem.productStatus = CommonUtils.ProductStatus.EXPIRED.getKey();
-		}
 		productItemRepo.save(productItem);
 
 		if (null != order.refUserId) {
@@ -381,6 +377,11 @@ public class ProductService {
 		for (ProductItem productItem : productItems) {
 			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
 				logger.info("Product Item " + productItem.productItemId + " is expired.");
+				productItem.productStatus = ProductStatus.EXPIRED.getKey();
+				productItemRepo.save(productItem);
+				orderService.orderRefund(productItem);
+			} else if (productItem.productStatus == ProductStatus.VALID.getKey() && productItem.stock <= 0) {
+				logger.info("Product Item " + productItem.productItemId + " is sold out.");
 				productItem.productStatus = ProductStatus.EXPIRED.getKey();
 				productItemRepo.save(productItem);
 				orderService.orderRefund(productItem);
