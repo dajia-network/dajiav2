@@ -238,6 +238,22 @@ button img {
 	position: relative;
 }
 
+.item-body.cart{
+	padding: 1px 16px;
+}
+
+.item.noBorder.cart {
+	padding-bottom: 8px;
+}
+
+.col.cart span {
+	vertical-align: middle;
+}
+
+.row.cart {
+	padding: 0px 5px;
+}
+
 /* countdown */
 .clock{
 	position: absolute;

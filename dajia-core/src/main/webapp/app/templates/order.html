@@ -61,12 +61,12 @@
 			</div>
 			<div class="row">
 				<div class="col">购买数量</div>
-				<div class="col text-right">		
+				<div class="col text-right cart">		
 					<div class="buttons">
 						<button class="button button-small button-stable" ng-click="remove()">
 							<i class="icon ion-minus"></i>
 						</button>
-						&nbsp;{{order.quantity}}&nbsp;
+						&nbsp;<span>{{order.quantity}}</span>&nbsp;
 						<button class="button button-small button-stable" ng-click="add()">
 							<i class="icon ion-plus"></i>
 						</button>
@@ -99,7 +99,7 @@
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
-			<div class="col text-left">合计金额：<span class="assertive">￥{{order.totalPrice.toFixed(2)}}</span></div>
+			<div class="col text-left">合计金额：<span class="assertive">{{order.totalPrice.toFixed(2)}}元</span></div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">确认付款</button>
 			</div>
