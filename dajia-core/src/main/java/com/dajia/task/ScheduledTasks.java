@@ -34,7 +34,7 @@ public class ScheduledTasks {
 		productService.updateProductExpireStatus(currentDate);
 	}
 
-	@Scheduled(cron = "0 */30 *  * * * ")
+	// @Scheduled(cron = "0 0 12 * * ?")
 	public void orderRefundByCron() {
 		Date currentDate = new Date();
 		logger.info("Order refund job starts at: " + dateFormat.format(currentDate));
