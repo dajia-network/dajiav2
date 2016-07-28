@@ -10,6 +10,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import com.dajia.Application;
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserOrder;
+import com.dajia.repository.ProductItemRepo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
@@ -23,10 +24,16 @@ public class ServiceTests {
 	private ProductService productService;
 
 	@Autowired
+	private OrderService orderService;
+
+	@Autowired
 	private SmsService smsService;
 
 	@Autowired
 	private RewardService rewardService;
+
+	@Autowired
+	private ProductItemRepo productItemRepo;
 
 	// @Test
 	public void testApiService() throws Exception {
@@ -59,5 +66,12 @@ public class ServiceTests {
 		String str = "https://img.yzcdn.cn/upload_files/2016/07/03/Fo19Hw9ukEF5bxQ9ncpR-TkCW-x-.jpg?imageView2/2/w/290/h/290/q/75/format/jpg";
 		str = str.replaceAll("https://", "http://");
 		System.out.println(str);
+	}
+
+	@Test
+	public void testRefund() {
+		Long productItemId = 101L;
+		ProductItem productItem = productItemRepo.findOne(productItemId);
+		orderService.orderRefund(productItem);
 	}
 }

@@ -286,7 +286,13 @@ public class ProductService {
 		List<ProductItem> productItems = (List<ProductItem>) productItemRepo
 				.findByProductStatusAndIsActiveOrderByExpiredDateAsc(ProductStatus.VALID.getKey(),
 						ActiveStatus.YES.toString());
-
+		return productItems;
+	}
+	
+	public List<ProductItem> loadAllExpiredProducts() {
+		List<ProductItem> productItems = (List<ProductItem>) productItemRepo
+				.findByProductStatusAndIsActiveOrderByExpiredDateAsc(ProductStatus.EXPIRED.getKey(),
+						ActiveStatus.YES.toString());
 		return productItems;
 	}
 

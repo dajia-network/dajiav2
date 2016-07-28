@@ -176,7 +176,7 @@ public class OrderService {
 	}
 
 	public void orderRefund(ProductItem productItem) {
-		List<UserOrder> orderList = orderRepo.findByProductItemIdAndIsActiveOrderByOrderDateDesc(
+		List<UserOrder> orderList = orderRepo.findByProductItemIdAndIsActiveAndPaymentIdNotNullOrderByOrderDateDesc(
 				productItem.productItemId, CommonUtils.ActiveStatus.YES.toString());
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
@@ -190,8 +190,8 @@ public class OrderService {
 							try {
 								apiService
 										.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
-								logger.info("order " + userOrder.trackingId + " refund applied for "
-										+ refundValue.doubleValue());
+								logger.info("order " + userOrder.orderId + "-" + userOrder.trackingId
+										+ " refund applied for " + refundValue.doubleValue());
 							} catch (PingppException e) {
 								logger.error(e.getMessage(), e);
 							}
@@ -300,5 +300,12 @@ public class OrderService {
 			return false;
 		}
 		return true;
+	}
+
+	public void orderRefundCheck() {
+		List<ProductItem> productItems = productService.loadAllExpiredProducts();
+		for (ProductItem productItem : productItems) {
+			this.orderRefund(productItem);
+		}
 	}
 }

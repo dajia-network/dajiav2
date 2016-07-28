@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.RewardService;
 
@@ -21,6 +22,9 @@ public class ScheduledTasks {
 	private ProductService productService;
 
 	@Autowired
+	private OrderService orderService;
+
+	@Autowired
 	private RewardService rewardService;
 
 	@Scheduled(cron = "0 */5 *  * * * ")
@@ -28,6 +32,13 @@ public class ScheduledTasks {
 		Date currentDate = new Date();
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
 		productService.updateProductExpireStatus(currentDate);
+	}
+
+	@Scheduled(cron = "0 */5 *  * * * ")
+	public void orderRefundByCron() {
+		Date currentDate = new Date();
+		logger.info("Order refund job starts at: " + dateFormat.format(currentDate));
+		orderService.orderRefundCheck();
 	}
 
 	@Scheduled(cron = "0 */5 *  * * * ")
