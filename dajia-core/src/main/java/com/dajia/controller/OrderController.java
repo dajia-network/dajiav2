@@ -297,6 +297,15 @@ public class OrderController extends BaseController {
 		return ov;
 	}
 
+	@RequestMapping("/user/order/del/{trackingId}")
+	public void delOrder(@PathVariable("trackingId") String trackingId) {
+		UserOrder order = orderRepo.findByTrackingId(trackingId);
+		if (null != order) {
+			order.isActive = CommonUtils.ActiveStatus.NO.toString();
+			orderRepo.save(order);
+		}
+	}
+
 	@RequestMapping("/user/progress/{trackingId}/{orderItemId}")
 	public OrderVO progressDetail(@PathVariable("trackingId") String trackingId,
 			@PathVariable("orderItemId") Long orderItemId) {

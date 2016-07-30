@@ -126,8 +126,8 @@ public class OrderService {
 
 	public Page<UserOrder> loadOrdersByUserIdByPage(Long userId, List<Integer> orderStatusList, Integer pageNum) {
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
-		Page<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInOrderByOrderDateDesc(userId, orderStatusList,
-				pageable);
+		Page<UserOrder> orders = orderRepo.findByUserIdAndOrderStatusInAndIsActiveOrderByOrderDateDesc(userId,
+				orderStatusList, CommonUtils.ActiveStatus.YES.toString(), pageable);
 		return orders;
 	}
 

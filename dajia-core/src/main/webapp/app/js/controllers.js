@@ -734,7 +734,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			});
 		})
 
-.controller('MyOrdersCtrl', function($scope, $http, $window, $stateParams, $ionicLoading) {
+.controller('MyOrdersCtrl', function($scope, $http, $window, $stateParams, $timeout, $ionicLoading) {
 	console.log('我的订单...');
 	$scope.page = {
 		hasMore : false,
@@ -771,6 +771,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 	$scope.orderDetail = function(trackingId) {
 		$window.location.href = '#/tab/mine/order/' + trackingId;
+	}
+	$scope.delOrder = function(trackingId) {
+		$http.get('/user/order/del/' + trackingId).success(function(data, status, headers, config) {
+			popWarning('订单删除成功', $timeout, $ionicLoading);
+			$window.location.reload();
+		});
 	}
 	$scope.goHome = function() {
 		$window.location.href = '#/tab/prod';

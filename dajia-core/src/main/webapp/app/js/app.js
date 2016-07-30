@@ -118,6 +118,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.mine-order', {
 		url : '/mine/order/:trackingId',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/order-detail.html',
