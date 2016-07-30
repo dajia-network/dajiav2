@@ -775,7 +775,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	$scope.delOrder = function(trackingId) {
 		$http.get('/user/order/del/' + trackingId).success(function(data, status, headers, config) {
 			popWarning('订单删除成功', $timeout, $ionicLoading);
-			$window.location.reload();
+			$timeout(function() {
+				$window.location.reload();
+			}, 500);
 		});
 	}
 	$scope.goHome = function() {
