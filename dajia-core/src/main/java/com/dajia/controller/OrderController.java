@@ -24,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserOrderItem;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.ApiService;
+import com.dajia.service.CartService;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.RefundService;
@@ -34,8 +36,10 @@ import com.dajia.service.RewardService;
 import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
+import com.dajia.vo.CartItemVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
+import com.dajia.vo.ProductVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
 import com.pingplusplus.model.Event;
@@ -70,6 +74,9 @@ public class OrderController extends BaseController {
 	@Autowired
 	private RewardService rewardService;
 
+	@Autowired
+	private CartService cartService;
+
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public Charge submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
 		User user = this.getLoginUser(request, response, userRepo, true);
@@ -77,8 +84,7 @@ public class OrderController extends BaseController {
 		if (null != uc) {
 			uc = userContactService.updateUserContact(uc, user);
 		}
-
-		if (productService.loadProductDetail(orderVO.productId).stock <= 0) {
+		if (!productService.validateStock(orderVO)) {
 			return null;
 		}
 
@@ -105,20 +111,64 @@ public class OrderController extends BaseController {
 		order.address = uc.province.locationValue + " " + uc.city.locationValue + " " + uc.district.locationValue + " "
 				+ uc.address1;
 		order.trackingId = CommonUtils.genTrackingId(user.userId);
+		if (null != orderVO.cartItems) {
+			List<UserOrderItem> orderItems = new ArrayList<UserOrderItem>();
+			for (CartItemVO cartItem : orderVO.cartItems) {
+				UserOrderItem oi = new UserOrderItem();
+				oi.userOrder = order;
+				oi.trackingId = order.trackingId;
+				oi.userId = order.userId;
+				oi.productId = cartItem.productId;
+				oi.productItemId = cartItem.productItemId;
+				oi.productShared = CommonUtils.ProductShared.NO.toString();
+				oi.unitPrice = cartItem.currentPrice;
+				oi.quantity = cartItem.quantity;
+				orderItems.add(oi);
+			}
+			order.orderItems = orderItems;
+		}
 		if (!orderService.orderValidate(order)) {
 			return null;
 		}
 		orderRepo.save(order);
 
+		if (null != orderVO.cartItems) {
+			for (CartItemVO cartItem : orderVO.cartItems) {
+				cartService.removeFromCart(user.userId, cartItem.productId);
+			}
+		}
+
 		Charge charge = null;
 		try {
 			charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
 			order.pingxxCharge = charge.toString();
+			order.paymentId = charge.getId();
 			orderRepo.save(order);
 		} catch (PingppException e) {
 			logger.error(e.getMessage(), e);
 		}
+		return charge;
+	}
 
+	@RequestMapping(value = "/user/getCharge", method = RequestMethod.POST)
+	public Charge getCharge(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		if (null == user) {
+			return null;
+		}
+		UserOrder order = orderRepo.findOne(orderVO.orderId);
+		if (null == order) {
+			return null;
+		}
+		order.payType = orderVO.payType;
+		orderRepo.save(order);
+
+		Charge charge = null;
+		try {
+			charge = apiService.getPingppCharge(order.paymentId, user, CommonUtils.getPayTypeStr(order.payType));
+		} catch (PingppException e) {
+			logger.error(e.getMessage(), e);
+		}
 		return charge;
 	}
 
@@ -151,7 +201,7 @@ public class OrderController extends BaseController {
 				String trackingId = charge.getOrderNo();
 				logger.info("付款状态：" + charge.getPaid() + " 订单号：" + trackingId);
 				UserOrder order = orderRepo.findByTrackingId(trackingId);
-				order.paymentId = charge.getId();
+				// order.paymentId = charge.getId();
 				productService.productSold(order);
 			}
 			response.setStatus(200);
@@ -193,11 +243,21 @@ public class OrderController extends BaseController {
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.productVO = productService.loadProductDetailByItemId(order.productItemId);
-			if (null != ov.productVO && null != ov.productVO.originalPrice && null != ov.productVO.currentPrice) {
-				ov.productVO.priceOff = ov.productVO.originalPrice.add(ov.productVO.currentPrice.negate());
+			if (null != order.productItemId) {
+				ov.productVO = productService.loadProductDetailByItemId(order.productItemId);
+				progressList.add(ov);
+			} else {
+				if (null != order.orderItems) {
+					for (UserOrderItem orderItem : order.orderItems) {
+						OrderVO orderItemVO = orderService.convertOrderVO(order);
+						orderItemVO.orderItemId = orderItem.orderItemId;
+						orderItemVO.unitPrice = orderItem.unitPrice;
+						orderItemVO.quantity = orderItem.quantity;
+						orderItemVO.productVO = productService.loadProductDetailByItemId(orderItem.productItemId);
+						progressList.add(orderItemVO);
+					}
+				}
 			}
-			progressList.add(ov);
 		}
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		page.results = progressList;
@@ -209,6 +269,7 @@ public class OrderController extends BaseController {
 			@PathVariable("page") Integer pageNum) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PENDING_PAY.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
@@ -218,7 +279,11 @@ public class OrderController extends BaseController {
 		List<OrderVO> orderVoList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
-			ov.productVO = productService.loadProductDetailByItemId(order.productItemId);
+			if (null != order.productItemId) {
+				ov.productVO = productService.loadProductDetailByItemId(order.productItemId);
+			} else {
+				ov.productVOList = productService.loadProducts4Order(order.orderItems);
+			}
 			orderVoList.add(ov);
 		}
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
@@ -232,9 +297,10 @@ public class OrderController extends BaseController {
 		return ov;
 	}
 
-	@RequestMapping("/user/progress/{trackingId}")
-	public OrderVO progressDetail(@PathVariable("trackingId") String trackingId) {
-		OrderVO ov = orderService.getOrderDetailByTrackingId4Progress(trackingId);
+	@RequestMapping("/user/progress/{trackingId}/{orderItemId}")
+	public OrderVO progressDetail(@PathVariable("trackingId") String trackingId,
+			@PathVariable("orderItemId") Long orderItemId) {
+		OrderVO ov = orderService.getOrderDetailByTrackingId4Progress(trackingId, orderItemId);
 		return ov;
 	}
 

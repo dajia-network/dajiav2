@@ -40,7 +40,7 @@
 		<tbody>
 			<tr ng-repeat="product in products">
 				<td>{{product.product.productId}}</td>
-				<td title="{{ product.product.name}}">{{ product.product.name | limitTo: 10 }} {{product.name.length < 10 ? '' : '...'}}</td>
+				<td width="300px">{{ product.product.name}} </td>
 				<td>￥{{product.currentPrice}}</td>
 				<td>{{product.stock}}</td>
 				<td>{{product.sold}}</td>

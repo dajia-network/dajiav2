@@ -122,8 +122,8 @@ DROP TABLE IF EXISTS dajia.user_order;
 CREATE TABLE IF NOT EXISTS dajia.user_order (
 	order_id BIGINT(25) NOT NULL AUTO_INCREMENT,
     tracking_id VARCHAR(50) NULL,
-	product_id BIGINT(25) NOT NULL,
-	product_item_id BIGINT(25) NOT NULL,
+	product_id BIGINT(25) NULL,
+	product_item_id BIGINT(25) NULL,
     product_desc VARCHAR(800) NULL,
     product_shared VARCHAR(5) NULL DEFAULT 'N',
 	user_contact_id BIGINT(25) NULL,
@@ -153,6 +153,23 @@ CREATE TABLE IF NOT EXISTS dajia.user_order (
 	modified_date TIMESTAMP NULL,
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(order_id)
+);
+
+DROP TABLE IF EXISTS dajia.user_order_item;
+CREATE TABLE IF NOT EXISTS dajia.user_order_item (
+	order_item_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	order_id BIGINT(25) NOT NULL,
+    tracking_id VARCHAR(50) NULL,
+	product_id BIGINT(25) NOT NULL,
+	product_item_id BIGINT(25) NOT NULL,
+    product_shared VARCHAR(5) NULL DEFAULT 'N',
+    user_id BIGINT(25) NOT NULL,
+    quantity INT,
+    unit_price NUMERIC(10,2),
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(order_item_id)
 );
 
 DROP TABLE IF EXISTS dajia.property;

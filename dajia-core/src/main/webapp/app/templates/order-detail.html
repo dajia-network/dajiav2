@@ -13,6 +13,8 @@
 				订单号：{{order.trackingId}}
 			</div>
 			<div class="item item-text-wrap">
+				<p ng-if="order.productItemId!=null">{{order.productVO.shortName}}<br/> x {{order.quantity}}</p>
+				<p ng-if="order.productItemId==null" ng-repeat="oi in order.orderItems">{{oi.productVO.shortName}}<br/> x {{oi.quantity}}</p>
 				<p>订单状态：{{order.orderStatus4Show}}</p>
 				<p>支付金额：{{order.totalPrice}}元</p>
 				<p ng-if="null!=order.comments">商家备注：{{order.comments}}</p>
@@ -38,16 +40,31 @@
 		    <p ng-if="null!=order.userComments">买家备注: {{order.userComments}}</p>
 		  </div>
 		</div>
-  		<div class="card">
+  		<div class="card" ng-if="order.orderStatus>1">
 			<div class="item item-divider">
 			  结算
 			</div>
 			<div class="item item-text-wrap">
-				<p>商品总价：{{order.unitPrice*order.quantity}}元</p>
+				<p>商品总价：{{order.totalProductPrice}}元</p>
 				<p>运费：<span ng-if="order.postFee==null">0</span>{{order.postFee}}元</p>
 				<p>打价退款：<span class="assertive">{{order.refundValue.toFixed(2)}}元</span></p>
 				<p>推荐奖励：<span class="assertive">{{order.rewardValue.toFixed(2)}}元</span> (最多邀请10位好友来获取奖励)</p>
 			</div>
 		</div>
+  		<div class="card" ng-if="order.orderStatus==1">
+			<div class="item item-divider">
+			  支付方式
+			</div>
+			<ion-radio ng-model="order.payType" ng-value="1">微信支付</ion-radio>
+			<ion-radio ng-model="order.payType" ng-value="2" ng-click="selectAlipay()">支付宝</ion-radio>
+		</div>
 	</ion-content>
+	<ion-footer-bar align-title="left" class="bar-stable" ng-if="order.orderStatus==1">
+		<div class="row noPadding">
+			<div class="col text-left">合计金额：<span class="assertive">{{order.totalPrice.toFixed(2)}}元</span></div>
+			<div class="col noPadding text-right">
+				<button class="button button-sqr button-assertive" ng-click="submit()">确认付款</button>
+			</div>
+		</div>
+	</ion-footer-bar>
 </ion-view>

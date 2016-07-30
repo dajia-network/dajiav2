@@ -11,7 +11,8 @@ public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
 	public List<UserReward> findByRefUserIdAndProductItemIdAndRewardStatus(Long refUserId, Long productItemId,
 			Integer rewardStatus);
 
-	public List<UserReward> findByRefOrderIdAndRewardStatus(Long refOrderId, Integer rewardStatus);
+	public List<UserReward> findByRefOrderIdAndProductItemIdAndRewardStatus(Long refOrderId, Long productItemId,
+			Integer rewardStatus);
 
 	public List<UserReward> findTop5ByRefOrderIdAndRewardStatusOrderByCreatedDateDesc(Long refOrderId,
 			Integer rewardStatus);

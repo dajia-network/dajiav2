@@ -16,3 +16,13 @@ where ref_user_id not in (1,2,11,12,13,20) and user_id not in (1,2,11,12,13,20) 
 group by ref_user_id
 ) ref where u.user_id=ref.ref_user_id 
  order by ref.c desc;
+ 
+select * from user_order where payment_id is not null and order_status in (2,3,4) and order_id not in (
+select order_id from user_refund where refund_type=0
+) and product_item_id in (
+select product_item_id from product_item where product_status=3
+);
+
+select o.user_id, u.username, o.c from (
+select user_id, count(1) c from user_order where payment_id is not null and order_status in (2,3,4) group by user_id
+) o, user u where u.user_id=o.user_id order by o.c desc

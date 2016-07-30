@@ -58,7 +58,7 @@ public class ServiceTests {
 		order.productItemId = 68L;
 		ProductItem productItem = new ProductItem();
 		productItem.productItemId = 68L;
-		rewardService.createReward(order, productItem);
+		rewardService.createReward(order, null, productItem);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class ServiceTests {
 		System.out.println(str);
 	}
 
-	@Test
+	// @Test
 	public void testRefund() {
 		Long productItemId = 101L;
 		ProductItem productItem = productItemRepo.findOne(productItemId);

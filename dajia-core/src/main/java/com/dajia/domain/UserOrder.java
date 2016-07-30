@@ -2,11 +2,15 @@ package com.dajia.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -29,7 +33,7 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "product_desc")
 	public String productDesc;
-	
+
 	@Column(name = "product_shared")
 	public String productShared;
 
@@ -98,4 +102,7 @@ public class UserOrder extends BaseModel {
 
 	@Column(name = "admin_comments")
 	public String adminComments;
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userOrder", fetch = FetchType.LAZY)
+	public List<UserOrderItem> orderItems;
 }

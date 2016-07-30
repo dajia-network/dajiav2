@@ -3,6 +3,7 @@ package com.dajia.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -384,5 +385,22 @@ public class UserController extends BaseController {
 			return null;
 		}
 		return cartService.getCartByUserId(user.userId);
+	}
+
+	@RequestMapping("/user/cartorder")
+	public List<CartItemVO> myCartOrder(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		if (null == user) {
+			return null;
+		}
+		List<CartItemVO> cartItems = cartService.getCartByUserId(user.userId);
+		Iterator<CartItemVO> itr = cartItems.iterator();
+		while (itr.hasNext()) {
+			CartItemVO cartItem = itr.next();
+			if (!cartItem.productStatus.equals(CommonUtils.ProductStatus.VALID.getKey()) || cartItem.stock <= 0) {
+				itr.remove();
+			}
+		}
+		return cartItems;
 	}
 }

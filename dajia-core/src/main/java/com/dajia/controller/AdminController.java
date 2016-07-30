@@ -215,6 +215,9 @@ public class AdminController extends BaseController {
 		}
 		OrderVO ov = orderService.convertOrderVO(order);
 		orderService.fillOrderVO(ov, order);
+		if (null == order.productItemId) {
+			ov.productVOList = productService.loadProducts4Order(order.orderItems);
+		}
 		ov.refundList = refundService.getRefundListByOrderId(orderId);
 		return ov;
 	}

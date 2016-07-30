@@ -80,7 +80,5 @@ public class ProductItem extends BaseModel {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "product_id", referencedColumnName = "product_id")
 	public Product product;
-
-	@Transient
-	public ProductVO productVO;
+	
 }

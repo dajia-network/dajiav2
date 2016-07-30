@@ -6,11 +6,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.dajia.domain.UserContact;
+import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserRefund;
 
 public class OrderVO {
 
 	public Long orderId;
+	
+	public Long orderItemId;
 
 	public String trackingId;
 
@@ -25,7 +28,7 @@ public class OrderVO {
 	public Long productItemId;
 
 	public String productDesc;
-	
+
 	public String productShared;
 
 	public Long refUserId;
@@ -39,6 +42,8 @@ public class OrderVO {
 	public BigDecimal unitPrice;
 
 	public BigDecimal totalPrice;
+
+	public BigDecimal totalProductPrice;
 
 	public BigDecimal postFee;
 
@@ -68,8 +73,6 @@ public class OrderVO {
 
 	public String logisticAgent4Show;
 
-	public String productInfo4Show;
-
 	public Date orderDate;
 
 	public UserContact userContact;
@@ -81,4 +84,10 @@ public class OrderVO {
 	public List<ProgressVO> progressList;
 
 	public List<UserRefund> refundList;
+
+	public List<ProductVO> productVOList;
+
+	public List<CartItemVO> cartItems;
+
+	public List<UserOrderItem> orderItems;
 }

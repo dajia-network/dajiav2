@@ -26,6 +26,7 @@ import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserCart;
 import com.dajia.domain.UserFavourite;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserOrderItem;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserCartRepo;
@@ -38,6 +39,8 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.util.CommonUtils.ProductStatus;
+import com.dajia.vo.CartItemVO;
+import com.dajia.vo.OrderVO;
 import com.dajia.vo.ProductVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -288,7 +291,7 @@ public class ProductService {
 						ActiveStatus.YES.toString());
 		return productItems;
 	}
-	
+
 	public List<ProductItem> loadAllExpiredProducts() {
 		List<ProductItem> productItems = (List<ProductItem>) productItemRepo
 				.findByProductStatusAndIsActiveOrderByExpiredDateAsc(ProductStatus.EXPIRED.getKey(),
@@ -335,25 +338,40 @@ public class ProductService {
 		// update order
 		order.orderStatus = OrderStatus.PAIED.getKey();
 		orderRepo.save(order);
-		// update product price
-		ProductItem productItem = productItemRepo.findOne(order.productItemId);
+		if (null != order.productItemId) {
+			// update product price
+			ProductItem productItem = productItemRepo.findOne(order.productItemId);
+			updateProductPrice(productItem, order.quantity);
+			if (null != order.refUserId) {
+				// generate reward
+				rewardService.createReward(order, null, productItem);
+			}
+		} else {
+			for (UserOrderItem oi : order.orderItems) {
+				// update product price
+				ProductItem productItem = productItemRepo.findOne(oi.productItemId);
+				updateProductPrice(productItem, oi.quantity);
+				if (null != order.refUserId) {
+					// generate reward
+					rewardService.createReward(order, oi, productItem);
+				}
+			}
+		}
+	}
+
+	private void updateProductPrice(ProductItem productItem, Integer quantity) {
 		if (null != productItem) {
 			if (null == productItem.sold) {
 				productItem.sold = 0L;
 			}
-			productItem.sold += order.quantity;
-			productItem.stock -= order.quantity;
+			productItem.sold += quantity;
+			productItem.stock -= quantity;
 			if (productItem.stock < 0L) {
 				productItem.stock = 0L;
 			}
-			calcCurrentPrice(productItem, order.quantity);
+			calcCurrentPrice(productItem, quantity);
 		}
 		productItemRepo.save(productItem);
-
-		if (null != order.refUserId) {
-			// generate reward
-			rewardService.createReward(order, productItem);
-		}
 	}
 
 	public List<Product> loadFavProductsByUserId(Long userId) {
@@ -503,5 +521,31 @@ public class ProductService {
 			}
 			productRepo.save(product);
 		}
+	}
+
+	public List<ProductVO> loadProducts4Order(List<UserOrderItem> orderItemList) {
+		List<ProductVO> productVOList = new ArrayList<ProductVO>();
+		for (UserOrderItem oi : orderItemList) {
+			ProductVO productVO = this.loadProductDetailByItemId(oi.productItemId);
+			productVOList.add(productVO);
+		}
+		return productVOList;
+	}
+
+	public boolean validateStock(OrderVO orderVO) {
+		if (null != orderVO.productId) {
+			if (this.loadProductDetail(orderVO.productId).stock <= 0) {
+				return false;
+			}
+		} else {
+			if (null != orderVO.cartItems) {
+				for (CartItemVO cartItem : orderVO.cartItems) {
+					if (this.loadProductDetail(cartItem.productId).stock <= 0) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

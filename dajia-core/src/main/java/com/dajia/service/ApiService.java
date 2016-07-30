@@ -262,6 +262,22 @@ public class ApiService {
 		return charge;
 	}
 
+	public Charge getPingppCharge(String chargeId, User user, String channel) throws PingppException {
+		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
+		Map<String, Object> extraParams = new HashMap<String, Object>();
+		if (channel.equalsIgnoreCase(CommonUtils.PayType.ALIPAY.getValue())) {
+			extraParams.put("success_url", "http://51daja.com/app/index.html#/tab/prog");
+			extraParams.put("cancel_url", "http://51daja.com/app");
+		}
+		if (channel.equalsIgnoreCase(CommonUtils.PayType.WECHAT.getValue())) {
+			logger.info("-------charge open_id:" + user.oauthUserId);
+			extraParams.put("open_id", user.oauthUserId);
+		}
+		Charge charge = Charge.retrieve(chargeId);
+		charge.setExtra(extraParams);
+		return charge;
+	}
+
 	public Refund applyRefund(String chargeId, BigDecimal refundValue, String refundType) throws PingppException {
 		Pingpp.apiKey = ApiPingppUtils.pingpp_live_key;
 		Charge ch = Charge.retrieve(chargeId);

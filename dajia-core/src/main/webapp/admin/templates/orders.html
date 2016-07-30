@@ -38,7 +38,7 @@
 			<tr>
 				<th data-field="orderId">ID</th>
 				<th data-field="trackingId">订单编号</th>
-				<th data-field="productInfo4Show">产品名</th>
+				<th data-field="productDesc">产品名</th>
 				<th data-field="quantity">购买数量</th>
 				<th data-field="unitPrice">购买单价</th>
 				<th data-field="postFee">邮费</th>
@@ -54,9 +54,11 @@
 			<tr ng-repeat="order in orders">
 				<td>{{order.orderId}}</td>
 				<td>{{order.trackingId}}</td>
-				<td>{{order.productInfo4Show}}</td>
-				<td>{{order.quantity}}</td>
-				<td>￥{{order.unitPrice}}</td>
+				<td>{{order.productDesc}}</td>
+				<td ng-if="order.quantity!=null">{{order.quantity}}</td>
+				<td ng-if="order.quantity==null">N/A</td>
+				<td ng-if="order.unitPrice!=null">￥{{order.unitPrice}}</td>
+				<td ng-if="order.unitPrice==null">N/A</td>
 				<td>￥{{order.postFee}}</td>
 				<td>￥{{order.totalPrice}}</td>
 				<td>{{order.userName}}</td>

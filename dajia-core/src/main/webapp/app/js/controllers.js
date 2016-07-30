@@ -119,6 +119,18 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				}
 			}
 
+			$scope.add2Cart = function() {
+				if ($cookies.get('dajia_user_id') == null) {
+					$rootScope.$broadcast('event:auth-loginRequired');
+				} else {
+					$http.get('/user/cart/add/' + $stateParams.pid).success(function(data, status, headers, config) {
+						popWarning('已放入购物车', $timeout, $ionicLoading);
+					}).error(function(data, status, headers, config) {
+						console.log('request failed...');
+					});
+				}
+			}
+
 			$scope.add2Fav = function() {
 				if ($cookies.get('dajia_user_id') == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
@@ -226,33 +238,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.userContact = {};
 			$scope.userContacts = [];
 			$scope.selectedUserContact = {};
-			$scope.order = {
-				'quantity' : 1,
-				'unitPrice' : 0,
-				'totalPrice' : 0,
-				'payType' : 1
-			};
 			$scope.userAgree = {
 				checked : true
 			};
-			var quota = 5;
-			$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
-				var product = data;
-				$scope.orderItem = product;
-				// $scope.totalPrice = product.price;
-				quota = product.buyQuota;
-				$scope.order.productId = product.productId;
-				$scope.order.productItemId = product.productItemId;
-				$scope.order.unitPrice = product.currentPrice;
-				$scope.order.postFee = product.postFee;
-				$scope.defaultPostFee = product.postFee;
-				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
-				$scope.order.productDesc = product.shortName;
-				if (locationReady) {
-					$ionicLoading.hide();
-				}
-				productReady = true;
-			});
 			$http.get('/user/loginuserinfo').success(
 					function(data, status, headers, config) {
 						var loginuser = data;
@@ -290,6 +278,69 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			}).error(function(data, status, headers, config) {
 				console.log('request failed...');
 			});
+			if ($window.location.hash.indexOf('prodorder') >= 0) {
+				console.log('single product order');
+				$scope.order = {
+					'quantity' : 1,
+					'unitPrice' : 0,
+					'totalPrice' : 0,
+					'payType' : 1
+				};
+				var quota = 2;
+				$http.get('/product/' + $stateParams.pid).success(function(data, status, headers, config) {
+					var product = data;
+					$scope.orderItem = product;
+					// $scope.totalPrice = product.price;
+					quota = product.buyQuota;
+					$scope.order.productId = product.productId;
+					$scope.order.productItemId = product.productItemId;
+					$scope.order.unitPrice = product.currentPrice;
+					$scope.order.postFee = product.postFee;
+					$scope.defaultPostFee = product.postFee;
+					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
+					$scope.order.productDesc = product.shortName;
+					if (locationReady) {
+						$ionicLoading.hide();
+					}
+					productReady = true;
+				});
+			} else if ($window.location.hash.indexOf('cartorder') >= 0) {
+				console.log('cart order');
+				$scope.order = {
+					'totalPrice' : 0,
+					'payType' : 1
+				};
+				$http.get('/user/cartorder').success(function(data, status, headers, config) {
+					console.log(data);
+					$scope.cartItems = data;
+					var postFee = 0;
+					var totalPrice = 0;
+					var productDesc = null;
+					if (null != $scope.cartItems) {
+						$scope.cartItems.forEach(function(c) {
+							if (postFee < c.postFee) {
+								postFee = c.postFee;
+							}
+							if (null == productDesc) {
+								productDesc = c.shortName;
+							}
+							totalPrice += c.currentPrice * c.quantity;
+						});
+						if ($scope.cartItems.length > 1) {
+							productDesc = productDesc + '等' + $scope.cartItems.length + '件产品';
+						}
+					}
+					$scope.order.postFee = postFee;
+					$scope.defaultPostFee = postFee;
+					$scope.order.totalPrice = totalPrice + postFee;
+					$scope.order.productDesc = productDesc;
+					// console.log($scope.order);
+					if (locationReady) {
+						$ionicLoading.hide();
+					}
+					productReady = true;
+				});
+			}
 			$scope.submit = function() {
 				// console.log($scope.order);
 				if (!$scope.userAgree.checked) {
@@ -305,18 +356,17 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				var city = $scope.userContact.city;
 				var district = $scope.userContact.district;
 				var address = $scope.userContact.address1;
-
 				if (!name || !mobile || !province || !city || !district || !address) {
 					popWarning('请输入完整信息', $timeout, $ionicLoading);
 					return;
 				}
-
 				if (mobile.length != 11 || !DajiaGlobal.utils.mobileReg.test(mobile)) {
 					popWarning('请输入正确的手机号码', $timeout, $ionicLoading);
 					return;
 				}
-
 				$scope.order.userContact = $scope.userContact;
+				$scope.order.cartItems = $scope.cartItems;
+
 				var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
 				var productId = DajiaGlobal.utils.getURLParameter('productId');
 				var refOrderId = DajiaGlobal.utils.getURLParameter('refOrderId');
@@ -328,11 +378,16 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					}
 				}
 
+				console.log($scope.order);
 				$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 					var charge = data;
 					console.log(charge);
 					if (null == charge || charge.length == 0) {
 						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
+						$timeout(function() {
+							$window.location.replace('#/tab/mine');
+							$window.location.href = "#/tab/mine/orders";
+						}, 1000);
 					} else {
 						pingpp.createPayment(charge, function(result, error) {
 							if (result == 'success') {
@@ -352,9 +407,17 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								for (key in error) {
 									alert(key + ': ' + error[key]);
 								}
+								$timeout(function() {
+									$window.location.replace('#/tab/mine');
+									$window.location.href = "#/tab/mine/orders";
+								}, 1000);
 							} else if (result == 'cancel') {
 								// 微信公众账号支付取消支付
 								console.log('wechat pay cancelled');
+								$timeout(function() {
+									$window.location.replace('#/tab/mine');
+									$window.location.href = "#/tab/mine/orders";
+								}, 1000);
 							}
 						});
 					}
@@ -380,6 +443,83 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
 				}
 			}
+			$scope.add4Cart = function(cartId) {
+				var cartItem = getCartItem(cartId);
+				if (cartItem.quantity >= cartItem.buyQuota && cartItem.buyQuota != null) {
+					popWarning('该产品每个账号限购' + cartItem.buyQuota + '件', $timeout, $ionicLoading);
+					return;
+				}
+				if (cartItem.quantity + 1 > cartItem.stock) {
+					popWarning('该产品库存不足', $timeout, $ionicLoading);
+					return;
+				}
+				cartItem.quantity += 1;
+				$scope.calcTotalPrice();
+				$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+					console.log('cartItem edit success...');
+				}).error(function(data, status, headers, config) {
+					popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+				});
+			};
+			$scope.remove4Cart = function(cartId) {
+				var cartItem = getCartItem(cartId);
+				if (cartItem.quantity > 1) {
+					cartItem.quantity -= 1;
+				}
+				$scope.calcTotalPrice();
+				$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+					console.log('cartItem edit success...');
+				}).error(function(data, status, headers, config) {
+					popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+				});
+			};
+			$scope.del4Cart = function(cartId) {
+				var cartItem = getCartItem(cartId);
+				delCartItem(cartId);
+				$scope.calcTotalPrice();
+			};
+			var getCartItem = function(cartId) {
+				var cartItem;
+				if (null != $scope.cartItems) {
+					$scope.cartItems.forEach(function(c) {
+						if (c.cartId == cartId) {
+							cartItem = c;
+							return;
+						}
+					});
+				}
+				return cartItem;
+			}
+			var delCartItem = function(cartId) {
+				if (null != $scope.cartItems) {
+					$scope.cartItems.forEach(function(c, idx) {
+						if (c.cartId == cartId) {
+							$scope.cartItems.splice(idx, 1);
+							return;
+						}
+					});
+				}
+			}
+			$scope.calcTotalPrice = function() {
+				var postFee = $scope.order.postFee;
+				if ($scope.defaultPostFee == 0) {
+					return;
+				}
+				if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
+					$scope.order.postFee = $scope.userContact.province.minPostFee;
+				} else {
+					$scope.order.postFee = $scope.defaultPostFee;
+				}
+				if (null != $scope.cartItems) {
+					var totalPrice = 0;
+					$scope.cartItems.forEach(function(c) {
+						totalPrice += c.currentPrice * c.quantity;
+					});
+					$scope.order.totalPrice = totalPrice + postFee;
+				}
+				$scope.order.totalPrice = $scope.order.totalPrice - postFee + $scope.order.postFee;
+			}
+
 			$scope.selectAlipay = function() {
 				popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
 			}
@@ -391,22 +531,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						}
 					});
 				}
-				fillLocationDropdowns($scope, $ionicLoading, locationReady);
+				fillLocationDropdowns($scope, $ionicLoading);
 			}
-			$scope.calcPostFee = function() {
-				if ($scope.defaultPostFee == 0) {
-					return;
-				}
-				if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
-					$scope.order.postFee = $scope.userContact.province.minPostFee;
-				} else {
-					$scope.order.postFee = $scope.defaultPostFee;
-				}
-				$scope.orderItem.postFee = $scope.order.postFee;
-				$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + $scope.order.postFee;
-			}
-
-			var fillLocationDropdowns = function($scope, $ionicLoading, locationReady) {
+			var fillLocationDropdowns = function($scope, $ionicLoading) {
 				$scope.provinces.forEach(function(p) {
 					if (p.locationKey == $scope.userContact.province.locationKey) {
 						$scope.userContact.province = p;
@@ -416,11 +543,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								c.children.forEach(function(d) {
 									if (d.locationKey == $scope.userContact.district.locationKey) {
 										$scope.userContact.district = d;
+										$scope.calcTotalPrice();
 										if (productReady) {
 											$ionicLoading.hide();
 										}
 										locationReady = true;
-										$scope.calcPostFee();
 										return;
 									}
 								});
@@ -459,6 +586,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								$scope.myOrders = [];
 							}
 							$scope.myOrders = $scope.myOrders.concat(data.results);
+							console.log($scope.myOrders);
 							$scope.myOrders.forEach(function(o) {
 								if (null == o.progressValue) {
 									o.progressValue = o.productVO.priceOff
@@ -490,8 +618,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.goHome = function() {
 				$window.location.href = '#/tab/prod';
 			}
-			$scope.progressDetail = function(trackingId) {
-				$window.location.href = '#/tab/prog/' + trackingId;
+			$scope.progressDetail = function(trackingId, orderItemId) {
+				if (null == orderItemId) {
+					orderItemId = 0;
+				}
+				$window.location.href = '#/tab/prog/' + trackingId + '/' + orderItemId;
 			}
 		})
 
@@ -501,8 +632,9 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			console.log('进度详情...')
 			$scope.order = {};
 			popLoading($ionicLoading);
-			$http.get('/user/progress/' + $stateParams.trackingId).success(
+			$http.get('/user/progress/' + $stateParams.trackingId + '/' + $stateParams.orderItemId).success(
 					function(data, status, headers, config) {
+						console.log(data);
 						var order = data;
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
@@ -616,6 +748,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				$scope.myOrders = [];
 			}
 			$scope.myOrders = $scope.myOrders.concat(data.results);
+			console.log($scope.myOrders);
 		});
 	}
 	popLoading($ionicLoading);
@@ -646,12 +779,13 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller(
 		'MyOrderDetailCtrl',
-		function($scope, $http, $stateParams, $window, $ionicLoading) {
+		function($scope, $http, $stateParams, $window, $timeout, $ionicLoading) {
 			console.log('我的订单详情...');
 			var loadOrderDetail = function() {
 				popLoading($ionicLoading);
 				return $http.get('/user/order/' + $stateParams.trackingId).success(
 						function(data, status, headers, config) {
+							console.log(data);
 							$scope.order = data;
 							$scope.checkLogisticUrl = "http://m.kuaidi100.com/index_all.html?type="
 									+ data.logisticAgent + "&postid=" + data.logisticTrackingId + "&callbackurl="
@@ -661,6 +795,47 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						});
 			}
 			loadOrderDetail();
+
+			$scope.submit = function() {
+				console.log($scope.order);
+				$http.post('/user/getCharge', $scope.order).success(function(data, status, headers, config) {
+					var charge = data;
+					console.log(charge);
+					if (null == charge || charge.length == 0) {
+						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
+					} else {
+						pingpp.createPayment(charge, function(result, error) {
+							if (result == 'success') {
+								// 只有微信公众账号 wx_pub 支付成功的结果会在这里返回，其他的 wap 支付结果都是在
+								// extra
+								// 中对应的URL 跳转。
+								console.log('wechat pay success');
+								popWarning('支付成功', $timeout, $ionicLoading);
+								$timeout(function() {
+									$window.location.replace('#/tab/prod');
+									$window.location.href = "#/tab/prog";
+								}, 1000);
+							} else if (result == 'fail') {
+								// charge 不正确或者微信公众账号支付失败时会在此处返回
+								console.log('payment failed');
+								popWarning('支付出错', $timeout, $ionicLoading);
+								for (key in error) {
+									alert(key + ': ' + error[key]);
+								}
+							} else if (result == 'cancel') {
+								// 微信公众账号支付取消支付
+								console.log('wechat pay cancelled');
+							}
+						});
+					}
+				}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+
+			$scope.selectAlipay = function() {
+				popWarning('由于微信技术屏蔽，选择支付宝购买可能需要打开独立浏览器。', $timeout, $ionicLoading);
+			}
 		})
 
 .controller('MyFavCtrl', function($scope, $http, $ionicLoading, $window) {
@@ -682,13 +857,17 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 })
 
-.controller('MyCartCtrl', function($scope, $http, $ionicLoading, $window) {
+.controller('MyCartCtrl', function($scope, $http, $timeout, $ionicLoading, $window) {
 	console.log('购物车...');
+	$scope.cart = {
+		totalPrice : 0
+	};
 	var loadMyCart = function() {
 		popLoading($ionicLoading);
 		return $http.get('/user/cart').success(function(data, status, headers, config) {
-			console.log(data);
+			// console.log(data);
 			$scope.cartItems = data;
+			calcTotalPrice();
 			$scope.$broadcast('scroll.refreshComplete');
 			$ionicLoading.hide();
 		});
@@ -699,6 +878,88 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	};
 	$scope.goHome = function() {
 		$window.location.href = '#/tab/prod';
+	}
+	$scope.add = function(cartId) {
+		var cartItem = getCartItem(cartId);
+		if (cartItem.quantity >= cartItem.buyQuota && cartItem.buyQuota != null) {
+			popWarning('该产品每个账号限购' + cartItem.buyQuota + '件', $timeout, $ionicLoading);
+			return;
+		}
+		if (cartItem.quantity + 1 > cartItem.stock) {
+			popWarning('该产品库存不足', $timeout, $ionicLoading);
+			return;
+		}
+		cartItem.quantity += 1;
+		calcTotalPrice();
+		$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+			console.log('cartItem edit success...');
+		}).error(function(data, status, headers, config) {
+			popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+		});
+	};
+	$scope.remove = function(cartId) {
+		var cartItem = getCartItem(cartId);
+		if (cartItem.quantity > 1) {
+			cartItem.quantity -= 1;
+		}
+		calcTotalPrice();
+		$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+			console.log('cartItem edit success...');
+		}).error(function(data, status, headers, config) {
+			popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+		});
+	};
+	$scope.del = function(cartId) {
+		var cartItem = getCartItem(cartId);
+		$http.get('/user/cart/remove/' + cartItem.productId).success(function(data, status, headers, config) {
+			delCartItem(cartId);
+			calcTotalPrice();
+		});
+	};
+	$scope.submit = function() {
+		// var submitItems = [];
+		// $scope.cartItems.forEach(function(c) {
+		// if (c.productStatus == 2 && c.stock > 0) {
+		// submitItems.push(c);
+		// }
+		// });
+		// console.log(submitItems);
+		if ($scope.cart.totalPrice > 0) {
+			$window.location.href = '#/tab/mine/cartorder';
+		} else {
+			popWarning('购物车中没有需要结算的商品', $timeout, $ionicLoading);
+		}
+	}
+
+	var getCartItem = function(cartId) {
+		var cartItem;
+		if (null != $scope.cartItems) {
+			$scope.cartItems.forEach(function(c) {
+				if (c.cartId == cartId) {
+					cartItem = c;
+					return;
+				}
+			});
+		}
+		return cartItem;
+	}
+	var delCartItem = function(cartId) {
+		if (null != $scope.cartItems) {
+			$scope.cartItems.forEach(function(c, idx) {
+				if (c.cartId == cartId) {
+					$scope.cartItems.splice(idx, 1);
+					return;
+				}
+			});
+		}
+	}
+	var calcTotalPrice = function() {
+		$scope.cart.totalPrice = 0;
+		$scope.cartItems.forEach(function(c) {
+			if (c.productStatus == 2 && c.stock > 0) {
+				$scope.cart.totalPrice += c.currentPrice * c.quantity;
+			}
+		});
 	}
 })
 

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserReward;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
@@ -49,10 +50,10 @@ public class RewardService {
 	@Autowired
 	private OrderService orderService;
 
-	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId) {
+	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId, Long productItemId) {
 		Map<Long, LoginUserVO> rdUserMap = new HashMap<Long, LoginUserVO>();
-		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndRewardStatus(orderId,
-				CommonUtils.RewardStatus.PENDING.getKey());
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatus(orderId,
+				productItemId, CommonUtils.RewardStatus.PENDING.getKey());
 		for (UserReward userReward : rewardList) {
 			if (null != userReward.orderUserId) {
 				User user = userRepo.findByUserId(userReward.orderUserId);
@@ -65,14 +66,19 @@ public class RewardService {
 		return rdUserMap;
 	}
 
-	public void createReward(UserOrder order, ProductItem productItem) {
+	public void createReward(UserOrder order, UserOrderItem oi, ProductItem productItem) {
 		List<UserReward> rewardList = rewardRepo.findByOrderUserIdAndProductItemIdAndRewardStatus(order.userId,
 				productItem.productItemId, CommonUtils.RewardStatus.PENDING.getKey());
 		if (null == rewardList || rewardList.isEmpty()) {
 			UserReward ur = new UserReward();
 			ur.orderId = order.orderId;
-			ur.productId = order.productId;
-			ur.productItemId = order.productItemId;
+			if (null != oi) {
+				ur.productId = oi.productId;
+				ur.productItemId = oi.productItemId;
+			} else {
+				ur.productId = order.productId;
+				ur.productItemId = order.productItemId;
+			}
 			ur.refUserId = order.refUserId;
 			ur.refOrderId = order.refOrderId;
 			ur.orderUserId = order.userId;
@@ -87,8 +93,24 @@ public class RewardService {
 				} else {
 					ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
 				}
-			}else{
-				ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+			} else {
+				UserOrder rewardOrder = orderRepo.findOne(ur.refOrderId);
+				if (null != rewardOrder.productItemId) {
+					if (rewardOrder.productItemId.longValue() == productItem.productItemId.longValue()) {
+						ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+					} else {
+						return;
+					}
+				} else {
+					for (UserOrderItem rewardOi : rewardOrder.orderItems) {
+						if (rewardOi.productItemId.longValue() == productItem.productItemId.longValue()) {
+							ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
+						}
+					}
+					if (null == ur.rewardStatus || ur.rewardStatus != CommonUtils.RewardStatus.PENDING.getKey()) {
+						return;
+					}
+				}
 			}
 			Calendar c = Calendar.getInstance();
 			c.setTime(ur.expiredDate);
@@ -100,8 +122,8 @@ public class RewardService {
 
 	public BigDecimal calculateRewards(Long orderId, ProductVO productVO) {
 		BigDecimal rewardValue = new BigDecimal(0);
-		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndRewardStatus(orderId,
-				CommonUtils.RewardStatus.PENDING.getKey());
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatus(orderId,
+				productVO.productItemId, CommonUtils.RewardStatus.PENDING.getKey());
 		if (null != rewardList && !rewardList.isEmpty()) {
 			for (UserReward userReward : rewardList) {
 				rewardValue = rewardValue.add(productVO.currentPrice.multiply(new BigDecimal(

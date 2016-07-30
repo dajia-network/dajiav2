@@ -37,7 +37,7 @@ public class CommonUtils {
 
 	public static final String global_cache_key = "global_cache";
 
-	public static final Integer reward_delay_days = 7;
+	public static final Integer reward_delay_days = 8;
 
 	public static final String refund_type_refund = "Refund";
 	public static final String refund_type_reward = "Reward";

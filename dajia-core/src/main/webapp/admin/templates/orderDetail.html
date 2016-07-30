@@ -83,7 +83,7 @@
 				</tr>
 			</thead>
 
-			<tbody>
+			<tbody ng-if="order.productVO!=null">
 				<tr>
 					<td>{{order.productVO.name}}</td>
 					<td>￥{{order.unitPrice}}</td>
@@ -91,6 +91,25 @@
 					<td>￥{{order.totalPrice}}</td>
 					<td>￥{{order.postFee}}</td>
 					<td>{{order.productVO.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+				</tr>
+			</tbody>
+			
+			<tbody ng-if="order.orderItems!=null">
+				<tr ng-repeat="orderItem in order.orderItems">
+					<td>{{orderItem.productVO.name}}</td>
+					<td>￥{{orderItem.unitPrice}}</td>
+					<td>{{orderItem.quantity}}</td>
+					<td></td>
+					<td></td>
+					<td>{{orderItem.productVO.expiredDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>￥{{order.totalPrice}}</td>
+					<td>￥{{order.postFee}}</td>
+					<td></td>
 				</tr>
 			</tbody>
 		</table>
