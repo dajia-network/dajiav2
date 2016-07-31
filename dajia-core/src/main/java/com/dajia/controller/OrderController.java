@@ -39,7 +39,6 @@ import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.CartItemVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
-import com.dajia.vo.ProductVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
 import com.pingplusplus.model.Event;
@@ -319,8 +318,19 @@ public class OrderController extends BaseController {
 		String productId = request.getParameter("productId");
 		UserOrder order = orderRepo.findOne(Long.valueOf(orderId));
 		if (null != order) {
-			order.productShared = CommonUtils.ProductShared.YES.toString();
-			orderRepo.save(order);
+			if (null != order.productItemId) {
+				order.productShared = CommonUtils.ProductShared.YES.toString();
+				orderRepo.save(order);
+			} else {
+				if (null != order.orderItems) {
+					for (UserOrderItem oi : order.orderItems) {
+						if (oi.productId.longValue() == Long.valueOf(productId)) {
+							oi.productShared = CommonUtils.ProductShared.YES.toString();
+						}
+					}
+					orderRepo.save(order);
+				}
+			}
 		}
 	}
 }

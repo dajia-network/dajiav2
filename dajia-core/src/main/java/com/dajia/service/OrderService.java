@@ -266,6 +266,7 @@ public class OrderService {
 			UserOrderItem oi = orderItemRepo.findOne(orderItemId);
 			ov.productId = oi.productId;
 			ov.productItemId = oi.productItemId;
+			ov.productShared = oi.productShared;
 			ov.productVO = productService.loadProductDetailByItemId(oi.productItemId);
 		}
 		Map<Long, LoginUserVO> rewardSrcUserMap = rewardService.getRewardSrcUsers(ov.orderId, ov.productItemId);
