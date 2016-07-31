@@ -474,6 +474,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			};
 			$scope.del4Cart = function(cartId) {
 				var cartItem = getCartItem(cartId);
+				if ($scope.cartItems.length == 1) {
+					popWarning('订单中只有一件商品', $timeout, $ionicLoading);
+					return;
+				}
 				delCartItem(cartId);
 				$scope.calcTotalPrice();
 			};
