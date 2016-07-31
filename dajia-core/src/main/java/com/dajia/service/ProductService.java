@@ -31,6 +31,7 @@ import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserCartRepo;
 import com.dajia.repository.UserFavouriteRepo;
+import com.dajia.repository.UserOrderItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRewardRepo;
 import com.dajia.util.ApiKdtUtils;
@@ -45,6 +46,7 @@ import com.dajia.vo.ProductVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pingplusplus.exception.PingppException;
 
 @Service
 public class ProductService {
@@ -73,6 +75,9 @@ public class ProductService {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private UserOrderItemRepo orderItemRepo;
 
 	@Autowired
 	private UserRewardRepo rewardRepo;
@@ -331,6 +336,37 @@ public class ProductService {
 			productItem.status4Show = getProductStatusStr(productItem.productStatus);
 		}
 		return productItems;
+	}
+
+	public void getRealSold(Page<ProductItem> productItems) {
+		for (ProductItem productItem : productItems) {
+			Long realSold = 0L;
+			List<Integer> orderStatusList = new ArrayList<Integer>();
+			orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+			orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+			List<UserOrder> orderList = orderRepo.findByProductItemIdAndOrderStatusInAndIsActiveOrderByOrderDateDesc(
+					productItem.productItemId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
+			if (null != orderList) {
+				for (UserOrder userOrder : orderList) {
+					if (null != userOrder.paymentId) {
+						realSold += userOrder.quantity;
+					}
+				}
+			}
+			List<UserOrderItem> orderItemList = orderItemRepo.findByProductItemIdAndIsActive(productItem.productItemId,
+					CommonUtils.ActiveStatus.YES.toString());
+			if (null != orderItemList) {
+				for (UserOrderItem userOrderItem : orderItemList) {
+					if (userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.PAIED.getKey()
+							|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVERING.getKey()
+							|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVRIED.getKey()) {
+						realSold += userOrderItem.quantity;
+					}
+				}
+			}
+			productItem.realSold = realSold;
+		}
 	}
 
 	@Transactional

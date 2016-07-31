@@ -311,7 +311,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					'payType' : 1
 				};
 				$http.get('/user/cartorder').success(function(data, status, headers, config) {
-					console.log(data);
 					$scope.cartItems = data;
 					var postFee = 0;
 					var totalPrice = 0;
@@ -342,7 +341,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				});
 			}
 			$scope.submit = function() {
-				// console.log($scope.order);
+				console.log($scope.order);
 				if (!$scope.userAgree.checked) {
 					popWarning('购买前请确认并同意打价网用户协议，谢谢！', $timeout, $ionicLoading);
 					return;
@@ -502,6 +501,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			}
 			$scope.calcTotalPrice = function() {
 				var postFee = $scope.order.postFee;
+				var productDesc = null;
 				if ($scope.defaultPostFee == 0) {
 					return;
 				}
@@ -514,8 +514,15 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					var totalPrice = 0;
 					$scope.cartItems.forEach(function(c) {
 						totalPrice += c.currentPrice * c.quantity;
+						if (null == productDesc) {
+							productDesc = c.shortName;
+						}
 					});
 					$scope.order.totalPrice = totalPrice + postFee;
+					if ($scope.cartItems.length > 1) {
+						productDesc = productDesc + '等' + $scope.cartItems.length + '件产品';
+					}
+					$scope.order.productDesc = productDesc;
 				}
 				$scope.order.totalPrice = $scope.order.totalPrice - postFee + $scope.order.postFee;
 			}

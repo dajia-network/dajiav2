@@ -20,7 +20,7 @@ import com.dajia.vo.ProductVO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-//@JsonIgnoreProperties(value = { "product" })
+// @JsonIgnoreProperties(value = { "product" })
 @Table(name = "product_item")
 public class ProductItem extends BaseModel {
 
@@ -74,11 +74,14 @@ public class ProductItem extends BaseModel {
 	@Transient
 	public String status4Show;
 
+	@Transient
+	public Long realSold;
+
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "productItem", fetch = FetchType.LAZY)
 	public List<Price> prices;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "product_id", referencedColumnName = "product_id")
 	public Product product;
-	
+
 }

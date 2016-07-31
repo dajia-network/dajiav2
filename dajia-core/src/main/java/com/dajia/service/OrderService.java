@@ -211,14 +211,16 @@ public class OrderService {
 				productItem.productItemId, orderStatusList, CommonUtils.ActiveStatus.YES.toString());
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
-				BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder);
-				if (refundValue.compareTo(new BigDecimal(0)) > 0) {
-					try {
-						apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
-						logger.info("order " + userOrder.orderId + "-" + userOrder.trackingId + " refund applied for "
-								+ refundValue.doubleValue());
-					} catch (PingppException e) {
-						logger.error(e.getMessage(), e);
+				if (null != userOrder.paymentId) {
+					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder);
+					if (refundValue.compareTo(new BigDecimal(0)) > 0) {
+						try {
+							apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
+							logger.info("order " + userOrder.orderId + "-" + userOrder.trackingId
+									+ " refund applied for " + refundValue.doubleValue());
+						} catch (PingppException e) {
+							logger.error(e.getMessage(), e);
+						}
 					}
 				}
 			}

@@ -79,6 +79,7 @@ public class AdminController extends BaseController {
 	@RequestMapping("/admin/products/{page}")
 	public PaginationVO<ProductItem> productsByPage(@PathVariable("page") Integer pageNum) {
 		Page<ProductItem> products = productService.loadProductsByPage(pageNum);
+		productService.getRealSold(products);
 		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}

@@ -30,6 +30,7 @@
 				<th data-field="currentPrice">当前价格</th>
 				<th data-field="stock">库存</th>
 				<th data-field="sold">销量</th>
+				<th data-field="realSold">真实销量</th>
 				<th data-field="startDate">起始时间</th>
 				<th data-field="expiredDate">过期时间</th>
 				<th data-field="productStatus">产品状态</th>
@@ -44,6 +45,7 @@
 				<td>￥{{product.currentPrice}}</td>
 				<td>{{product.stock}}</td>
 				<td>{{product.sold}}</td>
+				<td>{{product.realSold}}</td>
 				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm'}}</td>
 				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm'}}</td>
 				<td>{{product.status4Show}}</td>
