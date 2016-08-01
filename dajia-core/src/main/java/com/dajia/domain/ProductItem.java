@@ -41,6 +41,9 @@ public class ProductItem extends BaseModel {
 	@Column(name = "product_status")
 	public Integer productStatus;
 
+	@Column(name = "fix_top")
+	public Integer fixTop;
+
 	@Column(name = "original_price")
 	public BigDecimal originalPrice;
 

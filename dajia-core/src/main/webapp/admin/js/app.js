@@ -1,21 +1,27 @@
 angular.module('dajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'flow', 'dajiaAdmin.controllers', 'dajiaAdmin.directives' ])
 		.config([ '$routeProvider', function($routeProvider) {
 			$routeProvider.when('/products', {
+				cache : false,
 				templateUrl : './templates/products.html',
 				controller : 'ProductsCtrl'
 			}).when('/orders', {
+				cache : false,
 				templateUrl : './templates/orders.html',
 				controller : 'OrdersCtrl'
 			}).when('/clients', {
+				cache : false,
 				templateUrl : './templates/clients.html',
 				controller : 'ClientsCtrl'
 			}).when('/product/:pid', {
+				cache : false,
 				templateUrl : './templates/productDetail.html',
 				controller : 'ProductDetailCtrl'
 			}).when('/order/:orderId', {
+				cache : false,
 				templateUrl : './templates/orderDetail.html',
 				controller : 'OrderDetailCtrl'
 			}).when('/login', {
+				cache : false,
 				templateUrl : './templates/login.html',
 				controller : 'SignInCtrl'
 			}).otherwise('/products')

@@ -116,6 +116,9 @@ public class CommonUtils {
 		if (null != req.expiredDate) {
 			persist.expiredDate = req.expiredDate;
 		}
+		if (null != req.fixTop) {
+			persist.fixTop = req.fixTop;
+		}
 		if (null != req.productStatus) {
 			persist.productStatus = req.productStatus;
 		} else {

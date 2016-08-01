@@ -228,6 +228,7 @@ public class ProductService {
 			productVO.stock = pi.stock;
 			productVO.buyQuota = pi.buyQuota;
 			productVO.productStatus = pi.productStatus;
+			productVO.fixTop = pi.fixTop;
 			productVO.originalPrice = pi.originalPrice;
 			productVO.currentPrice = pi.currentPrice;
 			productVO.postFee = pi.postFee;
@@ -320,7 +321,7 @@ public class ProductService {
 		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
 		Page<ProductItem> productItems = productItemRepo
-				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByProductStatusAscExpiredDateAsc(
+				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByFixTopDescProductStatusAscExpiredDateAsc(
 						productStatusList, new Date(), ActiveStatus.YES.toString(), pageable);
 		for (ProductItem productItem : productItems) {
 			calcPrice(productItem);

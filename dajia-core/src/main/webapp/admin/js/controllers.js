@@ -119,6 +119,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				}
 				product.expiredDate.setSeconds(0);
 				product.expiredDate.setMilliseconds(0);
+				if (null == product.fixTop) {
+					product.fixTop = 0;
+				}
 				$scope.product = product;
 			}).error(function(data, status, headers, config) {
 				console.log('request failed...');

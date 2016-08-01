@@ -35,6 +35,8 @@ public class ProductVO {
 
 	public Integer productStatus;
 
+	public Integer fixTop;
+
 	public BigDecimal originalPrice;
 
 	public BigDecimal currentPrice;
