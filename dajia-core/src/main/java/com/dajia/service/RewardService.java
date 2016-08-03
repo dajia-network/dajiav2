@@ -52,8 +52,11 @@ public class RewardService {
 
 	public Map<Long, LoginUserVO> getRewardSrcUsers(Long orderId, Long productItemId) {
 		Map<Long, LoginUserVO> rdUserMap = new HashMap<Long, LoginUserVO>();
-		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatus(orderId,
-				productItemId, CommonUtils.RewardStatus.PENDING.getKey());
+		List<Integer> rewardStatusList = new ArrayList<Integer>();
+		rewardStatusList.add(CommonUtils.RewardStatus.PENDING.getKey());
+		rewardStatusList.add(CommonUtils.RewardStatus.COMPLETED.getKey());
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatusIn(orderId,
+				productItemId, rewardStatusList);
 		for (UserReward userReward : rewardList) {
 			if (null != userReward.orderUserId) {
 				User user = userRepo.findByUserId(userReward.orderUserId);
@@ -122,8 +125,11 @@ public class RewardService {
 
 	public BigDecimal calculateRewards(Long orderId, ProductVO productVO) {
 		BigDecimal rewardValue = new BigDecimal(0);
-		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatus(orderId,
-				productVO.productItemId, CommonUtils.RewardStatus.PENDING.getKey());
+		List<Integer> rewardStatusList = new ArrayList<Integer>();
+		rewardStatusList.add(CommonUtils.RewardStatus.PENDING.getKey());
+		rewardStatusList.add(CommonUtils.RewardStatus.COMPLETED.getKey());
+		List<UserReward> rewardList = rewardRepo.findByRefOrderIdAndProductItemIdAndRewardStatusIn(orderId,
+				productVO.productItemId, rewardStatusList);
 		if (null != rewardList && !rewardList.isEmpty()) {
 			for (UserReward userReward : rewardList) {
 				rewardValue = rewardValue.add(productVO.currentPrice.multiply(new BigDecimal(
