@@ -117,7 +117,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-order', {
-		url : '/mine/order/:trackingId',
+		url : '/order/:trackingId',
 		cache : false,
 		views : {
 			'tab-mine' : {
@@ -144,7 +144,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-cartorder', {
-		url : '/mine/cartorder',
+		url : '/cartorder',
 		cache : false,
 		views : {
 			'tab-mine' : {

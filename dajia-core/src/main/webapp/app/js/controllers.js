@@ -666,7 +666,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				// $scope.order.productVO.productId);
 			}
 			$scope.orderDetail = function(trackingId) {
-				$window.location.href = '#/tab/mine/order/' + trackingId;
+				$window.location.href = '#/tab/order/' + trackingId;
 			}
 			$scope.back = function() {
 				$window.location.replace('#/tab/prog');
@@ -781,7 +781,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		});
 	}
 	$scope.orderDetail = function(trackingId) {
-		$window.location.href = '#/tab/mine/order/' + trackingId;
+		$window.location.href = '#/tab/order/' + trackingId;
 	}
 	$scope.delOrder = function(trackingId) {
 		$http.get('/user/order/del/' + trackingId).success(function(data, status, headers, config) {
@@ -944,7 +944,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		// });
 		// console.log(submitItems);
 		if ($scope.cart.totalPrice > 0) {
-			$window.location.href = '#/tab/mine/cartorder';
+			$window.location.href = '#/tab/cartorder';
 		} else {
 			popWarning('购物车中没有需要结算的商品', $timeout, $ionicLoading);
 		}
