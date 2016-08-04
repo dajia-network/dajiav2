@@ -385,7 +385,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
 						$timeout(function() {
 							$window.location.replace('#/tab/mine');
-							$window.location.href = "#/tab/mine/orders";
+							$window.location.href = "#/tab/orders";
 						}, 1000);
 					} else {
 						pingpp.createPayment(charge, function(result, error) {
@@ -408,14 +408,14 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								}
 								$timeout(function() {
 									$window.location.replace('#/tab/mine');
-									$window.location.href = "#/tab/mine/orders";
+									$window.location.href = "#/tab/orders";
 								}, 1000);
 							} else if (result == 'cancel') {
 								// 微信公众账号支付取消支付
 								console.log('wechat pay cancelled');
 								$timeout(function() {
 									$window.location.replace('#/tab/mine');
-									$window.location.href = "#/tab/mine/orders";
+									$window.location.href = "#/tab/orders";
 								}, 1000);
 							}
 						});
@@ -688,7 +688,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				if (loginUser == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					$window.location.href = '#/tab/mine/orders';
+					$window.location.href = '#/tab/orders';
 				}
 			}
 			$scope.myFav = function() {
@@ -702,7 +702,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				if (loginUser == null) {
 					$rootScope.$broadcast('event:auth-loginRequired');
 				} else {
-					$window.location.href = '#/tab/mine/cart';
+					$window.location.href = '#/tab/cart';
 				}
 			}
 			$scope.contacts = function() {
@@ -727,7 +727,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				}
 			}
 			$scope.showQcode = function() {
-				$window.location.href = '#/tab/mine/qcode';
+				$window.location.href = '#/tab/qcode';
 			}
 			$scope.logout = function() {
 				if (loginUser == null) {

@@ -108,7 +108,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-orders', {
-		url : '/mine/orders',
+		url : '/orders',
 		cache : false,
 		views : {
 			'tab-mine' : {
@@ -135,7 +135,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-cart', {
-		url : '/mine/cart',
+		url : '/cart',
 		cache : false,
 		views : {
 			'tab-mine' : {
@@ -188,7 +188,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-qcode', {
-		url : '/mine/qcode',
+		url : '/qcode',
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/qcode.html',
