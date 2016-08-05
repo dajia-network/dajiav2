@@ -321,7 +321,7 @@ public class ProductService {
 		productStatusList.add(ProductStatus.EXPIRED.getKey());
 		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage_5);
 		Page<ProductItem> productItems = productItemRepo
-				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByFixTopDescProductStatusAscExpiredDateAsc(
+				.findByProductStatusInAndStartDateBeforeAndIsActiveOrderByProductStatusAscFixTopDescExpiredDateAsc(
 						productStatusList, new Date(), ActiveStatus.YES.toString(), pageable);
 		for (ProductItem productItem : productItems) {
 			calcPrice(productItem);
