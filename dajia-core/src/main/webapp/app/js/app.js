@@ -134,24 +134,6 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'MyFavCtrl'
 			}
 		}
-	}).state('tab.mine-cart', {
-		url : '/cart',
-		cache : false,
-		views : {
-			'tab-mine' : {
-				templateUrl : 'templates/cart.html',
-				controller : 'MyCartCtrl'
-			}
-		}
-	}).state('tab.mine-cartorder', {
-		url : '/cartorder',
-		cache : false,
-		views : {
-			'tab-mine' : {
-				templateUrl : 'templates/cartorder.html',
-				controller : 'OrderCtrl'
-			}
-		}
 	}).state('tab.mine-pass', {
 		url : '/mine/password',
 		cache : false,
@@ -193,6 +175,24 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			'tab-mine' : {
 				templateUrl : 'templates/qcode.html',
 				controller : 'QcodeCtrl'
+			}
+		}
+	}).state('tab.cart', {
+		url : '/cart',
+		cache : false,
+		views : {
+			'tab-cart' : {
+				templateUrl : 'templates/cart.html',
+				controller : 'MyCartCtrl'
+			}
+		}
+	}).state('tab.cart-cartorder', {
+		url : '/cartorder',
+		cache : false,
+		views : {
+			'tab-cart' : {
+				templateUrl : 'templates/cartorder.html',
+				controller : 'OrderCtrl'
 			}
 		}
 	}).state('error', {

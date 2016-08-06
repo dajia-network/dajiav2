@@ -6,6 +6,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$window.location.href = '#/tab/prod';
 		} else if (tab == 'progress') {
 			$window.location.href = '#/tab/prog';
+		} else if (tab == 'cart') {
+			$window.location.href = '#/tab/cart';
 		} else if (tab == 'mine') {
 			$window.location.href = '#/tab/mine';
 		}
