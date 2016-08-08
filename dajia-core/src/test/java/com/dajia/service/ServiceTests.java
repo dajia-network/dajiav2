@@ -1,11 +1,20 @@
 package com.dajia.service;
 
+import java.nio.charset.Charset;
+
+import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import com.dajia.Application;
 import com.dajia.domain.ProductItem;
@@ -73,5 +82,28 @@ public class ServiceTests {
 		Long productItemId = 101L;
 		ProductItem productItem = productItemRepo.findOne(productItemId);
 		orderService.orderRefund(productItem);
+	}
+
+	@Test
+	public void testUpYun() {
+		String url = "http://v0.api.upyun.com/dajia-static/app_img";
+		String username = "dajiawang";
+		String password = "Dajia2016";
+		HttpHeaders headers = createHeaders(username, password);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(headers),
+				String.class);
+		System.out.println(response.getBody());
+	}
+
+	private HttpHeaders createHeaders(final String username, final String password) {
+		return new HttpHeaders() {
+			{
+				String auth = username + ":" + password;
+				byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
+				String authHeader = "Basic " + new String(encodedAuth);
+				set("Authorization", authHeader);
+			}
+		};
 	}
 }

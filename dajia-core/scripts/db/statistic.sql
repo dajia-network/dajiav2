@@ -26,3 +26,7 @@ select product_item_id from product_item where product_status=3
 select o.user_id, u.username, o.c from (
 select user_id, count(1) c from user_order where payment_id is not null and order_status in (2,3,4) group by user_id
 ) o, user u where u.user_id=o.user_id order by o.c desc
+
+select p.product_id, p.short_name, o.c from product p, (
+select product_id, count(1) c from user_order where payment_id is not null and order_status in (2,3,4)
+group by product_id) o where o.product_id=p.product_id order by o.c desc

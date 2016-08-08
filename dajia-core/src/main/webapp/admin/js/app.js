@@ -1,4 +1,5 @@
-angular.module('dajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'flow', 'dajiaAdmin.controllers', 'dajiaAdmin.directives' ])
+angular.module('dajiaAdmin',
+		[ 'ui.bootstrap', 'ngRoute', 'flow', 'textAngular', 'dajiaAdmin.controllers', 'dajiaAdmin.directives' ])
 		.config([ '$routeProvider', function($routeProvider) {
 			$routeProvider.when('/products', {
 				cache : false,
@@ -35,4 +36,11 @@ angular.module('dajiaAdmin', [ 'ui.bootstrap', 'ngRoute', 'flow', 'dajiaAdmin.co
 			};
 		}).config([ '$httpProvider', function($httpProvider) {
 			$httpProvider.interceptors.push('authInterceptor');
+		} ]).config([ 'flowFactoryProvider', function(flowFactoryProvider) {
+
+			flowFactoryProvider.defaults = {
+				target : '/upload',
+				permanentErrors : [ 404, 500, 501 ],
+				testChunks : false
+			};
 		} ]);

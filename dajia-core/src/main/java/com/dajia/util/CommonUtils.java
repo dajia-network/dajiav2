@@ -143,7 +143,7 @@ public class CommonUtils {
 			} else {
 				persist.prices = req.prices;
 			}
-		} else {
+		} else if (null != persist.prices) {
 			persist.prices.clear();
 		}
 	}
@@ -157,6 +157,25 @@ public class CommonUtils {
 		}
 		if (null != req.brief) {
 			persist.brief = req.brief;
+		}
+		if (null != req.description) {
+			persist.description = req.description;
+		}
+		persist.imgUrl = req.imgUrl;
+		if (null != req.productImages) {
+			persist.imgUrl4List = null;
+			for (ProductImage productImage : req.productImages) {
+				productImage.product = persist;
+				if (null == persist.imgUrl4List) {
+					persist.imgUrl4List = productImage.url;
+				}
+			}
+			if (null != persist.productImages) {
+				persist.productImages.clear();
+				persist.productImages.addAll(req.productImages);
+			} else {
+				persist.productImages = req.productImages;
+			}
 		}
 	}
 

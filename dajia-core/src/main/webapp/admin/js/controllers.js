@@ -101,7 +101,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		'ProductDetailCtrl',
 		function($scope, $http, $routeParams, $route, $window) {
 			console.log('ProductDetailCtrl...');
+			$scope.descImages = [];
 			$http.get('/admin/product/' + $routeParams.pid).success(function(data, status, headers, config) {
+				console.log(data);
 				$scope.newSold = null;
 				$scope.newPrice = null;
 				var product = data;
@@ -186,7 +188,8 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				$scope.alerts = [];
 				console.log($scope.product);
 				if (!$scope.product.name || !$scope.product.postFee || !$scope.product.stock
-						|| !$scope.product.originalPrice || !$scope.product.startDate || !$scope.product.expiredDate) {
+						|| !$scope.product.originalPrice || !$scope.product.startDate || !$scope.product.expiredDate
+						|| !$scope.product.prices || $scope.product.prices.length == 0) {
 					$scope.formIncomplete();
 				} else {
 					$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
@@ -210,6 +213,58 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			$scope.homeImgUploader = {};
 			$scope.homeImgUpload = function() {
 				$scope.homeImgUploader.flow.upload();
+			}
+			$scope.otherImgUploader = {};
+			$scope.otherImgUpload = function() {
+				$scope.otherImgUploader.flow.upload();
+			}
+			$scope.descImgUploader = {};
+			$scope.descImgUpload = function() {
+				$scope.descImgUploader.flow.upload();
+			}
+			$scope.homeImgUploadSuccess = function($message) {
+				console.log($message);
+				$scope.product.imgUrl = $message;
+			}
+			$scope.otherImgUploadSuccess = function($message) {
+				console.log($message);
+				if (null == $scope.product.productImages) {
+					$scope.product.productImages = [];
+				}
+				var productImg = {
+					url : $message,
+					thumbUrl : $message
+				};
+				$scope.product.productImages.push(productImg);
+			}
+			$scope.descImgUploadSuccess = function($message) {
+				console.log($message);
+				$scope.descImages.push($message);
+				console.log($scope.descImages);
+			}
+			$scope.homeImgDelete = function() {
+				if (null != $scope.homeImgUploader.flow.files) {
+					$scope.homeImgUploader.flow.files.forEach(function(f) {
+						f.cancel();
+					});
+				}
+				$scope.product.imgUrl = null;
+			}
+			$scope.otherImgDelete = function() {
+				if (null != $scope.otherImgUploader.flow.files) {
+					$scope.otherImgUploader.flow.files.forEach(function(f) {
+						f.cancel();
+					});
+				}
+				$scope.product.productImages = null;
+			}
+			$scope.descImgDelete = function() {
+				if (null != $scope.descImgUploader.flow.files) {
+					$scope.descImgUploader.flow.files.forEach(function(f) {
+						f.cancel();
+					});
+				}
+				$scope.descImages = [];
 			}
 		})
 
