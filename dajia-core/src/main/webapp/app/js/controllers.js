@@ -823,7 +823,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					var charge = data;
 					console.log(charge);
 					if (null == charge || charge.length == 0) {
-						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
+						popWarning('订单已经过期或商品已经售完', $timeout, $ionicLoading);
 					} else {
 						pingpp.createPayment(charge, function(result, error) {
 							if (result == 'success') {

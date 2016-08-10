@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserOrderItem;
+import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.ApiService;
@@ -54,6 +56,9 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private ProductItemRepo productItemRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -158,6 +163,19 @@ public class OrderController extends BaseController {
 		UserOrder order = orderRepo.findOne(orderVO.orderId);
 		if (null == order) {
 			return null;
+		}
+		if (null != order.productItemId) {
+			ProductItem pi = productItemRepo.findOne(order.productItemId);
+			if (pi.productStatus != CommonUtils.ProductStatus.VALID.getKey() || pi.stock <= 0) {
+				return null;
+			}
+		} else {
+			for (UserOrderItem oi : order.orderItems) {
+				ProductItem pi = productItemRepo.findOne(oi.productItemId);
+				if (pi.productStatus != CommonUtils.ProductStatus.VALID.getKey() || pi.stock <= 0) {
+					return null;
+				}
+			}
 		}
 		order.payType = orderVO.payType;
 		orderRepo.save(order);
