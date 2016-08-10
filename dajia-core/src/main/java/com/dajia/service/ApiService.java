@@ -274,6 +274,7 @@ public class ApiService {
 			extraParams.put("open_id", user.oauthUserId);
 		}
 		Charge charge = Charge.retrieve(chargeId);
+		charge.setChannel(channel);
 		charge.setExtra(extraParams);
 		return charge;
 	}
