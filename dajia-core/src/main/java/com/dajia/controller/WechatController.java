@@ -73,7 +73,7 @@ public class WechatController extends BaseController {
 		}
 		if (null != userInfoMap && userInfoMap.containsKey("openid")) {
 			String openid = userInfoMap.get("openid");
-			User user = userService.oauthLogin(ApiWechatUtils.wechat_oauth_type, openid, userInfoMap, request);
+			User user = userService.oauthLogin(ApiWechatUtils.wechat_oauth_type, openid, userInfoMap, state, request);
 			loginUser = UserUtils.addLoginSession(loginUser, user, request);
 			request.getSession().setAttribute("oauthLogin", "success");
 		}

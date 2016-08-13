@@ -94,7 +94,13 @@ public class RewardService {
 					ur.refOrderId = rewardOrder.orderId;
 					ur.rewardStatus = CommonUtils.RewardStatus.PENDING.getKey();
 				} else {
-					ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
+					User rewardUser = userRepo.findOne(ur.refUserId);
+					if (null != rewardUser
+							&& rewardUser.isSales.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+						ur.rewardStatus = CommonUtils.RewardStatus.SALES.getKey();
+					} else {
+						ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
+					}
 				}
 			} else {
 				UserOrder rewardOrder = orderRepo.findOne(ur.refOrderId);

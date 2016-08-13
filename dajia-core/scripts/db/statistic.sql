@@ -27,15 +27,10 @@ select o.user_id, u.username, o.c from (
 select user_id, count(1) c from user_order where payment_id is not null and order_status in (2,3,4) group by user_id
 ) o, user u where u.user_id=o.user_id order by o.c desc
 
-select p.product_id, p.short_name, res2.quantity from product p, (
-select res.product_id, sum(res.quantity) quantity from (
-select product_id, sum(quantity) quantity from user_order 
-where payment_id is not null and order_status in (2,3,4) group by product_id
-union
-select oi.product_id, sum(oi.quantity) quantity from user_order_item oi, user_order o  
-where o.payment_id is not null and o.order_status in (2,3,4) and oi.order_id=o.order_id 
-group by oi.product_id
-) res group by res.product_id) res2 where res2.product_id=p.product_id order by res2.quantity desc
+select u.user_id, u.username, res.total_price from user u, (
+select user_id, sum(total_price) total_price from user_order 
+where payment_id is not null and order_status in (2,3,4) group by user_id
+) res where res.user_id=u.user_id order by res.total_price desc
 
 select p.product_id, p.short_name, res2.quantity from product p, (
 select res.product_id, sum(res.quantity) quantity from (

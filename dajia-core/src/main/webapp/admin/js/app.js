@@ -13,6 +13,10 @@ angular.module('dajiaAdmin',
 				cache : false,
 				templateUrl : './templates/clients.html',
 				controller : 'ClientsCtrl'
+			}).when('/sales', {
+				cache : false,
+				templateUrl : './templates/sales.html',
+				controller : 'SalesCtrl'
 			}).when('/product/:pid', {
 				cache : false,
 				templateUrl : './templates/productDetail.html',
@@ -21,6 +25,10 @@ angular.module('dajiaAdmin',
 				cache : false,
 				templateUrl : './templates/orderDetail.html',
 				controller : 'OrderDetailCtrl'
+			}).when('/client/:userId', {
+				cache : false,
+				templateUrl : './templates/clientDetail.html',
+				controller : 'ClientDetailCtrl'
 			}).when('/login', {
 				cache : false,
 				templateUrl : './templates/login.html',

@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -378,5 +380,20 @@ public class OrderService {
 		for (ProductItem productItem : productItems) {
 			this.orderRefund(productItem);
 		}
+	}
+
+	public List<UserOrder> getOrderListBySales(Long userId, Date startDate, Date endDate) {
+		List<UserReward> rewardList = rewardRepo.findByRefUserIdAndRewardDateBetweenAndRewardStatus(userId, startDate,
+				endDate, CommonUtils.RewardStatus.SALES.getKey());
+		List<UserOrder> orderList = new ArrayList<UserOrder>();
+		Set<Long> orderIdSet = new HashSet<Long>();
+		for (UserReward userReward : rewardList) {
+			if (!orderIdSet.contains(userReward.orderId)) {
+				orderIdSet.add(userReward.orderId);
+				UserOrder order = orderRepo.findOne(userReward.orderId);
+				orderList.add(order);
+			}
+		}
+		return orderList;
 	}
 }

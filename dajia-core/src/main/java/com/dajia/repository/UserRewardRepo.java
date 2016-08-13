@@ -22,4 +22,7 @@ public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
 
 	public List<UserReward> findByRewardDateBeforeAndRewardStatusAndIsActive(Date rewardDate, Integer rewardStatus,
 			String isActive);
+
+	public List<UserReward> findByRefUserIdAndRewardDateBetweenAndRewardStatus(Long refUserId, Date startDate,
+			Date endDate, Integer rewardStatus);
 }

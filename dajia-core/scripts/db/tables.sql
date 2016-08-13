@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS dajia.user (
     city VARCHAR(100) NULL,
     head_img_url VARCHAR(500) NULL,
     is_admin VARCHAR(5) NOT NULL DEFAULT 'N',
+    is_sales VARCHAR(5) NOT NULL DEFAULT 'N',
+	ref_user_id BIGINT(25) NULL,
 	oauth_type VARCHAR(50) NULL,
 	oauth_user_id VARCHAR(50) NULL,
 	last_visit_date TIMESTAMP NULL,

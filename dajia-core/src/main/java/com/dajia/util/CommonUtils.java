@@ -245,6 +245,20 @@ public class CommonUtils {
 		}
 	}
 
+	public enum YesNoStatus {
+		YES("Y"), NO("N");
+		private String key;
+
+		private YesNoStatus(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(this.key);
+		}
+	}
+
 	public enum ProductShared {
 		YES("Y"), NO("N");
 		private String key;
@@ -360,7 +374,7 @@ public class CommonUtils {
 	}
 
 	public enum RewardStatus {
-		INVALID(0, "尚未生效"), PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消"), ERROR(3, "出错");
+		INVALID(0, "尚未生效"), PENDING(1, "待退款"), COMPLETED(2, "已退款"), CANCELLED(3, "已取消"), ERROR(3, "出错"), SALES(4, "推广");
 		private Integer key;
 		private String value;
 

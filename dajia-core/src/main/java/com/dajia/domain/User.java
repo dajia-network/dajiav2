@@ -55,8 +55,14 @@ public class User extends BaseModel {
 	@Column(name = "oauth_user_id")
 	public String oauthUserId;
 
+	@Column(name = "ref_user_id")
+	public Long refUserId;
+
 	@Column(name = "is_admin")
 	public String isAdmin;
+
+	@Column(name = "is_sales")
+	public String isSales;
 
 	@Column(name = "last_visit_date")
 	public Date lastVisitDate;

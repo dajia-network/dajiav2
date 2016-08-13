@@ -87,11 +87,32 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	}
 }).controller('ClientsCtrl', function($scope, $http) {
 	console.log('ClientsCtrl...');
+	$scope.keyword = {
+		value : ''
+	};
+	$scope.editUser = function(userId) {
+		window.location.href = '#/client/' + userId;
+	}
 	$scope.loadPage = function(pageNum) {
-		$http.get('/admin/users/' + pageNum).success(function(data, status, headers, config) {
+		$http.post('/admin/users/' + pageNum, $scope.keyword).success(function(data, status, headers, config) {
 			console.log(data);
 			$scope.pager = data;
 			$scope.users = data.results;
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.loadPage(1);
+}).controller('SalesCtrl', function($scope, $http) {
+	console.log('SalesCtrl...');
+	$scope.editUser = function(userId) {
+		// window.location.href = '#/sales/' + userId;
+	}
+	$scope.loadPage = function(pageNum) {
+		$http.get('/admin/sales/' + pageNum).success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.pager = data;
+			$scope.salesmen = data.results;
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
@@ -364,6 +385,23 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				$scope.alerts.splice(index, 1);
 			}
 		})
+
+.controller('ClientDetailCtrl', function($scope, $http, $routeParams, $route, $window) {
+	console.log('ClientDetailCtrl...');
+	$http.get('/admin/user/' + $routeParams.userId).success(function(data, status, headers, config) {
+		$scope.user = data;
+		console.log($scope.user);
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
+	$scope.save = function() {
+		$http.post('/admin/user/' + $routeParams.userId, $scope.user).success(function(data, status, headers, config) {
+			$route.reload();
+		}).error(function(data, status, headers, config) {
+			console.log('product update failed...');
+		});
+	}
+})
 
 .controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout, $q) {
 	$scope.login = {

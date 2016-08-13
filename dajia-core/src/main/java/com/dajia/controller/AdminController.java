@@ -32,10 +32,12 @@ import com.dajia.service.RefundService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
+import com.dajia.vo.LoginUserVO;
 import com.dajia.vo.OrderFilterVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
 import com.dajia.vo.ProductVO;
+import com.dajia.vo.SalesVO;
 
 @RestController
 public class AdminController extends BaseController {
@@ -191,6 +193,44 @@ public class AdminController extends BaseController {
 		Page<User> users = userService.loadUsersByPage(pageNum);
 		PaginationVO<User> page = CommonUtils.generatePaginationVO(users, pageNum);
 		return page;
+	}
+
+	@RequestMapping("/admin/sales/{page}")
+	public PaginationVO<SalesVO> salesByPage(@PathVariable("page") Integer pageNum) {
+		Page<User> users = userService.loadSalesUsersByPage(pageNum);
+		List<SalesVO> salesList = new ArrayList<SalesVO>();
+		for (User user : users) {
+			SalesVO sales = userService.generateSalesVO(user);
+			salesList.add(sales);
+		}
+		PaginationVO<SalesVO> page = CommonUtils.generatePaginationVO(users, pageNum);
+		page.results = salesList;
+		return page;
+	}
+
+	@RequestMapping(value = "/admin/users/{page}", method = RequestMethod.POST)
+	public PaginationVO<User> usersByKeywordByPage(@PathVariable("page") Integer pageNum,
+			@RequestBody Map<String, String> keyMap) {
+		Page<User> users = null;
+		String keyword = keyMap.get("value");
+		if (null != keyword && keyword.trim().length() > 0) {
+			users = userService.loadUsersByKeywordByPage(keyword, pageNum);
+		} else {
+			users = userService.loadUsersByPage(pageNum);
+		}
+		PaginationVO<User> page = CommonUtils.generatePaginationVO(users, pageNum);
+		return page;
+	}
+
+	@RequestMapping("/admin/user/{userId}")
+	public LoginUserVO userByUserId(@PathVariable("userId") Long userId) {
+		LoginUserVO userVO = userService.getUserVO(userId);
+		return userVO;
+	}
+
+	@RequestMapping(value = "/admin/user/{userId}", method = RequestMethod.POST)
+	public void modifyUser(@PathVariable("userId") Long userId, @RequestBody LoginUserVO userVO) {
+		userService.modifyUser(userId, userVO);
 	}
 
 	@RequestMapping(value = "/admin/orders/{page}", method = RequestMethod.POST)
