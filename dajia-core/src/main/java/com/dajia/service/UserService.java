@@ -159,22 +159,24 @@ public class UserService {
 
 	public SalesVO generateSalesVO(User user) {
 		SalesVO sales = UserUtils.getSalesVO(user);
-		sales.refAmountMTD = new BigDecimal(0);
+		sales.refAmountWTD = new BigDecimal(0);
 
 		Calendar monthStart = Calendar.getInstance();
-		monthStart.set(Calendar.DAY_OF_MONTH, 1);
+		monthStart.set(Calendar.DAY_OF_WEEK, 1);
 		monthStart.set(Calendar.HOUR_OF_DAY, 0);
 		monthStart.set(Calendar.MINUTE, 0);
 		monthStart.set(Calendar.SECOND, 0);
 		Date startDate = monthStart.getTime();
 		List<UserOrder> orderList = orderService.getOrderListBySales(user.userId, startDate, new Date());
 		for (UserOrder order : orderList) {
-			sales.refAmountMTD = sales.refAmountMTD.add(order.totalPrice);
+			sales.refAmountWTD = sales.refAmountWTD.add(order.totalPrice);
 		}
-		sales.refOrderNumMTD = orderList.size();
+		sales.refOrderNumWTD = orderList.size();
 		List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(user.userId, startDate, new Date(),
 				CommonUtils.ActiveStatus.YES.toString());
-		sales.refUserNumMTD = users.size();
+		sales.refUserNumWTD = users.size();
+
+		sales.bonusAmountWTD = sales.refAmountWTD.multiply(new BigDecimal(0.2));
 		return sales;
 	}
 }

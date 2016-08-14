@@ -41,4 +41,14 @@ public class SalesVO {
 	public Integer refOrderNumMTD;
 
 	public BigDecimal refAmountMTD;
+
+	public BigDecimal bonusAmountMTD;
+
+	public Integer refUserNumWTD;
+
+	public Integer refOrderNumWTD;
+
+	public BigDecimal refAmountWTD;
+
+	public BigDecimal bonusAmountWTD;
 }

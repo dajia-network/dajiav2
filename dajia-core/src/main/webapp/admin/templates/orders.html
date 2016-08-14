@@ -54,7 +54,7 @@
 		<tbody>
 			<tr ng-repeat="order in orders">
 				<td>{{order.orderId}}</td>
-				<td>{{order.trackingId}}</td>
+				<td><a href  ng-click="viewOrder(order.orderId);">{{order.trackingId}}</a></td>
 				<td>{{order.productDesc}}</td>
 				<td ng-if="order.quantity!=null">{{order.quantity}}</td>
 				<td ng-if="order.quantity==null">N/A</td>

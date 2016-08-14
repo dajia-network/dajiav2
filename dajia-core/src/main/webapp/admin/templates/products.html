@@ -42,7 +42,7 @@
 		<tbody>
 			<tr ng-repeat="product in products">
 				<td>{{product.product.productId}}</td>
-				<td width="300px">{{ product.product.name}} </td>
+				<td width="300px"><a href ng-click="editProduct(product.product.productId);">{{ product.product.name}}</a></td>
 				<td>￥{{product.currentPrice}}</td>
 				<td>{{product.stock}}</td>
 				<td>{{product.sold}}</td>

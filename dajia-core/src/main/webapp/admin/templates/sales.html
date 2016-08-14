@@ -21,9 +21,10 @@
 				<th data-field="id">ID</th>
 				<th data-field="userName">用户名</th>
 				<th data-field="mobile">手机</th>
-				<th data-field="refUserNum">本月推广用户数</th>
-				<th data-field="refOrderNum">本月推广订单数</th>
-				<th data-field="refAmount">本月推广金额</th>
+				<th data-field="refUserNum">本周推广用户数</th>
+				<th data-field="refOrderNum">本周推广订单数</th>
+				<th data-field="refAmount">本周推广业绩</th>
+				<th data-field="bonusAmount">本周奖金</th>
 				<th data-field="lastVisitDate">上次登录时间</th>
 				<th>操作</th>
 			</tr>
@@ -32,11 +33,12 @@
 		<tbody>
 			<tr ng-repeat="sales in salesmen">
 				<td>{{sales.userId}}</td>
-				<td>{{sales.userName}}</td>
+				<td><a href ng-click="editUser(sales.userId);">{{sales.userName}}</a></td>
 				<td>{{sales.mobile}}</td>
-				<td>{{sales.refUserNumMTD}}</td>
-				<td>{{sales.refOrderNumMTD}}</td>
-				<td>{{sales.refAmountMTD}}元</td>
+				<td>{{sales.refUserNumWTD}}</td>
+				<td>{{sales.refOrderNumWTD}}</td>
+				<td>{{sales.refAmountWTD.toFixed(2)}}元</td>
+				<td>{{sales.bonusAmountWTD.toFixed(2)}}元</td>
 				<td>{{sales.lastVisitDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
 				<td><button type="button" class="btn btn-primary btn-sm"
 						ng-click="editUser(user.userId);">编辑</button>

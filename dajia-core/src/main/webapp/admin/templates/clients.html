@@ -39,7 +39,7 @@
 		<tbody>
 			<tr ng-repeat="user in users">
 				<td>{{user.userId}}</td>
-				<td>{{user.userName}}</td>
+				<td><a href ng-click="editUser(user.userId);">{{user.userName}}</a></td>
 				<td>{{user.mobile}}</td>
 				<td>{{user.email}}</td>
 				<td>{{user.lastVisitDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
