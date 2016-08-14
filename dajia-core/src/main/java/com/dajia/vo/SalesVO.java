@@ -2,6 +2,7 @@ package com.dajia.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class SalesVO {
 	public Long userId;
@@ -51,4 +52,6 @@ public class SalesVO {
 	public BigDecimal refAmountWTD;
 
 	public BigDecimal bonusAmountWTD;
+
+	public List<SalesIndicatorVO> salesIndicators;
 }

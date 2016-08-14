@@ -1,6 +1,8 @@
 package com.dajia.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +28,7 @@ import com.dajia.util.CommonUtils.YesNoStatus;
 import com.dajia.util.EncodingUtil;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.SalesIndicatorVO;
 import com.dajia.vo.SalesVO;
 
 @Service
@@ -161,12 +164,12 @@ public class UserService {
 		SalesVO sales = UserUtils.getSalesVO(user);
 		sales.refAmountWTD = new BigDecimal(0);
 
-		Calendar monthStart = Calendar.getInstance();
-		monthStart.set(Calendar.DAY_OF_WEEK, 1);
-		monthStart.set(Calendar.HOUR_OF_DAY, 0);
-		monthStart.set(Calendar.MINUTE, 0);
-		monthStart.set(Calendar.SECOND, 0);
-		Date startDate = monthStart.getTime();
+		Calendar weekStart = Calendar.getInstance();
+		weekStart.set(Calendar.DAY_OF_WEEK, 1);
+		weekStart.set(Calendar.HOUR_OF_DAY, 0);
+		weekStart.set(Calendar.MINUTE, 0);
+		weekStart.set(Calendar.SECOND, 0);
+		Date startDate = weekStart.getTime();
 		List<UserOrder> orderList = orderService.getOrderListBySales(user.userId, startDate, new Date());
 		for (UserOrder order : orderList) {
 			sales.refAmountWTD = sales.refAmountWTD.add(order.totalPrice);
@@ -175,8 +178,59 @@ public class UserService {
 		List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(user.userId, startDate, new Date(),
 				CommonUtils.ActiveStatus.YES.toString());
 		sales.refUserNumWTD = users.size();
-
 		sales.bonusAmountWTD = sales.refAmountWTD.multiply(new BigDecimal(0.2));
+
 		return sales;
+	}
+
+	public SalesVO getSalesDetail(SalesVO salesVO) {
+		salesVO.salesIndicators = new ArrayList<SalesIndicatorVO>();
+		Date startDate = new Date();
+		Date endDate = new Date();
+		for (int i = 0; i < 4; i++) {
+			Calendar weekStart = Calendar.getInstance();
+			weekStart.setTime(startDate);
+			if (i > 0) {
+				weekStart.add(Calendar.DATE, -1);
+			}
+			weekStart.set(Calendar.DAY_OF_WEEK, 1);
+			weekStart.set(Calendar.HOUR_OF_DAY, 0);
+			weekStart.set(Calendar.MINUTE, 0);
+			weekStart.set(Calendar.SECOND, 0);
+			startDate = weekStart.getTime();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+			String startDateStr = dateFormat.format(startDate);
+			String endDateStr = dateFormat.format(endDate);
+			String periodStr = startDateStr + " - " + endDateStr;
+
+			SalesIndicatorVO indicator = new SalesIndicatorVO();
+			indicator.period = periodStr;
+
+			indicator.refAmount = new BigDecimal(0);
+			List<UserOrder> orderList = orderService.getOrderListBySales(salesVO.userId, startDate, endDate);
+			for (UserOrder order : orderList) {
+				indicator.refAmount = indicator.refAmount.add(order.totalPrice);
+			}
+			indicator.refOrderNum = orderList.size();
+			List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(salesVO.userId, startDate,
+					endDate, CommonUtils.ActiveStatus.YES.toString());
+			indicator.refUserNum = users.size();
+			indicator.bonusAmount = indicator.refAmount.multiply(new BigDecimal(0.2));
+			salesVO.salesIndicators.add(indicator);
+
+			endDate = startDate;
+		}
+
+		return salesVO;
+	}
+
+	public SalesVO getSalesVO(Long userId) {
+		User user = userRepo.findByUserId(userId);
+		if (null != user) {
+			SalesVO salesVO = generateSalesVO(user);
+			return getSalesDetail(salesVO);
+		}
+		return null;
 	}
 }

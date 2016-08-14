@@ -85,7 +85,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	$scope.viewOrder = function(orderId) {
 		window.location.href = '#/order/' + orderId;
 	}
-}).controller('ClientsCtrl', function($scope, $http) {
+})
+
+.controller('ClientsCtrl', function($scope, $http) {
 	console.log('ClientsCtrl...');
 	$scope.keyword = {
 		value : ''
@@ -103,10 +105,12 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		});
 	}
 	$scope.loadPage(1);
-}).controller('SalesCtrl', function($scope, $http) {
+})
+
+.controller('SalesCtrl', function($scope, $http) {
 	console.log('SalesCtrl...');
 	$scope.editUser = function(userId) {
-		// window.location.href = '#/sales/' + userId;
+		window.location.href = '#/sales/' + userId;
 	}
 	$scope.loadPage = function(pageNum) {
 		$http.get('/admin/sales/' + pageNum).success(function(data, status, headers, config) {
@@ -401,6 +405,16 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			console.log('product update failed...');
 		});
 	}
+})
+
+.controller('SalesDetailCtrl', function($scope, $http, $routeParams, $route, $window) {
+	console.log('SalesDetailCtrl...');
+	$http.get('/admin/salesdetail/' + $routeParams.userId).success(function(data, status, headers, config) {
+		$scope.user = data;
+		console.log($scope.user);
+	}).error(function(data, status, headers, config) {
+		console.log('request failed...');
+	});
 })
 
 .controller('SignInCtrl', function($scope, $rootScope, $http, $window, $timeout, $q) {

@@ -228,6 +228,12 @@ public class AdminController extends BaseController {
 		return userVO;
 	}
 
+	@RequestMapping("/admin/salesdetail/{userId}")
+	public SalesVO salesByUserId(@PathVariable("userId") Long userId) {
+		SalesVO salesVO = userService.getSalesVO(userId);
+		return salesVO;
+	}
+
 	@RequestMapping(value = "/admin/user/{userId}", method = RequestMethod.POST)
 	public void modifyUser(@PathVariable("userId") Long userId, @RequestBody LoginUserVO userVO) {
 		userService.modifyUser(userId, userVO);

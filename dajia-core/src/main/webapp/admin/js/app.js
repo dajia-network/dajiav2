@@ -29,6 +29,10 @@ angular.module('dajiaAdmin',
 				cache : false,
 				templateUrl : './templates/clientDetail.html',
 				controller : 'ClientDetailCtrl'
+			}).when('/sales/:userId', {
+				cache : false,
+				templateUrl : './templates/salesDetail.html',
+				controller : 'SalesDetailCtrl'
 			}).when('/login', {
 				cache : false,
 				templateUrl : './templates/login.html',
