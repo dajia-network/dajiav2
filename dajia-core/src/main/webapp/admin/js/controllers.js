@@ -356,7 +356,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}
 			$scope.addComments = function(orderId) {
 				$scope.alerts = [];
-				if (!$scope.order.comments) {
+				if (!$scope.order.comments && !$scope.order.adminComments) {
 					$scope.missComments();
 				} else {
 					$http.get('/admin/order/' + $routeParams.orderId + '/comments', {
