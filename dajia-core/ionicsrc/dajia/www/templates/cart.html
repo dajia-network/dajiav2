@@ -11,15 +11,35 @@
   	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
     <ion-list>
-      <ion-item class="item-thumbnail-left item-icon-right" ng-repeat="product in products" type="item-text-wrap" href="#/tab/prod/{{product.productId}}">
-        <img ng-src="{{product.imgUrl4List}}" >
-        <p>{{product.name}}</p>
-        <p>价格：￥{{product.originalPrice}}</p>
-        <p>打价开始日期：{{product.startDate | date:'yyyy-MM-dd'}}</p>
-  		<p ng-if="product.productStatus!=3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}}</p>
-  		<p ng-if="product.productStatus==3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}} ({{product.status4Show}})</p>
-        <i class="icon ion-chevron-right icon-accessory"></i>
-      </ion-item>
+      <div class="item item-body cart" ng-repeat="cartItem in cartItems">
+			<div class="item noBorder item-thumbnail-left cart">
+				<img ng-src="{{cartItem.imgUrl4List}}">
+				<h3>{{cartItem.name}}</h3>
+			</div>
+			<div class="row cart">
+				<div class="col cart" ng-if="cartItem.productStatus!=2||cartItem.stock<=0">
+					<span>产品售罄或已过期</span>
+				</div>
+				<div class="col cart" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+					<span class="assertive">{{cartItem.currentPrice*cartItem.quantity}}元</span>
+				</div>
+				<div class="col text-right cart">		
+					<div class="buttons">
+						<button class="button button-small button-stable" ng-click="remove(cartItem.cartId)" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+							<i class="icon ion-minus"></i>
+						</button>
+						&nbsp;<span ng-if="cartItem.productStatus==2&&cartItem.stock>0">{{cartItem.quantity}}</span>&nbsp;
+						<button class="button button-small button-stable" ng-click="add(cartItem.cartId)" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+							<i class="icon ion-plus"></i>
+						</button>
+						&nbsp;&nbsp;
+						<button class="button button-small button-stable" ng-click="del(cartItem.cartId)">
+							<i class="icon ion-trash-a"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
     </ion-list>
     
     <div ng-if="cartItems.length==0">
@@ -35,4 +55,12 @@
 		</div>
     </div>
   </ion-content>
+	<ion-footer-bar align-title="left" class="bar-stable" ng-show="cartItems.length>0">
+		<div class="row noPadding">
+			<div class="col text-left">合计：<span class="assertive">{{cart.totalPrice.toFixed(2)}}元</span>&nbsp;(未含运费)</div>
+			<div class="col noPadding text-right">
+				<button class="button button-sqr button-assertive" ng-click="submit()">去结算</button>
+			</div>
+		</div>
+	</ion-footer-bar>
 </ion-view>

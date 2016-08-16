@@ -14,19 +14,31 @@
 	  <div class="item item-divider">
 	    订单号：{{order.trackingId}}
 	  </div>
-	  <div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
+	  <div ng-if="order.productItemId!=null" class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
 	    <img ng-src="{{order.productVO.imgUrl4List}}" >
-        <p>{{order.productVO.name}}</p>
-        <p>数量x{{order.quantity}}  实付: {{order.totalPrice}}元</p>
+        <p>{{order.productDesc}}</p>
+        <p>数量x{{order.quantity}}  金额: {{order.totalPrice}}元</p>
         <p ng-if="order.productVO.productStatus!=3">截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}}</p>
         <p ng-if="order.productVO.productStatus==3">截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}} ({{order.productVO.status4Show}})</p>
         <p><span class="assertive">{{order.orderStatus4Show}}</span></p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 	  </div>
+	  <div ng-if="order.productItemId==null" class="item item-thumbnail item-icon-right" type="item-text-wrap" ng-click="orderDetail(order.trackingId)">
+		<p>{{order.productDesc}}</p>
+        <img ng-repeat="product in order.productVOList" ng-src="{{product.imgUrl4List}}" />
+        <p>金额: {{order.totalPrice}}元&nbsp;&nbsp;<span class="assertive">{{order.orderStatus4Show}}</span></p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+	  </div>
 	  <div class="item">
-	    {{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买
-	    <button class="button button-sqr-sm button-assertive" ng-click="orderDetail(order.trackingId)">
+	    <span>{{order.orderDate | date:'yyyy-MM-dd HH:mm'}} 购买</span>
+	    <button ng-if="order.orderStatus==1" class="button button-sqr-sm button-assertive" ng-click="orderDetail(order.trackingId)">
+			前去付款
+		</button>
+	    <button ng-if="order.orderStatus!=1" class="button button-sqr-sm button-assertive" ng-click="orderDetail(order.trackingId)">
 			跟踪订单
+		</button>
+	    <button ng-if="order.orderStatus==1" style="margin-right:5px" class="button button-sqr-sm button-assertive button-outline" ng-click="delOrder(order.trackingId)">
+			删除
 		</button>
 	  </div>
 	</div>

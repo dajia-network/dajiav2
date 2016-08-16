@@ -67,6 +67,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.prod-order', {
 		url : '/prodorder/:pid',
+		cache : false,
 		views : {
 			'tab-prod' : {
 				templateUrl : 'templates/order.html',
@@ -75,6 +76,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.prod-order-rec', {
 		url : '/prodorder/:pid/:refuserid',
+		cache : false,
 		views : {
 			'tab-prod' : {
 				templateUrl : 'templates/order.html',
@@ -90,7 +92,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.prog-detail', {
-		url : '/prog/:trackingId',
+		url : '/prog/:trackingId/:orderItemId',
 		views : {
 			'tab-prog' : {
 				templateUrl : 'templates/prog-detail.html',
@@ -106,7 +108,8 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-orders', {
-		url : '/mine/orders',
+		url : '/orders',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/order-list.html',
@@ -114,7 +117,8 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-order', {
-		url : '/mine/order/:trackingId',
+		url : '/order/:trackingId',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/order-detail.html',
@@ -123,22 +127,16 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.mine-fav', {
 		url : '/mine/fav',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/fav-list.html',
 				controller : 'MyFavCtrl'
 			}
 		}
-	}).state('tab.mine-cart', {
-		url : '/mine/cart',
-		views : {
-			'tab-mine' : {
-				templateUrl : 'templates/cart.html',
-				controller : 'MyCartCtrl'
-			}
-		}
 	}).state('tab.mine-pass', {
 		url : '/mine/password',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/password.html',
@@ -147,6 +145,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.mine-mobile', {
 		url : '/mine/bindmobile',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/bindMobile.html',
@@ -155,6 +154,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.mine-contacts', {
 		url : '/mine/contacts',
+		cache : false,
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/contact-list.html',
@@ -170,11 +170,29 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 			}
 		}
 	}).state('tab.mine-qcode', {
-		url : '/mine/qcode',
+		url : '/qcode',
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/qcode.html',
 				controller : 'QcodeCtrl'
+			}
+		}
+	}).state('tab.cart', {
+		url : '/cart',
+		cache : false,
+		views : {
+			'tab-cart' : {
+				templateUrl : 'templates/cart.html',
+				controller : 'MyCartCtrl'
+			}
+		}
+	}).state('tab.cart-cartorder', {
+		url : '/cartorder',
+		cache : false,
+		views : {
+			'tab-cart' : {
+				templateUrl : 'templates/cartorder.html',
+				controller : 'OrderCtrl'
 			}
 		}
 	}).state('error', {

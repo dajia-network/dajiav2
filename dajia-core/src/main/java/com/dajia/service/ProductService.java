@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Price;
 import com.dajia.domain.Product;
+import com.dajia.domain.ProductImage;
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserCart;
 import com.dajia.domain.UserFavourite;
@@ -46,7 +47,6 @@ import com.dajia.vo.ProductVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pingplusplus.exception.PingppException;
 
 @Service
 public class ProductService {
@@ -253,6 +253,7 @@ public class ProductService {
 		productVO.imgUrl = product.imgUrl;
 		productVO.imgUrl4List = product.imgUrl4List;
 		productVO.productImages = product.productImages;
+		productImageSort(productVO.productImages);
 		return productVO;
 	}
 
@@ -584,5 +585,19 @@ public class ProductService {
 			}
 		}
 		return true;
+	}
+
+	private void productImageSort(List<ProductImage> imgList) {
+		if (null != imgList) {
+			for (int i = 0; i < imgList.size() - 1; i++) {
+				for (int j = 0; j < imgList.size() - 1 - i; j++) {
+					if (imgList.get(j).sort > imgList.get(j + 1).sort) {
+						ProductImage temp = imgList.get(j);
+						imgList.set(j, imgList.get(j + 1));
+						imgList.set(j + 1, temp);
+					}
+				}
+			}
+		}
 	}
 }

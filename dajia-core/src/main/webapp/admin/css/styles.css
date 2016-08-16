@@ -40,6 +40,7 @@
 
 .thumbnail {
 	border: none;
+	display: inline-block;
 }
 
 .thumbnail>img {

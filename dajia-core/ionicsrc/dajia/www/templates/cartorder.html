@@ -55,27 +55,34 @@
 		  购买详情
 		</div>
 		<div class="item item-body">
-			<div class="item noBorder item-thumbnail-left">
-				<img ng-src={{orderItem.imgUrl}}>
-				<h3>{{orderItem.name}}</h3>
-			</div>
-			<div class="row">
-				<div class="col">购买数量</div>
-				<div class="col text-right cart">		
-					<div class="buttons">
-						<button class="button button-small button-stable" ng-click="remove()">
-							<i class="icon ion-minus"></i>
-						</button>
-						&nbsp;<span>{{order.quantity}}</span>&nbsp;
-						<button class="button button-small button-stable" ng-click="add()">
-							<i class="icon ion-plus"></i>
-						</button>
+			<div class="item noBorder item-body cart" ng-repeat="cartItem in cartItems">
+				<div class="item noBorder item-thumbnail-left cart">
+					<img ng-src="{{cartItem.imgUrl4List}}">
+					<h3>{{cartItem.name}}</h3>
+				</div>
+				<div class="row cart">
+					<div class="col cart" ng-if="cartItem.productStatus!=2||cartItem.stock<=0">
+						<span>产品售罄或已过期</span>
+					</div>
+					<div class="col cart" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+						<span class="assertive">{{cartItem.currentPrice*cartItem.quantity}}元</span>
+					</div>
+					<div class="col text-right cart">		
+						<div class="buttons">
+							<button class="button button-small button-stable" ng-click="remove4Cart(cartItem.cartId)" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+								<i class="icon ion-minus"></i>
+							</button>
+							&nbsp;<span ng-if="cartItem.productStatus==2&&cartItem.stock>0">{{cartItem.quantity}}</span>&nbsp;
+							<button class="button button-small button-stable" ng-click="add4Cart(cartItem.cartId)" ng-if="cartItem.productStatus==2&&cartItem.stock>0">
+								<i class="icon ion-plus"></i>
+							</button>
+							&nbsp;&nbsp;
+							<button class="button button-small button-stable" ng-click="del4Cart(cartItem.cartId)">
+								<i class="icon ion-trash-a"></i>
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
-				<div class="col">商品单价</div>
-				<div class="col text-right assertive">{{orderItem.currentPrice}}元</div>
 			</div>
 			<div class="row">
 				<div class="col">邮费</div>

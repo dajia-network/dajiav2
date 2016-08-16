@@ -251,6 +251,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				console.log($message);
 				$scope.product.imgUrl = $message;
 			}
+			$scope.imgOrder = 0;
 			$scope.otherImgUploadSuccess = function($message) {
 				console.log($message);
 				if (null == $scope.product.productImages) {
@@ -258,9 +259,11 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				}
 				var productImg = {
 					url : $message,
-					thumbUrl : $message
+					thumbUrl : $message,
+					sort : $scope.imgOrder
 				};
 				$scope.product.productImages.push(productImg);
+				$scope.imgOrder += 1;
 			}
 			$scope.descImgUploadSuccess = function($message) {
 				console.log($message);
@@ -282,6 +285,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 					});
 				}
 				$scope.product.productImages = null;
+				$scope.imgOrder = 0;
 			}
 			$scope.descImgDelete = function() {
 				if (null != $scope.descImgUploader.flow.files) {
@@ -290,6 +294,28 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 					});
 				}
 				$scope.descImages = [];
+			}
+			$scope.switchImgOrder = function(imgId) {
+				if (null != $scope.product.productImages) {
+					for (i = 0; i < $scope.product.productImages.length; i++) {
+						var current = $scope.product.productImages[i];
+						var next = $scope.product.productImages[i + 1];
+						if (current.imgId == imgId) {
+							var tmp = {
+								url : null,
+								thumbUrl : null,
+								sort : null
+							};
+							tmp.url = current.url;
+							tmp.thumbUrl = current.thumbUrl;
+							current.url = next.url;
+							current.thumbUrl = next.thumbUrl;
+							next.url = tmp.url;
+							next.thumbUrl = tmp.thumbUrl;
+							break;
+						}
+					}
+				}
 			}
 		})
 

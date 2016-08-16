@@ -61,8 +61,13 @@
 			    <div class="thumbnail" ng-hide="product.productImages!=null&&product.productImages.length>0">
 			      <img class="img-thumbnail" src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&text=no+image" />
 			    </div>
-			    <div class="thumbnail" ng-show="product.productImages!=null&&product.productImages.length>0">
-			      <img class="img-thumbnail" ng-repeat="image in product.productImages" ng-src="{{image.url}}" />
+			    <div ng-show="product.productImages!=null&&product.productImages.length>0">
+			   		<div class="thumbnail" ng-repeat="image in product.productImages" ng-switch="$last">
+						<img class="img-thumbnail" ng-src="{{image.url}}" />
+						<button ng-switch-when="false" type="button" class="btn btn-default" ng-click="switchImgOrder(image.imgId)">
+							<span class="glyphicon glyphicon-transfer"></span>
+						</button>
+			   		</div>
 			    </div>
 			    <div>
 			      <span class="btn btn-default" flow-btn flow-attrs="{accept:'image/*'}">选择</span>

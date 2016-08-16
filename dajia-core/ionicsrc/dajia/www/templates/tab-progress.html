@@ -9,7 +9,7 @@
 	
 	<div ng-if="loginUser">
 		<div class="card" ng-repeat="order in myOrders" >
-			<div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId)">
+			<div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId, order.orderItemId)">
 			  <img ng-src="{{order.productVO.imgUrl4List}}" />
 			     <p>{{order.productVO.name}}</p>
 			     <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
@@ -32,7 +32,7 @@
 				 	
 				</div>
 				<div class="col homebar" align="center">
-				    <button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId)">
+				    <button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId, order.orderItemId)">
 						去看底价
 					</button>
 					<button ng-if="order.productVO.productStatus==3||order.productVO.stock<=0" disabled="true" class="button button-sqr button-assertive">打价已结束</button>
