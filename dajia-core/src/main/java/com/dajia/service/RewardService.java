@@ -87,6 +87,10 @@ public class RewardService {
 			ur.orderUserId = order.userId;
 			ur.rewardRatio = 10; // ignore quantity
 			ur.expiredDate = productItem.expiredDate;
+			Calendar c = Calendar.getInstance();
+			c.setTime(ur.expiredDate);
+			c.add(Calendar.DATE, CommonUtils.reward_delay_days);
+			ur.rewardDate = c.getTime();
 			if (null == ur.refOrderId || ur.refOrderId.longValue() == 0L) {
 				UserOrder rewardOrder = orderService.findOneOrderByProductItemIdAndUserId(ur.productItemId,
 						ur.refUserId);
@@ -98,6 +102,7 @@ public class RewardService {
 					if (null != rewardUser
 							&& rewardUser.isSales.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
 						ur.rewardStatus = CommonUtils.RewardStatus.SALES.getKey();
+						ur.rewardDate = new Date();
 					} else {
 						ur.rewardStatus = CommonUtils.RewardStatus.INVALID.getKey();
 					}
@@ -121,10 +126,6 @@ public class RewardService {
 					}
 				}
 			}
-			Calendar c = Calendar.getInstance();
-			c.setTime(ur.expiredDate);
-			c.add(Calendar.DATE, CommonUtils.reward_delay_days);
-			ur.rewardDate = c.getTime();
 			rewardRepo.save(ur);
 		}
 	}
