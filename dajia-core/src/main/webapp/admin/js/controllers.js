@@ -128,7 +128,7 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			console.log('ProductDetailCtrl...');
 			$scope.descImages = [];
 			$http.get('/admin/product/' + $routeParams.pid).success(function(data, status, headers, config) {
-				console.log(data);
+				// console.log(data);
 				$scope.newSold = null;
 				$scope.newPrice = null;
 				var product = data;
@@ -217,6 +217,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 						|| !$scope.product.prices || $scope.product.prices.length == 0) {
 					$scope.formIncomplete();
 				} else {
+					if ($scope.product.isPromoted == 'Y') {
+						$scope.product.buyQuota = 1;
+					}
 					$http.post('/admin/product/' + $routeParams.pid, $scope.product).success(
 							function(data, status, headers, config) {
 								window.location = '#';

@@ -384,7 +384,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 					var charge = data;
 					console.log(charge);
 					if (null == charge || charge.length == 0) {
-						popWarning('订单生成出错或商品已经售完', $timeout, $ionicLoading);
+						popWarning('很抱歉，订单生成出错或商品已经售完，请刷新页面或重新进入应用再次尝试。', $timeout, $ionicLoading);
 						$timeout(function() {
 							$window.location.replace('#/tab/mine');
 							$window.location.href = "#/tab/orders";

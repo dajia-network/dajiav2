@@ -16,9 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.dajia.vo.ProductVO;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
 // @JsonIgnoreProperties(value = { "product" })
 @Table(name = "product_item")
@@ -43,6 +40,9 @@ public class ProductItem extends BaseModel {
 
 	@Column(name = "fix_top")
 	public Integer fixTop;
+
+	@Column(name = "is_promoted")
+	public String isPromoted;
 
 	@Column(name = "original_price")
 	public BigDecimal originalPrice;

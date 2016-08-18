@@ -37,6 +37,8 @@ public class ProductVO {
 
 	public Integer fixTop;
 
+	public String isPromoted;
+
 	public BigDecimal originalPrice;
 
 	public BigDecimal currentPrice;

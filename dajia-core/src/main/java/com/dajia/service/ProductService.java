@@ -229,6 +229,7 @@ public class ProductService {
 			productVO.buyQuota = pi.buyQuota;
 			productVO.productStatus = pi.productStatus;
 			productVO.fixTop = pi.fixTop;
+			productVO.isPromoted = pi.isPromoted;
 			productVO.originalPrice = pi.originalPrice;
 			productVO.currentPrice = pi.currentPrice;
 			productVO.postFee = pi.postFee;

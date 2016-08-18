@@ -44,3 +44,5 @@ group by oi.product_id
 
 
 select count(*) from user where created_date!=last_visit_date
+
+select sum(total_price) from user_order where payment_id is not null and order_status in (2,3,4)

@@ -119,6 +119,9 @@ public class CommonUtils {
 		if (null != req.fixTop) {
 			persist.fixTop = req.fixTop;
 		}
+		if (null != req.isPromoted) {
+			persist.isPromoted = req.isPromoted;
+		}
 		if (null != req.productStatus) {
 			persist.productStatus = req.productStatus;
 		} else {

@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS dajia.product_item (
     buy_quota INT,
     product_status INT,
     fix_top INT,
+    is_promoted VARCHAR(5) NULL DEFAULT 'N',
     original_price NUMERIC(10,2),
     current_price NUMERIC(10,2),
     post_fee NUMERIC(10,2),

@@ -357,6 +357,7 @@ public class OrderService {
 			}
 			return true;
 		} else if (null != order.orderItems) {
+			BigDecimal productAmount = new BigDecimal(0);
 			for (UserOrderItem oi : order.orderItems) {
 				ProductItem item = productItemRepo.findOne(oi.productItemId);
 				if (null == item) {
@@ -367,6 +368,11 @@ public class OrderService {
 					logger.error("Product price validation failed");
 					return false;
 				}
+				productAmount = productAmount.add(oi.unitPrice.multiply(new BigDecimal(oi.quantity)));
+			}
+			if (order.totalPrice.compareTo(productAmount.add(order.postFee)) < 0) {
+				logger.error("Total price validation failed");
+				return false;
 			}
 			return true;
 		} else {
