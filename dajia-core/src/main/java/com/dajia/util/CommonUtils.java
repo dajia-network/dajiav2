@@ -494,4 +494,23 @@ public class CommonUtils {
 			return value;
 		}
 	}
+
+	public enum ShareType {
+		BUY_SHARE(1, "购买分享");
+		private Integer key;
+		private String value;
+
+		private ShareType(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
 }

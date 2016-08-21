@@ -99,6 +99,14 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'ProgDetailCtrl'
 			}
 		}
+	}).state('tab.prog-detail-share', {
+		url : '/prog4s/:trackingId/:orderItemId',
+		views : {
+			'tab-prog' : {
+				templateUrl : 'templates/prog-detail-share.html',
+				controller : 'ProgDetailShareCtrl'
+			}
+		}
 	}).state('tab.mine', {
 		url : '/mine',
 		views : {

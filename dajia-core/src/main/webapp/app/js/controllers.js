@@ -184,16 +184,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						}, 1000);
 
 						var targetDate = new Date(product.expiredDate);
-						// var countdown = document.getElementById('clock-' +
-						// $scope.product.productId);
-						// console.log('clock-' + $scope.product.productId);
-						// console.log(countdown);
-						// DajiaGlobal.utils.getCountdown(countdown,
-						// targetDate);
-						// var clock = setInterval(function() {
-						// DajiaGlobal.utils.getCountdown(countdown,
-						// targetDate);
-						// }, 1000);
 
 						// save share log
 						var productId = DajiaGlobal.utils.getURLParameter('productId');
@@ -204,8 +194,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						if (null != productId) {
 							productId = Number(productId);
 							var refUserId = DajiaGlobal.utils.getURLParameter('refUserId');
+							var refOrderId = DajiaGlobal.utils.getURLParameter('refOrderId');
 							if (null != refUserId) {
 								refUserId = Number(refUserId);
+							}
+							if (null != refOrderId) {
+								refOrderId = Number(refOrderId);
 							}
 							var shareLog = {
 								visitUrl : window.location.href,
@@ -224,6 +218,19 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							userId : userId
 						}
 						$http.post('/user/visitlog', visitLog);
+
+						// add user share
+						if (null != refUserId && null != refOrderId && null != userId && null != productId
+								&& product.isPromoted == 'Y' && refUserId != userId) {
+							var userShare = {
+								productId : product.productId,
+								productItemId : product.productItemId,
+								userId : refUserId,
+								visitUserId : userId,
+								orderId : refOrderId
+							}
+							$http.post('/user/addUserShare', userShare);
+						}
 					});
 			$scope.progressValue = 0;
 		})
@@ -631,11 +638,15 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.goHome = function() {
 				$window.location.href = '#/tab/prod';
 			}
-			$scope.progressDetail = function(trackingId, orderItemId) {
+			$scope.progressDetail = function(trackingId, orderItemId, isPromoted) {
 				if (null == orderItemId) {
 					orderItemId = 0;
 				}
-				$window.location.href = '#/tab/prog/' + trackingId + '/' + orderItemId;
+				if (isPromoted == 'Y') {
+					$window.location.href = '#/tab/prog4s/' + trackingId + '/' + orderItemId;
+				} else {
+					$window.location.href = '#/tab/prog/' + trackingId + '/' + orderItemId;
+				}
 			}
 		})
 
@@ -655,7 +666,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						// console.log(order);
 						if (order.productVO.productStatus == 2 && order.productVO.stock) {
 							initWechatJSAPI('progress', $http, $cookies, $timeout, $ionicLoading,
-									$scope.order.productVO, $scope.order, $scope, $rootScope);
+									$scope.order.productVO, $scope.order, $scope, $rootScope, 'N');
 						}
 						$ionicLoading.hide();
 					});
@@ -666,6 +677,40 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$scope.order);
 				// shareSuccess($scope, $http, $scope.order.orderId,
 				// $scope.order.productVO.productId);
+			}
+			$scope.orderDetail = function(trackingId) {
+				$window.location.href = '#/tab/order/' + trackingId;
+			}
+			$scope.back = function() {
+				$window.location.replace('#/tab/prog');
+			}
+		})
+
+.controller(
+		'ProgDetailShareCtrl',
+		function($scope, $rootScope, $cookies, $stateParams, $http, $window, $ionicModal, $timeout, $ionicLoading) {
+			console.log('打群价进度详情...')
+			$scope.order = {};
+			popLoading($ionicLoading);
+			$http.get('/user/progress/' + $stateParams.trackingId + '/' + $stateParams.orderItemId).success(
+					function(data, status, headers, config) {
+						console.log(data);
+						var order = data;
+						order.progressValue = order.productVO.priceOff
+								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
+						$scope.order = order;
+						// console.log(order);
+						if (order.productVO.productStatus == 2 && order.productVO.stock) {
+							initWechatJSAPI('progress', $http, $cookies, $timeout, $ionicLoading,
+									$scope.order.productVO, $scope.order, $scope, $rootScope, 'Y');
+						}
+						$ionicLoading.hide();
+					});
+			$scope.order.progressValue = 0;
+			$scope.share = function() {
+				popWarning('请点击右上角微信菜单-分享到朋友圈或微信群，获取免单机会。', $timeout, $ionicLoading);
+				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, $scope.order.productVO,
+						$scope.order, 'Y');
 			}
 			$scope.orderDetail = function(trackingId) {
 				$window.location.href = '#/tab/order/' + trackingId;
@@ -1445,7 +1490,8 @@ var sendSmsMessage = function($scope, $http, $timeout, $ionicLoading, methodPath
 	});
 }
 
-var initWechatJSAPI = function(screen, $http, $cookies, $timeout, $ionicLoading, product, order, $scope, $rootScope) {
+var initWechatJSAPI = function(screen, $http, $cookies, $timeout, $ionicLoading, product, order, $scope, $rootScope,
+		isPromoted) {
 	$http.get('/wechat/signature').success(function(data, status, headers, config) {
 		// console.log(data);
 		wx.config({
@@ -1465,7 +1511,7 @@ var initWechatJSAPI = function(screen, $http, $cookies, $timeout, $ionicLoading,
 			if (screen == 'product') {
 				simpleShare(product, $cookies, $timeout, $ionicLoading);
 			} else if (screen == 'progress') {
-				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order);
+				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order, isPromoted);
 			} else {
 				shareHome();
 			}
@@ -1581,7 +1627,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 	console.log(wx);
 }
 
-var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order) {
+var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order, isPromoted) {
 	console.log('shareProduct');
 	var userId = $cookies.get('dajia_user_id');
 	var username = $cookies.get('dajia_username');
@@ -1589,6 +1635,15 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
+
+		if (isPromoted == 'Y') {
+			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
+			var shareTitle = username + '正在苦战中！快来与他一起打群价，获得免单机会!';
+			var shareTitle4Timeline = username + '正在苦战中！快来与他一起打群价，获得免单机会!「' + product.shortName
+					+ '」现在限时活动中，打一次便宜1元~ 还等什么？';
+			var shareBody = '「' + product.shortName + '」现在限时活动中，打一次便宜1元~ 还等什么？';
+		}
+
 		var shareLink = "";
 		if (null != order && null != product) {
 			shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
@@ -1597,8 +1652,8 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 			shareLink = 'http://51daja.com/app/index.html#/tab/prod/' + product.productId;
 		}
 		wx.onMenuShareAppMessage({
-			title : '快来跟' + username + '一起亲手打出全网最低价！',
-			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+			title : shareTitle,
+			desc : shareBody,
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			trigger : function() {
@@ -1613,8 +1668,7 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 			}
 		});
 		wx.onMenuShareTimeline({
-			title : '快来跟' + username + '一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
-					+ '元~ 红红火火恍恍惚惚~',
+			title : shareTitle4Timeline,
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {
@@ -1626,8 +1680,8 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 			}
 		});
 		wx.onMenuShareQQ({
-			title : '快来跟' + username + '一起亲手打出全网最低价！',
-			desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+			title : shareTitle,
+			desc : shareBody,
 			link : shareLink,
 			imgUrl : product.imgUrl4List,
 			success : function() {

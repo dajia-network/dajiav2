@@ -8,11 +8,12 @@ import java.util.List;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserRefund;
+import com.dajia.domain.UserShare;
 
 public class OrderVO {
 
 	public Long orderId;
-	
+
 	public Long orderItemId;
 
 	public String trackingId;
@@ -90,4 +91,6 @@ public class OrderVO {
 	public List<CartItemVO> cartItems;
 
 	public List<UserOrderItem> orderItems;
+
+	public List<UserShare> userShares;
 }

@@ -279,3 +279,20 @@ CREATE TABLE IF NOT EXISTS dajia.user_cart (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(cart_id)
 );
+
+DROP TABLE IF EXISTS dajia.user_share;
+CREATE TABLE IF NOT EXISTS dajia.user_share (
+	share_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+    user_id BIGINT(25) NOT NULL,
+    order_id BIGINT(25) NULL,
+    product_id BIGINT(25) NULL,
+    product_item_id BIGINT(25) NULL,
+    visit_user_id BIGINT(25) NULL,
+	visit_username VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+    visit_head_img_url VARCHAR(500) NULL,
+    share_type INT,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(share_id)
+);

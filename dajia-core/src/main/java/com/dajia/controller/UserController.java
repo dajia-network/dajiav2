@@ -28,6 +28,7 @@ import com.dajia.domain.User;
 import com.dajia.domain.UserCart;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserFavourite;
+import com.dajia.domain.UserShare;
 import com.dajia.domain.VisitLog;
 import com.dajia.repository.LocationRepo;
 import com.dajia.repository.UserContactRepo;
@@ -37,6 +38,7 @@ import com.dajia.service.FavouriteService;
 import com.dajia.service.SmsService;
 import com.dajia.service.UserContactService;
 import com.dajia.service.UserService;
+import com.dajia.service.UserShareService;
 import com.dajia.service.VisitLogService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.LocationType;
@@ -77,6 +79,9 @@ public class UserController extends BaseController {
 
 	@Autowired
 	private VisitLogService visitLogService;
+
+	@Autowired
+	private UserShareService userShareService;
 
 	@Autowired
 	EhCacheCacheManager ehcacheManager;
@@ -354,6 +359,11 @@ public class UserController extends BaseController {
 		String visitIp = CommonUtils.getRequestIP(request);
 		Integer logType = CommonUtils.LogType.PRODUCT_VISIT.getKey();
 		visitLogService.addVisitLog(visitLog, logType, visitIp);
+	}
+
+	@RequestMapping(value = "/user/addUserShare", method = RequestMethod.POST)
+	public void addUserShare(@RequestBody UserShare userShare) {
+		userShareService.addUserShare(userShare);
 	}
 
 	@RequestMapping("/user/cart/add/{pid}")

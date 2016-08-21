@@ -444,6 +444,9 @@ public class ProductService {
 				productItemRepo.save(productItem);
 				orderService.orderRefund(productItem);
 			} else if (productItem.stock <= 0) {
+				if (productItem.isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+					return;
+				}
 				logger.info("Product Item " + productItem.productItemId + " is sold out.");
 				productItem.productStatus = ProductStatus.EXPIRED.getKey();
 				productItemRepo.save(productItem);

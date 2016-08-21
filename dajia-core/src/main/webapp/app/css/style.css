@@ -199,7 +199,14 @@ button img {
 .item-progress{
 	font-size: 90%;
 	border: 0px;
-	padding: 0px 16px 16px 16px;
+	top: -10px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	min-height: 52px
+}
+
+.item-progress>img:first-child {
+	top: 6px;
 }
 
 .item-note-progress {

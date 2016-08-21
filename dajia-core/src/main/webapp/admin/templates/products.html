@@ -32,6 +32,8 @@
 				<th data-field="stock">库存</th>
 				<th data-field="sold">销量</th>
 				<th data-field="realSold">真实销量</th>
+				<th data-field="fixTop">置顶</th>
+				<th data-field="isPromoted">参与打群价</th>
 				<th data-field="startDate">起始时间</th>
 				<th data-field="expiredDate">过期时间</th>
 				<th data-field="productStatus">产品状态</th>
@@ -47,6 +49,8 @@
 				<td>{{product.stock}}</td>
 				<td>{{product.sold}}</td>
 				<td>{{product.realSold}}</td>
+				<td>{{product.fixTop}}</td>
+				<td>{{product.isPromoted}}</td>
 				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm'}}</td>
 				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm'}}</td>
 				<td>{{product.status4Show}}</td>

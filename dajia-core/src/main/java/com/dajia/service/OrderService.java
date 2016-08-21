@@ -23,6 +23,7 @@ import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserReward;
+import com.dajia.domain.UserShare;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserContactRepo;
 import com.dajia.repository.UserOrderItemRepo;
@@ -30,6 +31,7 @@ import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRefundRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserRewardRepo;
+import com.dajia.repository.UserShareRepo;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.ActiveStatus;
 import com.dajia.util.CommonUtils.OrderStatus;
@@ -64,6 +66,9 @@ public class OrderService {
 
 	@Autowired
 	private UserRewardRepo rewardRepo;
+
+	@Autowired
+	private UserShareRepo userShareRepo;
 
 	@Autowired
 	private ProductService productService;
@@ -173,7 +178,8 @@ public class OrderService {
 			if (null != ov.productVO) {
 				ov.totalProductPrice = ov.unitPrice.multiply(new BigDecimal(ov.quantity));
 				ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.productVO);
-				ov.refundValue = calculateRefundValue(ov.productVO.currentPrice, order);
+				ov.refundValue = calculateRefundValue(ov.productVO.currentPrice, order.unitPrice, order.totalPrice,
+						order.quantity, order.orderId, ov.productVO.productItemId, ov.productVO.isPromoted);
 			}
 		} else {
 			ov.orderItems = order.orderItems;
@@ -184,24 +190,40 @@ public class OrderService {
 				ov.totalProductPrice = ov.totalProductPrice.add(oi.unitPrice.multiply(new BigDecimal(oi.quantity)));
 				oi.productVO = productService.loadProductDetailByItemId(oi.productItemId);
 				ov.rewardValue = ov.rewardValue.add(rewardService.calculateRewards(ov.orderId, oi.productVO));
-				ov.refundValue = ov.refundValue.add(calculateRefundValue(oi.productVO.currentPrice, oi));
+				ov.refundValue = ov.refundValue.add(calculateRefundValue(oi.productVO.currentPrice, oi.unitPrice,
+						order.totalPrice, oi.quantity, order.orderId, oi.productVO.productItemId,
+						oi.productVO.isPromoted));
 			}
 		}
 	}
 
-	private BigDecimal calculateRefundValue(BigDecimal currentPrice, UserOrder userOrder) {
-		if (null == currentPrice || null == userOrder) {
+	private BigDecimal calculateRefundValue(BigDecimal currentPrice, BigDecimal orderUnitPrice, BigDecimal totalPrice,
+			Integer orderQuantity, Long orderId, Long productItemId, String isPromoted) {
+		if (null == currentPrice || null == orderUnitPrice) {
 			return null;
 		}
-		return userOrder.unitPrice.add(currentPrice.negate()).multiply(new BigDecimal(userOrder.quantity));
+		BigDecimal refundVal = orderUnitPrice.add(currentPrice.negate()).multiply(new BigDecimal(orderQuantity));
+		if (isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+			List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
+					orderId, productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+			refundVal = refundVal.add(new BigDecimal(userShares.size()));
+			if (refundVal.compareTo(totalPrice) > 0) {
+				refundVal = totalPrice;
+			}
+		}
+		return refundVal;
 	}
 
-	private BigDecimal calculateRefundValue(BigDecimal currentPrice, UserOrderItem orderItem) {
-		if (null == currentPrice || null == orderItem) {
-			return null;
-		}
-		return orderItem.unitPrice.add(currentPrice.negate()).multiply(new BigDecimal(orderItem.quantity));
-	}
+	// private BigDecimal calculateRefundValue(BigDecimal currentPrice,
+	// UserOrder userOrder) {
+	// if (null == currentPrice || null == userOrder) {
+	// return null;
+	// }
+	// BigDecimal refundVal =
+	// userOrder.unitPrice.add(currentPrice.negate()).multiply(
+	// new BigDecimal(userOrder.quantity));
+	// return refundVal;
+	// }
 
 	public void orderRefund(ProductItem productItem) {
 		// refund single product order
@@ -214,7 +236,9 @@ public class OrderService {
 		if (null != orderList) {
 			for (UserOrder userOrder : orderList) {
 				if (null != userOrder.paymentId) {
-					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder);
+					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder.unitPrice,
+							userOrder.totalPrice, userOrder.quantity, userOrder.orderId, productItem.productItemId,
+							productItem.isPromoted);
 					if (refundValue.compareTo(new BigDecimal(0)) > 0) {
 						try {
 							apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
@@ -235,7 +259,9 @@ public class OrderService {
 				if (userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.PAIED.getKey()
 						|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVERING.getKey()
 						|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVRIED.getKey()) {
-					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrderItem);
+					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrderItem.unitPrice,
+							userOrderItem.userOrder.totalPrice, userOrderItem.quantity,
+							userOrderItem.userOrder.orderId, productItem.productItemId, productItem.isPromoted);
 					if (refundValue.compareTo(new BigDecimal(0)) > 0) {
 						try {
 							apiService.applyRefund(userOrderItem.userOrder.paymentId, refundValue,
@@ -307,6 +333,11 @@ public class OrderService {
 		}
 		Collections.sort(progressList, Collections.reverseOrder());
 		ov.progressList = progressList;
+
+		List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
+				ov.orderId, ov.productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+		ov.userShares = userShares;
+
 		return ov;
 	}
 
