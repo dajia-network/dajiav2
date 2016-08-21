@@ -22,9 +22,6 @@
 	        现价:<span class="assertive">{{order.productVO.currentPrice}}元</span></p>
 	        <p>截止时间：{{order.productVO.expiredDate | date:'yyyy-MM-dd HH:mm'}}</p>
 		  </div>
-			<div class="bar bar-assertive" ng-if="order.productVO.productStatus==2&&order.productShared=='Y'">
-				<h2 class="title">底价：{{(order.productVO.targetPrice).toFixed(2)}}元（如产品售罄）</h1>
-			</div>
 		  <div class="item item-text-wrap" align="center">
 		  	<span class="assertive">抓紧时间立即分享到朋友圈！</span><br/>
 		  	<span class="assertive">每个好友点击获1元额外优惠，直至免单！</span><br/>
