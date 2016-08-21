@@ -171,6 +171,9 @@ public class CommonUtils {
 				productImage.product = persist;
 				if (null == persist.imgUrl4List) {
 					persist.imgUrl4List = productImage.url;
+					if (null != persist.imgUrl4List) {
+						persist.imgUrl4List = persist.imgUrl4List.replaceAll("https://", "http://");
+					}
 				}
 			}
 			if (null != persist.productImages) {

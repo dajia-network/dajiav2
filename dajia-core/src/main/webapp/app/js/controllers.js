@@ -1641,7 +1641,7 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 			var shareTitle = username + '正在苦战中！一起来打群价，获得免单机会!';
 			var shareTitle4Timeline = username + '正在苦战中！一起来打群价，获得免单机会!「' + product.shortName
 					+ '」现在限时活动中，打一次便宜1元~ 还等什么？';
-			var shareBody = '「' + product.shortName + '」现在限时活动中，打一次便宜1元~ 还等什么？';
+			var shareBody = '「' + product.shortName + '」现在打一次便宜1元限时活动中~ 还等什么？';
 		}
 
 		var shareLink = "";

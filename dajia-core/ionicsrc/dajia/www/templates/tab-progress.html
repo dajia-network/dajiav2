@@ -9,13 +9,13 @@
 	
 	<div ng-if="loginUser">
 		<div class="card" ng-repeat="order in myOrders" >
-			<div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId, order.orderItemId)">
+			<div class="item item-thumbnail-left item-icon-right" type="item-text-wrap" ng-click="progressDetail(order.trackingId, order.orderItemId, order.productVO.isPromoted)">
 			  <img ng-src="{{order.productVO.imgUrl4List}}" />
 			     <p>{{order.productVO.name}}</p>
 			     <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 			     <p>数量 x {{order.quantity}}</p>
 			     <p>出价:{{order.unitPrice}}元  现价:{{order.productVO.currentPrice}}元</p>
-			     <p>截止日期：{{order.productVO.expiredDate | date:'yyyy-MM-dd'}}</p>
+			     <p>截止时间：{{order.productVO.expiredDate | date:'yyyy-MM-dd HH:mm'}}</p>
 			     <i class="icon ion-chevron-right icon-accessory"></i>
 			</div>
 			<div class="row">
@@ -32,10 +32,13 @@
 				 	
 				</div>
 				<div class="col homebar" align="center">
-				    <button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId, order.orderItemId)">
+				    <button ng-if="order.productVO.productStatus==2&&order.productVO.stock>0&&order.productVO.isPromoted!='Y'" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId, order.orderItemId)">
 						去看底价
 					</button>
-					<button ng-if="order.productVO.productStatus==3||order.productVO.stock<=0" disabled="true" class="button button-sqr button-assertive">打价已结束</button>
+				    <button ng-if="order.productVO.productStatus==2&&order.productVO.isPromoted=='Y'" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId, order.orderItemId, order.productVO.isPromoted)">
+						获免单机会
+					</button>
+					<button ng-if="(order.productVO.productStatus==3||order.productVO.stock<=0)&&order.productVO.isPromoted!='Y'" disabled="true" class="button button-sqr button-assertive">打价已结束</button>
 					<button ng-if="order.productVO.productStatus!=2&&order.productVO.productStatus!=3" disabled="true" class="button button-sqr button-assertive">产品已失效</button>
 				</div>
 			</div>
