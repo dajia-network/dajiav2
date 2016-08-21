@@ -1638,8 +1638,8 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 
 		if (isPromoted == 'Y') {
 			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
-			var shareTitle = username + '正在苦战中！快来与他一起打群价，获得免单机会!';
-			var shareTitle4Timeline = username + '正在苦战中！快来与他一起打群价，获得免单机会!「' + product.shortName
+			var shareTitle = username + '正在苦战中！一起来打群价，获得免单机会!';
+			var shareTitle4Timeline = username + '正在苦战中！一起来打群价，获得免单机会!「' + product.shortName
 					+ '」现在限时活动中，打一次便宜1元~ 还等什么？';
 			var shareBody = '「' + product.shortName + '」现在限时活动中，打一次便宜1元~ 还等什么？';
 		}
