@@ -333,6 +333,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}, {
 				code : 'shunfeng',
 				name : '顺丰快递'
+			}, {
+				code : 'zhongtong',
+				name : '中通快递'
 			} ];
 			$http.get('/admin/order/' + $routeParams.orderId).success(
 					function(data, status, headers, config) {
