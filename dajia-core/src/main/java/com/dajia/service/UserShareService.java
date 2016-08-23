@@ -57,6 +57,11 @@ public class UserShareService {
 		if (null != userShares && userShares.size() > 0) {
 			return;
 		}
+		List<UserShare> userSharesReverse = userShareRepo.findByUserIdAndVisitUserIdAndProductItemIdAndShareType(
+				userShare.visitUserId, userShare.userId, userShare.productItemId, userShare.shareType);
+		if (null != userSharesReverse && userSharesReverse.size() > 0) {
+			return;
+		}
 		User user = userRepo.findByUserId(userShare.visitUserId);
 		if (null == user) {
 			return;
