@@ -101,7 +101,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');
-			shareModalInit($scope, $ionicModal);
+			// shareModalInit($scope, $ionicModal);
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -1529,7 +1529,7 @@ var initWechatJSAPI = function(screen, $http, $cookies, $timeout, $ionicLoading,
 		});
 		wx.ready(function() {
 			if (screen == 'product') {
-				//simpleShare(product, $cookies, $timeout, $ionicLoading);
+				simpleShare(product, $cookies, $timeout, $ionicLoading);
 			} else if (screen == 'progress') {
 				shareProduct($scope, $rootScope, $http, $cookies, $timeout, $ionicLoading, product, order, isPromoted);
 			} else {
