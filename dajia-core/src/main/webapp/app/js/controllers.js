@@ -101,6 +101,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');
+			shareModalInit($scope, $ionicModal);
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -220,6 +221,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$http.post('/user/visitlog', visitLog);
 
 						// add user share
+						// $scope.openShareModal();
 						if (null != refUserId && null != refOrderId && null != userId && null != productId
 								&& product.isPromoted == 'Y' && refUserId != userId) {
 							var userShare = {
@@ -1449,6 +1451,24 @@ var userAgreeModalInit = function($scope, $ionicModal) {
 	});
 }
 
+var shareModalInit = function($scope, $ionicModal) {
+	$ionicModal.fromTemplateUrl('templates/share-popup.html', {
+		scope : $scope,
+		animation : 'slide-in-up'
+	}).then(function(modal) {
+		$scope.shareModal = modal;
+	});
+	$scope.openShareModal = function() {
+		$scope.shareModal.show();
+	};
+	$scope.closeShareModal = function() {
+		$scope.shareModal.hide();
+	};
+	$scope.$on('$destroy', function() {
+		$scope.shareModal.remove();
+	});
+}
+
 var popWarning = function(msg, $timeout, $ionicLoading) {
 	$ionicLoading.show({
 		template : msg
@@ -1634,14 +1654,18 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 	if (userId == null) {
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
-		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
-
 		if (isPromoted == 'Y') {
-			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
+			var successMsg = '分享成功，每个好友点击将获1元额外优惠！';
 			var shareTitle = username + '正在苦战中！一起来打群价，获得免单机会!';
 			var shareTitle4Timeline = username + '正在苦战中！一起来打群价，获得免单机会!「' + product.shortName
 					+ '」现在限时活动中，打一次便宜1元~ 还等什么？';
 			var shareBody = '「' + product.shortName + '」现在打一次便宜1元限时活动中~ 还等什么？';
+		} else {
+			successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
+			shareTitle = '快来跟' + username + '一起亲手打出全网最低价！';
+			shareTitle4Timeline = '快来跟' + username + '一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
+					+ '元~ 红红火火恍恍惚惚~';
+			shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
 		}
 
 		var shareLink = "";
