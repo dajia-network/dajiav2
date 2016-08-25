@@ -375,7 +375,9 @@ public class OrderService {
 		if (null != order.productId) {
 			if (order.totalPrice.compareTo(order.unitPrice.multiply(new BigDecimal(order.quantity)).add(order.postFee)) < 0) {
 				logger.error("Total price validation failed");
-				return false;
+				logger.error("Page total: " + order.totalPrice.toPlainString() + "; Calculated total: "
+						+ order.unitPrice.multiply(new BigDecimal(order.quantity)).add(order.postFee).toPlainString());
+				order.totalPrice = order.unitPrice.multiply(new BigDecimal(order.quantity)).add(order.postFee);
 			}
 			ProductItem item = productItemRepo.findOne(order.productItemId);
 			if (null == item) {
@@ -403,7 +405,9 @@ public class OrderService {
 			}
 			if (order.totalPrice.compareTo(productAmount.add(order.postFee)) < 0) {
 				logger.error("Total price validation failed");
-				return false;
+				logger.error("Page total: " + order.totalPrice.toPlainString() + "; Calculated total: "
+						+ productAmount.add(order.postFee).toPlainString());
+				order.totalPrice = productAmount.add(order.postFee);
 			}
 			return true;
 		} else {
