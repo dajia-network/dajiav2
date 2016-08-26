@@ -173,12 +173,18 @@ public class UserService {
 		List<UserOrder> orderList = orderService.getOrderListBySales(user.userId, startDate, new Date());
 		for (UserOrder order : orderList) {
 			sales.refAmountWTD = sales.refAmountWTD.add(order.totalPrice);
+			BigDecimal coef = null;
+			if (order.totalPrice.compareTo(new BigDecimal(100)) >= 0) {
+				coef = new BigDecimal(0.15);
+			} else {
+				coef = new BigDecimal(0.2);
+			}
+			sales.bonusAmountMTD = sales.bonusAmountMTD.add(order.totalPrice.multiply(coef));
 		}
 		sales.refOrderNumWTD = orderList.size();
 		List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(user.userId, startDate, new Date(),
 				CommonUtils.ActiveStatus.YES.toString());
 		sales.refUserNumWTD = users.size();
-		sales.bonusAmountWTD = sales.refAmountWTD.multiply(new BigDecimal(0.2));
 
 		return sales;
 	}
@@ -211,12 +217,18 @@ public class UserService {
 			List<UserOrder> orderList = orderService.getOrderListBySales(salesVO.userId, startDate, endDate);
 			for (UserOrder order : orderList) {
 				indicator.refAmount = indicator.refAmount.add(order.totalPrice);
+				BigDecimal coef = null;
+				if (order.totalPrice.compareTo(new BigDecimal(100)) >= 0) {
+					coef = new BigDecimal(0.15);
+				} else {
+					coef = new BigDecimal(0.2);
+				}
+				indicator.bonusAmount = indicator.bonusAmount.add(order.totalPrice.multiply(coef));
 			}
 			indicator.refOrderNum = orderList.size();
 			List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(salesVO.userId, startDate,
 					endDate, CommonUtils.ActiveStatus.YES.toString());
 			indicator.refUserNum = users.size();
-			indicator.bonusAmount = indicator.refAmount.multiply(new BigDecimal(0.2));
 			salesVO.salesIndicators.add(indicator);
 
 			endDate = startDate;
