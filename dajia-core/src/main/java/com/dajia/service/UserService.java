@@ -163,6 +163,7 @@ public class UserService {
 	public SalesVO generateSalesVO(User user) {
 		SalesVO sales = UserUtils.getSalesVO(user);
 		sales.refAmountWTD = new BigDecimal(0);
+		sales.bonusAmountMTD = new BigDecimal(0);
 
 		Calendar weekStart = Calendar.getInstance();
 		weekStart.set(Calendar.DAY_OF_WEEK, 1);
@@ -214,6 +215,7 @@ public class UserService {
 			indicator.period = periodStr;
 
 			indicator.refAmount = new BigDecimal(0);
+			indicator.bonusAmount = new BigDecimal(0);
 			List<UserOrder> orderList = orderService.getOrderListBySales(salesVO.userId, startDate, endDate);
 			for (UserOrder order : orderList) {
 				indicator.refAmount = indicator.refAmount.add(order.totalPrice);
