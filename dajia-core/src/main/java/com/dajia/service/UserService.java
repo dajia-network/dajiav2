@@ -163,7 +163,7 @@ public class UserService {
 	public SalesVO generateSalesVO(User user) {
 		SalesVO sales = UserUtils.getSalesVO(user);
 		sales.refAmountWTD = new BigDecimal(0);
-		sales.bonusAmountMTD = new BigDecimal(0);
+		sales.bonusAmountWTD = new BigDecimal(0);
 
 		Calendar weekStart = Calendar.getInstance();
 		weekStart.set(Calendar.DAY_OF_WEEK, 1);
