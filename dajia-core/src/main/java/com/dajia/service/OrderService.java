@@ -172,6 +172,7 @@ public class OrderService {
 		User user = userRepo.findByUserId(order.userId);
 		if (null != user) {
 			ov.userName = user.userName;
+			ov.userHeadImgUrl = user.headImgUrl;
 		}
 		if (null != ov.productItemId) {
 			ov.productVO = productService.loadProductDetailByItemId(ov.productItemId);
@@ -436,5 +437,31 @@ public class OrderService {
 			}
 		}
 		return orderList;
+	}
+
+	public OrderVO getRefOrderDetail(Long productId, Long refOrderId) {
+		UserOrder order = orderRepo.findOne(refOrderId);
+		OrderVO ov = this.convertOrderVO(order);
+		this.fillOrderVO(ov, order);
+
+		Long productItemId = null;
+		if (null != ov.productItemId) {
+			productItemId = ov.productItemId;
+		} else if (null != ov.orderItems) {
+			for (UserOrderItem oi : ov.orderItems) {
+				if (oi.productId.longValue() == productId.longValue()) {
+					productItemId = oi.productItemId;
+					break;
+				}
+			}
+		} else {
+			return null;
+		}
+
+		List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
+				ov.orderId, productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+		ov.userShares = userShares;
+
+		return ov;
 	}
 }

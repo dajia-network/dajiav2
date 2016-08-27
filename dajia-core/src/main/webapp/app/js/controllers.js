@@ -101,7 +101,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');
-			// shareModalInit($scope, $ionicModal);
+			shareModalInit($scope, $ionicModal);
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -221,7 +221,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$http.post('/user/visitlog', visitLog);
 
 						// add user share
-						// $scope.openShareModal();
+						$http.get('/product/share/' + productId + '/' + refOrderId).success(
+								function(data, status, headers, config) {
+									$scope.openShareModal(data);
+								});
 						if (null != refUserId && null != refOrderId && null != userId && null != productId
 								&& product.isPromoted == 'Y' && refUserId != userId) {
 							var userShare = {
@@ -700,6 +703,14 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						var order = data;
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
+						if (null != order.userShares) {
+							var shareRefund = order.userShares.length;
+							if (shareRefund > order.productVO.currentPrice) {
+								shareRefund = order.productVO.currentPrice;
+							}
+							order.progressValue = shareRefund / order.productVO.currentPrice * 100;
+							order.productVO.currentPrice = order.productVO.currentPrice - shareRefund;
+						}
 						$scope.order = order;
 						// console.log(order);
 						if (order.productVO.productStatus == 2 && order.productVO.stock) {
@@ -1458,7 +1469,9 @@ var shareModalInit = function($scope, $ionicModal) {
 	}).then(function(modal) {
 		$scope.shareModal = modal;
 	});
-	$scope.openShareModal = function() {
+	$scope.openShareModal = function(data) {
+		console.log(data)
+		$scope.shareInfo = data;
 		$scope.shareModal.show();
 	};
 	$scope.closeShareModal = function() {
@@ -1607,7 +1620,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 				+ product.productId;
 	}
 	wx.onMenuShareAppMessage({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！',
 		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
@@ -1622,7 +1635,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1633,7 +1646,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareQQ({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！',
 		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
@@ -1655,15 +1668,15 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
-		var shareTitle = '快来跟' + username + '一起亲手打出全网最低价！';
-		var shareTitle4Timeline = '快来跟' + username + '一起亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
+		var shareTitle = '快来跟' + username + '一起打出全网最低价！';
+		var shareTitle4Timeline = '快来跟' + username + '一起打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
 				+ '元~ 红红火火恍恍惚惚~';
 		var shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
 		if (isPromoted == 'Y') {
 			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
-			shareTitle = username + '正在苦战中！一起来打群价，获得免单机会!';
-			shareTitle4Timeline = username + '正在苦战中！一起来打群价，获得免单机会!「' + product.shortName + '」现在限时活动中，打一次便宜1元~ 还等什么？';
-			shareBody = '「' + product.shortName + '」现在打一次便宜1元限时活动中~ 还等什么？';
+			shareTitle = username + '正在苦战中！我来补一刀，有机会免单!';
+			shareTitle4Timeline = username + '正在苦战中！我来补一刀，有机会免单!「' + product.shortName + '」补一刀便宜1元限时活动中~ 还等什么？';
+			shareBody = '「' + product.shortName + '」补一刀便宜1元限时活动中~ 还等什么？';
 		}
 		var shareLink = "";
 		if (null != order && null != product) {

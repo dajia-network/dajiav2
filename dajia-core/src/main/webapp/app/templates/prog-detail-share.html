@@ -19,7 +19,7 @@
 	        <p><uib-progressbar class="progress-striped active" animate="true" max="100" value="order.progressValue" type="success"></uib-progressbar></p>
 	        <p>数量 x {{order.quantity}}</p>
 	        <p>出价:{{order.unitPrice}}元&nbsp;&nbsp;&nbsp;
-	        现价:<span class="assertive">{{order.productVO.currentPrice}}元</span></p>
+	        优惠后:<span class="assertive">{{order.productVO.currentPrice}}元</span></p>
 	        <p>截止时间：{{order.productVO.expiredDate | date:'yyyy-MM-dd HH:mm'}}</p>
 		  </div>
 		  <div class="item item-text-wrap" align="center">

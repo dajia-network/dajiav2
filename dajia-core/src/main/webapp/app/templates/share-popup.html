@@ -1,0 +1,21 @@
+<div class="modal">
+	<ion-header-bar>
+		<button class="button button-icon icon ion-android-cancel" ng-click="closeShareModal()"></button>
+		<div class="h1 title">限时活动 - 打群「价」</div>
+		</ion-header-bar>
+	<ion-content>
+		<div class="item item-text-wrap" align="center">
+			<span class="assertive">谢谢你的补刀!</span><br/>
+			<span class="assertive">你参与了打群价，使{{shareInfo.userName}}获得了1元现金补偿!</span><br/>
+			<span class="assertive">{{shareInfo.userName}}已经累计获得{{shareInfo.userShares.length}}元现金补偿!</span>
+			<div class="row">
+				<div class="col-xs-2" ng-repeat="rewardSrcUser in order.rewardSrcUsers">
+					<a class="center-avatar margin"><img ng-src="{{rewardSrcUser.headImgUrl}}"></img></a>
+				</div>
+			</div>
+		</div>
+		<div class="col text-center">
+			<button class="button button-block button-assertive" ng-click="closeShareModal()">我也要打群架</button>
+		</div>
+	</ion-content>
+</div>

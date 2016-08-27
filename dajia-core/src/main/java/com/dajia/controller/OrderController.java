@@ -351,4 +351,11 @@ public class OrderController extends BaseController {
 			}
 		}
 	}
+	
+	@RequestMapping("/product/share/{productId}/{refOrderId}")
+	public OrderVO shareInfo4Product(@PathVariable("productId") Long productId,
+			@PathVariable("refOrderId") Long refOrderId) {
+		OrderVO ov = orderService.getRefOrderDetail(productId, refOrderId);
+		return ov;
+	}
 }

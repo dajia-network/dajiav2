@@ -40,6 +40,8 @@ public class OrderVO {
 
 	public String userName;
 
+	public String userHeadImgUrl;
+
 	public BigDecimal unitPrice;
 
 	public BigDecimal totalPrice;
