@@ -1673,11 +1673,14 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 				+ '元~ 红红火火恍恍惚惚~';
 		var shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
 		if (isPromoted == 'Y') {
+			var count = Math.round(order.productVO.currentPrice);
 			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
-			shareTitle = username + '正在苦战中！我来补一刀，有机会免单!';
-			shareTitle4Timeline = username + '正在苦战中！我来补一刀，有机会免单!「' + product.shortName + '」补一刀便宜1元限时活动中~ 还等什么？';
-			shareBody = '「' + product.shortName + '」补一刀便宜1元限时活动中~ 还等什么？';
+			shareTitle = username + '正在打群「价」！还差' + count + '人点击就能免单!';
+			shareTitle4Timeline = username + '正在打群「价」！还差' + count + '人点击就能免单!「' + product.shortName
+					+ '」打一下便宜1元限时活动中~ 还等什么？';
+			shareBody = '「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
 		}
+		console.log(shareTitle4Timeline);
 		var shareLink = "";
 		if (null != order && null != product) {
 			shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
