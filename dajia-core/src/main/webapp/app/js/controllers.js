@@ -221,12 +221,12 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$http.post('/user/visitlog', visitLog);
 
 						// add user share
-						$http.get('/product/share/' + productId + '/' + refOrderId).success(
-								function(data, status, headers, config) {
-									$scope.openShareModal(data);
-								});
 						if (null != refUserId && null != refOrderId && null != userId && null != productId
 								&& product.isPromoted == 'Y' && refUserId != userId) {
+							$http.get('/product/share/' + productId + '/' + refOrderId).success(
+									function(data, status, headers, config) {
+										$scope.openShareModal(data);
+									});
 							var userShare = {
 								productId : product.productId,
 								productItemId : product.productItemId,
