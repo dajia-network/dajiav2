@@ -180,7 +180,7 @@ public class UserService {
 			} else {
 				coef = new BigDecimal(0.2);
 			}
-			sales.bonusAmountMTD = sales.bonusAmountMTD.add(order.totalPrice.multiply(coef));
+			sales.bonusAmountWTD = sales.bonusAmountWTD.add(order.totalPrice.multiply(coef));
 		}
 		sales.refOrderNumWTD = orderList.size();
 		List<User> users = userRepo.findByRefUserIdAndCreatedDateBetweenAndIsActive(user.userId, startDate, new Date(),
