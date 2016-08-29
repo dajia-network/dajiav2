@@ -5,17 +5,9 @@
 		</ion-header-bar>
 	<ion-content>
 		<div class="item item-text-wrap" align="center">
-			<span class="assertive">谢谢你拔刀相助!</span><br/>
-			<span class="assertive">你参与了打群价，使{{shareInfo.userName}}获得了1元现金优惠!</span><br/>
-			<span class="assertive">{{shareInfo.userName}}已经累计获得{{shareInfo.userShares.length}}元现金优惠!</span>
-			<div class="row">
-				<div class="col-xs-2" ng-repeat="rewardSrcUser in order.rewardSrcUsers">
-					<a class="center-avatar margin"><img ng-src="{{rewardSrcUser.headImgUrl}}"></img></a>
-				</div>
+			<div class="item item-text-wrap noPadding">
+				<p><img src="http://dajia-static.b0.upaiyun.com/app_img/daqunjia_popup.gif" ng-click="closeShareModal()"></img></p>
 			</div>
-		</div>
-		<div class="col text-center">
-			<button class="button button-block button-assertive" ng-click="closeShareModal()">我也要打群架!</button>
 		</div>
 	</ion-content>
 </div>
