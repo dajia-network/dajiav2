@@ -10,6 +10,9 @@
 				<div align="center">{{product.name}}<p/></div>
 				<div ng-show="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.productId}}"></div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
+				<div class="img-sticker" ng-if="product.isPromoted=='Y'">
+					<img src="http://dajia-static.b0.upaiyun.com/app_img/daqunjia_sticker.gif"></img>
+				</div>
 				  <ion-slide ng-repeat="prodImg in product.productImages">
 				    <img ng-src="{{prodImg.url}}" class="full-image">
 				  </ion-slide>

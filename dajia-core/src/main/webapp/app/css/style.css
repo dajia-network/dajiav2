@@ -270,6 +270,17 @@ button img {
     height: 100%;
 }
 
+.img-sticker {
+	position: absolute;
+	text-align: right;
+	width: 100%;
+	z-index: 1000;
+}
+
+.img-sticker img {
+	width: auto !important;
+}
+
 /* countdown */
 .clock{
 	position: absolute;
