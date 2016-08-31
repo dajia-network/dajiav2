@@ -7,7 +7,9 @@
 	<ion-content>
 		<div class="list card">
 			<div class="item item-body">
-				<div align="center">{{product.name}}<p/></div>
+				<div align="center">
+					{{product.name}}<p/>
+				</div>
 				<div ng-show="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.productId}}"></div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
 				<div class="img-sticker" ng-if="product.isPromoted=='Y'">
@@ -17,6 +19,7 @@
 				    <img ng-src="{{prodImg.url}}" class="full-image">
 				  </ion-slide>
 				</ion-slide-box>
+				<span ng-if="product.isPromoted=='Y'" class="assertive">该产品正在限时打群「价」活动中。<br/>购买后分享到朋友圈。每一个好友点击带来1元额外优惠，直至免单！</span>
 				<p>
 					<b>现价 <span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> 元</b>
 					&nbsp;<span class="ori_price">{{product.originalPrice}} 元</span>
