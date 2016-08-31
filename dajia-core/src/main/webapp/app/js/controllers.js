@@ -618,6 +618,14 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 									o.progressValue = o.productVO.priceOff
 											/ (o.productVO.originalPrice - o.productVO.targetPrice) * 100;
 								}
+								if (null != o.userShares) {
+									var shareRefund = o.userShares.length;
+									if (shareRefund > o.productVO.currentPrice) {
+										shareRefund = o.productVO.currentPrice;
+									}
+									o.progressValue = shareRefund / o.productVO.currentPrice * 100;
+									o.productVO.currentPrice = o.productVO.currentPrice - shareRefund;
+								}
 							});
 						});
 			}

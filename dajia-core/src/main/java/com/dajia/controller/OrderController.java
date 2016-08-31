@@ -26,9 +26,11 @@ import com.dajia.domain.User;
 import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserOrderItem;
+import com.dajia.domain.UserShare;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.repository.UserShareRepo;
 import com.dajia.service.ApiService;
 import com.dajia.service.CartService;
 import com.dajia.service.OrderService;
@@ -56,6 +58,9 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private UserOrderRepo orderRepo;
+
+	@Autowired
+	private UserShareRepo userShareRepo;
 
 	@Autowired
 	private ProductItemRepo productItemRepo;
@@ -275,6 +280,9 @@ public class OrderController extends BaseController {
 					}
 				}
 			}
+			List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
+					ov.orderId, ov.productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+			ov.userShares = userShares;
 		}
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		page.results = progressList;
@@ -351,7 +359,7 @@ public class OrderController extends BaseController {
 			}
 		}
 	}
-	
+
 	@RequestMapping("/product/share/{productId}/{refOrderId}")
 	public OrderVO shareInfo4Product(@PathVariable("productId") Long productId,
 			@PathVariable("refOrderId") Long refOrderId) {
