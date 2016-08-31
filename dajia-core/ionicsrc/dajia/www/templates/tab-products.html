@@ -10,6 +10,9 @@
 		<div class="overlay" ng-if="product.productStatus!=2" ng-click="go2Product(product.product.productId)"></div>
 		<div class="item item-image">
 			<div  ng-if="product.stock>0&&product.productStatus==2" class="clock" id="{{'clock-' + product.product.productId}}"></div>
+			<div class="img-sticker" ng-if="product.isPromoted=='Y'">
+				<img src="http://dajia-static.b0.upaiyun.com/app_img/daqunjia_sticker.gif" ng-click="go2Product(product.product.productId)"></img>
+			</div>
 			<a href="#/tab/prod/{{product.product.productId}}"><img ng-src="{{product.product.imgUrl}}"></a>
 		</div>
 		<div class="row">

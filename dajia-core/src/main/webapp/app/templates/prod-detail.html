@@ -65,8 +65,9 @@
 				<button class="button backBtn" ng-click="back()">
 					<i class="icon ion-chevron-left"></i> 返回
 				</button>
-				<button ng-if="product.productStatus==2&&product.stock>0" class="button button-sqr button-assertive button-outline cartBtn" ng-click="add2Cart()"><i class="icon ion-ios-cart"></i> 放入购物车</button>
-				<button ng-if="product.productStatus==2&&product.stock>0" class="button button-sqr button-assertive buyBtn" ng-click="buyNow()">立即打价</button>
+				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now" class="button button-sqr button-assertive button-outline cartBtn" ng-click="add2Cart()"><i class="icon ion-ios-cart"></i> 放入购物车</button>
+				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now" class="button button-sqr button-assertive buyBtn" ng-click="buyNow()">立即打价</button>
+				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate>now" disabled="true" class="button button-sqr button-assertive submitBtn">打价即将开始</button>
 				<button ng-if="product.productStatus==3||product.stock<=0" disabled="true" class="button submitBtn">打价已结束</button>
 				<button ng-if="product.productStatus!=2&&product.productStatus!=3" disabled="true" class="button submitBtn">产品已失效</button>
 			</div>

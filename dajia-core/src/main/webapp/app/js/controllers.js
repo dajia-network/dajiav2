@@ -98,6 +98,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal, $ionicLoading, AuthService) {
 			console.log('产品详情...')
+			$scope.now = new Date();
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');

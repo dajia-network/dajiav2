@@ -98,9 +98,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		function($scope, $rootScope, $stateParams, $http, $cookies, $window, $timeout, $ionicSlideBoxDelegate,
 				$ionicModal, $ionicLoading, AuthService) {
 			console.log('产品详情...')
+			$scope.now = new Date();
 			$scope.favBtnTxt = '收藏';
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');
+			shareModalInit($scope, $ionicModal);
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -222,6 +224,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						// add user share
 						if (null != refUserId && null != refOrderId && null != userId && null != productId
 								&& product.isPromoted == 'Y' && refUserId != userId) {
+							$http.get('/product/share/' + productId + '/' + refOrderId).success(
+									function(data, status, headers, config) {
+										$scope.openShareModal(data);
+									});
 							var userShare = {
 								productId : product.productId,
 								productItemId : product.productItemId,
@@ -698,6 +704,14 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						var order = data;
 						order.progressValue = order.productVO.priceOff
 								/ (order.productVO.originalPrice - order.productVO.targetPrice) * 100;
+						if (null != order.userShares) {
+							var shareRefund = order.userShares.length;
+							if (shareRefund > order.productVO.currentPrice) {
+								shareRefund = order.productVO.currentPrice;
+							}
+							order.progressValue = shareRefund / order.productVO.currentPrice * 100;
+							order.productVO.currentPrice = order.productVO.currentPrice - shareRefund;
+						}
 						$scope.order = order;
 						// console.log(order);
 						if (order.productVO.productStatus == 2 && order.productVO.stock) {
@@ -1449,6 +1463,26 @@ var userAgreeModalInit = function($scope, $ionicModal) {
 	});
 }
 
+var shareModalInit = function($scope, $ionicModal) {
+	$ionicModal.fromTemplateUrl('templates/share-popup.html', {
+		scope : $scope,
+		animation : 'slide-in-up'
+	}).then(function(modal) {
+		$scope.shareModal = modal;
+	});
+	$scope.openShareModal = function(data) {
+		console.log(data)
+		$scope.shareInfo = data;
+		$scope.shareModal.show();
+	};
+	$scope.closeShareModal = function() {
+		$scope.shareModal.hide();
+	};
+	$scope.$on('$destroy', function() {
+		$scope.shareModal.remove();
+	});
+}
+
 var popWarning = function(msg, $timeout, $ionicLoading) {
 	$ionicLoading.show({
 		template : msg
@@ -1587,7 +1621,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 				+ product.productId;
 	}
 	wx.onMenuShareAppMessage({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！',
 		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
@@ -1602,7 +1636,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1613,7 +1647,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareQQ({
-		title : '一起来打价，越打越便宜！自己亲手打出全网最低价！',
+		title : '一起来打价，越打越便宜！自己打出全网最低价！',
 		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
@@ -1635,15 +1669,19 @@ var shareProduct = function($scope, $rootScope, $http, $cookies, $timeout, $ioni
 		$rootScope.$broadcast('event:auth-loginRequired');
 	} else {
 		var successMsg = '分享成功，底价已显示！朋友购买后将获得额外奖励折扣！';
-
+		var shareTitle = '快来跟' + username + '一起打出全网最低价！';
+		var shareTitle4Timeline = '快来跟' + username + '一起打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
+				+ '元~ 红红火火恍恍惚惚~';
+		var shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
 		if (isPromoted == 'Y') {
+			var count = Math.round(order.productVO.currentPrice);
 			successMsg = '分享成功，每个好友点击将获1元额外优惠！';
-			var shareTitle = username + '正在苦战中！一起来打群价，获得免单机会!';
-			var shareTitle4Timeline = username + '正在苦战中！一起来打群价，获得免单机会!「' + product.shortName
-					+ '」现在限时活动中，打一次便宜1元~ 还等什么？';
-			var shareBody = '「' + product.shortName + '」现在打一次便宜1元限时活动中~ 还等什么？';
+			shareTitle = username + '正在打群「价」！还差' + count + '人点击就能免单!';
+			shareTitle4Timeline = username + '正在打群「价」！还差' + count + '人点击就能免单!「' + product.shortName
+					+ '」打一下便宜1元限时活动中~ 还等什么？';
+			shareBody = '「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
 		}
-
+		console.log(shareTitle4Timeline);
 		var shareLink = "";
 		if (null != order && null != product) {
 			shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId

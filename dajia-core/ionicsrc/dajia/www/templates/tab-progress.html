@@ -38,7 +38,7 @@
 				    <button ng-if="order.productVO.productStatus==2&&order.productVO.isPromoted=='Y'" class="button button-sqr button-assertive" ng-click="progressDetail(order.trackingId, order.orderItemId, order.productVO.isPromoted)">
 						获免单机会
 					</button>
-					<button ng-if="(order.productVO.productStatus==3||order.productVO.stock<=0)&&order.productVO.isPromoted!='Y'" disabled="true" class="button button-sqr button-assertive">打价已结束</button>
+					<button ng-if="order.productVO.productStatus==3||(order.productVO.stock<=0&&order.productVO.isPromoted!='Y')" disabled="true" class="button button-sqr button-assertive">打价已结束</button>
 					<button ng-if="order.productVO.productStatus!=2&&order.productVO.productStatus!=3" disabled="true" class="button button-sqr button-assertive">产品已失效</button>
 				</div>
 			</div>

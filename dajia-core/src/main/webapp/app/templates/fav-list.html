@@ -16,8 +16,8 @@
         <p>{{product.name}}</p>
         <p>价格：￥{{product.currentPrice}}</p>
         <p>打价开始日期：{{product.startDate | date:'yyyy-MM-dd'}}</p>
-  		<p ng-if="product.productStatus!=3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}}</p>
-  		<p ng-if="product.productStatus==3">截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}} ({{product.status4Show}})</p>
+  		<p ng-if="product.productStatus!=3">打价截止日期：{{product.expiredDate | date:'yyyy-MM-dd'}}</p>
+  		<p ng-if="product.productStatus==3">{{product.status4Show}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
