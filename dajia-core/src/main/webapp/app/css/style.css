@@ -275,6 +275,7 @@ button img {
 	text-align: right;
 	width: 100%;
 	z-index: 1000;
+	right: 20px;
 }
 
 .img-sticker img {
