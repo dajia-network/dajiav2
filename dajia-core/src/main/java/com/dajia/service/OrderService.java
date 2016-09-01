@@ -296,6 +296,8 @@ public class OrderService {
 			ov.productId = oi.productId;
 			ov.productItemId = oi.productItemId;
 			ov.productShared = oi.productShared;
+			ov.unitPrice = oi.unitPrice;
+			ov.quantity = oi.quantity;
 			ov.productVO = productService.loadProductDetailByItemId(oi.productItemId);
 		}
 		Map<Long, LoginUserVO> rewardSrcUserMap = rewardService.getRewardSrcUsers(ov.orderId, ov.productItemId);
