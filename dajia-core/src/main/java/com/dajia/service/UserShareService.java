@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.dajia.domain.User;
 import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserShare;
 import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserShareRepo;
@@ -41,9 +42,14 @@ public class UserShareService {
 		if (userShare.userId == userShare.visitUserId) {
 			return;
 		}
-		UserOrder order = orderService.findOneOrderByProductItemIdAndUserId(userShare.productItemId, userShare.userId);
-		if (null == order) {
-			return;
+		UserOrderItem orderItem = orderService.findOneOrderItemByProductItemIdAndUserId(userShare.productItemId,
+				userShare.userId);
+		if (null == orderItem) {
+			UserOrder order = orderService.findOneOrderByProductItemIdAndUserId(userShare.productItemId,
+					userShare.userId);
+			if (null == order) {
+				return;
+			}
 		}
 		ProductVO product = productService.loadProductDetailByItemId(userShare.productItemId);
 		if (null == product || product.productStatus != CommonUtils.ProductStatus.VALID.getKey()) {

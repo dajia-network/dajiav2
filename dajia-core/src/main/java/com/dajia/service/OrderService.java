@@ -372,6 +372,17 @@ public class OrderService {
 		return null;
 	}
 
+	public UserOrderItem findOneOrderItemByProductItemIdAndUserId(Long productItemId, Long userId) {
+		List<UserOrderItem> orderItemList = orderItemRepo.findByProductItemIdAndUserIdAndAndIsActiveOrderByOrderItemId(
+				productItemId, userId, CommonUtils.ActiveStatus.YES.toString());
+		if (null != orderItemList) {
+			for (UserOrderItem orderItem : orderItemList) {
+				return orderItem;
+			}
+		}
+		return null;
+	}
+
 	public boolean orderValidate(UserOrder order) {
 		if (null != order.productId) {
 			if (order.totalPrice.compareTo(order.unitPrice.multiply(new BigDecimal(order.quantity)).add(order.postFee)) < 0) {
