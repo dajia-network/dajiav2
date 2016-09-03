@@ -1617,9 +1617,8 @@ var shareHome = function() {
 
 var simpleShare = function(product, $cookies, $timeout) {
 	console.log('simpleShare');
-	// console.log(product);
+	console.log(product);
 	var userId = $cookies.get('dajia_user_id');
-	var successMsg = '分享成功！';
 	var shareLink = '#';
 	if (null != userId) {
 		shareLink = 'http://51daja.com/app/index.html?refUserId=' + userId + '&productId=' + product.productId
@@ -1628,9 +1627,19 @@ var simpleShare = function(product, $cookies, $timeout) {
 		shareLink = 'http://51daja.com/app/index.html?productId=' + product.productId + '#/tab/prod/'
 				+ product.productId;
 	}
+	var successMsg = '分享成功！';
+	var shareTitle = '一起来打价，越打越便宜！自己打出全网最低价！';
+	var shareTitle4Timeline = '一起来打价，越打越便宜！自己打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
+			+ '元~ 红红火火恍恍惚惚~';
+	var shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
+	if (isPromoted == 'Y') {
+		shareTitle = '分享好友，确定免单！打价网邀你打群「价」！';
+		shareTitle4Timeline = '分享好友，确定免单！打价网邀你打群「价」！「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
+		shareBody = '「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
+	}
 	wx.onMenuShareAppMessage({
-		title : '一起来打价，越打越便宜！自己打出全网最低价！',
-		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+		title : shareTitle,
+		desc : shareBody,
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		trigger : function() {
@@ -1644,7 +1653,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareTimeline({
-		title : '一起来打价，越打越便宜！自己打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+		title : shareTitle4Timeline,
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
@@ -1655,8 +1664,8 @@ var simpleShare = function(product, $cookies, $timeout) {
 		}
 	});
 	wx.onMenuShareQQ({
-		title : '一起来打价，越打越便宜！自己打出全网最低价！',
-		desc : '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~',
+		title : shareTitle,
+		desc : shareBody,
 		link : shareLink,
 		imgUrl : product.imgUrl4List,
 		success : function() {
