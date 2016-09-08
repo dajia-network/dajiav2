@@ -1617,7 +1617,7 @@ var shareHome = function() {
 
 var simpleShare = function(product, $cookies, $timeout) {
 	console.log('simpleShare');
-	console.log(product);
+	// console.log(product);
 	var userId = $cookies.get('dajia_user_id');
 	var shareLink = '#';
 	if (null != userId) {
@@ -1632,7 +1632,7 @@ var simpleShare = function(product, $cookies, $timeout) {
 	var shareTitle4Timeline = '一起来打价，越打越便宜！自己打出全网最低价！「' + product.shortName + '」再打一次便宜' + product.nextOff
 			+ '元~ 红红火火恍恍惚惚~';
 	var shareBody = '「' + product.shortName + '」再打一次便宜' + product.nextOff + '元~ 红红火火恍恍惚惚~';
-	if (isPromoted == 'Y') {
+	if (product.isPromoted == 'Y') {
 		shareTitle = '分享好友，确定免单！打价网邀你打群「价」！';
 		shareTitle4Timeline = '分享好友，确定免单！打价网邀你打群「价」！「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
 		shareBody = '「' + product.shortName + '」打一下便宜1元限时活动中~ 还等什么？';
