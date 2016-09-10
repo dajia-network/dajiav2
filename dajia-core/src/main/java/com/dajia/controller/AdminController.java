@@ -79,8 +79,15 @@ public class AdminController extends BaseController {
 	}
 
 	@RequestMapping("/admin/products/{page}")
-	public PaginationVO<ProductItem> productsByPage(@PathVariable("page") Integer pageNum) {
-		Page<ProductItem> products = productService.loadProductsByPage(pageNum);
+	public PaginationVO<ProductItem> productsByPage(@PathVariable("page") Integer pageNum,
+			@RequestBody Map<String, String> keyMap) {
+		Page<ProductItem> products = null;
+		String keyword = keyMap.get("value");
+		if (null != keyword && keyword.trim().length() > 0) {
+			products = productService.loadProductsByPage(pageNum);
+		} else {
+			products = productService.loadProductsByPage(pageNum);
+		}
 		productService.getRealSold(products);
 		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
@@ -304,6 +311,18 @@ public class AdminController extends BaseController {
 	public UserOrder closeOrder(@PathVariable("orderId") Long orderId) {
 		UserOrder order = orderRepo.findOne(orderId);
 		order.orderStatus = OrderStatus.CLOSED.getKey();
+		orderRepo.save(order);
+		return order;
+	}
+
+	@RequestMapping("/admin/order/{orderId}/reopen")
+	public UserOrder reopenOrder(@PathVariable("orderId") Long orderId) {
+		UserOrder order = orderRepo.findOne(orderId);
+		if (null != order.logisticTrackingId) {
+			order.orderStatus = OrderStatus.DELEVERING.getKey();
+		} else {
+			order.orderStatus = OrderStatus.PAIED.getKey();
+		}
 		orderRepo.save(order);
 		return order;
 	}

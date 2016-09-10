@@ -393,7 +393,15 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 				$http.get('/admin/order/' + $routeParams.orderId + '/close').success(
 						function(data, status, headers, config) {
 							$scope.order = data;
-							console.log($scope.order);
+							$route.reload();
+						}).error(function(data, status, headers, config) {
+					console.log('request failed...');
+				});
+			}
+			$scope.reopenOrder = function(orderId) {
+				$http.get('/admin/order/' + $routeParams.orderId + '/reopen').success(
+						function(data, status, headers, config) {
+							$scope.order = data;
 							$route.reload();
 						}).error(function(data, status, headers, config) {
 					console.log('request failed...');
