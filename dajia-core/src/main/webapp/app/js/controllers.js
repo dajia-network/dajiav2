@@ -1615,7 +1615,7 @@ var shareHome = function() {
 	});
 }
 
-var simpleShare = function(product, $cookies, $timeout) {
+var simpleShare = function(product, $cookies, $timeout, $ionicLoading) {
 	console.log('simpleShare');
 	// console.log(product);
 	var userId = $cookies.get('dajia_user_id');

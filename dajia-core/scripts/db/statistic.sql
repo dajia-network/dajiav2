@@ -42,7 +42,18 @@ where o.payment_id is not null and o.order_status in (2,3,4) and oi.order_id=o.o
 group by oi.product_id
 ) res group by res.product_id) res2 where res2.product_id=p.product_id order by res2.quantity desc
 
+select sum(quantity) quantity from user_order 
+where payment_id is not null and order_status in (2,3,4)
+and order_date between '2016-08-01' AND '2016-09-01'
+union
+select sum(oi.quantity) quantity from user_order_item oi, user_order o  
+where o.payment_id is not null and o.order_status in (2,3,4) and oi.order_id=o.order_id 
+and o.order_date between '2016-08-01' AND '2016-09-01'
 
 select count(*) from user where created_date!=last_visit_date
 
 select sum(total_price) from user_order where payment_id is not null and order_status in (2,3,4)
+
+select count(1) from user_share
+union
+select count(distinct(visit_user_id)) from user_share

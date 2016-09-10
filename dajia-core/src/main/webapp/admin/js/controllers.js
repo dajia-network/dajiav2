@@ -1,15 +1,25 @@
 angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function($scope, $http, $route, $timeout) {
 	console.log('ProductsCtrl...');
 	$scope.syncBtnTxt = '同步数据';
+	$scope.keyword = {
+		value : ''
+	};
 	$scope.loadPage = function(pageNum) {
-		$http.get('/admin/products/' + pageNum).success(function(data, status, headers, config) {
+		$http.get('/admin/products/' + pageNum, $scope.keyword).success(function(data, status, headers, config) {
 			$scope.pager = data;
 			$scope.products = data.results;
+			$scope.gridOptions.data = $scope.products;
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
 	}
 	$scope.loadPage(1);
+	$scope.gridOptions = {
+		enableSorting : true,
+		rowHeight : 50,
+		appScope : $scope,
+		columnDefs : ColumnDefs.productGridDef
+	};
 	$scope.sync = function() {
 		$scope.alerts = [];
 		$scope.syncBtnTxt = '进行中...';
@@ -336,6 +346,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}, {
 				code : 'zhongtong',
 				name : '中通快递'
+			}, {
+				code : 'shentong',
+				name : '申通快递'
 			} ];
 			$http.get('/admin/order/' + $routeParams.orderId).success(
 					function(data, status, headers, config) {

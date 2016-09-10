@@ -430,7 +430,8 @@ public class CommonUtils {
 	}
 
 	public enum LogisticAgent {
-		SHUNFENG("shunfeng", "顺丰快递"), TIANTIAN("tiantian", "天天快递"), ZHONGTONG("zhongtong", "中通快递");
+		SHUNFENG("shunfeng", "顺丰快递"), TIANTIAN("tiantian", "天天快递"), ZHONGTONG("zhongtong", "中通快递"), SHENTONG(
+				"shentong", "申通快递");
 		private String key;
 		private String value;
 
