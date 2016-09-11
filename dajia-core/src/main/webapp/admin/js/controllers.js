@@ -5,7 +5,8 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		value : ''
 	};
 	$scope.loadPage = function(pageNum) {
-		$http.get('/admin/products/' + pageNum, $scope.keyword).success(function(data, status, headers, config) {
+		console.log($scope.keyword);
+		$http.post('/admin/products/' + pageNum, $scope.keyword).success(function(data, status, headers, config) {
 			$scope.pager = data;
 			$scope.products = data.results;
 			$scope.gridOptions.data = $scope.products;

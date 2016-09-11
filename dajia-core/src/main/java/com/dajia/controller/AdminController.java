@@ -78,7 +78,7 @@ public class AdminController extends BaseController {
 		return map;
 	}
 
-	@RequestMapping("/admin/products/{page}")
+	@RequestMapping(value = "/admin/products/{page}", method = RequestMethod.POST)
 	public PaginationVO<ProductItem> productsByPage(@PathVariable("page") Integer pageNum,
 			@RequestBody Map<String, String> keyMap) {
 		Page<ProductItem> products = null;
