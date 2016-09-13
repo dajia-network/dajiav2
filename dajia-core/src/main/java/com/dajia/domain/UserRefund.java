@@ -1,6 +1,7 @@
 package com.dajia.domain;
 
 import java.math.BigDecimal;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,6 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+/**
+ * Real refund info. Only be saved when refund really happen.
+ * 
+ * @author Puffy
+ */
 @Entity
 @Table(name = "user_refund")
 public class UserRefund extends BaseModel {
@@ -24,7 +30,7 @@ public class UserRefund extends BaseModel {
 
 	@Column(name = "product_id")
 	public Long productId;
-	
+
 	@Column(name = "product_item_id")
 	public Long productItemId;
 

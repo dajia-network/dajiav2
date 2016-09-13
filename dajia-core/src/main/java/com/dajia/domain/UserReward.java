@@ -2,12 +2,18 @@ package com.dajia.domain;
 
 import java.util.Date;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * User will get reward when products sold thru the links he/she shared.
+ * 
+ * @author Puffy
+ */
 @Entity
 @Table(name = "user_reward")
 public class UserReward extends BaseModel {

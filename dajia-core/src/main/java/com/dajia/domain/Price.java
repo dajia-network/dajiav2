@@ -11,10 +11,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.springframework.beans.BeanUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * price & sold combination to define the formula of price change
+ * 
+ * @author Puffy
+ */
 @Entity
 @JsonIgnoreProperties(value = { "productItem" })
 @Table(name = "price")
@@ -37,8 +40,8 @@ public class Price extends BaseModel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_item_id", referencedColumnName = "product_item_id")
 	public ProductItem productItem;
-	
-	public Price clone(){
+
+	public Price clone() {
 		Price clonePrice = new Price();
 		clonePrice.sort = this.sort;
 		clonePrice.sold = this.sold;

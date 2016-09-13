@@ -6,6 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * location & post fee information for user contact.
+ * 
+ * @author Puffy
+ */
 @Entity
 @Table(name = "location")
 public class Location extends BaseModel {

@@ -6,6 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * User will get 1 yuan refund every time the link he/she shared be clicked.
+ * 
+ * @author Puffy
+ */
 @Entity
 @Table(name = "user_share")
 public class UserShare extends BaseModel {
