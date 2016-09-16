@@ -16,7 +16,6 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 	}
 	$scope.loadPage(1);
 	$scope.gridOptions = {
-		enableSorting : true,
 		rowHeight : 50,
 		appScope : $scope,
 		columnDefs : ColumnDefs.productGridDef
@@ -88,11 +87,17 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			// console.log(data);
 			$scope.pager = data;
 			$scope.orders = data.results;
+			$scope.gridOptions.data = $scope.orders;
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
 	}
 	$scope.loadPage(1);
+	$scope.gridOptions = {
+		rowHeight : 50,
+		appScope : $scope,
+		columnDefs : ColumnDefs.orderGridDef
+	};
 	$scope.viewOrder = function(orderId) {
 		window.location.href = '#/order/' + orderId;
 	}
@@ -111,11 +116,17 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			console.log(data);
 			$scope.pager = data;
 			$scope.users = data.results;
+			$scope.gridOptions.data = $scope.users;
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
 	}
 	$scope.loadPage(1);
+	$scope.gridOptions = {
+		rowHeight : 50,
+		appScope : $scope,
+		columnDefs : ColumnDefs.clientGridDef
+	};
 })
 
 .controller('SalesCtrl', function($scope, $http) {
@@ -128,11 +139,17 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			console.log(data);
 			$scope.pager = data;
 			$scope.salesmen = data.results;
+			$scope.gridOptions.data = $scope.salesmen;
 		}).error(function(data, status, headers, config) {
 			console.log('request failed...');
 		});
 	}
 	$scope.loadPage(1);
+	$scope.gridOptions = {
+		rowHeight : 50,
+		appScope : $scope,
+		columnDefs : ColumnDefs.salesGridDef
+	};
 }).controller(
 		'ProductDetailCtrl',
 		function($scope, $http, $routeParams, $route, $window) {

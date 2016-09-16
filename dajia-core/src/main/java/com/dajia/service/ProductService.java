@@ -341,6 +341,23 @@ public class ProductService {
 		return productItems;
 	}
 
+	public Page<ProductItem> loadProductsByKeywordByPage(String keyword, Integer pageNum) {
+		List<Product> products = this.loadProductIdsByKeyword(keyword);
+		Pageable pageable = new PageRequest(pageNum - 1, CommonUtils.page_item_perpage);
+		Page<ProductItem> productItems = productItemRepo.findByProductInAndIsActiveOrderByStartDateDesc(products,
+				ActiveStatus.YES.toString(), pageable);
+		for (ProductItem productItem : productItems) {
+			productItem.status4Show = getProductStatusStr(productItem.productStatus);
+		}
+		return productItems;
+	}
+
+	public List<Product> loadProductIdsByKeyword(String keyword) {
+		List<Product> products = productRepo.findByNameContainingAndIsActiveOrderByCreatedDateDesc(keyword,
+				ActiveStatus.YES.toString());
+		return products;
+	}
+
 	public void getRealSold(Page<ProductItem> productItems) {
 		for (ProductItem productItem : productItems) {
 			Long realSold = 0L;

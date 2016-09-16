@@ -34,42 +34,16 @@
 	</div>
 
     <p></p>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th data-field="orderId">ID</th>
-				<th data-field="trackingId">订单编号</th>
-				<th data-field="productDesc">产品名</th>
-				<th data-field="quantity">购买数量</th>
-				<th data-field="unitPrice">购买单价</th>
-				<th data-field="postFee">邮费</th>
-				<th data-field="totalPrice">购买总价</th>
-				<th data-field="userInfo4Show">用户</th>
-				<th data-field="orderStatus4Show">订单状态</th>
-				<th data-field="orderDate">购买时间</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr ng-repeat="order in orders">
-				<td>{{order.orderId}}</td>
-				<td><a href  ng-click="viewOrder(order.orderId);">{{order.trackingId}}</a></td>
-				<td>{{order.productDesc}}</td>
-				<td ng-if="order.quantity!=null">{{order.quantity}}</td>
-				<td ng-if="order.quantity==null">N/A</td>
-				<td ng-if="order.unitPrice!=null">￥{{order.unitPrice}}</td>
-				<td ng-if="order.unitPrice==null">N/A</td>
-				<td>￥{{order.postFee}}</td>
-				<td>￥{{order.totalPrice}}</td>
-				<td>{{order.userName}}</td>
-				<td><span ng-class="{true: 'label-ember'}[order.orderStatus==2]">{{order.orderStatus4Show}}</span></td>
-				<td>{{order.orderDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
-				<td><button type="button" class="btn btn-primary btn-sm" ng-if="order.userId!=0" ng-click="viewOrder(order.orderId);">处理</button>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="input-group">
+	    <span class="input-group-btn">
+	      <button class="btn btn-default" type="button" ng-click="loadPage(1);">搜索</button>
+	    </span>
+	    <input type="text" my-enter="loadPage(1);" class="form-control" ng-model="keyword.value" placeholder="输入订单编号">
+    </div>
+    <p></p>
+    
+	<div class="gridStyle" ui-grid="gridOptions"></div>
+	
 	<nav>
 		<ul class="pagination">
 			<li ng-class="{true: 'active', false: 'disabled'}[pager.hasPrev]"><a href ng-click="loadPage(pager.currentPage-1)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
