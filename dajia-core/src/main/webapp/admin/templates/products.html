@@ -19,47 +19,19 @@
 		<button type="button" class="btn btn-primary" ng-click="sync();">{{syncBtnTxt}}</button>
 		<button type="button" class="btn btn-primary" ng-click="addProduct();">新增产品</button>
 	</div>
+    <p></p>
+	<div class="input-group">
+	    <span class="input-group-btn">
+	      <button class="btn btn-default" type="button" ng-click="loadPage(1);">搜索</button>
+	    </span>
+	    <input type="text" my-enter="loadPage(1);" class="form-control" ng-model="keyword.value" placeholder="输入产品名">
+    </div>
 	<p></p>
 	<div>
 		<uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
 	</div>
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th data-field="id">ID</th>
-				<th data-field="name">产品</th>
-				<th data-field="currentPrice">当前价格</th>
-				<th data-field="stock">库存</th>
-				<th data-field="sold">销量</th>
-				<th data-field="realSold">真实销量</th>
-				<th data-field="fixTop">置顶</th>
-				<th data-field="isPromoted">参与打群价</th>
-				<th data-field="startDate">起始时间</th>
-				<th data-field="expiredDate">过期时间</th>
-				<th data-field="productStatus">产品状态</th>
-				<th>操作</th>
-			</tr>
-		</thead>
-
-		<tbody>
-			<tr ng-repeat="product in products">
-				<td>{{product.product.productId}}</td>
-				<td width="300px"><a href ng-click="editProduct(product.product.productId);">{{ product.product.name}}</a></td>
-				<td>￥{{product.currentPrice}}</td>
-				<td>{{product.stock}}</td>
-				<td>{{product.sold}}</td>
-				<td>{{product.realSold}}</td>
-				<td>{{product.fixTop}}</td>
-				<td>{{product.isPromoted}}</td>
-				<td>{{product.startDate | date:'yyyy-MM-dd HH:mm'}}</td>
-				<td>{{product.expiredDate | date:'yyyy-MM-dd HH:mm'}}</td>
-				<td>{{product.status4Show}}</td>
-				<td><button type="button" class="btn btn-primary btn-sm" ng-click="editProduct(product.product.productId);">编辑</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-confirm-click="确定要删除该产品吗?" confirmed-click="delProduct(product.product.productId);">删除</button>
-					<button type="button" class="btn btn-primary btn-sm" ng-disabled="product.productStatus!=2" ng-click="bot(product.product.productId);">BOT+1</button></td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="gridStyle" ui-grid="gridOptions"></div>
+	
 	<nav>
 		<ul class="pagination">
 			<li ng-class="{true: 'active', false: 'disabled'}[pager.hasPrev]"><a href ng-click="loadPage(pager.currentPage-1)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>

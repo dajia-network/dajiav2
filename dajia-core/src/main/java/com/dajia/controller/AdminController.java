@@ -84,7 +84,7 @@ public class AdminController extends BaseController {
 		Page<ProductItem> products = null;
 		String keyword = keyMap.get("value");
 		if (null != keyword && keyword.trim().length() > 0) {
-			products = productService.loadProductsByPage(pageNum);
+			products = productService.loadProductsByKeywordByPage(keyword, pageNum);
 		} else {
 			products = productService.loadProductsByPage(pageNum);
 		}

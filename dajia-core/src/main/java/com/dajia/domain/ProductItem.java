@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -19,6 +21,8 @@ import javax.persistence.Transient;
 @Entity
 // @JsonIgnoreProperties(value = { "product" })
 @Table(name = "product_item")
+@NamedEntityGraph(name = "ProductItem.parent",
+attributeNodes = @NamedAttributeNode("product"))
 public class ProductItem extends BaseModel {
 
 	@Column(name = "product_item_id")
