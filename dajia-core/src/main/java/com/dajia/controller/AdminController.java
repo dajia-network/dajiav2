@@ -120,7 +120,13 @@ public class AdminController extends BaseController {
 
 	@RequestMapping(value = "/admin/product/{pid}", method = RequestMethod.POST)
 	public @ResponseBody ProductVO modifyProduct(@PathVariable("pid") Long pid, @RequestBody ProductVO productVO) {
-		if (pid == productVO.productId) {
+
+		if(null == pid || null == productVO) {
+			logger.error("modify product failed, pid or productVo is null");
+			return null;
+		}
+
+		if (pid.equals(productVO.productId)) {
 			Product product = null;
 			if (pid.longValue() != 0L) {
 				product = productRepo.findOne(pid);
@@ -150,6 +156,7 @@ public class AdminController extends BaseController {
 			productRepo.save(product);
 			return productService.convertProductVO(product, null);
 		} else {
+			logger.error("modify product failed, pid != productVo.productId");
 			return null;
 		}
 	}
