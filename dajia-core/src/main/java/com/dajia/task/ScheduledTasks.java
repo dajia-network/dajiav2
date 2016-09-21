@@ -27,7 +27,7 @@ public class ScheduledTasks {
 	@Autowired
 	private RewardService rewardService;
 
-	// @Scheduled(cron = "0 */10 *  * * * ")
+	@Scheduled(cron = "0 */10 *  * * * ")
 	public void productUpdateByCron() {
 		Date currentDate = new Date();
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
@@ -41,7 +41,7 @@ public class ScheduledTasks {
 		orderService.orderRefundCheck();
 	}
 
-	// @Scheduled(cron = "0 */20 *  * * * ")
+	@Scheduled(cron = "0 */20 *  * * * ")
 	public void checkRewardByCron() {
 		Date currentDate = new Date();
 		logger.info("Reward check job starts at: " + dateFormat.format(currentDate));
