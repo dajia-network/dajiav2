@@ -51,7 +51,7 @@ public class SmsService {
 		cache.put(new Element(mobile, signinCode));
 
 		return sendSmsMessage(mobile, ApiAlibabaUtils.sms_free_sign_name_signin, ApiAlibabaUtils.sms_template_signin,
-				signinCode, allowSend);
+				signinCode, false);
 	}
 
 	public String sendBindingMessage(String mobile, boolean allowSend) {
