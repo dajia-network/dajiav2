@@ -29,6 +29,7 @@ import com.dajia.repository.UserOrderRepo;
 import com.dajia.service.OrderService;
 import com.dajia.service.ProductService;
 import com.dajia.service.RefundService;
+import com.dajia.service.StatService;
 import com.dajia.service.UserService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
@@ -63,6 +64,9 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private StatService statService;
 
 	@RequestMapping("/admin/robotorder/{pid}")
 	public @ResponseBody UserOrder robotOrder(@PathVariable("pid") Long pid) {
@@ -120,7 +124,13 @@ public class AdminController extends BaseController {
 
 	@RequestMapping(value = "/admin/product/{pid}", method = RequestMethod.POST)
 	public @ResponseBody ProductVO modifyProduct(@PathVariable("pid") Long pid, @RequestBody ProductVO productVO) {
-		if (pid == productVO.productId) {
+
+		if (null == pid || null == productVO) {
+			logger.error("modify product failed, pid or productVo is null");
+			return null;
+		}
+
+		if (pid.equals(productVO.productId)) {
 			Product product = null;
 			if (pid.longValue() != 0L) {
 				product = productRepo.findOne(pid);
@@ -150,6 +160,7 @@ public class AdminController extends BaseController {
 			productRepo.save(product);
 			return productService.convertProductVO(product, null);
 		} else {
+			logger.error("modify product failed, pid != productVo.productId");
 			return null;
 		}
 	}
@@ -325,5 +336,10 @@ public class AdminController extends BaseController {
 		}
 		orderRepo.save(order);
 		return order;
+	}
+
+	@RequestMapping(value = "/admin/stats/{page}", method = RequestMethod.GET)
+	public PaginationVO<OrderVO> statsByPage(@PathVariable("page") Integer pageNum) {
+		return statService.getRewardStatsByPage(pageNum);
 	}
 }

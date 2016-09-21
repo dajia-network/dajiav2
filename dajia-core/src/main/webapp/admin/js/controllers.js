@@ -150,7 +150,32 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 		appScope : $scope,
 		columnDefs : ColumnDefs.salesGridDef
 	};
-}).controller(
+})
+
+.controller('StatsCtrl', function($scope, $http) {
+	console.log('StatsCtrl...');
+	$scope.loadPage = function(pageNum) {
+		$http.get('/admin/stats/' + pageNum).success(function(data, status, headers, config) {
+			console.log(data);
+			$scope.pager = data;
+			$scope.salesmen = data.results;
+			$scope.gridOptions.data = $scope.salesmen;
+		}).error(function(data, status, headers, config) {
+			console.log('request failed...');
+		});
+	}
+	$scope.loadPage(1);
+	$scope.gridOptions = {
+		rowHeight : 50,
+		appScope : $scope,
+		columnDefs : ColumnDefs.statsGridDef
+	};
+	$scope.viewOrder = function(orderId) {
+		window.location.href = '#/order/' + orderId;
+	}
+})
+
+.controller(
 		'ProductDetailCtrl',
 		function($scope, $http, $routeParams, $route, $window) {
 			console.log('ProductDetailCtrl...');

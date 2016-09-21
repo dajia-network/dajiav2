@@ -11,5 +11,8 @@ public interface UserShareRepo extends CrudRepository<UserShare, Long> {
 	public List<UserShare> findByUserIdAndVisitUserIdAndProductItemIdAndShareType(Long userId, Long visitUserId,
 			Long productItemId, Integer shareType);
 
-	public List<UserShare> findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(Long orderId, Long productItemId, Integer shareType);
+	public List<UserShare> findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(Long orderId,
+			Long productItemId, Integer shareType);
+
+	public List<UserShare> findByShareType(Integer shareType);
 }

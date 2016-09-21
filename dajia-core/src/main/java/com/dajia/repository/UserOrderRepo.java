@@ -1,6 +1,7 @@
 package com.dajia.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,4 +43,6 @@ public interface UserOrderRepo extends CrudRepository<UserOrder, Long> {
 	public Page<UserOrder> findByOrderStatusInAndUserIdNotAndIsActiveOrderByOrderDateDesc(
 			List<Integer> orderStatusList, Long userId, String isActive, Pageable pageable);
 
+	public Page<UserOrder> findByOrderIdInAndIsActiveOrderByOrderDateDesc(Set<Long> orderIds, String isActive,
+			Pageable pageable);
 }

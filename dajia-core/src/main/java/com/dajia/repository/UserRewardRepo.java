@@ -3,6 +3,8 @@ package com.dajia.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 import com.dajia.domain.UserReward;
@@ -25,4 +27,7 @@ public interface UserRewardRepo extends CrudRepository<UserReward, Long> {
 
 	public List<UserReward> findByRefUserIdAndRewardDateBetweenAndRewardStatus(Long refUserId, Date startDate,
 			Date endDate, Integer rewardStatus);
+
+	public List<UserReward> findByRewardStatusAndIsActive(Integer rewardStatus, String isActive);
+
 }

@@ -236,5 +236,67 @@ ColumnDefs = {
 				field : 'lastVisitDate',
 				width : 140,
 				cellTemplate : "<div class='ui-grid-cell-contents'>{{row.entity.lastVisitDate | date:'yyyy-MM-dd HH:mm'}}</div>"
+			} ],
+
+	statsGridDef : [
+			{
+				name : '订单编号',
+				field : 'trackingId',
+				width : 170,
+				cellTemplate : '<div class="ui-grid-cell-contents"><a href ng-click="grid.appScope.viewOrder(row.entity.orderId);">{{row.entity.trackingId}}</a></div>'
+			},
+			{
+				name : '产品名',
+				field : 'productDesc',
+				width : 300
+			},
+			{
+				name : '购买数量',
+				field : 'quantity',
+				enableSorting : false,
+				width : 70,
+				cellTemplate : "<div class='ui-grid-cell-contents' ng-if='row.entity.quantity!=null'>{{row.entity.quantity}}</div><div class='ui-grid-cell-contents' ng-if='row.entity.quantity==null'>N/A</div>"
+			},
+			{
+				name : '购买单价',
+				field : 'unitPrice',
+				enableSorting : false,
+				width : 80,
+				cellTemplate : "<div class='ui-grid-cell-contents' ng-if='row.entity.unitPrice!=null'>￥{{row.entity.unitPrice}}</div><div class='ui-grid-cell-contents' ng-if='row.entity.unitPrice==null'>N/A</div>"
+			},
+			{
+				name : '邮费',
+				field : 'postFee',
+				enableSorting : false,
+				width : 50,
+				cellTemplate : "<div class='ui-grid-cell-contents'>￥{{row.entity.postFee}}</div>"
+			},
+			{
+				name : '总金额',
+				field : 'totalPrice',
+				enableSorting : false,
+				width : 80,
+				cellTemplate : "<div class='ui-grid-cell-contents'>￥{{row.entity.totalPrice}}</div>"
+			},
+			{
+				name : '用户',
+				field : 'userName',
+				width : 80
+			},
+			{
+				name : '购买时间',
+				field : 'orderDate',
+				width : 140,
+				cellTemplate : "<div class='ui-grid-cell-contents'>{{row.entity.orderDate | date:'yyyy-MM-dd HH:mm'}}</div>"
+			}, {
+				name : '打群价分享',
+				field : 'userShareCount',
+				width : 80,
+				cellTemplate : "<div class='ui-grid-cell-contents'>{{row.entity.userShares.length}}</div>"
+			}, {
+				name : '分享返利',
+				field : 'rewardValue',
+				width : 80,
+				cellTemplate : "<div class='ui-grid-cell-contents'>￥{{row.entity.rewardValue}}</div>"
 			} ]
 }

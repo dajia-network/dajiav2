@@ -18,6 +18,10 @@ angular.module(
 		cache : false,
 		templateUrl : './templates/sales.html',
 		controller : 'SalesCtrl'
+	}).when('/stats', {
+		cache : false,
+		templateUrl : './templates/stats.html',
+		controller : 'StatsCtrl'
 	}).when('/product/:pid', {
 		cache : false,
 		templateUrl : './templates/productDetail.html',
