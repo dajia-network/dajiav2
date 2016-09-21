@@ -296,7 +296,7 @@ ColumnDefs = {
 			}, {
 				name : '分享返利',
 				field : 'rewardValue',
-				width : 80,
-				cellTemplate : "<div class='ui-grid-cell-contents'>￥{{row.entity.rewardValue}}</div>"
+				width : 100,
+				cellTemplate : "<div class='ui-grid-cell-contents'>￥{{row.entity.rewardValue.toFixed(2)}}</div>"
 			} ]
 }
