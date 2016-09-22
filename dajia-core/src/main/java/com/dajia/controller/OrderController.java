@@ -51,6 +51,15 @@ import com.pingplusplus.model.Webhooks;
 
 @RestController
 public class OrderController extends BaseController {
+
+	/** Ping++ 回调函数的返回码 **/
+	public static final int Ping_Plus_Code_Error = 500;
+	public static final int Ping_Plus_Code_Success = 200;
+	/** Ping++ 回调函数的事件类型: 退款成功事件 **/
+	public static final String Ping_Plus_Event_Type_Refund_Succeed = "refund.succeeded";
+	/** Ping++ 回调函数的事件类型: 付款成功事件 **/
+	public static final String Ping_Plus_Event_Type_Charge_Succeed = "charge.succeeded";
+
 	Logger logger = LoggerFactory.getLogger(OrderController.class);
 
 	@Autowired
@@ -196,6 +205,9 @@ public class OrderController extends BaseController {
 
 	@RequestMapping(value = "/webhooks", method = RequestMethod.POST)
 	public void webhooks(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		// TODO 读取http header和body的公共方法
+
 		request.setCharacterEncoding("UTF8");
 		// 获取头部所有信息
 		Enumeration<String> headerNames = request.getHeaderNames();
@@ -215,7 +227,8 @@ public class OrderController extends BaseController {
 		String eventString = buffer.toString();
 		// 解析异步通知数据
 		Event event = Webhooks.eventParse(eventString);
-		if ("charge.succeeded".equals(event.getType())) {
+
+		if (Ping_Plus_Event_Type_Charge_Succeed.equals(event.getType())) {
 			Object obj = Webhooks.getObject(eventString);
 			if (obj instanceof Charge) {
 				logger.info("webhooks 发送了 Charge");
@@ -226,16 +239,35 @@ public class OrderController extends BaseController {
 				// order.paymentId = charge.getId();
 				productService.productSold(order);
 			}
-			response.setStatus(200);
-		} else if ("refund.succeeded".equals(event.getType())) {
+			response.setStatus(Ping_Plus_Code_Success);
+
+		} else if (Ping_Plus_Event_Type_Refund_Succeed.equals(event.getType())) {
 			Object obj = Webhooks.getObject(eventString);
-			if (obj instanceof Refund) {
-				logger.info("webhooks 发送了 Refund");
-				Refund refund = (Refund) obj;
-				String chargeId = refund.getCharge();
-				Integer amount = refund.getAmount();
-				String desc = refund.getDescription();
-				logger.info("退款类型：" + desc + " 退款状态：" + refund.getStatus() + " ChargeId：" + chargeId);
+
+			if(null == obj) {
+				logger.error("RefundCallback,N,webhooks.getObject is null,eventString={}", eventString);
+				response.setStatus(Ping_Plus_Code_Error);
+				return;
+			}
+
+			if(!(obj instanceof Refund)) {
+				logger.error("RefundCallback,N,webhooks.getObject is not typeof Refund,eventString={}", eventString);
+				response.setStatus(Ping_Plus_Code_Error);
+				return;
+			}
+
+			Refund refund = (Refund) obj;
+			String chargeId = refund.getCharge();
+			Integer amount = refund.getAmount();
+			String desc = refund.getDescription();
+
+			String refundLog = String.format("refundId=%s, desc=%s, status=%s, chargeId=%s, value=%d",
+					refund.getId(), desc, refund.getStatus(), chargeId, amount);
+
+			/**
+			 * 收到退款消息 保存一条退款记录到数据库 记录退款类型
+			 */
+			try {
 				if (desc.equalsIgnoreCase(CommonUtils.refund_type_refund)) {
 					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.REFUND.getKey());
@@ -246,10 +278,18 @@ public class OrderController extends BaseController {
 					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.MANNUAL.getKey());
 				}
+
+				logger.info("RefundCallback,Y,{}", refundLog);
+				response.setStatus(Ping_Plus_Code_Success);
+
+			} catch (Exception ex) {
+				logger.error("RefundCallback,N,save refund failed, {}", refundLog, ex);
+				response.setStatus(Ping_Plus_Code_Error);
 			}
-			response.setStatus(200);
+
 		} else {
-			response.setStatus(500);
+			logger.error("RefundCallback,N,unknown event type, eventString={}", eventString);
+			response.setStatus(Ping_Plus_Code_Error);
 		}
 	}
 
