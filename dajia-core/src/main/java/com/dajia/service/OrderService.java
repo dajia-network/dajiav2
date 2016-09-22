@@ -208,7 +208,7 @@ public class OrderService {
 			List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
 					orderId, productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
 			refundVal = refundVal.add(new BigDecimal(userShares.size()));
-			if (refundVal.compareTo(totalPrice) > 0) {
+			if (refundVal.compareTo(orderUnitPrice.multiply(new BigDecimal(orderQuantity))) > 0) {
 				refundVal = totalPrice;
 			}
 		}
