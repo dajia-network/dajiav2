@@ -1,5 +1,7 @@
 package com.dajia.domain;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Date;
 
 
@@ -52,5 +54,10 @@ public class UserReward extends BaseModel {
 
 	@Column(name = "expired_date")
 	public Date expiredDate;
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 
 }

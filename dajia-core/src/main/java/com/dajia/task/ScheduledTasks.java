@@ -1,22 +1,22 @@
 package com.dajia.task;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import com.dajia.service.OrderService;
+import com.dajia.service.ProductService;
+import com.dajia.service.RewardService;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.dajia.service.OrderService;
-import com.dajia.service.ProductService;
-import com.dajia.service.RewardService;
+import java.util.Date;
 
 @Component
 public class ScheduledTasks {
 	Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd_HH:mm:ss");
 
 	@Autowired
 	private ProductService productService;
@@ -43,8 +43,7 @@ public class ScheduledTasks {
 
 	@Scheduled(cron = "0 */20 *  * * * ")
 	public void checkRewardByCron() {
-		Date currentDate = new Date();
-		logger.info("Reward check job starts at: " + dateFormat.format(currentDate));
-		rewardService.payRewards();
+		String currentTime = dateFormat.format(new Date());
+		rewardService.payRewards(currentTime);
 	}
 }
