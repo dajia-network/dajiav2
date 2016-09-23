@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
@@ -40,8 +41,6 @@ import com.dajia.vo.OrderFilterVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.ProductVO;
 import com.dajia.vo.ProgressVO;
-import com.pingplusplus.exception.PingppException;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -73,6 +72,9 @@ public class OrderService {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private RefundService refundService;
 
 	@Autowired
 	private RewardService rewardService;
@@ -180,8 +182,7 @@ public class OrderService {
 			if (null != ov.productVO) {
 				ov.totalProductPrice = ov.unitPrice.multiply(new BigDecimal(ov.quantity));
 				ov.rewardValue = rewardService.calculateRewards(ov.orderId, ov.productVO);
-				ov.refundValue = calculateRefundValue(ov.productVO.currentPrice, order.unitPrice, order.totalPrice,
-						order.quantity, order.orderId, ov.productVO.productItemId, ov.productVO.isPromoted);
+				ov.refundValue = calculateRefundValue(order);
 			}
 		} else {
 			ov.orderItems = order.orderItems;
@@ -192,49 +193,58 @@ public class OrderService {
 				ov.totalProductPrice = ov.totalProductPrice.add(oi.unitPrice.multiply(new BigDecimal(oi.quantity)));
 				oi.productVO = productService.loadProductDetailByItemId(oi.productItemId);
 				ov.rewardValue = ov.rewardValue.add(rewardService.calculateRewards(ov.orderId, oi.productVO));
-				ov.refundValue = ov.refundValue.add(calculateRefundValue(oi.productVO.currentPrice, oi.unitPrice,
-						order.totalPrice, oi.quantity, order.orderId, oi.productVO.productItemId,
-						oi.productVO.isPromoted));
 			}
+			ov.refundValue = calculateRefundValue(order);
 		}
 	}
 
-	private BigDecimal calculateRefundValue(BigDecimal currentPrice, BigDecimal orderUnitPrice, BigDecimal totalPrice,
-			Integer orderQuantity, Long orderId, Long productItemId, String isPromoted) {
-		if (null == currentPrice || null == orderUnitPrice) {
-			return null;
-		}
-		BigDecimal refundVal = orderUnitPrice.add(currentPrice.negate()).multiply(new BigDecimal(orderQuantity));
+	private BigDecimal calculateRefundValue(UserOrder order) {
+		BigDecimal refundVal = new BigDecimal(0);
 
-		/** 计算Promote返利 **/
-		if (isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
-			List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
-					orderId, productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+		if (null != order.productItemId) {
+			// single order
+			ProductVO pv = productService.loadProductDetailByItemId(order.productItemId);
+			refundVal = order.unitPrice.add(pv.currentPrice.negate()).multiply(new BigDecimal(order.quantity));
 
-			if(false == CollectionUtils.isEmpty(userShares)) {
-				refundVal = refundVal.add(new BigDecimal(userShares.size()));
+			/** 计算Promote返利 **/
+			if (pv.isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+				List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(
+						order.orderId, pv.productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+
+				if (false == CollectionUtils.isEmpty(userShares)) {
+					refundVal = refundVal.add(new BigDecimal(userShares.size()));
+				}
+			}
+
+		} else {
+			// cart order
+			for (UserOrderItem oi : order.orderItems) {
+				ProductVO pv = productService.loadProductDetailByItemId(oi.productItemId);
+				refundVal = refundVal.add(oi.unitPrice.add(pv.currentPrice.negate()).multiply(
+						new BigDecimal(oi.quantity)));
+
+				/** 计算Promote返利 **/
+				if (pv.isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+					List<UserShare> userShares = userShareRepo
+							.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(order.orderId,
+									pv.productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+
+					if (false == CollectionUtils.isEmpty(userShares)) {
+						refundVal = refundVal.add(new BigDecimal(userShares.size()));
+					}
+				}
 			}
 		}
 
-		/** 只能退不超过当前商品的购买消费 **/
-		BigDecimal productItemTotalPrice = orderUnitPrice.multiply(new BigDecimal(orderQuantity));
-		if (refundVal.compareTo(productItemTotalPrice) > 0) {
-			refundVal = productItemTotalPrice;
+		/** 只能退不超过当前订单总价的金额 **/
+		// BigDecimal productItemTotalPrice = orderUnitPrice.multiply(new
+		// BigDecimal(orderQuantity));
+		if (refundVal.compareTo(order.totalPrice) > 0) {
+			refundVal = order.totalPrice;
 		}
 
 		return refundVal;
 	}
-
-	// private BigDecimal calculateRefundValue(BigDecimal currentPrice,
-	// UserOrder userOrder) {
-	// if (null == currentPrice || null == userOrder) {
-	// return null;
-	// }
-	// BigDecimal refundVal =
-	// userOrder.unitPrice.add(currentPrice.negate()).multiply(
-	// new BigDecimal(userOrder.quantity));
-	// return refundVal;
-	// }
 
 	public void orderRefund(ProductItem productItem) {
 		Long productItemId = productItem.productItemId;
@@ -255,23 +265,22 @@ public class OrderService {
 				String trackingId = userOrder.trackingId;
 
 				if (null != userOrder.paymentId) {
-					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrder.unitPrice,
-							userOrder.totalPrice, userOrder.quantity, userOrder.orderId, productItem.productItemId,
-							productItem.isPromoted);
+					BigDecimal refundValue = calculateRefundValue(userOrder);
 
 					if (refundValue.compareTo(BigDecimal.ZERO) <= 0) {
-						logger.warn("orderRefund, refund value <= 0, productItemId={}, trackingId={}",
-								productItemId, trackingId);
+						logger.warn("orderRefund, refund value <= 0, productItemId={}, trackingId={}", productItemId,
+								trackingId);
 						continue;
 					}
 
 					try {
+						refundService.createRefund(userOrder, refundValue, CommonUtils.RefundType.REFUND.getKey());
 						apiService.applyRefund(userOrder.paymentId, refundValue, CommonUtils.refund_type_refund);
-						logger.info("orderRefund, userOrder, success, productItemId={}, trackingId={}, value=" +
-								refundValue.doubleValue(), productItemId, trackingId);
+						logger.info("orderRefund, userOrder, success, productItemId={}, trackingId={}, value="
+								+ refundValue.doubleValue(), productItemId, trackingId);
 					} catch (Exception e) {
-						logger.error("orderRefund, userOrder, error, productItemId={}, trackingId=" +
-								trackingId, productItemId, e);
+						logger.error("orderRefund, userOrder, error, productItemId={}, trackingId=" + trackingId,
+								productItemId, e);
 					}
 				}
 			}
@@ -283,32 +292,39 @@ public class OrderService {
 		if (null != orderItemList) {
 
 			for (UserOrderItem userOrderItem : orderItemList) {
-
 				String trackingId = userOrderItem.userOrder.trackingId;
+				// 检查是否该订单下所有产品均已打价结束，否则不处理
+				List<ProductVO> products = productService.loadProducts4Order(userOrderItem.userOrder.orderItems);
+				for (ProductVO productVO : products) {
+					if (productVO.productStatus.intValue() != CommonUtils.ProductStatus.EXPIRED.getKey().intValue()) {
+						logger.warn("orderRefund is not created because there is productItem no expired, trackingId="
+								+ trackingId, productVO.productItemId);
+						return;
+					}
+				}
 
 				if (userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.PAIED.getKey()
 						|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVERING.getKey()
 						|| userOrderItem.userOrder.orderStatus == CommonUtils.OrderStatus.DELEVRIED.getKey()) {
 
-					BigDecimal refundValue = calculateRefundValue(productItem.currentPrice, userOrderItem.unitPrice,
-							userOrderItem.userOrder.totalPrice, userOrderItem.quantity,
-							userOrderItem.userOrder.orderId, productItem.productItemId, productItem.isPromoted);
+					BigDecimal refundValue = calculateRefundValue(userOrderItem.userOrder);
 
 					if (refundValue.compareTo(BigDecimal.ZERO) <= 0) {
-						logger.warn("orderRefund, userOrderItem, refund value <= 0, productItemId={}, trackingId={}",
-								productItemId, trackingId);
+						logger.warn("orderRefund, cart order, refund value <= 0, trackingId={}", trackingId);
 						continue;
 					}
 
 					try {
+						refundService.createRefund(userOrderItem.userOrder, refundValue,
+								CommonUtils.RefundType.REFUND.getKey());
 						apiService.applyRefund(userOrderItem.userOrder.paymentId, refundValue,
 								CommonUtils.refund_type_refund);
-						logger.info("orderRefund, userOrderItem, success, productItemId={}, trackingId={}, value=" +
-								refundValue.doubleValue(), productItemId, trackingId);
+						logger.info(
+								"orderRefund, cart order, success, trackingId={}, value=" + refundValue.doubleValue(),
+								trackingId);
 
 					} catch (Exception e) {
-						logger.error("orderRefund, userOrderItem, error, productItemId={}, trackingId=" +
-								trackingId, productItemId, e);
+						logger.error("orderRefund, cart order, error, trackingId=" + trackingId, productItemId, e);
 					}
 				}
 			}

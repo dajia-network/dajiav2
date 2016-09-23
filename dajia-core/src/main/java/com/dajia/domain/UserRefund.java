@@ -1,7 +1,6 @@
 package com.dajia.domain;
 
 import java.math.BigDecimal;
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -45,6 +44,9 @@ public class UserRefund extends BaseModel {
 
 	@Column(name = "refund_type")
 	public Integer refundType;
+
+	@Column(name = "refund_status")
+	public Integer refundStatus;
 
 	@Transient
 	public String refundType4Show;

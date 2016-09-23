@@ -429,6 +429,25 @@ public class CommonUtils {
 		return returnStr;
 	}
 
+	public enum RefundStatus {
+		PENDING(0, "退款中"), COMPLETE(1, "退款完成"), FAILED(2, "退款失败");
+		private Integer key;
+		private String value;
+
+		private RefundStatus(Integer key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+
+		public Integer getKey() {
+			return key;
+		}
+
+		public String getValue() {
+			return value;
+		}
+	}
+
 	public enum LogisticAgent {
 		SHUNFENG("shunfeng", "顺丰快递"), TIANTIAN("tiantian", "天天快递"), ZHONGTONG("zhongtong", "中通快递"), SHENTONG(
 				"shentong", "申通快递");

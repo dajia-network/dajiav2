@@ -1,8 +1,7 @@
 package com.dajia.task;
 
-import com.dajia.service.OrderService;
-import com.dajia.service.ProductService;
-import com.dajia.service.RewardService;
+import java.util.Date;
+
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import com.dajia.service.OrderService;
+import com.dajia.service.ProductService;
+import com.dajia.service.RefundService;
+import com.dajia.service.RewardService;
 
 @Component
 public class ScheduledTasks {
@@ -26,6 +28,9 @@ public class ScheduledTasks {
 
 	@Autowired
 	private RewardService rewardService;
+
+	@Autowired
+	private RefundService refundService;
 
 	@Scheduled(cron = "0 */10 *  * * * ")
 	public void productUpdateByCron() {
@@ -45,5 +50,11 @@ public class ScheduledTasks {
 	public void checkRewardByCron() {
 		String currentTime = dateFormat.format(new Date());
 		rewardService.payRewards(currentTime);
+	}
+
+	@Scheduled(cron = "0 */60 *  * * * ")
+	public void retryRefundByCron() {
+		String currentTime = dateFormat.format(new Date());
+		refundService.retryRefund(currentTime);
 	}
 }

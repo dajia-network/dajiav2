@@ -244,13 +244,13 @@ public class OrderController extends BaseController {
 		} else if (Ping_Plus_Event_Type_Refund_Succeed.equals(event.getType())) {
 			Object obj = Webhooks.getObject(eventString);
 
-			if(null == obj) {
+			if (null == obj) {
 				logger.error("RefundCallback,N,webhooks.getObject is null,eventString={}", eventString);
 				response.setStatus(Ping_Plus_Code_Error);
 				return;
 			}
 
-			if(!(obj instanceof Refund)) {
+			if (!(obj instanceof Refund)) {
 				logger.error("RefundCallback,N,webhooks.getObject is not typeof Refund,eventString={}", eventString);
 				response.setStatus(Ping_Plus_Code_Error);
 				return;
@@ -261,21 +261,20 @@ public class OrderController extends BaseController {
 			Integer amount = refund.getAmount();
 			String desc = refund.getDescription();
 
-			String refundLog = String.format("refundId=%s, desc=%s, status=%s, chargeId=%s, value=%d",
-					refund.getId(), desc, refund.getStatus(), chargeId, amount);
+			String refundLog = String.format("refundId=%s, desc=%s, status=%s, chargeId=%s, value=%d", refund.getId(),
+					desc, refund.getStatus(), chargeId, amount);
 
 			/**
 			 * 收到退款消息 保存一条退款记录到数据库 记录退款类型
 			 */
 			try {
 				if (desc.equalsIgnoreCase(CommonUtils.refund_type_refund)) {
-					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
-							CommonUtils.RefundType.REFUND.getKey());
+					refundService.updateRefund(chargeId, CommonUtils.RefundStatus.COMPLETE.getKey());
 				} else if (desc.equalsIgnoreCase(CommonUtils.refund_type_reward)) {
-					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
+					refundService.createRefundByWebhook(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.REWARD.getKey());
 				} else {
-					refundService.createRefund(chargeId, new BigDecimal(new Double(amount) / 100),
+					refundService.createRefundByWebhook(chargeId, new BigDecimal(new Double(amount) / 100),
 							CommonUtils.RefundType.MANNUAL.getKey());
 				}
 
@@ -283,11 +282,28 @@ public class OrderController extends BaseController {
 				response.setStatus(Ping_Plus_Code_Success);
 
 			} catch (Exception ex) {
-				logger.error("RefundCallback,N,save refund failed, {}", refundLog, ex);
+				logger.error("RefundCallback,N, save refund failed, {}", refundLog, ex);
 				response.setStatus(Ping_Plus_Code_Error);
 			}
 
 		} else {
+			Object obj = Webhooks.getObject(eventString);
+
+			if (null == obj) {
+				logger.error("RefundCallback,N,webhooks.getObject is null,eventString={}", eventString);
+				response.setStatus(Ping_Plus_Code_Error);
+				return;
+			}
+
+			if (!(obj instanceof Refund)) {
+				logger.error("RefundCallback,N,webhooks.getObject is not typeof Refund,eventString={}", eventString);
+				response.setStatus(Ping_Plus_Code_Error);
+				return;
+			}
+
+			Refund refund = (Refund) obj;
+			String chargeId = refund.getCharge();
+			refundService.updateRefund(chargeId, CommonUtils.RefundStatus.FAILED.getKey());
 			logger.error("RefundCallback,N,unknown event type, eventString={}", eventString);
 			response.setStatus(Ping_Plus_Code_Error);
 		}
