@@ -208,11 +208,15 @@ public class RewardService {
 				logger.warn("payRewards job {}, reward value <= 0, order id is " + orderId + ", rewards are " + rwList, jobToken);
 			}
 
-			UserOrder userOrder = orderRepo.findByOrderIdAndOrderStatusAndIsActive(orderId,
-					CommonUtils.OrderStatus.DELEVRIED.getKey(), CommonUtils.ActiveStatus.YES.toString());
+			UserOrder userOrder = orderRepo.findByOrderIdAndIsActive(orderId, CommonUtils.ActiveStatus.YES.toString());
 
 			if (null == userOrder) {
 				logger.error("payRewards job {}, failed for orderId " + orderId + ", order not found", jobToken);
+				continue;
+			}
+
+			if (!CommonUtils.OrderStatus.DELEVRIED.getKey().equals(userOrder.orderStatus)) {
+				logger.warn("payRewards job {}, ignore for undelivered orderId {}", jobToken, orderId);
 				continue;
 			}
 

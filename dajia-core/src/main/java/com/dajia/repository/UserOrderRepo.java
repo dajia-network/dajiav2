@@ -45,4 +45,6 @@ public interface UserOrderRepo extends CrudRepository<UserOrder, Long> {
 
 	public Page<UserOrder> findByOrderIdInAndIsActiveOrderByOrderDateDesc(Set<Long> orderIds, String isActive,
 			Pageable pageable);
+
+	UserOrder findByOrderIdAndIsActive(Long orderId, String s);
 }
