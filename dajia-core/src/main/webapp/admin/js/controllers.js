@@ -392,6 +392,9 @@ angular.module('dajiaAdmin.controllers', []).controller('ProductsCtrl', function
 			}, {
 				code : 'shentong',
 				name : '申通快递'
+			}, {
+				code : 'yunda',
+				name : '韵达快递'
 			} ];
 			$http.get('/admin/order/' + $routeParams.orderId).success(
 					function(data, status, headers, config) {

@@ -18,7 +18,7 @@ public class RepositoryTests {
 	@Autowired
 	private PropertyRepo repo;
 
-	@Test
+	// @Test
 	public void testPropertyRepo() throws Exception {
 		Property p = repo.findByPropertyKey("appkey");
 		System.out.println(p.propertyValue);

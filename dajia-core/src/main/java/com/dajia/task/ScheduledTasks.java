@@ -52,7 +52,7 @@ public class ScheduledTasks {
 		rewardService.payRewards(currentTime);
 	}
 
-	@Scheduled(cron = "0 */60 *  * * * ")
+	//@Scheduled(cron = "0 */60 *  * * * ")
 	public void retryRefundByCron() {
 		String currentTime = dateFormat.format(new Date());
 		refundService.retryRefund(currentTime);

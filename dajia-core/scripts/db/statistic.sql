@@ -44,11 +44,11 @@ group by oi.product_id
 
 select sum(quantity) quantity from user_order 
 where payment_id is not null and order_status in (2,3,4)
-and order_date between '2016-08-01' AND '2016-09-01'
+and order_date between '2016-09-01' AND '2016-10-01'
 union
 select sum(oi.quantity) quantity from user_order_item oi, user_order o  
 where o.payment_id is not null and o.order_status in (2,3,4) and oi.order_id=o.order_id 
-and o.order_date between '2016-08-01' AND '2016-09-01'
+and o.order_date between '2016-09-01' AND '2016-10-01'
 
 select count(*) from user where created_date!=last_visit_date
 
@@ -57,3 +57,29 @@ select sum(total_price) from user_order where payment_id is not null and order_s
 select count(1) from user_share
 union
 select count(distinct(visit_user_id)) from user_share
+
+select * from user_refund where order_id in (
+select order_id from user_refund where refund_type=1 
+group by product_item_id, order_id
+having count(order_id)>1
+) and refund_type=1 order by order_id
+
+
+select * from (
+select * from user_order where is_active='Y' 
+and payment_id is not null and order_status in (2,3,4) and product_item_id is not null
+and order_id not in 
+(select order_id from user_refund where is_active='Y' and refund_type=0 and refund_status=1)
+union
+select * from user_order where order_id in (
+select order_id from user_order_item where order_id in 
+(
+select order_id from user_order where is_active='Y' 
+and payment_id is not null and order_status in (2,3,4) and product_item_id is null
+) group by order_id having count(1)>1
+)
+and order_id not in (
+select order_id from user_refund where is_active='Y' and refund_type=0 and refund_status=1
+group by order_id having count(1)>1
+)
+) res where res.created_date < '2016-09-20'
