@@ -32,7 +32,7 @@ public class ScheduledTasks {
 	@Autowired
 	private RefundService refundService;
 
-	@Scheduled(cron = "0 */10 *  * * * ")
+	@Scheduled(cron = "0 */1 * * * * ")
 	public void productUpdateByCron() {
 		Date currentDate = new Date();
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
