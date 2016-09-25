@@ -42,10 +42,17 @@ public class WechatFilter implements Filter {
 				.append(",userAgent=").append(request.getHeader("user-agent"))
 				.append(",cookies=[");
 
-		for(Cookie cookie : request.getCookies()) {
-			stringBuffer.append("{").append(cookie.getName()).append(":").append(cookie.getValue()).append("},");
+		if (null != request.getCookies()) {
+			for (Cookie cookie : request.getCookies()) {
+				if (null == cookie) {
+					continue;
+				}
+				
+				stringBuffer.append("{").append(cookie.getName()).append(":").append(cookie.getValue()).append("},");
+			}
 		}
 		stringBuffer.append("]");
+
 		return stringBuffer.toString();
 	}
 

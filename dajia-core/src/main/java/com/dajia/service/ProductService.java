@@ -452,9 +452,16 @@ public class ProductService {
 		return products;
 	}
 
-	public void updateProductExpireStatus(Date date) {
-		List<ProductItem> productItems = this.loadAllValidProducts();
+	/**
+	 * 把某些productItem过期 这个方法独立出来以后可以给admin使用 比如对发生错误的
+	 * 商品 可以手动走一遍到期流程
+	 *
+	 * @param productItems
+	 * @param date
+	 */
+	public void doExpireProductItems(List<ProductItem> productItems, Date date) {
 		for (ProductItem productItem : productItems) {
+			logger.info("product item {} will be expired");
 			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
 				logger.info("Product Item " + productItem.productItemId + " is expired.");
 				productItem.productStatus = ProductStatus.EXPIRED.getKey();
@@ -470,6 +477,15 @@ public class ProductService {
 				orderService.orderRefund(productItem);
 			}
 		}
+	}
+
+	/**
+	 *
+	 * @param date
+	 */
+	public void updateProductExpireStatus(Date date) {
+		List<ProductItem> productItems = this.loadAllValidProducts();
+		doExpireProductItems(productItems, date);
 	}
 
 	/**
