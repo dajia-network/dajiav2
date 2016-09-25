@@ -430,7 +430,7 @@ public class CommonUtils {
 	}
 
 	public enum RefundStatus {
-		PENDING(0, "退款中"), COMPLETE(1, "退款完成"), FAILED(2, "退款失败");
+		PENDING(0, "退款中"), COMPLETE(1, "退款完成"), FAILED(2, "退款失败"), RETRYING(3, "重新退款中");
 		private Integer key;
 		private String value;
 
