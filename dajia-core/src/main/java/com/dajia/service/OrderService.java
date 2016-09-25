@@ -294,7 +294,9 @@ public class OrderService {
 			for (UserOrderItem userOrderItem : orderItemList) {
 				String trackingId = userOrderItem.userOrder.trackingId;
 				// 检查是否该订单下所有产品均已打价结束，否则不处理
-				List<ProductVO> products = productService.loadProducts4Order(userOrderItem.userOrder.orderItems);
+				List<UserOrderItem> orderItems = orderItemRepo.findByTrackingIdAndIsActive(userOrderItem.trackingId,
+						CommonUtils.ActiveStatus.YES.toString());
+				List<ProductVO> products = productService.loadProducts4Order(orderItems);
 				for (ProductVO productVO : products) {
 					if (productVO.productStatus.intValue() != CommonUtils.ProductStatus.EXPIRED.getKey().intValue()) {
 						logger.warn("orderRefund is not created because there is productItem no expired, trackingId="

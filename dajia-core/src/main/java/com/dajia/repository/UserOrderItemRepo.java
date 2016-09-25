@@ -12,4 +12,5 @@ public interface UserOrderItemRepo extends CrudRepository<UserOrderItem, Long> {
 	public List<UserOrderItem> findByProductItemIdAndUserIdAndAndIsActiveOrderByOrderItemId(Long productItemId,
 			Long userId, String isActive);
 
+	public List<UserOrderItem> findByTrackingIdAndIsActive(String trackingId, String isActive);
 }
