@@ -47,7 +47,7 @@ public class WechatFilter implements Filter {
 				if (null == cookie) {
 					continue;
 				}
-				
+
 				stringBuffer.append("{").append(cookie.getName()).append(":").append(cookie.getValue()).append("},");
 			}
 		}

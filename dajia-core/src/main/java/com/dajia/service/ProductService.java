@@ -461,7 +461,7 @@ public class ProductService {
 	 */
 	public void doExpireProductItems(List<ProductItem> productItems, Date date) {
 		for (ProductItem productItem : productItems) {
-			logger.info("product item {} will be expired");
+			logger.info("product item {} will be expired", productItem.productItemId);
 			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
 				logger.info("Product Item " + productItem.productItemId + " is expired.");
 				productItem.productStatus = ProductStatus.EXPIRED.getKey();
