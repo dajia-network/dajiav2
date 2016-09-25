@@ -141,9 +141,17 @@ public class ApiService {
 				String requestUserInfoUrl = ApiWechatUtils.wechat_get_userinfo_url + "?access_token=" + accessToken
 						+ "&openid=" + openId + "&lang=zh_CN";
 				logger.info("request userInfo url: " + requestUserInfoUrl);
-				retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
-				map = mapper.readValue(retrunJsonStr, HashMap.class);
+
+
+				if ("ojKYps5HcYJtPFpphPWwFYZ0tscI".equals(openId)) {
+					retrunJsonStr = ApiWechatUtils.httpGet(requestUserInfoUrl, "GET", "UTF-8");
+					logger.info("user hn, returnJsonStr={}", retrunJsonStr);
+				} else {
+					retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl, String.class);
+				}
+
 				logger.info("request userInfo result: " + retrunJsonStr);
+				map = mapper.readValue(retrunJsonStr, HashMap.class);
 				return map;
 			} else {
 				return null;

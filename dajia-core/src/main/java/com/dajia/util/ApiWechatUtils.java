@@ -1,10 +1,20 @@
 package com.dajia.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import com.dajia.domain.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApiWechatUtils {
+
+	private final static Logger logger = LoggerFactory.getLogger(ApiWechatUtils.class);
+
 	public static final String wechat_api_token = "dajia";
 	public static final String wechat_get_token_url = "https://api.weixin.qq.com/sns/oauth2/access_token";
 	public static final String wechat_get_userinfo_url = "https://api.weixin.qq.com/sns/userinfo";
@@ -47,5 +57,38 @@ public class ApiWechatUtils {
 					+ "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
 		}
 		return url;
+	}
+
+	public static String httpGet(String url, String method, String responseEncoding) {
+		try {
+			URL innerURL = new URL(url);
+			HttpURLConnection conn = (HttpURLConnection) innerURL.openConnection();
+			conn.setRequestMethod(method);
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setConnectTimeout(3000);
+
+			conn.connect();
+			logger.info("[test] connected");
+			BufferedInputStream inputStream = new BufferedInputStream(conn.getInputStream());
+
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+			int k;
+
+			while((k = inputStream.read()) != -1) {
+				outputStream.write(k);
+			}
+
+			outputStream.flush();
+			logger.info("[test] output flushed, total {} bytes", outputStream.toByteArray().length);
+			inputStream.close();
+			conn.disconnect();
+			logger.info("[test] disconnected");
+			return new String(outputStream.toByteArray(), responseEncoding);
+		} catch (Exception e) {
+			logger.error("http get error for url {}", url, e);
+			return null;
+		}
 	}
 }
