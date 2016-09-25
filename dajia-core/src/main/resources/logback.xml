@@ -76,6 +76,19 @@
 		</triggeringPolicy>
 	</appender>
 
+	<!-- access log -->
+	<appender name="DebugLog"
+			  class="ch.qos.logback.core.FileAppender">
+		<file>/tmp/debug.log</file>
+		<append>true</append>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
+			</pattern>
+		</layout>
+	</appender>
+
+
 
 	<!-- 日志输出级别 -->
 	<root level="INFO">
@@ -91,4 +104,7 @@
 		<appender-ref ref="AdminLog" />
 	</logger>
 
+	<logger name="DebugLog" level="DEBUG" additivity="false">
+		<appender-ref ref="DebugLog" />
+	</logger>
 </configuration>
