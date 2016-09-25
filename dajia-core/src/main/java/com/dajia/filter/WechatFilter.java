@@ -24,25 +24,44 @@ import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 
 public class WechatFilter implements Filter {
-	Logger logger = LoggerFactory.getLogger(WechatFilter.class);
+
+	Logger logger = LoggerFactory.getLogger("AccessLog");
 
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * 保留访问日志
+	 *
+	 * @param request
+	 * @return
+	 */
+	private String extractRequestInfo(HttpServletRequest request) {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("url=").append(request.getRequestURI())
+				.append(",userAgent=").append(request.getHeader("user-agent"))
+				.append(",cookies=[");
+
+		for(Cookie cookie : request.getCookies()) {
+			stringBuffer.append("{").append(cookie.getName()).append(":").append(cookie.getValue()).append("},");
+		}
+		stringBuffer.append("]");
+		return stringBuffer.toString();
+	}
+
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = (HttpServletRequest) req;
-		String reqUrl = request.getRequestURI();
-		logger.info("requestURL: " + reqUrl);
+
+		logger.info(extractRequestInfo(request));
+
 		HttpSession session = request.getSession(true);
 		LoginUserVO loginUser = (LoginUserVO) session.getAttribute(UserUtils.session_user);
-		logger.info("hasLoginUser: " + (null != loginUser));
 		HttpServletResponse response = (HttpServletResponse) res;
 
 		if ((null == loginUser || null == loginUser.oauthUserId)) {
 			String ua = request.getHeader("user-agent");
 			// is Wechat browser
-			logger.info("user-agent: " + ua);
 			if (null != ua && ua.toLowerCase().indexOf("micromessenger") > 0) {
 				boolean isCookieLogin = false;
 				Cookie[] cookies = request.getCookies();
@@ -50,7 +69,6 @@ public class WechatFilter implements Filter {
 					for (Cookie cookie : cookies) {
 						String name = cookie.getName();
 						if (name.equals("dajia_user_oauth_id")) {
-							logger.info("user has cookies...");
 							String oauthUserId = cookie.getValue();
 							User user = userService.oauthLogin("Wechat", oauthUserId, request);
 							if (null != user) {
@@ -61,7 +79,6 @@ public class WechatFilter implements Filter {
 					}
 				}
 				if (!isCookieLogin) {
-					logger.info("user does not have cookies...");
 					String refUserId = request.getParameter(CommonUtils.ref_user_id);
 					String productId = request.getParameter(CommonUtils.product_id);
 					String refOrderId = request.getParameter(CommonUtils.ref_order_id);

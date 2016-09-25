@@ -21,7 +21,8 @@ import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
 
 public class AdminFilter implements Filter {
-	Logger logger = LoggerFactory.getLogger(AdminFilter.class);
+
+	Logger logger = LoggerFactory.getLogger("AdminLog");
 
 	@Autowired
 	private UserService userService;
