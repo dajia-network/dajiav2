@@ -1,8 +1,10 @@
 package com.dajia.service;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.dajia.Application;
@@ -43,6 +44,9 @@ public class ServiceTests {
 
 	@Autowired
 	private ProductItemRepo productItemRepo;
+
+	@Autowired
+	private RefundService refundService;
 
 	// @Test
 	public void testApiService() throws Exception {
@@ -84,7 +88,7 @@ public class ServiceTests {
 		orderService.orderRefund(productItem);
 	}
 
-	@Test
+	//@Test
 	public void testUpYun() {
 		String url = "http://v0.api.upyun.com/dajia-static/app_img";
 		String username = "dajiawang";
@@ -105,5 +109,12 @@ public class ServiceTests {
 				set("Authorization", authHeader);
 			}
 		};
+	}
+
+	@Test
+	public void testRefundRetry() {
+		FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd_HH:mm:ss");
+		String currentTime = dateFormat.format(new Date());
+		refundService.retryRefund(currentTime);
 	}
 }

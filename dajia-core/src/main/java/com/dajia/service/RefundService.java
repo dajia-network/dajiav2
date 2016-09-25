@@ -96,6 +96,7 @@ public class RefundService {
 					continue;
 				}
 				try {
+					this.updateRefund(order.paymentId, CommonUtils.RefundStatus.RETRYING.getKey());
 					apiService.applyRefund(order.paymentId, refund.refundValue, CommonUtils.refund_type_refund);
 					logger.info(
 							"orderRefund, userOrder, success, trackingId={}, value=" + refund.refundValue.doubleValue(),
