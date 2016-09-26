@@ -3,6 +3,7 @@ package com.dajia.service;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,21 @@ public class SmsService {
 				bindingCode, allowSend);
 	}
 
+	/**
+	 * 调用阿里大鱼发送短信
+	 *
+	 * @param mobile
+	 * @param signName
+	 * @param templateCode
+	 * @param codeStr
+	 * @param allowSend		是否是测试 如果allowSend == false 表示不实际发送短信
+	 * @return
+	 */
 	private String sendSmsMessage(String mobile, String signName, String templateCode, String codeStr, boolean allowSend) {
-		String returnStatus = CommonUtils.return_val_failed;
+		String Y = CommonUtils.return_val_success;
+		String N = CommonUtils.return_val_failed;
+
+
 		String url = ApiAlibabaUtils.sms_server_url;
 		String appkey = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_key).propertyValue;
 		String secret = propertyRepo.findByPropertyKey(ApiAlibabaUtils.sms_app_secret).propertyValue;
@@ -80,20 +94,38 @@ public class SmsService {
 		req.setSmsFreeSignName(signName);
 		req.setSmsParam("{\"code\":\"" + codeStr + "\",\"product\":\"打价网\"}");
 		req.setSmsTemplateCode(templateCode);
-		logger.info("Sending msg to mobile: " + mobile + " / Code: " + codeStr);
-		try {
-			if (allowSend) {
-				AlibabaAliqinFcSmsNumSendResponse response = client.execute(req);
-				String returnJsonStr = response.getBody();
-				if (returnJsonStr.indexOf("\"err_code\":\"0\"") >= 0) {
-					returnStatus = CommonUtils.return_val_success;
-				}
-			} else {
-				returnStatus = CommonUtils.return_val_success;
-			}
-		} catch (ApiException e) {
-			logger.error(e.getMessage(), e);
+		logger.info("sending sms, phone={}, msg={}", mobile, codeStr);
+
+		if (false == allowSend) {
+			logger.warn("send sms skipped, phone={}, msg={}", mobile, codeStr);
+			return Y;
 		}
-		return returnStatus;
+
+		try {
+			AlibabaAliqinFcSmsNumSendResponse response = client.execute(req);
+			String result = response.getBody();
+
+			if (StringUtils.isNotEmpty(result) && result.contains("\"err_code\":\"0\"")) {
+				logger.info("send sms succeed, phone={}, msg={}", mobile, codeStr);
+				return Y;
+			}
+
+			logger.warn("send sms failed, phone={}, msg={}, result={}", mobile, codeStr, result);
+			return N;
+
+		} catch (Exception e) {
+			logger.error("send sms failed, phone={}, msg={}, reason={}", mobile, codeStr, e.getMessage());
+			return N;
+		}
+	}
+
+	public static void main(String[] args) {
+//		new SmsService().sendSmsMessage("13917586143",
+//				ApiAlibabaUtils.sms_free_sign_name_signup, ApiAlibabaUtils.sms_template_signup,
+//				"1234测试", true);
+//
+		new SmsService().sendSmsMessage("13917586143",
+				ApiAlibabaUtils.sms_free_sign_name_signup, ApiAlibabaUtils.sms_template_signup,
+				CommonUtils.genRandomNum(4) + "测试不发", false);
 	}
 }

@@ -10,6 +10,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Page;
 
 import com.dajia.domain.Price;
@@ -190,16 +191,7 @@ public class CommonUtils {
 	}
 
 	public static String genRandomNum(int pwd_len) {
-		int i;
-		int count = 0;
-		StringBuffer pwd = new StringBuffer("");
-		Random r = new Random();
-		while (count < pwd_len) {
-			i = Math.abs(r.nextInt(10));
-			pwd.append(i);
-			count++;
-		}
-		return pwd.toString();
+		return RandomStringUtils.randomNumeric(pwd_len);
 	}
 
 	public static String genTrackingId(Long userId) {
