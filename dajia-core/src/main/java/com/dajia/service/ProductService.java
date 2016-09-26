@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.dajia.domain.Price;
@@ -460,6 +461,13 @@ public class ProductService {
 	 * @param date
 	 */
 	public void doExpireProductItems(List<ProductItem> productItems, Date date) {
+
+		if (CollectionUtils.isEmpty(productItems)) {
+			return;
+		}
+
+		StringBuffer skippedProductItems = new StringBuffer("Product Items [");
+
 		for (ProductItem productItem : productItems) {
 			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
 				logger.info("Product Item " + productItem.productItemId + " is expired.");
@@ -475,9 +483,11 @@ public class ProductService {
 				productItemRepo.save(productItem);
 				orderService.orderRefund(productItem);
 			} else {
-				logger.info("Product Item {} is skipped", productItem);
+				skippedProductItems.append(productItem.productItemId).append(",");
 			}
 		}
+
+		logger.info(skippedProductItems.append("] are skipped").toString());
 	}
 
 	/**
