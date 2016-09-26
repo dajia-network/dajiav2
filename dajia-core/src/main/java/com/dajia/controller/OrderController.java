@@ -303,7 +303,7 @@ public class OrderController extends BaseController {
 
 			Refund refund = (Refund) obj;
 			String chargeId = refund.getCharge();
-			refundService.updateRefund(chargeId, CommonUtils.RefundStatus.FAILED.getKey());
+			refundService.updateRefund(chargeId, CommonUtils.RefundStatus.FAILED.getKey(), eventString);
 			logger.error("RefundCallback,N,unknown event type, eventString={}", eventString);
 			response.setStatus(Ping_Plus_Code_Error);
 		}

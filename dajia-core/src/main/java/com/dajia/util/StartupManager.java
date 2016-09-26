@@ -15,7 +15,9 @@ public class StartupManager implements InitializingBean {
     final static Logger logger = LoggerFactory.getLogger(StartupManager.class);
 
     public static void printLogo() {
-        String logo = "___           ___            ___                     ___     \n" +
+        String logo =
+                "\n======================================================================\n\n" +
+                "      ___           ___            ___                     ___    \n" +
                 "     /\\  \\         /\\  \\          /\\  \\        ___        /\\  \\    \n" +
                 "    /::\\  \\       /::\\  \\         \\:\\  \\      /\\  \\      /::\\  \\   \n" +
                 "   /:/\\:\\  \\     /:/\\:\\  \\    ___ /::\\__\\     \\:\\  \\    /:/\\:\\  \\  \n" +
@@ -25,7 +27,8 @@ public class StartupManager implements InitializingBean {
                 "  \\:\\  /:/  /       \\::/  /    \\/__/      \\::/__/          \\::/  / \n" +
                 "   \\:\\/:/  /        /:/  /                 \\:\\__\\          /:/  /  \n" +
                 "    \\::/__/        /:/  /                   \\/__/         /:/  /   \n" +
-                "     ~~            \\/__/                                  \\/__/    ";
+                "     ~~            \\/__/                                  \\/__/    \n\n" +
+                " ======================================================================\n\n\n";
 
         logger.info(logo);
 

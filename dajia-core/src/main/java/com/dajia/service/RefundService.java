@@ -59,6 +59,11 @@ public class RefundService {
 	}
 
 	public void updateRefund(String chargeId, Integer refundStatus) {
+		updateRefund(chargeId, refundStatus, null);
+	}
+
+	public void updateRefund(String chargeId, Integer refundStatus, String msg) {
+
 		UserOrder order = orderRepo.findByPaymentId(chargeId);
 		if (null == order) {
 			logger.error("update Refund failed because findByPaymentId has no result by chargeId: {} at {}", chargeId,
@@ -73,10 +78,12 @@ public class RefundService {
 					"update Refund warn because findByOrderIdAndRefundTypeAndIsActive size is {} other than 1 at {}",
 					refunds.size(), System.currentTimeMillis());
 		}
+
 		for (UserRefund refund : refunds) {
 			if (refund.refundStatus.intValue() != refundStatus.intValue()) {
 				refund.refundDate = new Date();
 				refund.refundStatus = refundStatus;
+				refund.apiMsg = msg;
 				refundRepo.save(refund);
 				logger.info("update Refund success for order {} at {}", order.orderId, System.currentTimeMillis());
 			}
