@@ -78,6 +78,7 @@ public class RefundService {
 		refund.refundDate = new Date();
 		refund.refundStatus = refundStatus;
 		refundRepo.save(refund);
+		logger.info("update Refund success for order {} at {}", order.orderId, System.currentTimeMillis());
 	}
 
 	public void retryRefund(String jobToken) {

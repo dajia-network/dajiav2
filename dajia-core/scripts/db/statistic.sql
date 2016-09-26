@@ -70,16 +70,19 @@ select * from user_order where is_active='Y'
 and payment_id is not null and order_status in (2,3,4) and product_item_id is not null
 and order_id not in 
 (select order_id from user_refund where is_active='Y' and refund_type=0 and refund_status=1)
-union
-select * from user_order where order_id in (
-select order_id from user_order_item where order_id in 
-(
-select order_id from user_order where is_active='Y' 
-and payment_id is not null and order_status in (2,3,4) and product_item_id is null
-) group by order_id having count(1)>1
-)
-and order_id not in (
-select order_id from user_refund where is_active='Y' and refund_type=0 and refund_status=1
-group by order_id having count(1)>1
-)
-) res where res.created_date < '2016-09-20'
+) res where res.created_date between '2016-08-01' and '2016-09-20'
+
+
+insert into user_refund 
+(user_id, product_id, product_item_id, order_id, refund_value, refund_type, refund_status, refund_date) 
+select user_id, product_id, product_item_id, order_id, refund_value, 0 refund_type, 2 refund_status, now() refund_date 
+from (
+select ((o.unit_price-pi.current_price)*o.quantity) refund_value,
+o.* from user_order o, product_item pi
+where o.product_item_id=pi.product_item_id
+and o.is_active='Y' 
+and o.payment_id is not null and o.order_status in (2,3,4) and o.product_item_id is not null
+and o.order_id not in 
+(select order_id from user_refund where is_active='Y' and refund_type=0 and refund_status!=0)
+) res where res.refund_value>0 and res.created_date between '2016-08-01' and '2016-09-26'
+and res.order_id not in (select order_id from user_refund where refund_status=2);
