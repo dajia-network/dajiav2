@@ -69,18 +69,16 @@ public class RefundService {
 				CommonUtils.RefundType.REFUND.getKey(), CommonUtils.ActiveStatus.YES.toString());
 		// 一个订单只应该有一个普通退款
 		if (refunds.size() != 1) {
-			logger.warn(
-					"update Refund warn because findByOrderIdAndRefundTypeAndIsActive size is {} other than 1 at {}",
+			logger.error(
+					"update Refund failed because findByOrderIdAndRefundTypeAndIsActive size is {} other than 1 at {}",
 					refunds.size(), System.currentTimeMillis());
+			return;
 		}
-		for (UserRefund refund : refunds) {
-			if (refund.refundStatus.intValue() != refundStatus.intValue()) {
-				refund.refundDate = new Date();
-				refund.refundStatus = refundStatus;
-				refundRepo.save(refund);
-				logger.info("update Refund success for order {} at {}", order.orderId, System.currentTimeMillis());
-			}
-		}
+		UserRefund refund = refunds.get(0);
+		refund.refundDate = new Date();
+		refund.refundStatus = refundStatus;
+		refundRepo.save(refund);
+		logger.info("update Refund success for order {} at {}", order.orderId, System.currentTimeMillis());
 	}
 
 	public void retryRefund(String jobToken) {
