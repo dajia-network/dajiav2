@@ -473,6 +473,13 @@ public class ProductService {
 			return;
 		}
 
+		StringBuffer productItemsIds = new StringBuffer("expire job {}, product item [");
+		for(ProductItem pi : productItems) {
+			productItemsIds.append(pi.productItemId).append(",");
+		}
+		logger.info("expire job {}, {} to be deal with", jobToken, productItemsIds.append("]").toString());
+
+
 		StringBuffer skippedProductItems = new StringBuffer("expire job {}, product items [");
 
 		for (ProductItem productItem : productItems) {

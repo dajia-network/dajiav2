@@ -166,8 +166,12 @@ public class RewardService {
 			return;
 		}
 
+		StringBuffer rewardsIds = new StringBuffer("reward ids [");
+
 		Map<Long, List<UserReward>> userProductMap = new HashMap<Long, List<UserReward>>();
 		for (UserReward userReward : rewards) {
+			rewardsIds.append(userReward.rewardId).append(",");
+
 			Long key = userReward.refOrderId;
 			List<UserReward> rwList = new ArrayList<UserReward>();
 			if (userProductMap.containsKey(key)) {
@@ -179,6 +183,10 @@ public class RewardService {
 				userProductMap.put(key, rwList);
 			}
 		}
+
+		rewardsIds.append("]");
+
+		logger.info("payRewards job {}, {}", jobToken, rewardsIds.toString());
 
 		Iterator<Map.Entry<Long, List<UserReward>>> iter = userProductMap.entrySet().iterator();
 
