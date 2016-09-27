@@ -142,8 +142,7 @@ public class ApiService {
 						+ "&openid=" + openId + "&lang=zh_CN";
 				logger.info("request userInfo url: " + requestUserInfoUrl);
 
-
-				if ("ojKYps5HcYJtPFpphPWwFYZ0tscI".equals(openId)) {
+				if ("ojKYps5HcYJtPFpphPWwFYZ0tscI".equals(openId) || "ojKYps1y5oaBbeoHoPIq9en9391E".equals(openId)) {
 					retrunJsonStr = ApiWechatUtils.httpGet(requestUserInfoUrl, "GET", "UTF-8");
 					logger.info("user hn, returnJsonStr={}", retrunJsonStr);
 					debugLogger.info("user hn, returnJsonStr={}", retrunJsonStr);
