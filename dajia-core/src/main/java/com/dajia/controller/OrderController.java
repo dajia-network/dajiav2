@@ -2,6 +2,7 @@ package com.dajia.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -208,13 +209,17 @@ public class OrderController extends BaseController {
 
 		// TODO 读取http header和body的公共方法
 
-		request.setCharacterEncoding("UTF8");
+		request.setCharacterEncoding("UTF-8");
+
+		StringBuffer webhookBuffer = new StringBuffer();
+		SoftReference<StringBuffer> webhooksInfo = new SoftReference<StringBuffer>(webhookBuffer);
+
 		// 获取头部所有信息
 		Enumeration<String> headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
-			String key = (String) headerNames.nextElement();
+			String key = headerNames.nextElement();
 			String value = request.getHeader(key);
-			logger.info(key + " " + value);
+			webhooksInfo.get().append("{").append(key).append(":").append(value).append("},");
 		}
 		// 获得 http body 内容
 		BufferedReader reader = request.getReader();
@@ -225,6 +230,9 @@ public class OrderController extends BaseController {
 		}
 		reader.close();
 		String eventString = buffer.toString();
+		webhooksInfo.get().append("body=[").append(eventString).append("]");
+		logger.info("webhooks, {}", webhooksInfo.toString());
+
 		// 解析异步通知数据
 		Event event = Webhooks.eventParse(eventString);
 
