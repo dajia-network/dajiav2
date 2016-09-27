@@ -29,12 +29,12 @@ public class ApiWechatUtils {
 	public static final String wechat_jsapi_key = "ticket";
 
 	public static void updateWechatUserInfo(User user, Map<String, String> userInfoMap) {
-		user.userName = CommonUtils.stringCharsetConvert(userInfoMap.get("nickname"), "utf-8");
+		user.userName = CommonUtils.stringCharsetConvert(userInfoMap.get("nickname"), "UTF-8");
 		user.headImgUrl = userInfoMap.get("headimgurl");
 		user.sex = String.valueOf(userInfoMap.get("sex"));
-		user.country = CommonUtils.stringCharsetConvert(userInfoMap.get("country"), "utf-8");
-		user.province = CommonUtils.stringCharsetConvert(userInfoMap.get("province"), "utf-8");
-		user.city = CommonUtils.stringCharsetConvert(userInfoMap.get("city"), "utf-8");
+		user.country = CommonUtils.stringCharsetConvert(userInfoMap.get("country"), "UTF-8");
+		user.province = CommonUtils.stringCharsetConvert(userInfoMap.get("province"), "ISO-8859-1");
+		user.city = CommonUtils.stringCharsetConvert(userInfoMap.get("city"), "UTF-8");
 	}
 
 	public static String getOauthUrl(String appId, String refUserId, String productId, String refOrderId) {

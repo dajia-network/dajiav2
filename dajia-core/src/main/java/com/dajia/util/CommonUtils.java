@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -218,6 +217,9 @@ public class CommonUtils {
 	}
 
 	public static String getRequestIP(HttpServletRequest request) {
+		if (null == request) {
+			return "";
+		}
 		String ipAddr;
 		ipAddr = request.getHeader("X-Real-IP");
 		if (null == ipAddr || ipAddr.length() == 0) {
