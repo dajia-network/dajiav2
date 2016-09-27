@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,9 @@ public class ProductService {
 
 	@Autowired
 	private UserRewardRepo rewardRepo;
+
+	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd_HH:mm:ss");
+
 
 	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
@@ -462,32 +466,47 @@ public class ProductService {
 	 */
 	public void doExpireProductItems(List<ProductItem> productItems, Date date) {
 
+		String jobToken = dateFormat.format(date);
+
 		if (CollectionUtils.isEmpty(productItems)) {
+			logger.warn("expire job {} finished, no product items", jobToken);
 			return;
 		}
 
-		StringBuffer skippedProductItems = new StringBuffer("Product Items [");
+		StringBuffer skippedProductItems = new StringBuffer("expire job {}, product items [");
 
 		for (ProductItem productItem : productItems) {
-			if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
-				logger.info("Product Item " + productItem.productItemId + " is expired.");
-				productItem.productStatus = ProductStatus.EXPIRED.getKey();
-				productItemRepo.save(productItem);
-				orderService.orderRefund(productItem);
-			} else if (productItem.stock <= 0) {
-				if (productItem.isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
-					return;
+
+			Long id = productItem.productItemId;
+
+			try {
+				if (null == productItem.expiredDate || productItem.expiredDate.before(date)) {
+					productItem.productStatus = ProductStatus.EXPIRED.getKey();
+					productItemRepo.save(productItem);
+					orderService.orderRefund(productItem);
+					logger.info("expire job {}, product item {} expired by time", jobToken, id);
+
+				} else if (productItem.stock <= 0) {
+					if (productItem.isPromoted.equalsIgnoreCase(CommonUtils.YesNoStatus.YES.toString())) {
+						return;
+					}
+					productItem.productStatus = ProductStatus.EXPIRED.getKey();
+					productItemRepo.save(productItem);
+					orderService.orderRefund(productItem);
+					logger.info("expire job {}, product item {} expired by sold out", jobToken, id);
+
+				} else {
+					skippedProductItems.append(id).append(",");
 				}
-				logger.info("Product Item " + productItem.productItemId + " is sold out.");
-				productItem.productStatus = ProductStatus.EXPIRED.getKey();
-				productItemRepo.save(productItem);
-				orderService.orderRefund(productItem);
-			} else {
-				skippedProductItems.append(productItem.productItemId).append(",");
+
+			} catch (Exception ex) {
+				logger.error("expire job {}, product item {} failed", jobToken, id, ex);
 			}
 		}
 
-		logger.info(skippedProductItems.append("] are skipped").toString());
+		logger.info(skippedProductItems.append("] are skipped").toString(), jobToken);
+
+		logger.info("expire job {} finished at {}", jobToken, System.currentTimeMillis());
 	}
 
 	/**
