@@ -59,6 +59,11 @@ public class RefundService {
 	}
 
 	public void updateRefund(String chargeId, Integer refundStatus) {
+		updateRefund(chargeId, refundStatus, null);
+	}
+
+	public void updateRefund(String chargeId, Integer refundStatus, String msg) {
+
 		UserOrder order = orderRepo.findByPaymentId(chargeId);
 		if (null == order) {
 			logger.error("update Refund failed because findByPaymentId has no result by chargeId: {} at {}", chargeId,

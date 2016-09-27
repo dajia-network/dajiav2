@@ -88,7 +88,7 @@ public class ServiceTests {
 		orderService.orderRefund(productItem);
 	}
 
-	//@Test
+	// @Test
 	public void testUpYun() {
 		String url = "http://v0.api.upyun.com/dajia-static/app_img";
 		String username = "dajiawang";
@@ -111,10 +111,14 @@ public class ServiceTests {
 		};
 	}
 
-	@Test
 	public void testRefundRetry() {
 		FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd_HH:mm:ss");
 		String currentTime = dateFormat.format(new Date());
 		refundService.retryRefund(currentTime);
+	}
+
+	@Test
+	public void testExpireJob() {
+		productService.updateProductExpireStatus(new Date());
 	}
 }

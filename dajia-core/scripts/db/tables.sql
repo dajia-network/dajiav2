@@ -244,6 +244,7 @@ CREATE TABLE IF NOT EXISTS dajia.user_refund (
     refund_value NUMERIC(10,2),
     refund_type INT,
     refund_status INT,
+    api_msg VARCHAR(2000),
 	refund_date TIMESTAMP NULL,
 	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 	modified_date TIMESTAMP NULL,

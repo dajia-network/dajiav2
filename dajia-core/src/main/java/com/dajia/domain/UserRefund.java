@@ -51,4 +51,7 @@ public class UserRefund extends BaseModel {
 	@Transient
 	public String refundType4Show;
 
+	@Column(name = "api_msg")
+	public String apiMsg;
+
 }
