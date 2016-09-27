@@ -3,13 +3,13 @@ package com.dajia.util;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
-import com.dajia.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.dajia.domain.User;
 
 public class ApiWechatUtils {
 
@@ -29,12 +29,12 @@ public class ApiWechatUtils {
 	public static final String wechat_jsapi_key = "ticket";
 
 	public static void updateWechatUserInfo(User user, Map<String, String> userInfoMap) {
-		user.userName = CommonUtils.stringCharsetConvert(userInfoMap.get("nickname"), "UTF-8");
+		user.userName = userInfoMap.get("nickname");
 		user.headImgUrl = userInfoMap.get("headimgurl");
 		user.sex = String.valueOf(userInfoMap.get("sex"));
-		user.country = CommonUtils.stringCharsetConvert(userInfoMap.get("country"), "UTF-8");
-		user.province = CommonUtils.stringCharsetConvert(userInfoMap.get("province"), "ISO-8859-1");
-		user.city = CommonUtils.stringCharsetConvert(userInfoMap.get("city"), "UTF-8");
+		user.country = userInfoMap.get("country");
+		user.province = userInfoMap.get("province");
+		user.city = userInfoMap.get("city");
 	}
 
 	public static String getOauthUrl(String appId, String refUserId, String productId, String refOrderId) {
@@ -76,7 +76,7 @@ public class ApiWechatUtils {
 
 			int k;
 
-			while((k = inputStream.read()) != -1) {
+			while ((k = inputStream.read()) != -1) {
 				outputStream.write(k);
 			}
 
