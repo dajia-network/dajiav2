@@ -39,8 +39,9 @@ import com.pingplusplus.model.Refund;
 
 @Service
 public class ApiService {
-	Logger logger = LoggerFactory.getLogger(ApiService.class);
-	Logger debugLogger = LoggerFactory.getLogger("DebugLog");
+
+	private final static Logger logger = LoggerFactory.getLogger(ApiService.class);
+
 	@Autowired
 	private PropertyRepo propertyRepo;
 
@@ -226,15 +227,8 @@ public class ApiService {
 		String ticket = null;
 		try {
 			ticket = getWechatJsapiTicket();
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception ex) {
+			logger.error("get wechat sig error, timestamp={}, nonceStr={}, url={}, error={}", timestamp, nonceStr, url, ex.getMessage());
 		}
 		String str = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timestamp + "&url=" + url;
 		logger.info("wechat signature str: " + str);
