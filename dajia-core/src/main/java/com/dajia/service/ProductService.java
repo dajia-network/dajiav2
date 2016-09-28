@@ -473,7 +473,7 @@ public class ProductService {
 			return;
 		}
 
-		StringBuffer productItemsIds = new StringBuffer("expire job {}, product item [");
+		StringBuffer productItemsIds = new StringBuffer("product item [");
 		for(ProductItem pi : productItems) {
 			productItemsIds.append(pi.productItemId).append(",");
 		}
