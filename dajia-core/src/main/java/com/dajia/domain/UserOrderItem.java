@@ -52,4 +52,19 @@ public class UserOrderItem extends BaseModel {
 
 	@Transient
 	public ProductVO productVO;
+
+	@Override
+	public String toString() {
+		return "UserOrderItem{" +
+				"orderItemId=" + orderItemId +
+				", trackingId='" + trackingId + '\'' +
+				", productId=" + productId +
+				", productItemId=" + productItemId +
+				", userId=" + userId +
+				", productShared='" + productShared + '\'' +
+				", quantity=" + quantity +
+				", unitPrice=" + unitPrice +
+				", orderId=" + userOrder.orderId +
+				'}';
+	}
 }
