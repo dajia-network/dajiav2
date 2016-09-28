@@ -231,7 +231,7 @@ public class OrderController extends BaseController {
 		reader.close();
 		String eventString = buffer.toString();
 		webhooksInfo.get().append("body=[").append(eventString).append("]");
-		logger.info("webhooks, {}", webhooksInfo.toString());
+		logger.info("webhooks, {}", webhooksInfo.get().toString());
 
 		// 解析异步通知数据
 		Event event = Webhooks.eventParse(eventString);
