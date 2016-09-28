@@ -84,7 +84,7 @@ public class ProductItem extends BaseModel {
 	@Transient
 	public Long realSold;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "productItem", fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "productItem", fetch = FetchType.EAGER)
 	public List<Price> prices;
 
 	@ManyToOne(fetch = FetchType.EAGER)
