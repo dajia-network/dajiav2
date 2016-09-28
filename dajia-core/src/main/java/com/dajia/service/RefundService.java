@@ -1,6 +1,7 @@
 package com.dajia.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -115,7 +116,9 @@ public class RefundService {
 	}
 
 	public List<UserRefund> getRefundListByOrderId(Long orderId) {
-		List<UserRefund> refundList = refundRepo.findByOrderIdAndIsActive(orderId,
+		List<Integer> refundStatusList = new ArrayList<Integer>();
+		refundStatusList.add(CommonUtils.RefundStatus.COMPLETE.getKey());
+		List<UserRefund> refundList = refundRepo.findByOrderIdAndRefundStatusInAndIsActive(orderId, refundStatusList,
 				CommonUtils.ActiveStatus.YES.toString());
 		for (UserRefund userRefund : refundList) {
 			userRefund.refundType4Show = CommonUtils.getRefundTypeStr(userRefund.refundType);

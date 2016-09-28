@@ -302,13 +302,12 @@ public class OrderService {
 				// 检查是否该订单下所有产品均已打价结束，否则不处理
 
 				boolean isAllProductItemsExpiredForThisOrder = true;
-
-				List<UserOrderItem> orderItems = orderItemRepo.findByTrackingIdAndIsActive(userOrderItem.trackingId,
-						CommonUtils.ActiveStatus.YES.toString());
-				List<ProductVO> products = productService.loadProducts4Order(orderItems);
-				for (ProductVO productVO : products) {
-					if (productVO.productStatus.intValue() != CommonUtils.ProductStatus.EXPIRED.getKey().intValue()) {
-						logger.warn("orderRefund for productItem {} is not created because there is productItem no expired, trackingId {}", trackingId, productVO.productItemId);
+				List<ProductItem> productItems = productService.loadProductItemsByTrackingId(trackingId);
+				for (ProductItem pi : productItems) {
+					if (pi.productStatus.intValue() != CommonUtils.ProductStatus.EXPIRED.getKey().intValue()) {
+						logger.warn(
+								"orderRefund for productItem {} is not created because there is productItem no expired, trackingId {}",
+								pi.productItemId, trackingId);
 						isAllProductItemsExpiredForThisOrder = false;
 						break;
 					}
@@ -339,7 +338,7 @@ public class OrderService {
 								trackingId);
 
 					} catch (Exception e) {
-						logger.error("orderRefund, cart order, error, trackingId=" + trackingId, productItemId, e);
+						logger.error("orderRefund, cart order, error, trackingId={}", trackingId, e);
 					}
 				}
 			}

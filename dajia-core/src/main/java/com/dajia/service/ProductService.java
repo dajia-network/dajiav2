@@ -86,7 +86,6 @@ public class ProductService {
 
 	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd_HH:mm:ss");
 
-
 	public List<Product> loadProductsAllFromApiWd() {
 		String token = "";
 		try {
@@ -459,8 +458,7 @@ public class ProductService {
 	}
 
 	/**
-	 * 把某些productItem过期 这个方法独立出来以后可以给admin使用 比如对发生错误的
-	 * 商品 可以手动走一遍到期流程
+	 * 把某些productItem过期 这个方法独立出来以后可以给admin使用 比如对发生错误的 商品 可以手动走一遍到期流程
 	 *
 	 * @param productItems
 	 * @param date
@@ -475,7 +473,7 @@ public class ProductService {
 		}
 
 		StringBuffer productItemsIds = new StringBuffer("product item [");
-		for(ProductItem pi : productItems) {
+		for (ProductItem pi : productItems) {
 			productItemsIds.append(pi.productItemId).append(",");
 		}
 		logger.info("expire job {}, {} to be deal with", jobToken, productItemsIds.append("]").toString());
@@ -662,6 +660,19 @@ public class ProductService {
 			productVOList.add(productVO);
 		}
 		return productVOList;
+	}
+
+	public List<ProductItem> loadProductItemsByTrackingId(String trackingId) {
+		List<ProductItem> productItems = new ArrayList<ProductItem>();
+		List<UserOrderItem> orderItems = orderItemRepo.findByTrackingIdAndIsActive(trackingId,
+				CommonUtils.ActiveStatus.YES.toString());
+		for (UserOrderItem orderItem : orderItems) {
+			ProductItem pi = productItemRepo.findOne(orderItem.productItemId);
+			if (null != pi) {
+				productItems.add(pi);
+			}
+		}
+		return productItems;
 	}
 
 	public boolean validateStock(OrderVO orderVO) {
