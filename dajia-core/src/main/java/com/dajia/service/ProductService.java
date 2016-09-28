@@ -292,6 +292,7 @@ public class ProductService {
 		}
 		for (ProductItem pi : product.productItems) {
 			if (pi.isActive.equalsIgnoreCase(CommonUtils.ActiveStatus.YES.toString())) {
+				pi.prices.size();
 				return pi;
 			}
 		}
