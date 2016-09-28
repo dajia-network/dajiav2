@@ -40,7 +40,7 @@ import com.pingplusplus.model.Refund;
 @Service
 public class ApiService {
 
-	private final static Logger logger = LoggerFactory.getLogger(ApiService.class);
+	private final static Logger logger = LoggerFactory.getLogger("RpcLog");
 
 	@Autowired
 	private PropertyRepo propertyRepo;
@@ -143,16 +143,7 @@ public class ApiService {
 						+ "&openid=" + openId + "&lang=zh_CN";
 				logger.info("request userInfo url: " + requestUserInfoUrl);
 
-				// if ("ojKYps5HcYJtPFpphPWwFYZ0tscI".equals(openId) ||
-				// "ojKYps1y5oaBbeoHoPIq9en9391E".equals(openId)) {
 				retrunJsonStr = ApiWechatUtils.httpGet(requestUserInfoUrl, "GET", "UTF-8");
-				// logger.info("user hn, returnJsonStr={}", retrunJsonStr);
-				// debugLogger.info("user hn, returnJsonStr={}", retrunJsonStr);
-
-				// } else {
-				// retrunJsonStr = restTemplate.getForObject(requestUserInfoUrl,
-				// String.class);
-				// }
 
 				logger.info("request userInfo result: " + retrunJsonStr);
 				map = mapper.readValue(retrunJsonStr, HashMap.class);

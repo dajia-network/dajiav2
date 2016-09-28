@@ -31,7 +31,6 @@
 		</triggeringPolicy>
 	</appender>
 
-
 	<!-- access log -->
 	<appender name="AccessLog"
 			  class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -41,18 +40,16 @@
 			</FileNamePattern>
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-			</pattern>
-		</layout>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
 		<!--日志文件最大的大小 -->
 		<triggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
 			<MaxFileSize>200MB</MaxFileSize>
 		</triggeringPolicy>
 	</appender>
-
 
 	<!-- access log -->
 	<appender name="AdminLog"
@@ -63,11 +60,10 @@
 			</FileNamePattern>
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-			</pattern>
-		</layout>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
 		<!--日志文件最大的大小 -->
 		<triggeringPolicy
 				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
@@ -75,19 +71,26 @@
 		</triggeringPolicy>
 	</appender>
 
+
 	<!-- access log -->
-	<appender name="DebugLog"
-			  class="ch.qos.logback.core.FileAppender">
-		<file>/tmp/debug.log</file>
-		<append>true</append>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n
-			</pattern>
-		</layout>
+	<appender name="RpcLog"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--日志文件输出的文件名 -->
+			<FileNamePattern>${LOG_HOME}/dajia-rpc.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<MaxHistory>30</MaxHistory>
+		</rollingPolicy>
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+		</encoder>
+		<!--日志文件最大的大小 -->
+		<triggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>200MB</MaxFileSize>
+		</triggeringPolicy>
 	</appender>
-
-
 
 	<!-- 日志输出级别 -->
 	<root level="INFO">
@@ -103,7 +106,8 @@
 		<appender-ref ref="AdminLog" />
 	</logger>
 
-	<logger name="DebugLog" level="DEBUG" additivity="false">
-		<appender-ref ref="DebugLog" />
+	<logger name="RpcLog" level="INFO" additivity="false">
+		<appender-ref ref="RpcLog" />
 	</logger>
+
 </configuration>
