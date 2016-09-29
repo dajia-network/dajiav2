@@ -1,13 +1,14 @@
 package com.dajia.service;
 
-import com.dajia.domain.*;
-import com.dajia.repository.ProductItemRepo;
-import com.dajia.repository.UserOrderRepo;
-import com.dajia.repository.UserRepo;
-import com.dajia.repository.UserRewardRepo;
-import com.dajia.util.CommonUtils;
-import com.dajia.vo.LoginUserVO;
-import com.dajia.vo.ProductVO;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
-import java.util.*;
+import com.dajia.domain.ProductItem;
+import com.dajia.domain.User;
+import com.dajia.domain.UserOrder;
+import com.dajia.domain.UserOrderItem;
+import com.dajia.domain.UserReward;
+import com.dajia.domain.UserShare;
+import com.dajia.repository.ProductItemRepo;
+import com.dajia.repository.UserOrderRepo;
+import com.dajia.repository.UserRepo;
+import com.dajia.repository.UserRewardRepo;
+import com.dajia.repository.UserShareRepo;
+import com.dajia.util.CommonUtils;
+import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.ProductVO;
 
 @Service
 public class RewardService {
@@ -24,6 +37,9 @@ public class RewardService {
 
 	@Autowired
 	private UserRewardRepo rewardRepo;
+
+	@Autowired
+	private UserShareRepo userShareRepo;
 
 	@Autowired
 	private UserOrderRepo orderRepo;
@@ -156,31 +172,33 @@ public class RewardService {
 
 		List<UserReward> rewards = this.getPendingPayRewards();
 
-		if(null == rewards) {
-			logger.error("payRewards job {}, failed because getPendingPayRewards returns null at {}", jobToken, System.currentTimeMillis());
+		if (null == rewards) {
+			logger.error("payRewards job {}, failed because getPendingPayRewards returns null at {}", jobToken,
+					System.currentTimeMillis());
 			return;
 		}
 
-		if(rewards.isEmpty()) {
-			logger.info("payRewards job {}, exit because getPendingPayRewards is empty at {}", jobToken, System.currentTimeMillis());
+		if (rewards.isEmpty()) {
+			logger.info("payRewards job {}, exit because getPendingPayRewards is empty at {}", jobToken,
+					System.currentTimeMillis());
 			return;
 		}
 
 		StringBuffer rewardsIds = new StringBuffer("reward ids [");
 
-		Map<Long, List<UserReward>> userProductMap = new HashMap<Long, List<UserReward>>();
+		Map<Long, List<UserReward>> orderRewardMap = new HashMap<Long, List<UserReward>>();
 		for (UserReward userReward : rewards) {
 			rewardsIds.append(userReward.rewardId).append(",");
 
 			Long key = userReward.refOrderId;
 			List<UserReward> rwList = new ArrayList<UserReward>();
-			if (userProductMap.containsKey(key)) {
-				rwList = userProductMap.get(key);
+			if (orderRewardMap.containsKey(key)) {
+				rwList = orderRewardMap.get(key);
 				rwList.add(userReward);
-				userProductMap.put(key, rwList);
+				orderRewardMap.put(key, rwList);
 			} else {
 				rwList.add(userReward);
-				userProductMap.put(key, rwList);
+				orderRewardMap.put(key, rwList);
 			}
 		}
 
@@ -188,32 +206,53 @@ public class RewardService {
 
 		logger.info("payRewards job {}, {}", jobToken, rewardsIds.toString());
 
-		Iterator<Map.Entry<Long, List<UserReward>>> iter = userProductMap.entrySet().iterator();
+		Iterator<Map.Entry<Long, List<UserReward>>> iter = orderRewardMap.entrySet().iterator();
 
 		while (iter.hasNext()) {
 			Map.Entry<Long, List<UserReward>> entry = iter.next();
 			Long orderId = entry.getKey();
 			List<UserReward> rwList = entry.getValue();
 
-			if(CollectionUtils.isEmpty(rwList)) {
-				logger.error("payRewards job {}, skipped for orderId " + orderId + ", no user reward for this order", jobToken);
+			if (CollectionUtils.isEmpty(rwList)) {
+				logger.error("payRewards job {}, skipped for orderId " + orderId + ", no user reward for this order",
+						jobToken);
 				continue;
 			}
 
-			Integer ratioSum = 0;
+			// 同一个订单可能包含多个产品
+			Map<Long, List<UserReward>> productRewardMap = new HashMap<Long, List<UserReward>>();
 			for (UserReward rw : rwList) {
-				ratioSum = ratioSum + rw.rewardRatio;
-				if (ratioSum > 100) {
-					ratioSum = 100;
+				Long key = rw.productItemId;
+				List<UserReward> prwList = new ArrayList<UserReward>();
+				if (productRewardMap.containsKey(key)) {
+					prwList = productRewardMap.get(key);
+					prwList.add(rw);
+					productRewardMap.put(key, prwList);
+				} else {
+					prwList.add(rw);
+					productRewardMap.put(key, prwList);
 				}
 			}
-
-			Long productItemId = rwList.get(0).productItemId;
-			BigDecimal rewardValue = this.calculateSingleReward(productItemId, ratioSum);
+			BigDecimal rewardValue = new BigDecimal(0);
+			Iterator<Map.Entry<Long, List<UserReward>>> piter = productRewardMap.entrySet().iterator();
+			while (piter.hasNext()) {
+				Map.Entry<Long, List<UserReward>> pentry = piter.next();
+				Long productItemId = pentry.getKey();
+				List<UserReward> prwList = entry.getValue();
+				Integer ratioSum = 0;
+				for (UserReward rw : prwList) {
+					ratioSum = ratioSum + rw.rewardRatio;
+					if (ratioSum > 100) {
+						ratioSum = 100;
+					}
+				}
+				rewardValue = rewardValue.add(this.calculateSingleReward(orderId, productItemId, ratioSum));
+			}
 
 			int k = rewardValue.compareTo(BigDecimal.ZERO);
-			if(k <= 0) {
-				logger.warn("payRewards job {}, reward value <= 0, order id is " + orderId + ", rewards are " + rwList, jobToken);
+			if (k <= 0) {
+				logger.warn("payRewards job {}, reward value <= 0, order id is " + orderId + ", rewards are " + rwList,
+						jobToken);
 			}
 
 			UserOrder userOrder = orderRepo.findByOrderIdAndIsActive(orderId, CommonUtils.ActiveStatus.YES.toString());
@@ -237,10 +276,11 @@ public class RewardService {
 				apiService.applyRefund(userOrder.paymentId, rewardValue, CommonUtils.refund_type_reward);
 				batchUpdateRewardStatus(rwList, CommonUtils.RewardStatus.COMPLETED, jobToken);
 
-				logger.info("payRewards job {} success for order " + orderId + ", trackingId=" + userOrder.trackingId + " value=" + rewardValue.doubleValue(), jobToken);
+				logger.info("payRewards job {} success for order " + orderId + ", trackingId=" + userOrder.trackingId
+						+ " value=" + rewardValue.doubleValue(), jobToken);
 
 			} catch (Exception ex) {
-				logger.error("payRewards job {}, exception for order " + orderId + ", " + ex.getMessage() , jobToken, ex);
+				logger.error("payRewards job {}, exception for order " + orderId + ", " + ex.getMessage(), jobToken, ex);
 				batchUpdateRewardStatus(rwList, CommonUtils.RewardStatus.ERROR, jobToken);
 			}
 
@@ -260,13 +300,14 @@ public class RewardService {
 	 *
 	 * @return
 	 */
-	private boolean batchUpdateRewardStatus(List<UserReward> userRewards, CommonUtils.RewardStatus rewardStatus, String jobToken) {
-		if(null == rewardStatus) {
+	private boolean batchUpdateRewardStatus(List<UserReward> userRewards, CommonUtils.RewardStatus rewardStatus,
+			String jobToken) {
+		if (null == rewardStatus) {
 			logger.error("batch update rewards status failed, status is null");
 			return false;
 		}
 
-		if(null == userRewards) {
+		if (null == userRewards) {
 			logger.error("batch update rewards status failed, userRewards is null");
 			return false;
 		}
@@ -274,7 +315,7 @@ public class RewardService {
 		Integer key = rewardStatus.getKey();
 		String desc = rewardStatus.getValue();
 		for (UserReward reward : userRewards) {
-			if(null != reward) {
+			if (null != reward) {
 				reward.rewardStatus = key;
 				rewardRepo.save(reward);
 				logger.info("payRewards job {}, reward " + reward.rewardId + " status updated to " + desc, jobToken);
@@ -283,11 +324,18 @@ public class RewardService {
 		return true;
 	}
 
-	private BigDecimal calculateSingleReward(Long productItemId, Integer rewardRatio) {
+	private BigDecimal calculateSingleReward(Long orderId, Long productItemId, Integer rewardRatio) {
 		BigDecimal rewardValue = new BigDecimal(0);
 		ProductItem productItem = productItemRepo.findOne(productItemId);
-		rewardValue = rewardValue.add(productItem.currentPrice.multiply(new BigDecimal(rewardRatio * 0.01)));
+		BigDecimal paidAmount = productItem.currentPrice;
+		// 计算reward的基准价格是产品最终价格减去打群价优惠的金额
+		List<UserShare> userShares = userShareRepo.findByOrderIdAndProductItemIdAndShareTypeOrderByShareIdDesc(orderId,
+				productItemId, CommonUtils.ShareType.BUY_SHARE.getKey());
+		if (null != userShares && userShares.size() > 0) {
+			BigDecimal shareCount = new BigDecimal(userShares.size());
+			paidAmount = paidAmount.add(shareCount.negate());
+		}
+		rewardValue = rewardValue.add(paidAmount.multiply(new BigDecimal(rewardRatio * 0.01)));
 		return rewardValue;
 	}
-
 }
