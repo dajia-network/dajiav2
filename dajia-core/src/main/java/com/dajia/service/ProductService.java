@@ -268,7 +268,6 @@ public class ProductService {
 			return null;
 		}
 		product.productImages.size();
-
 		return convertProductVO(product, null);
 	}
 
@@ -277,7 +276,7 @@ public class ProductService {
 		if (null == pi) {
 			return null;
 		}
-
+		pi.product.productImages.size();
 		return convertProductVO(pi.product, pi);
 	}
 
@@ -527,18 +526,15 @@ public class ProductService {
 	 * 计算本次价格
 	 *
 	 * 设本次销售了quantity件商品
-	 * ================================================================================
-	 *		上次总销量     						    本次总销量
-	 *    pdtItem.s-quantity                       pdtItem.s
-	 *           |                                     |
-	 *           |         |<------- new quantity ---->|
-	 *           |         |<--- pdtItem.s - p3.s ---->|<--- p4.s - pdtItem.s -->|
-	 * |-----|-------------|-----------------------------------------------------|
-	 * |     |            p3.s                                                  p4.s
-	 * |    p2.s
-	 * p1.s
+	 * ========================================================
+	 * ======================== 上次总销量 本次总销量 pdtItem.s-quantity pdtItem.s | | |
+	 * |<------- new quantity ---->| | |<--- pdtItem.s - p3.s ---->|<--- p4.s -
+	 * pdtItem.s -->|
+	 * |-----|-------------|--------------------------------------
+	 * ---------------| | | p3.s p4.s | p2.s p1.s
 	 *
-	 * =================================================================================
+	 * ========================================================================
+	 * =========
 	 *
 	 * @param productItem
 	 * @param quantity
