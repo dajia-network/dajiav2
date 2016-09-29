@@ -12,35 +12,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartupManager implements InitializingBean {
 
-    final static Logger logger = LoggerFactory.getLogger(StartupManager.class);
+	final static Logger logger = LoggerFactory.getLogger(StartupManager.class);
 
-    public static void printLogo() {
-        String logo =
-                "\n======================================================================\n\n" +
-                "      ___           ___            ___                     ___    \n" +
-                "     /\\  \\         /\\  \\          /\\  \\        ___        /\\  \\    \n" +
-                "    /::\\  \\       /::\\  \\         \\:\\  \\      /\\  \\      /::\\  \\   \n" +
-                "   /:/\\:\\  \\     /:/\\:\\  \\    ___ /::\\__\\     \\:\\  \\    /:/\\:\\  \\  \n" +
-                "  /:/  \\:\\__\\   /::\\~\\:\\  \\  /\\  /:/\\/__/     /::\\__\\  /::\\~\\:\\  \\ \n" +
-                " /:/__/ \\:|__| /:/\\:\\ \\:\\__\\ \\:\\/:/  /     __/:/\\/__/ /:/\\:\\ \\:\\__\\\n" +
-                " \\:\\  \\ /:/  / \\/__\\:\\/:/  /  \\::/  /     /\\/:/  /    \\/__\\:\\/:/  /\n" +
-                "  \\:\\  /:/  /       \\::/  /    \\/__/      \\::/__/          \\::/  / \n" +
-                "   \\:\\/:/  /        /:/  /                 \\:\\__\\          /:/  /  \n" +
-                "    \\::/__/        /:/  /                   \\/__/         /:/  /   \n" +
-                "     ~~            \\/__/                                  \\/__/    \n\n" +
-                " ======================================================================\n\n\n";
+	public static void printLogo() {
+		String logo = "\n======================================================================\n\n"
+				+ "      ___           ___            ___                     ___    \n"
+				+ "     /\\  \\         /\\  \\          /\\  \\        ___        /\\  \\    \n"
+				+ "    /::\\  \\       /::\\  \\         \\:\\  \\      /\\  \\      /::\\  \\   \n"
+				+ "   /:/\\:\\  \\     /:/\\:\\  \\    ___ /::\\__\\     \\:\\  \\    /:/\\:\\  \\  \n"
+				+ "  /:/  \\:\\__\\   /::\\~\\:\\  \\  /\\  /:/\\/__/     /::\\__\\  /::\\~\\:\\  \\ \n"
+				+ " /:/__/ \\:|__| /:/\\:\\ \\:\\__\\ \\:\\/:/  /     __/:/\\/__/ /:/\\:\\ \\:\\__\\\n"
+				+ " \\:\\  \\ /:/  / \\/__\\:\\/:/  /  \\::/  /     /\\/:/  /    \\/__\\:\\/:/  /\n"
+				+ "  \\:\\  /:/  /       \\::/  /    \\/__/      \\::/__/          \\::/  / \n"
+				+ "   \\:\\/:/  /        /:/  /                 \\:\\__\\          /:/  /  \n"
+				+ "    \\::/__/        /:/  /                   \\/__/         /:/  /   \n"
+				+ "     ~~            \\/__/                                  \\/__/    \n\n"
+				+ " ======================================================================\n\n\n";
 
-        logger.info(logo);
+		logger.info(logo);
+		logger.info("打价中文测试");
+	}
 
-        logger.info("打价中文测试");
-    }
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		printLogo();
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        printLogo();
-    }
-
-    public static void main(String[] args) {
-        printLogo();
-    }
+	public static void main(String[] args) {
+		printLogo();
+	}
 }

@@ -118,10 +118,14 @@ public class RefundService {
 	public List<UserRefund> getRefundListByOrderId(Long orderId) {
 		List<Integer> refundStatusList = new ArrayList<Integer>();
 		refundStatusList.add(CommonUtils.RefundStatus.COMPLETE.getKey());
+		refundStatusList.add(CommonUtils.RefundStatus.FAILED.getKey());
+		refundStatusList.add(CommonUtils.RefundStatus.PENDING.getKey());
+		refundStatusList.add(CommonUtils.RefundStatus.RETRYING.getKey());
 		List<UserRefund> refundList = refundRepo.findByOrderIdAndRefundStatusInAndIsActive(orderId, refundStatusList,
 				CommonUtils.ActiveStatus.YES.toString());
 		for (UserRefund userRefund : refundList) {
 			userRefund.refundType4Show = CommonUtils.getRefundTypeStr(userRefund.refundType);
+			userRefund.refundStatus4Show = CommonUtils.getRefundStatusStr(userRefund.refundStatus);
 		}
 		return refundList;
 	}
