@@ -8,23 +8,16 @@ scheduler_src_file=`find src -name ScheduledTasks.java`
 sed '/@Scheduled/d' $scheduler_src_file  > /tmp/sed.b
 mv /tmp/sed.b $scheduler_src_file
 
-exit
-
 echo ""
 echo ""
 echo ""
 echo "###################################################################"
-echo "   _______       ___            __   __       ___      "
-echo "  |       \     /   \          |  | |  |     /   \     " 
-echo "  |  .--.  |   /  ^  \         |  | |  |    /  ^  \    " 
-echo "  |  |  |  |  /  /_\  \  .--.  |  | |  |   /  /_\  \   " 
-echo "  |  '--'  | /  _____  \ |  '--'  | |  |  /  _____  \  " 
-echo "  |_______/ /__/     \__\ \______/  |__| /__/     \__\ " 
-echo "								         "
+cat  scripts/avatar.txt
+echo ""
 echo "###################################################################"
 echo ""
 echo ""
                                                      
 
- mvn clean spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+# mvn clean spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
 
