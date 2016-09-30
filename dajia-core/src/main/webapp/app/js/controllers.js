@@ -222,7 +222,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$http.post('/user/visitlog', visitLog);
 
 						// add user share
-						if (null != refUserId && null != refOrderId && null != userId && null != productId
+						if (null != refUserId && null != refOrderId && null != userId && product.productId == productId
 								&& product.isPromoted == 'Y' && refUserId != userId) {
 							$http.get('/product/share/' + productId + '/' + refOrderId).success(
 									function(data, status, headers, config) {
