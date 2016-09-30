@@ -5,8 +5,10 @@ mv /tmp/sed.a $application_properties
 
 scheduler_src_file=`find src -name ScheduledTasks.java`
 
-# sed 's/^@Scheduled/\/\/@Scheduled/g' $scheduler_src_file 
+sed '/@Scheduled/d' $scheduler_src_file  > /tmp/sed.b
+mv /tmp/sed.b $scheduler_src_file
 
+exit
 
 echo ""
 echo ""
