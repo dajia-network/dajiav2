@@ -19,7 +19,15 @@
 				    <img ng-src="{{prodImg.url}}" class="full-image">
 				  </ion-slide>
 				</ion-slide-box>
-				<span ng-if="product.isPromoted=='Y'" class="assertive">该产品正在限时打群「价」活动中。<br/>购买后分享到朋友圈。每一个好友点击带来1元额外优惠，直至免单！</span>
+				<span ng-if="null!=shareInfo" class="assertive">
+					你的拔刀相助，帮{{shareInfo.userName}}打下1元!<br/>
+					下列用户已经帮助{{shareInfo.userName}}累计获得{{shareInfo.userShares.length}}元优惠!
+				</span>
+			  	<div class="row">
+			  		<div class="col-xs-2" ng-repeat="userShare in shareInfo.userShares">
+			  			<a class="center-avatar margin"><img ng-src="{{userShare.visitHeadImgUrl}}"></img></a>
+			  		</div>
+			  	</div>
 				<p>
 					<b>现价 <span class="assertive now_price" count-to="{{countTo}}" duration="2" value="{{countFrom}}"></span> 元</b>
 					&nbsp;<span class="ori_price">{{product.originalPrice}} 元</span>
@@ -27,10 +35,10 @@
 					<span ng-if="product.stock>0&&product.productStatus==2">截至时间 {{product.expiredDate | date:'yyyy-MM-dd HH:mm'}}</span>
 					<br ng-if="product.stock>0&&product.productStatus==2"/>
 					<span ng-if="product.stock>0&&product.productStatus==2">库存 {{product.stock}}</span>
-					<div ng-if="product.stock>0&&product.productStatus==2">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
+					<div ng-if="product.stock>0&&product.productStatus==2&&null==shareInfo">下一位打手即将打下<span class="assertive"><b>{{product.nextOff.toFixed(2)}}</b></span>元!</div>
 					<div ng-if="product.stock<=0">该商品已售罄。</div>
 				</p>
-				<div>
+				<div ng-if="null==shareInfo">
 				    <uib-progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
 				    </uib-progressbar>
 				</div>
@@ -71,7 +79,8 @@
 					<i class="icon ion-chevron-left"></i> 返回
 				</button>
 				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now" class="button button-sqr button-assertive button-outline cartBtn" ng-click="add2Cart()"><i class="icon ion-ios-cart"></i> 放入购物车</button>
-				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now" class="button button-sqr button-assertive buyBtn" ng-click="buyNow()">立即打价</button>
+				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now&&null==shareInfo" class="button button-sqr button-assertive buyBtn" ng-click="buyNow()">立即购买</button>
+				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate<=now&&null!=shareInfo" class="button button-sqr button-assertive buyBtn" ng-click="buyNow()">我也要买</button>
 				<button ng-if="product.productStatus==2&&product.stock>0&&product.startDate>now" disabled="true" class="button button-sqr button-assertive submitBtn">打价即将开始</button>
 				<button ng-if="product.productStatus==3||product.stock<=0" disabled="true" class="button submitBtn">打价已结束</button>
 				<button ng-if="product.productStatus!=2&&product.productStatus!=3" disabled="true" class="button submitBtn">产品已失效</button>

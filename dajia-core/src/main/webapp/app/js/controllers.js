@@ -226,7 +226,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 								&& product.isPromoted == 'Y' && refUserId != userId) {
 							$http.get('/product/share/' + productId + '/' + refOrderId).success(
 									function(data, status, headers, config) {
-										$scope.openShareModal(data);
+										// $scope.openShareModal(data);
+										$scope.shareInfo = data;
 									});
 							var userShare = {
 								productId : product.productId,
@@ -1485,6 +1486,10 @@ var shareModalInit = function($scope, $ionicModal) {
 	};
 	$scope.closeShareModal = function() {
 		$scope.shareModal.hide();
+	};
+	$scope.closeAndBuy = function() {
+		$scope.shareModal.hide();
+		$scope.buyNow();
 	};
 	$scope.$on('$destroy', function() {
 		$scope.shareModal.remove();

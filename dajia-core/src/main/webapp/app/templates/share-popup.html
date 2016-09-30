@@ -5,9 +5,24 @@
 		</ion-header-bar>
 	<ion-content>
 		<div class="item item-text-wrap" align="center">
-			<div class="item item-text-wrap noPadding">
-				<p><img src="http://dajia-static.b0.upaiyun.com/app_img/daqunjia_popup.gif" ng-click="closeShareModal()"></img></p>
-			</div>
+			<span class="assertive">你的拔刀相助，让{{shareInfo.userName}}获得了1元现金优惠!</span><br/>
+			<span class="assertive">{{shareInfo.userName}}已经累计获得{{shareInfo.userShares.length}}元现金优惠!</span>
+		</div>
+		<div class="item item-avatar item-progress" ng-repeat="userShare in shareInfo.userShares | limitTo:10" >
+			<img ng-src="{{userShare.visitHeadImgUrl}}" >
+		 	<div>
+			    {{userShare.visitUserName}}拔刀相助，获得1元额外优惠。
+			    <span class="item-note-progress">
+			      {{userShare.createdDate | date:'yyyy-MM-dd HH:mm'}}
+			    </span>
+		 	</div>
+		</div>
+		<div class="item item-progress" align="center">
+			<span class="assertive"><b>点击按钮购买产品，一起打群「价」！</b></span><br/>
+			<span class="assertive"><b>&#8595;</b></span>
+		</div>
+		<div class="col text-center">
+			<button class="button button-block button-assertive" ng-click="closeAndBuy()">我也要打群「价」!</button>
 		</div>
 	</ion-content>
 </div>
