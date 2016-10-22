@@ -14,10 +14,6 @@ scheduler_src_file=`find src -name ScheduledTasks.java`
 sed '/@Scheduled/d' $scheduler_src_file  > /tmp/sed.b
 mv /tmp/sed.b $scheduler_src_file
 
-
-exit
-
-
 echo ""
 echo ""
 echo ""
