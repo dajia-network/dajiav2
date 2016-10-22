@@ -298,3 +298,50 @@ CREATE TABLE IF NOT EXISTS dajia.user_share (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(share_id)
 );
+
+
+
+
+
+drop table coupon if exists dajia.coupon;
+drop table user_coupon if exists dajia.user_coupon;
+
+CREATE TABLE if not exists dajia.`coupon` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(400) NOT NULL, -- 券的名称
+  `desc` varchar(4000) , -- 券的说明
+  `value` int NOT NULL, -- 券的面额
+  `amount` bigint NOT NULL, -- 券的发放数量
+  `remain` bigint NOT NULL, -- 剩余数量
+  `type` int NOT NULL, -- 券的种类 比如代金券、免邮券、仅限内部使用的代金券、仅限商家使用的代金券等等
+  `status` int NOT NULL, -- 券的状态 主要指 is_active
+  `gmt_expired` datetime not null, -- 过期时间
+  `created_by` varchar(200) NOT NULL, -- 创建人
+  `modified_by` varchar(200) NOT NULL, -- 修改人
+  `created_date` datetime NOT NULL, -- 创建时间
+  `modified_date` datetime NOT NULL, -- 修改时间
+  `is_active` varchar(1) not null default 'Y',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/**
+* 用户拥有的代金券 查询索引 user_id, order_id, coupon_id
+* 一张券只能而且必须要用于一个订单
+**/
+create table if not exists dajia.`user_coupon` (
+	`id` int(11) not null auto_increment,
+	`user_id` bigint not null, -- 所属用户
+	`coupon_id` bigint not null, -- 券的ID
+	`order_id` bigint not null, -- 订单号
+	`status` int not null, -- 券的状态 0 未使用 1 已使用 2 已取消 3 过期未使用 / 其中置为2,3的时候必须要确定当前状态不为1
+	`value` int not null, -- 金额
+	`desc` varchar(400), -- 备注
+	`info` varchar(400), -- 冗余字段 券的说明 例如 "5元满减代金券 限订单满100使用"
+	`created_by` varchar(200) NOT NULL, -- 创建人
+	`modified_by` varchar(200) NOT NULL, -- 修改人
+	`created_date` datetime not null, -- 创建时间
+	`modified_date` datetime not null, -- 修改时间
+	`is_active` varchar(1) not null default 'Y',
+	primary key (`id`)
+) engine=InnoDB default charset=utf8;
