@@ -799,6 +799,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			$scope.showQcode = function() {
 				$window.location.href = '#/tab/qcode';
 			}
+			$scope.userCoupons = function() {
+				console.log("点击我的优惠券");
+				$window.location.href = "#/tab/mine/userCoupons";
+			}
 			$scope.logout = function() {
 				if (loginUser == null) {
 					$window.location.reload();
@@ -1433,7 +1437,29 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	$scope.goHome = function() {
 		$window.location.replace('#');
 	}
-});
+})
+
+.controller('UserCouponCtrl', function($scope, $rootScope, $window, $http) {
+
+	$scope.page = $scope.page || {pageNo:1};
+
+	var get_my_coupons = function() {
+		$http.get('/user/coupons/' + $scope.page.pageNo)
+			.success(function(response, status, headers, config) {
+				$scope.user_coupons = response.data.content;
+			})
+			.error(function() {
+				console.log("get_my_coupons_failed");
+			});
+	};
+
+	$scope.goHome = function() {
+		$window.location.replace('#');
+	}
+
+	get_my_coupons();
+})
+;
 
 var modalInit = function($rootScope, $ionicModal, modalType) {
 	// console.log($ionicModal);

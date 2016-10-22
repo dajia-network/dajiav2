@@ -179,6 +179,14 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 				controller : 'EditContactCtrl'
 			}
 		}
+	}).state('tab.mine-userCoupons', {
+		url : '/mine/userCoupons',
+		views : {
+			'tab-mine' : {
+				templateUrl : 'templates/user-coupons.html',
+				controller : 'UserCouponCtrl'
+			}
+		}
 	}).state('tab.mine-qcode', {
 		url : '/qcode',
 		views : {

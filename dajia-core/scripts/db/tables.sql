@@ -301,21 +301,23 @@ CREATE TABLE IF NOT EXISTS dajia.user_share (
 
 
 
+drop table coupon ;
+drop table user_coupon ;
 
-
-drop table coupon if exists dajia.coupon;
-drop table user_coupon if exists dajia.user_coupon;
-
-CREATE TABLE if not exists dajia.`coupon` (
+CREATE TABLE if not exists `coupon` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL, -- 券的名称
-  `desc` varchar(4000) , -- 券的说明
+  `comment` varchar(4000) , -- 券的说明
   `value` int NOT NULL, -- 券的面额
   `amount` bigint NOT NULL, -- 券的发放数量
   `remain` bigint NOT NULL, -- 剩余数量
-  `type` int NOT NULL, -- 券的种类 比如代金券、免邮券、仅限内部使用的代金券、仅限商家使用的代金券等等
+  `type` int NOT NULL, -- 券的种类 比如 1.代金券 2.满减券 3.折扣券
+  `area` int NOT NULL, -- 可以使用的范围 1.直营 2.店铺 3.通用
+  `source_id` bigint NOT NULL default 1, -- 来源 商家ID 默认是1 即打价网
   `status` int NOT NULL, -- 券的状态 主要指 is_active
+  `rule_desc` varchar(1000) default '',  -- 使用规则的简要描述 显示在优惠券界面上
   `gmt_expired` datetime not null, -- 过期时间
+  `gmt_start` datetime not null, -- 可以使用的最早时间
   `created_by` varchar(200) NOT NULL, -- 创建人
   `modified_by` varchar(200) NOT NULL, -- 修改人
   `created_date` datetime NOT NULL, -- 创建时间
@@ -329,15 +331,19 @@ CREATE TABLE if not exists dajia.`coupon` (
 * 用户拥有的代金券 查询索引 user_id, order_id, coupon_id
 * 一张券只能而且必须要用于一个订单
 **/
-create table if not exists dajia.`user_coupon` (
+create table if not exists `user_coupon` (
 	`id` int(11) not null auto_increment,
 	`user_id` bigint not null, -- 所属用户
 	`coupon_id` bigint not null, -- 券的ID
 	`order_id` bigint not null, -- 订单号
-	`status` int not null, -- 券的状态 0 未使用 1 已使用 2 已取消 3 过期未使用 / 其中置为2,3的时候必须要确定当前状态不为1
+	`status` int not null, -- 券的状态
 	`value` int not null, -- 金额
-	`desc` varchar(400), -- 备注
-	`info` varchar(400), -- 冗余字段 券的说明 例如 "5元满减代金券 限订单满100使用"
+	`type` int not null, -- 类型 1代金券 2满减券 3折扣券
+	`area` int not null, -- 可以使用的范围 1.直营 2.店铺 3.通用
+	`comment` varchar(4000), -- 备注信息 后台可见 前台不可见
+	`rule_desc` varchar(1000), -- 使用规则的简要说明 显示在券的界面上 比如 "满199元使用"
+	`gmt_expired` bigint not null, -- 过期时间
+	`gmt_start` bigint not null, -- 可以使用的最早时间
 	`created_by` varchar(200) NOT NULL, -- 创建人
 	`modified_by` varchar(200) NOT NULL, -- 修改人
 	`created_date` datetime not null, -- 创建时间
