@@ -14,7 +14,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 	}
 })
 
-.controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService, $timeout) {
+.controller('ProdCtrl', function($scope, $http, $cookies, $ionicLoading, $window, AuthService, $timeout, $ionicModal) {
 	console.log('产品列表...');
 	$scope.products = [];
 	$scope.countDowns = [];
@@ -23,6 +23,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		hasMore : false,
 		pageNo : 1
 	};
+	couponModalInit($scope, $ionicModal);
 	var loadProducts = function() {
 		return $http.get('/products/' + $scope.page.pageNo).success(function(data, status, headers, config) {
 			$scope.page.hasMore = data.hasNext;
@@ -35,6 +36,7 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 				}
 				$scope.countDowns.push(countDown);
 			});
+			$scope.openCouponModal(data);
 		});
 	}
 	initWechatJSAPI('home', $http);
@@ -1545,6 +1547,25 @@ var qrcodeModalInit = function($scope, $ionicModal) {
 	};
 	$scope.$on('$destroy', function() {
 		$scope.qrcodeModal.remove();
+	});
+}
+
+var couponModalInit = function($scope, $ionicModal) {
+	$ionicModal.fromTemplateUrl('templates/coupon-popup.html', {
+		scope : $scope,
+		animation : 'slide-in-up'
+	}).then(function(modal) {
+		$scope.couponModal = modal;
+	});
+	$scope.openCouponModal = function(data) {
+		console.log(data)
+		$scope.couponModal.show();
+	};
+	$scope.closeCouponModal = function() {
+		$scope.couponModal.hide();
+	};
+	$scope.$on('$destroy', function() {
+		$scope.couponModal.remove();
 	});
 }
 
