@@ -103,6 +103,11 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			var element = angular.element(document.querySelector('#fav_icon'));
 			modalInit($rootScope, $ionicModal, 'login');
 			shareModalInit($scope, $ionicModal);
+			qrcodeModalInit($scope, $ionicModal);
+
+			if (!DajiaGlobal.utils.isWeChat()) {
+				console.log('Not in Wechat...');
+			}
 
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
@@ -184,6 +189,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 						$timeout(function() {
 							$scope.progressValue = amt;
 						}, 1000);
+
+						$scope.openQrcodeModal(data);
 
 						var targetDate = new Date(product.expiredDate);
 
@@ -1441,25 +1448,26 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
 .controller('UserCouponCtrl', function($scope, $rootScope, $window, $http) {
 
-	$scope.page = $scope.page || {pageNo:1};
+	$scope.page = $scope.page || {
+		pageNo : 1
+	};
 
 	var get_my_coupons = function() {
-		$http.get('/user/coupons/' + $scope.page.pageNo)
-			.success(function(response, status, headers, config) {
-				$scope.user_coupons = response.data.content;
-			})
-			.error(function() {
-				console.log("get_my_coupons_failed");
-			});
+		$http.get('/user/coupons/' + $scope.page.pageNo).success(function(response, status, headers, config) {
+			$scope.user_coupons = response.data.content;
+		}).error(function() {
+			console.log("get_my_coupons_failed");
+		});
 	};
 
 	$scope.goHome = function() {
 		$window.location.replace('#');
 	}
 
+	$scope.DajiaGlobal = DajiaGlobal;
+	console.log(DajiaGlobal + "...[[");
 	get_my_coupons();
-})
-;
+});
 
 var modalInit = function($rootScope, $ionicModal, modalType) {
 	// console.log($ionicModal);
@@ -1519,6 +1527,25 @@ var shareModalInit = function($scope, $ionicModal) {
 	};
 	$scope.$on('$destroy', function() {
 		$scope.shareModal.remove();
+	});
+}
+
+var qrcodeModalInit = function($scope, $ionicModal) {
+	$ionicModal.fromTemplateUrl('templates/qrcode-popup.html', {
+		scope : $scope,
+		animation : 'slide-in-up'
+	}).then(function(modal) {
+		$scope.qrcodeModal = modal;
+	});
+	$scope.openQrcodeModal = function(data) {
+		console.log(data)
+		$scope.qrcodeModal.show();
+	};
+	$scope.closeQrcodeModal = function() {
+		$scope.qrcodeModal.hide();
+	};
+	$scope.$on('$destroy', function() {
+		$scope.qrcodeModal.remove();
 	});
 }
 
