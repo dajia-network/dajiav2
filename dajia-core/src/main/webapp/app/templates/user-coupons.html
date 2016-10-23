@@ -10,33 +10,58 @@
 		</div>
 		<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
 		</ion-refresher>
-
-		已领优惠券
 		<ion-list>
 			<style>
 				.coupon {
-					background-color: hotpink;
+					background-color: rgba(175, 58, 58, 0.94);
 					-moz-border-radius: 5px;
-					line-height:3.5em;
-					padding: 0.1em 0.5em;
+					line-height:4em;
+					padding: 0.1em 0 1em 1em;
 					color: white;
-					height:3.5em;
-					width: 70%;
+					height:4.5em;
+					width: 80%;
 					margin: 0 auto;
+					border-radius: 5px;
 				}
+
+				.coupon_rule_desc {
+					font-size: 0.5em;
+					color: lightcyan;
+				}
+
+				.coupon_name {
+					font-weight: bold;
+				}
+
 				.coupon_value {
 					font-size: 3em;
+				}
+
+				.coupon_status {
+					font-size: 1.2em;
+					font-weight: bold;
 				}
 			</style>
 			<ion-item class="" ng-repeat="user_coupon in user_coupons" type="item-text-wrap">
 				<!--<img ng-src="{{product.imgUrl4List}}" >-->
-				<div class="coupon coupon_{{type}}_{{value}}" id="coupon_{{user_coupon.coupon_id}}">
+				<div class="coupon coupon_{{user_coupon.type}}_{{user_coupon.value}}" id="coupon_{{user_coupon.coupon_id}}">
 					<span class="coupon_value">{{user_coupon.value}}</span>
+					<span class="coupon_rate">元</span>
+					<span class="coupon_name">
+						<span class="coupon_area">{{DajiaGlobal["constants"]["coupon"]["area"][user_coupon.area]}}</span>
+						<span class="coupon_type">{{DajiaGlobal["constants"]["coupon"]["type"][user_coupon.type]}}</span>
+					</span>
+					<span class="coupon_rule_desc">
+						<span>{{user_coupon.ruleDesc}}</span>
+					</span>
+
+					<span class="coupon_status">
+						{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}
+					</span>
 				</div>
 			</ion-item>
 		</ion-list>
-
-		<div ng-if="user_coupons.length > 0">
+		<div ng-if="user_coupons.length <= 0">
 			<div class="row">
 				<div class="col text-center">
 					您还没有可领取的优惠券哦, 敬请期待!
