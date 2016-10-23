@@ -72,7 +72,7 @@ dajia.factory('AuthService', function($rootScope, $http, $cookies, authService) 
 	}
 	return service;
 })
-.dajia.factory('couponService', function($rootScope, $http, $cookies, authService) {
+.factory('couponService', function($rootScope, $http, $cookies, authService) {
 	var requestCoupon = function(couponId, _success_callback, _fail_callback) {
 		$http.get('/user/coupon/request/' + couponId).success(function(data, status, headers, config) {
 			_success_callback.call(data, status, headers, config);
