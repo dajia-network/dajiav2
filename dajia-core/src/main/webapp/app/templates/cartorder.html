@@ -103,10 +103,15 @@
 		</div>
 		<ion-radio ng-model="order.payType" ng-value="1">微信支付</ion-radio>
 		<ion-radio ng-model="order.payType" ng-value="2" ng-click="selectAlipay()">支付宝</ion-radio>
+		<div class="item item-divider">
+		  优惠券
+		</div>
+		<ion-checkbox ng-repeat="userCoupon in userCoupons" ng-model="userCoupon.checked" ng-change="applyCoupon()"><i class="icon ion-ios-pricetags"></i>&nbsp;&nbsp;{{userCoupon.value}}</ion-radio>
+		
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
-			<div class="col text-left">合计金额：<span class="assertive">{{order.totalPrice.toFixed(2)}}元</span></div>
+			<div class="col text-left">合计金额：<span class="assertive">{{(order.totalPrice-couponVal).toFixed(2)}}元</span></div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">确认付款</button>
 			</div>
