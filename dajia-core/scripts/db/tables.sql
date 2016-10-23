@@ -351,3 +351,6 @@ create table if not exists `user_coupon` (
 	`is_active` varchar(1) not null default 'Y',
 	primary key (`id`)
 ) engine=InnoDB default charset=utf8;
+
+alter table user_order add column actual_pay numeric(10,2);
+alter table user_order add column user_coupon_ids varchar(400);

@@ -114,4 +114,5 @@ public class UserCouponController extends BaseController {
         logger.info(String.format("%s|%s|%s", "canRequestCoupon", result, input));
         return result;
     }
+
 }

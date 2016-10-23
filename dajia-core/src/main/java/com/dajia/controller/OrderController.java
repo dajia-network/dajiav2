@@ -12,6 +12,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dajia.service.*;
+import com.dajia.util.DajiaResult;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +35,6 @@ import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserShareRepo;
-import com.dajia.service.ApiService;
-import com.dajia.service.CartService;
-import com.dajia.service.OrderService;
-import com.dajia.service.ProductService;
-import com.dajia.service.RefundService;
-import com.dajia.service.RewardService;
-import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
 import com.dajia.util.CommonUtils.OrderStatus;
 import com.dajia.vo.CartItemVO;
@@ -96,13 +92,20 @@ public class OrderController extends BaseController {
 	@Autowired
 	private CartService cartService;
 
+    @Autowired
+    private UserCouponService userCouponService;
+
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public Charge submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
 		User user = this.getLoginUser(request, response, userRepo, true);
+
+		// 更新收货地址
 		UserContact uc = orderVO.userContact;
 		if (null != uc) {
 			uc = userContactService.updateUserContact(uc, user);
 		}
+
+		// 验证是否超卖
 		if (!productService.validateStock(orderVO)) {
 			return null;
 		}
@@ -149,7 +152,34 @@ public class OrderController extends BaseController {
 		if (!orderService.orderValidate(order)) {
 			return null;
 		}
-		orderRepo.save(order);
+
+		/************************************************************/
+		/** 优惠券相关计算 **/
+		/************************************************************/
+		if (null == orderVO.appliedCoupons) {
+            orderVO.appliedCoupons = Lists.newArrayList();
+        }
+
+		// 计算实付价格
+        DajiaResult totalOffResult = userCouponService.getTotalCutOffWithCoupons(orderVO.appliedCoupons, user.userId);
+
+        if(!totalOffResult.succeed) {
+            logger.error("get total cut off failed, orderVo={}, error={}", orderVO, totalOffResult.message);
+            return null;
+        }
+
+        BigDecimal totalOff = ((BigDecimal) (totalOffResult.data)).negate();
+        order.actualPay = order.totalPrice.add(totalOff);
+
+        logger.info("total price cut off, orderVo={}, totalOff={}", orderVO, totalOff);
+
+        orderRepo.save(order);
+
+        logger.info("order save succeed, orderVo={}, order={}", orderVO, order);
+
+        userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
+
+        logger.info("consume user coupons succeed, orderVo={}", orderVO);
 
 		if (null != orderVO.cartItems) {
 			for (CartItemVO cartItem : orderVO.cartItems) {
@@ -169,7 +199,7 @@ public class OrderController extends BaseController {
 		return charge;
 	}
 
-	@RequestMapping(value = "/user/getCharge", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/getCharge", method = RequestMethod.POST)
 	public Charge getCharge(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
 		User user = this.getLoginUser(request, response, userRepo, true);
 		if (null == user) {
