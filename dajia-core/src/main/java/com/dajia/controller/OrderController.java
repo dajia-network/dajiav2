@@ -177,7 +177,12 @@ public class OrderController extends BaseController {
 
         logger.info("order save succeed, orderVo={}, order={}", orderVO, order);
 
-        userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
+        DajiaResult consumeCouponResult = userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
+
+		if (!consumeCouponResult.succeed) {
+			logger.error("consume coupons failed, orderVo={}, result={}", orderVO, consumeCouponResult);
+			return null;
+		}
 
         logger.info("consume user coupons succeed, orderVo={}", orderVO);
 
