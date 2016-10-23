@@ -105,10 +105,6 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 			shareModalInit($scope, $ionicModal);
 			qrcodeModalInit($scope, $ionicModal);
 
-			if (!DajiaGlobal.utils.isWeChat()) {
-				console.log('Not in Wechat...');
-			}
-
 			$http.get('/user/checkfav/' + $stateParams.pid).success(function(data, status, headers, config) {
 				var isFav = data;
 				$scope.isFav = isFav;
@@ -190,7 +186,10 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 							$scope.progressValue = amt;
 						}, 1000);
 
-						$scope.openQrcodeModal(data);
+						if (!DajiaGlobal.utils.isWeChat()) {
+							console.log('Not in Wechat...');
+							$scope.openQrcodeModal(data);
+						}
 
 						var targetDate = new Date(product.expiredDate);
 
