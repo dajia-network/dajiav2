@@ -72,12 +72,20 @@ dajia.factory('AuthService', function($rootScope, $http, $cookies, authService) 
 	}
 	return service;
 })
-.dajia.factory('couponService', function($rootScope, $http, $cookies, authService) {
+.factory('couponService', function($rootScope, $http, $cookies, authService) {
 	var requestCoupon = function(couponId, _success_callback, _fail_callback) {
-		$http.get('/user/coupon/request/' + couponId).success(function(data, status, headers, config) {
+		$http.get('/user/coupons/request/' + couponId).success(function(data, status, headers, config) {
 			_success_callback.call(data, status, headers, config);
 		}).error(function(data, status, headers, config) {
 			_fail_callback.call(data, status, headers, config);
+		});
+	};
+
+	var canRequestCoupon = function(couponId) {
+		$http.get("/user/coupons/canRequest/" + couponId).success(function(data) {
+			console.log(data);
+		}).error(function() {
+			return false;
 		});
 	}
 });

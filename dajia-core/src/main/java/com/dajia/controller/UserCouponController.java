@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Arrays;
 
+import static com.dajia.util.ResultConstants.COMMON_MSG_QUERY_FAILED;
 import static com.dajia.util.ResultConstants.COMMON_MSG_QUERY_OK;
 
 /**
@@ -78,7 +79,39 @@ public class UserCouponController extends BaseController {
 
         String input = String.format("user=%s,couponId=%d", user.userId, couponId);
         DajiaResult result = userCouponService.publishCoupons(couponId, Arrays.asList(new Long[] { user.userId}), String.valueOf(user.userId));
-        logger.info(String.format("%s|%s", "requestCoupon", result, input));
+        logger.info(String.format("%s|%s|%s", "requestCoupon", result, input));
+        return result;
+    }
+
+    /**
+     * 某个用户能不能领取某张优惠券 简单的逻辑就是查数据库有没有领取过
+     *
+     * @param request
+     * @param response
+     * @param couponId
+     * @return
+     */
+    @RequestMapping(value = "/user/coupons/can/{couponId}", method = RequestMethod.GET)
+    @ResponseBody
+    public DajiaResult canRequestCoupon(HttpServletRequest request, HttpServletResponse response, @PathVariable("couponId") Long couponId) {
+
+        User user = getLoginUser(request, response, userRepo, false);
+        Long userId  = user.userId;
+        DajiaResult result;
+        try {
+            UserCoupon userCoupon = userCouponService.userCouponRepo.findByUserIdAndCouponId(userId, couponId);
+
+            if (null != userCoupon) {
+                result =  DajiaResult.successReturn("已经领过相同的优惠券", null, Boolean.FALSE);
+            } else {
+                result = DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, Boolean.TRUE);
+            }
+
+        } catch (Exception ex) {
+            result = DajiaResult.systemError(COMMON_MSG_QUERY_FAILED + ",系统异常", null, ex);
+        }
+        String input = String.format("user=%s,couponId=%d", user.userId, couponId);
+        logger.info(String.format("%s|%s|%s", "canRequestCoupon", result, input));
         return result;
     }
 }
