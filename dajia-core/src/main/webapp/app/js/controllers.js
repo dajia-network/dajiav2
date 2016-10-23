@@ -1457,6 +1457,8 @@ angular.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 		$window.location.replace('#');
 	}
 
+	$scope.DajiaGlobal = DajiaGlobal;
+	console.log(DajiaGlobal + "...[[");
 	get_my_coupons();
 })
 ;

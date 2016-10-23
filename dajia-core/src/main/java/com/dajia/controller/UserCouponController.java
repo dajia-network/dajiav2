@@ -79,8 +79,8 @@ public class UserCouponController extends BaseController {
             return DajiaResult.systemError("领券失败, 系统异常, 请稍后重试", null, ex);
         }
 
-        DajiaResult result = userCouponService.publishCoupons(couponId, Arrays.asList(new Long[] { user.userId}), String.valueOf(user.userId));
         String input = String.format("user=%s,couponId=%d", user.userId, couponId);
+        DajiaResult result = userCouponService.publishCoupons(couponId, Arrays.asList(new Long[] { user.userId}), String.valueOf(user.userId));
         logger.info(String.format("%s|%s", "requestCoupon", result, input));
         return result;
     }

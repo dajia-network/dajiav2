@@ -320,8 +320,8 @@ CREATE TABLE if not exists `coupon` (
   `gmt_start` datetime not null, -- 可以使用的最早时间
   `created_by` varchar(200) NOT NULL, -- 创建人
   `modified_by` varchar(200) NOT NULL, -- 修改人
-  `created_date` datetime NOT NULL, -- 创建时间
-  `modified_date` datetime NOT NULL, -- 修改时间
+  `created_date` timestamp null default current_timestamp, -- 创建时间
+  `modified_date` timestamp, -- 修改时间
   `is_active` varchar(1) not null default 'Y',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -335,7 +335,7 @@ create table if not exists `user_coupon` (
 	`id` int(11) not null auto_increment,
 	`user_id` bigint not null, -- 所属用户
 	`coupon_id` bigint not null, -- 券的ID
-	`order_id` bigint not null, -- 订单号
+	`order_id` bigint default null, -- 订单号
 	`status` int not null, -- 券的状态
 	`value` int not null, -- 金额
 	`type` int not null, -- 类型 1代金券 2满减券 3折扣券
@@ -346,8 +346,8 @@ create table if not exists `user_coupon` (
 	`gmt_start` bigint not null, -- 可以使用的最早时间
 	`created_by` varchar(200) NOT NULL, -- 创建人
 	`modified_by` varchar(200) NOT NULL, -- 修改人
-	`created_date` datetime not null, -- 创建时间
-	`modified_date` datetime not null, -- 修改时间
+	`created_date` timestamp null default current_timestamp, -- 创建时间
+	`modified_date` timestamp, -- 修改时间
 	`is_active` varchar(1) not null default 'Y',
 	primary key (`id`)
 ) engine=InnoDB default charset=utf8;
