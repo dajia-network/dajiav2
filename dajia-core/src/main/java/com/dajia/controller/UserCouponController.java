@@ -2,7 +2,9 @@ package com.dajia.controller;
 
 import com.dajia.domain.User;
 import com.dajia.domain.UserCoupon;
+import com.dajia.repository.UserCouponRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.service.ProductService;
 import com.dajia.service.UserCouponService;
 import com.dajia.util.DajiaResult;
 import org.slf4j.Logger;
@@ -34,6 +36,12 @@ public class UserCouponController extends BaseController {
     public UserCouponService userCouponService;
 
     @Autowired
+    public UserCouponRepo userCouponRepo;
+
+    @Autowired
+    public ProductService productService;
+
+    @Autowired
     public UserRepo userRepo;
 
     final static Logger logger = LoggerFactory.getLogger(UserCouponController.class);
@@ -48,7 +56,7 @@ public class UserCouponController extends BaseController {
         page  = page > 0 ? (page - 1) : page;
         int size = 10;
         try {
-            Page<UserCoupon> userCoupons = userCouponService.userCouponRepo.findByUserIdOrderByStatusAscGmtExpiredDesc(user.userId, new PageRequest(page, size, Sort.Direction.DESC, "gmtExpired"));
+            Page<UserCoupon> userCoupons = userCouponRepo.findByUserIdOrderByStatusAscGmtExpiredDesc(user.userId, new PageRequest(page, size, Sort.Direction.DESC, "gmtExpired"));
             result = DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, userCoupons);
         } catch (Exception ex) {
             result = DajiaResult.systemError("查询优惠券失败, 系统异常", null, ex);
@@ -69,7 +77,7 @@ public class UserCouponController extends BaseController {
 
         // TODO Put it to service method
         try {
-            UserCoupon userCoupon =  userCouponService.userCouponRepo.findByUserIdAndCouponId(userId, couponId);
+            UserCoupon userCoupon =  userCouponRepo.findByUserIdAndCouponId(userId, couponId);
             if (null != userCoupon) {
                 return DajiaResult.inputError("领券失败, 您已经领取过这张优惠券", null);
             }
@@ -99,7 +107,7 @@ public class UserCouponController extends BaseController {
         Long userId  = user.userId;
         DajiaResult result;
         try {
-            UserCoupon userCoupon = userCouponService.userCouponRepo.findByUserIdAndCouponId(userId, couponId);
+            UserCoupon userCoupon = userCouponRepo.findByUserIdAndCouponId(userId, couponId);
 
             if (null != userCoupon) {
                 result =  DajiaResult.successReturn("已经领过相同的优惠券", null, Boolean.FALSE);
