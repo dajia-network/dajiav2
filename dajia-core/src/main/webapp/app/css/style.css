@@ -325,3 +325,21 @@ button img {
 }
 
 /* countdown end*/
+
+.item.item-text-wrap.transparent {
+	background: transparent;
+	border-color: transparent;
+	margin-top: 100px;
+}
+
+.modal.transparent {
+	background: transparent;
+}
+
+.modal.transparent>.scroll-content {
+	background: transparent;
+}
+
+.coupon img {
+	width: 100%;
+}
