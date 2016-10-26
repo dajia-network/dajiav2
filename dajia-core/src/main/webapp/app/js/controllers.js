@@ -319,9 +319,9 @@ angular
 						console.log('request failed...');
 					});
 					// 获得用户可使用的优惠券
-					CouponService.userCoupons(1, function(data) {
-						console.log(data);
-						$scope.userCoupons = data.data.content;
+					CouponService.available(function(data) {
+						$scope.userCoupons = data.data;
+						console.log("ava : " + data);
 						$scope.applyCoupon = function() {
 							$scope.order.appliedCoupons = [];
 							$scope.appliedCoupons = [];
