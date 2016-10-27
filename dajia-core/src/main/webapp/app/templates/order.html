@@ -100,7 +100,7 @@
 		<div class="item item-divider">
 		  优惠券
 		</div>
-		<ion-checkbox ng-repeat="userCoupon in userCoupons" ng-model="userCoupon.checked" ng-change="applyCoupon()"><i class="icon ion-ios-pricetags"></i>&nbsp;&nbsp;{{userCoupon.value}}</ion-radio>
+		<ion-checkbox ng-repeat="userCoupon in userCoupons" ng-model="userCoupon.checked" ng-change="applyCoupon()"><i class="icon ion-ios-pricetags"></i>&nbsp;&nbsp;{{userCoupon.displayInfo}}</ion-radio>
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">

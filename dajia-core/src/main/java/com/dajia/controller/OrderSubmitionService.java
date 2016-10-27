@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -98,12 +99,12 @@ public class OrderSubmitionService {
          */
         addCartItemsToOrder(order, orderVO.cartItems);
 
-        /**
-         * 检查Order合法性 主要是检查
+        /************************************************************/
+        /* 检查Order合法性 主要是检查
          *
          * 1. 订单总价totalPrice 不会小于 商品总价值 + 运费
          * 2. 商品的单价 不小于 当前数据库中该商品的单价
-         */
+        /************************************************************/
         if (!orderService.orderValidate(order)) {
             logger.error("validate order failed, orderVo={}", orderVO);
             return null;
@@ -116,7 +117,7 @@ public class OrderSubmitionService {
 
         if(actualPayResult.isNotSucceed()) {
             logger.error("calc actual pay failed, orderVo={}, result={}", orderVO, actualPayResult);
-            return null;
+            throw new RuntimeException("优惠券价格计算失败", actualPayResult.ex);
         }
 
         order.actualPay = order.totalPrice.add(((BigDecimal) actualPayResult.data).negate());
@@ -124,6 +125,31 @@ public class OrderSubmitionService {
         /************************************************************/
         /** 开始事务 **/
         /************************************************************/
+        try {
+            doSaveOrderTransactional(orderVO, user, order);
+        } catch (Exception ex) {
+            logger.error("order transaction failed", ex);
+            /** 手动回滚 **/
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            logger.info("order rollbacked");
+            return null;
+        }
+
+        /************************************************************/
+        /** 生成支付ID 开始一个新的事务 不影响本次事务 **/
+        /************************************************************/
+        return getCharge(user, order);
+    }
+
+    /**
+     * 事务方法
+     *
+     * @param orderVO
+     * @param user
+     * @param order
+     */
+    private void doSaveOrderTransactional(OrderVO orderVO, User user, UserOrder order) {
+
         try {
             orderRepo.save(order);
         } catch (Exception ex) {
@@ -133,25 +159,53 @@ public class OrderSubmitionService {
 
         logger.info("order save succeed, orderVo={}, order={}", orderVO, order);
 
-        DajiaResult consumeCouponResult = userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
-
-        if (consumeCouponResult.isNotSucceed()) {
-            logger.error("consume coupons failed, orderVo={}, result={}", orderVO, consumeCouponResult);
-            throw new RuntimeException(consumeCouponResult.userMsg);
+        /** 消耗优惠券 **/
+        if (needCoupon(orderVO, order)) {
+            doConsumeCoupons(orderVO, user, order);
         }
 
-        logger.info("consume user coupons succeed, orderVo={}", orderVO);
-
+        /** 清空购物车 **/
         if (null != orderVO.cartItems) {
             for (CartItemVO cartItem : orderVO.cartItems) {
                 cartService.removeFromCart(user.userId, cartItem.productId);
             }
         }
 
-        /*********************************************/
-        /** 生成支付ID 开始一个新的事务 不影响本次事务 **/
-        /*********************************************/
-        return getCharge(user, order);
+        int a = 1;
+        if(a == 1) {
+            throw new RuntimeException("test rollback");
+        }
+    }
+
+    /**
+     * 是否要使用优惠券
+     *
+     * @param orderVO
+     * @param order
+     * @return
+     */
+    private final boolean needCoupon(OrderVO orderVO, UserOrder order) {
+        boolean dontNeed = CollectionUtils.isEmpty(orderVO.appliedCoupons) || order.actualPay.equals(BigDecimal.ZERO);
+        return !dontNeed;
+    }
+
+    /**
+     * 消费优惠券 需要被包含在事务中
+     *
+     * @param orderVO
+     * @param user
+     * @param order
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void doConsumeCoupons(OrderVO orderVO, User user, UserOrder order) {
+        DajiaResult consumeCouponResult = userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
+
+        if (consumeCouponResult.isNotSucceed()) {
+            logger.error("consume coupons failed, orderVo={}, result={}", orderVO, consumeCouponResult);
+            throw new RuntimeException(consumeCouponResult.userMsg, consumeCouponResult.ex);
+        }
+
+        logger.info("consume user coupons succeed, orderVo={}", orderVO);
     }
 
     /**
@@ -185,7 +239,6 @@ public class OrderSubmitionService {
      * @param user
      * @return
      */
-    @Transactional(readOnly = true)
     public DajiaResult calc_cut_off_for_order(UserOrder order, List<Long> couponPkList, User user) {
 
         // 没有使用优惠券
