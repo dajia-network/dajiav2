@@ -14,6 +14,7 @@ import com.dajia.vo.CartItemVO;
 import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,16 +112,15 @@ public class OrderSubmitionService {
         }
 
         /************************************************************/
-        /** 优惠券相关计算 **/
+        /** 价格优惠计算 **/
+        /** TODO chain模式 包含满减等其他优惠 **/
         /************************************************************/
-        DajiaResult actualPayResult = calc_cut_off_for_order(order, orderVO.appliedCoupons, user);
+        DajiaResult actualPayResult = calc_actual_pay(order, orderVO.appliedCoupons, user);
 
         if(actualPayResult.isNotSucceed()) {
             logger.error("calc actual pay failed, orderVo={}, result={}", orderVO, actualPayResult);
-            throw new RuntimeException("优惠券价格计算失败", actualPayResult.ex);
+            throw new RuntimeException("实付价格计算失败", actualPayResult.ex);
         }
-
-        order.actualPay = order.totalPrice.add(((BigDecimal) actualPayResult.data).negate());
 
         /************************************************************/
         /** 开始事务 **/
@@ -131,7 +131,7 @@ public class OrderSubmitionService {
             logger.error("order transaction failed", ex);
             /** 手动回滚 **/
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            logger.info("order rollbacked");
+            logger.info("order rollbacked, order=" + order);
             return null;
         }
 
@@ -171,9 +171,11 @@ public class OrderSubmitionService {
             }
         }
 
-        int a = 1;
-        if(a == 1) {
-            throw new RuntimeException("test rollback");
+        if ("rollback_for_me".equals(orderVO.comments) || "rollback_for_me".equals(orderVO.userComments)) {
+            int a = 1;
+            if (a == 1) {
+                throw new RuntimeException("rollback_test");
+            }
         }
     }
 
@@ -198,6 +200,7 @@ public class OrderSubmitionService {
      */
     @Transactional(propagation = Propagation.REQUIRED)
     private void doConsumeCoupons(OrderVO orderVO, User user, UserOrder order) {
+
         DajiaResult consumeCouponResult = userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
 
         if (consumeCouponResult.isNotSucceed()) {
@@ -205,6 +208,7 @@ public class OrderSubmitionService {
             throw new RuntimeException(consumeCouponResult.userMsg, consumeCouponResult.ex);
         }
 
+        order.userCouponIds = StringUtils.join(orderVO.appliedCoupons, ",");
         logger.info("consume user coupons succeed, orderVo={}", orderVO);
     }
 
@@ -220,9 +224,16 @@ public class OrderSubmitionService {
         Charge charge = null;
         try {
             charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
+
+            if (null == charge || StringUtils.isEmpty(charge.getId())) {
+                logger.error("getPingppCharge for order submit failed, charge is null, order={}", order);
+                return null;
+            }
+
             order.pingxxCharge = charge.toString();
             order.paymentId = charge.getId();
             orderRepo.save(order);
+
         } catch (PingppException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException("订单支付失败", e);
@@ -239,24 +250,30 @@ public class OrderSubmitionService {
      * @param user
      * @return
      */
-    public DajiaResult calc_cut_off_for_order(UserOrder order, List<Long> couponPkList, User user) {
+    public DajiaResult calc_actual_pay(UserOrder order, List<Long> couponPkList, User user) {
 
         // 没有使用优惠券
         if (CollectionUtils.isEmpty(couponPkList)) {
             return DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, BigDecimal.ZERO);
         }
 
-        // 计算实付价格
+        // 计算优惠掉的价格
         DajiaResult totalOffResult = userCouponService.getTotalCutOffWithCoupons(couponPkList, user.userId);
 
         if(totalOffResult.isNotSucceed()) {
             return totalOffResult;
         }
 
-        BigDecimal totalOff = ((BigDecimal) (totalOffResult.data)).negate();
+        BigDecimal totalOff = (BigDecimal) (totalOffResult.data);
 
         logger.info("total price cut off, order={}, couponPkList={}, totalOff={}", order, couponPkList, totalOff);
-        return DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, order.totalPrice.add(totalOff));
+
+        ///////////////////////////////////////////////////////////////////
+        // 【注意】 价格计算逻辑
+        ///////////////////////////////////////////////////////////////////
+        order.actualPay = order.totalPrice.add(totalOff.negate());
+
+        return DajiaResult.success();
     }
 
     /**
@@ -300,6 +317,8 @@ public class OrderSubmitionService {
         }
         UserOrder order = new UserOrder();
         order.unitPrice = orderVO.unitPrice;
+
+        // TODO 如果totalPrice为空是否需要重新计算一次价格
         order.totalPrice = orderVO.totalPrice;
         order.postFee = orderVO.postFee;
         order.quantity = orderVO.quantity;

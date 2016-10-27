@@ -181,6 +181,7 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		}
 	}).state('tab.mine-userCoupons', {
 		url : '/mine/userCoupons',
+		cache : 'false',
 		views : {
 			'tab-mine' : {
 				templateUrl : 'templates/user-coupons.html',
