@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
@@ -147,6 +148,21 @@ public class OrderSubmitionService {
             }
         }
 
+        /*********************************************/
+        /** 生成支付ID 开始一个新的事务 不影响本次事务 **/
+        /*********************************************/
+        return getCharge(user, order);
+    }
+
+    /**
+     * 向平台支付 更新状态为已支付 这是一个单独的事务 不影响orderSubmition
+     *
+     * @param user
+     * @param order
+     * @return
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private Charge getCharge(User user, UserOrder order) {
         Charge charge = null;
         try {
             charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
@@ -155,6 +171,7 @@ public class OrderSubmitionService {
             orderRepo.save(order);
         } catch (PingppException e) {
             logger.error(e.getMessage(), e);
+            throw new RuntimeException("订单支付失败", e);
         }
         return charge;
     }
