@@ -343,3 +343,11 @@ button img {
 .coupon img {
 	width: 100%;
 }
+
+.coupon-btn {
+	position: relative;
+	width: 90px;
+	height: 25px;
+	top: -50px;
+	left: 100px;
+}
