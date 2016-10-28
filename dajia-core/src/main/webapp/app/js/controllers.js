@@ -321,7 +321,7 @@ angular
 					// 获得用户可使用的优惠券
 					CouponService.available(function(data) {
 						$scope.userCoupons = data.data;
-						console.log("ava : " + data);
+						console.log(data);
 						$scope.applyCoupon = function() {
 							$scope.order.appliedCoupons = [];
 							$scope.appliedCoupons = [];
