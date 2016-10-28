@@ -316,8 +316,9 @@ CREATE TABLE if not exists `coupon` (
   `source_id` bigint NOT NULL default 1, -- 来源 商家ID 默认是1 即打价网
   `status` int NOT NULL, -- 券的状态 主要指 is_active
   `rule_desc` varchar(1000) default '',  -- 使用规则的简要描述 显示在优惠券界面上
-  `gmt_expired` datetime not null, -- 过期时间
-  `gmt_start` datetime not null, -- 可以使用的最早时间
+  `gmt_expired` datetime null, -- 过期时间
+  `gmt_start` datetime null, -- 可以使用的最早时间
+  `expired_days` int , -- 有效天数 优先级比上面2个低
   `created_by` varchar(200) NOT NULL, -- 创建人
   `modified_by` varchar(200) NOT NULL, -- 修改人
   `created_date` timestamp null default current_timestamp, -- 创建时间

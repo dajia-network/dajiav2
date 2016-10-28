@@ -14,6 +14,7 @@ import com.dajia.vo.CartItemVO;
 import com.dajia.vo.OrderVO;
 import com.pingplusplus.exception.PingppException;
 import com.pingplusplus.model.Charge;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +77,7 @@ public class OrderSubmitionService {
      * @param user
      * @return
      */
-    @Transactional
+    @Transactional(noRollbackFor = {IgnoreRollbackException.class})
     public Charge handleOrderSubmitionRequest(OrderVO orderVO, User user) {
 
         if (null == orderVO) {
@@ -136,8 +137,15 @@ public class OrderSubmitionService {
         }
 
         /************************************************************/
-        /** 生成支付ID 开始一个新的事务 不影响本次事务 **/
+        /** 生成支付ID 在新事务中完成 请在新事务中捕获所有异常并抛出IgnoreRollbackException异常 **/
         /************************************************************/
+
+        // _for_test
+        if ("rollback_for_charge".equalsIgnoreCase(orderVO.comments) ||
+                "rollback_for_charge".equalsIgnoreCase(orderVO.userComments)) {
+            return testGetCharge(user, order);
+        }
+
         return getCharge(user, order);
     }
 
@@ -214,16 +222,16 @@ public class OrderSubmitionService {
 
     /**
      * 向平台支付 更新状态为已支付 这是一个单独的事务 不影响orderSubmition
+     * (使用IgnoreRollbackException)
      *
      * @param user
      * @param order
      * @return
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private Charge getCharge(User user, UserOrder order) {
-        Charge charge = null;
+    private Charge getCharge(User user, UserOrder order) throws IgnoreRollbackException {
         try {
-            charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
+            Charge charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
 
             if (null == charge || StringUtils.isEmpty(charge.getId())) {
                 logger.error("getPingppCharge for order submit failed, charge is null, order={}", order);
@@ -234,11 +242,27 @@ public class OrderSubmitionService {
             order.paymentId = charge.getId();
             orderRepo.save(order);
 
-        } catch (PingppException e) {
+            return charge;
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            throw new RuntimeException("订单支付失败", e);
+            throw new IgnoreRollbackException("订单支付失败", e);
         }
-        return charge;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    private Charge testGetCharge(User user, UserOrder order) {
+        try {
+            Charge charge = null;
+            order.userComments += "------;";
+            orderRepo.save(order);
+            int a = 1;
+            if (a == 1) {
+                throw new RuntimeException("test rollback for get charge");
+            }
+            return charge;
+        } catch (Exception ex) {
+            throw new IgnoreRollbackException(ex);
+        }
     }
 
 
@@ -254,6 +278,7 @@ public class OrderSubmitionService {
 
         // 没有使用优惠券
         if (CollectionUtils.isEmpty(couponPkList)) {
+            order.actualPay = order.totalPrice;
             return DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, BigDecimal.ZERO);
         }
 
