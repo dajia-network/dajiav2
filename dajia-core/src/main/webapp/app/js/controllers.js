@@ -399,7 +399,6 @@ angular
 					}
 					$scope.submit = function() {
 						console.log($scope.order);
-						return false;
 						if (!$scope.userAgree.checked) {
 							popWarning('购买前请确认并同意打价网用户协议，谢谢！', $timeout, $ionicLoading);
 							return;
