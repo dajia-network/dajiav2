@@ -121,4 +121,15 @@ public class ServiceTests {
 	public void testExpireJob() {
 		productService.updateProductExpireStatus(new Date());
 	}
+
+	@Test
+	public void testCalcRefund() {
+		orderService.testCalcRefundValue(5606L);
+
+	}
+
+	@Test
+	public void testOrderDetail() {
+		orderService.getOrderDetailByTrackingId4Progress("2016101122103014196", 311L);
+	}
 }
