@@ -1514,6 +1514,7 @@ angular
 
 			var get_my_coupons = function() {
 				$http.get('/user/coupons/' + $scope.page.pageNo).success(function(response, status, headers, config) {
+					console.log(response.data.content);
 					$scope.user_coupons = response.data.content;
 				}).error(function() {
 					console.log("get_my_coupons_failed");
@@ -1525,7 +1526,6 @@ angular
 			}
 
 			$scope.DajiaGlobal = DajiaGlobal;
-			console.log(DajiaGlobal + "...[[");
 			get_my_coupons();
 		});
 

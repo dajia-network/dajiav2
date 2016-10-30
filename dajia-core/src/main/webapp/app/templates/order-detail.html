@@ -56,24 +56,20 @@
 			  使用优惠券
 			</div>
 			<ion-list>
-				<ion-item class="" ng-repeat="user_coupon in order.appliedCouponsObj" type="item-text-wrap">
-					<!--<img ng-src="{{product.imgUrl4List}}" >-->
-					<div class="coupon coupon_{{user_coupon.type}}_{{user_coupon.value}}" id="coupon_{{user_coupon.coupon_id}}">
-						<span class="coupon_value">{{user_coupon.value}}</span>
-						<span class="coupon_rate">元</span>
-						<span class="coupon_name">
-							<span class="coupon_area">{{DajiaGlobal["constants"]["coupon"]["area"][user_coupon.area]}}</span>
-							<span class="coupon_type">{{DajiaGlobal["constants"]["coupon"]["type"][user_coupon.type]}}</span>
-						</span>
-						<span class="coupon_rule_desc">
-							<span>{{user_coupon.ruleDesc}}</span>
-						</span>
-	
-						<span class="coupon_status">
-							{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}
-						</span>
+				<div class="" ng-repeat="user_coupon in order.appliedCouponsObj" type="item-text-wrap">
+					<div class="stamp stamp02">
+					<div class="par"><p>打价网</p><sub class="sign">￥</sub><span>{{user_coupon.value}}.00</span>
+					<sub>{{DajiaGlobal["constants"]["coupon"]["type"][user_coupon.type]}}</sub>
+					<p>{{user_coupon.ruleDesc}}</p></div>
+					<div class="copy">{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}
+					<p>
+						{{user_coupon.gmtStart | date:'yyyy-MM-dd'}}<br>
+						{{user_coupon.gmtExpired | date:'yyyy-MM-dd'}}
+					</p></div>
+					<i></i>
 					</div>
-				</ion-item>
+				</div>
+	
 			</ion-list>
 		
   		</div>
