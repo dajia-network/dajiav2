@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.dajia.filter.AdminFilter;
 import com.dajia.filter.AuthFilter;
 import com.dajia.filter.WechatFilter;
 
@@ -27,15 +26,6 @@ public class ServerConfig extends WebMvcAutoConfigurationAdapter {
 	}
 
 	@Bean
-	public FilterRegistrationBean adminFilterRegistration() {
-		FilterRegistrationBean registration = new FilterRegistrationBean();
-		registration.setFilter(adminFilter());
-		registration.addUrlPatterns("/admin/*");
-		registration.setName("adminFilter");
-		return registration;
-	}
-
-	@Bean
 	public FilterRegistrationBean wechatFilterRegistration() {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(wechatFilter());
@@ -48,11 +38,6 @@ public class ServerConfig extends WebMvcAutoConfigurationAdapter {
 	@Bean(name = "authFilter")
 	public Filter authFilter() {
 		return new AuthFilter();
-	}
-
-	@Bean(name = "adminFilter")
-	public Filter adminFilter() {
-		return new AdminFilter();
 	}
 
 	@Bean(name = "wechatFilter")

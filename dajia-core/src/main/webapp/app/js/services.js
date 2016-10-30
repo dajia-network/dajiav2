@@ -71,4 +71,36 @@ dajia.factory('AuthService', function($rootScope, $http, $cookies, authService) 
 		});
 	}
 	return service;
+}).factory('CouponService', function($http, $cookies) {
+	var service = {
+		requestCoupon : function(couponId, _success_callback, _fail_callback) {
+			$http.get('/user/coupons/request/' + couponId).success(function(data, status, headers, config) {
+				_success_callback(data, status, headers, config);
+			}).error(function(data, status, headers, config) {
+				_fail_callback(data, status, headers, config);
+			});
+		},
+		canRequestCoupon : function(couponId, _success_callback, _fail_callback) {
+			$http.get("/user/coupons/can/" + couponId).success(function(data, status, headers, config) {
+				_success_callback(data, status, headers, config);
+			}).error(function(data, status, headers, config) {
+				_fail_callback(data, status, headers, config);
+			});
+		},
+		userCoupons : function(pageNo, _success_callback, _fail_callback) {
+			$http.get("/user/coupons/" + pageNo).success(function(data, status, headers, config) {
+				_success_callback(data, status, headers, config);
+			}).error(function(data, status, headers, config) {
+				_fail_callback(data, status, headers, config);
+			});
+		},
+		available  : function(_success_callback, _fail_callback) {
+			$http.get("/user/coupons/available").success(function(data, status, headers, config) {
+				_success_callback(data, status, headers, config);
+			}).error(function(data, status, headers, config) {
+				_fail_callback(data, status, headers, config);
+			});
+		}
+	}
+	return service;
 });

@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dajia.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.User;
-import com.dajia.domain.UserContact;
 import com.dajia.domain.UserOrder;
 import com.dajia.domain.UserOrderItem;
 import com.dajia.domain.UserShare;
@@ -32,16 +31,7 @@ import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserShareRepo;
-import com.dajia.service.ApiService;
-import com.dajia.service.CartService;
-import com.dajia.service.OrderService;
-import com.dajia.service.ProductService;
-import com.dajia.service.RefundService;
-import com.dajia.service.RewardService;
-import com.dajia.service.UserContactService;
 import com.dajia.util.CommonUtils;
-import com.dajia.util.CommonUtils.OrderStatus;
-import com.dajia.vo.CartItemVO;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
 import com.pingplusplus.exception.PingppException;
@@ -96,78 +86,18 @@ public class OrderController extends BaseController {
 	@Autowired
 	private CartService cartService;
 
+    @Autowired
+    private UserCouponService userCouponService;
+
+	@Autowired
+	public OrderSubmitionService orderSubmitionService;
+
 	@RequestMapping(value = "/user/submitOrder", method = RequestMethod.POST)
 	public Charge submitOrder(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
-		User user = this.getLoginUser(request, response, userRepo, true);
-		UserContact uc = orderVO.userContact;
-		if (null != uc) {
-			uc = userContactService.updateUserContact(uc, user);
-		}
-		if (!productService.validateStock(orderVO)) {
-			return null;
-		}
-
-		UserOrder order = new UserOrder();
-		order.unitPrice = orderVO.unitPrice;
-		order.totalPrice = orderVO.totalPrice;
-		order.postFee = orderVO.postFee;
-		order.quantity = orderVO.quantity;
-		order.payType = orderVO.payType;
-		order.productId = orderVO.productId;
-		order.productItemId = orderVO.productItemId;
-		order.productDesc = orderVO.productDesc;
-		order.productShared = CommonUtils.ProductShared.NO.toString();
-		order.userComments = orderVO.userComments;
-		if (null != orderVO.refUserId && orderVO.refUserId.longValue() != user.userId.longValue()) {
-			order.refUserId = orderVO.refUserId;
-			order.refOrderId = orderVO.refOrderId;
-		}
-		order.orderDate = new Date();
-		order.orderStatus = OrderStatus.PENDING_PAY.getKey();
-		order.userId = user.userId;
-		order.contactName = uc.contactName;
-		order.contactMobile = uc.contactMobile;
-		order.address = uc.province.locationValue + " " + uc.city.locationValue + " " + uc.district.locationValue + " "
-				+ uc.address1;
-		order.trackingId = CommonUtils.genTrackingId(user.userId);
-		if (null != orderVO.cartItems) {
-			List<UserOrderItem> orderItems = new ArrayList<UserOrderItem>();
-			for (CartItemVO cartItem : orderVO.cartItems) {
-				UserOrderItem oi = new UserOrderItem();
-				oi.userOrder = order;
-				oi.trackingId = order.trackingId;
-				oi.userId = order.userId;
-				oi.productId = cartItem.productId;
-				oi.productItemId = cartItem.productItemId;
-				oi.productShared = CommonUtils.ProductShared.NO.toString();
-				oi.unitPrice = cartItem.currentPrice;
-				oi.quantity = cartItem.quantity;
-				orderItems.add(oi);
-			}
-			order.orderItems = orderItems;
-		}
-		if (!orderService.orderValidate(order)) {
-			return null;
-		}
-		orderRepo.save(order);
-
-		if (null != orderVO.cartItems) {
-			for (CartItemVO cartItem : orderVO.cartItems) {
-				cartService.removeFromCart(user.userId, cartItem.productId);
-			}
-		}
-
-		Charge charge = null;
-		try {
-			charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
-			order.pingxxCharge = charge.toString();
-			order.paymentId = charge.getId();
-			orderRepo.save(order);
-		} catch (PingppException e) {
-			logger.error(e.getMessage(), e);
-		}
-		return charge;
+		User user = getLoginUser(request, response, userRepo, true);
+		return orderSubmitionService.handleOrderSubmitionRequest(orderVO, user);
 	}
+
 
 	@RequestMapping(value = "/user/getCharge", method = RequestMethod.POST)
 	public Charge getCharge(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {

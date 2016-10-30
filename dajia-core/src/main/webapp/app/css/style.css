@@ -11,6 +11,10 @@
 	padding: 0;
 }
 
+.row.avatars {
+	display: inline-block;
+}
+
 .col.noPadding {
 	padding: 0;
 }
@@ -321,3 +325,170 @@ button img {
 }
 
 /* countdown end*/
+
+.item.item-text-wrap.transparent {
+	background: transparent;
+	border-color: transparent;
+	margin-top: 100px;
+}
+
+.modal.transparent {
+	background: transparent;
+}
+
+.modal.transparent>.scroll-content {
+	background: transparent;
+}
+
+.coupon-pop img {
+	width: 100%;
+}
+
+.coupon-btn {
+	position: relative;
+	width: 90px;
+	height: 25px;
+	top: -50px;
+	left: 100px;
+}
+
+.coupon {
+	background-color: rgba(175, 58, 58, 0.94);
+	-moz-border-radius: 5px;
+	line-height: 4em;
+	padding: 0.1em 0 1em 1em;
+	color: white;
+	height: 4.5em;
+	width: 80%;
+	margin: 0 auto;
+	border-radius: 5px;
+}
+
+.coupon_rule_desc {
+	font-size: 0.5em;
+	color: lightcyan;
+}
+
+.coupon_name {
+	font-weight: bold;
+}
+
+.coupon_value {
+	font-size: 3em;
+}
+
+.coupon_status {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+/* coupon start*/
+.stamp {
+	width: 387px;
+	height: 110px;
+	padding: 0 10px;
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.stamp:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 10px;
+	right: 10px;
+	z-index: -1;
+}
+
+.stamp:after {
+	content: '';
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	right: 10px;
+	bottom: 10px;
+	box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+	z-index: -2;
+}
+
+.stamp i {
+	position: absolute;
+	left: 20%;
+	top: 45px;
+	height: 190px;
+	width: 390px;
+	background-color: rgba(255, 255, 255, .15);
+	transform: rotate(-30deg);
+}
+
+.stamp .par {
+	float: left;
+	padding: 16px 15px;
+	width: 220px;
+	border-right: 2px dashed rgba(255, 255, 255, .3);
+	text-align: left;
+}
+
+.stamp .par p {
+	color: #fff;
+}
+
+.stamp .par span {
+	font-size: 40px;
+	color: #fff;
+	margin-right: 5px;
+}
+
+.stamp .par .sign {
+	font-size: 34px;
+}
+
+.stamp .par sub {
+	position: relative;
+	top: 0px;
+	color: rgba(255, 255, 255, .8);
+}
+
+.stamp .copy {
+	display: inline-block;
+	padding: 21px 14px;
+	vertical-align: text-bottom;
+	font-size: 20px;
+	color: rgb(255, 255, 255);
+}
+
+.stamp .copy p {
+	font-size: 13px;
+	margin-top: 15px;
+}
+
+.stamp01 {
+	background: #F39B00;
+	background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 5px,
+		#F39B00 5px);
+	background-size: 15px 15px;
+	background-position: 9px 3px;
+}
+
+.stamp01:before {
+	background-color: #F39B00;
+}
+
+.stamp02 {
+	background: #D24161;
+	background: radial-gradient(transparent 0, transparent 5px, #D24161 5px);
+	background-size: 15px 15px;
+	background-position: 9px 3px;
+}
+
+.stamp02:before {
+	background-color: #D24161;
+}
+
+.card.coupon, .list-inset {
+	background-color: transparent;
+}
+
+/* coupon end*/

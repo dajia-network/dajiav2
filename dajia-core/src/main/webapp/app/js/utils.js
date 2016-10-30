@@ -35,5 +35,36 @@ DajiaGlobal.utils = {
 	},
 	pad : function(n) {
 		return (n < 10 ? '0' : '') + n;
+	},
+	isWeChat : function() {
+		var ua = window.navigator.userAgent.toLowerCase();
+		if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+			return true;
+		} else {
+			return false;
+		}
 	}
 };
+
+DajiaGlobal.constants =
+{
+	"coupon" : {
+		"area" : {
+			"1" : "直营",
+			"2" : "商家",
+			"3" : "通用"
+		},
+		"type" : {
+			"1" : "代金券",
+			"2" : "满减券",
+			"3" : "折扣券"
+		},
+		"status" : {
+			"1" : "可使用",
+			"2" : "已使用",
+			"3" : "已取消",
+			"4" : "已放弃",
+			"5" : "不可用"
+		}
+	}
+}

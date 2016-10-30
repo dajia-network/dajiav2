@@ -298,3 +298,60 @@ CREATE TABLE IF NOT EXISTS dajia.user_share (
     is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
 	PRIMARY KEY(share_id)
 );
+
+
+
+drop table coupon ;
+drop table user_coupon ;
+
+CREATE TABLE if not exists `coupon` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(400) NOT NULL, -- 券的名称
+  `comment` varchar(4000) , -- 券的说明
+  `value` int NOT NULL, -- 券的面额
+  `amount` bigint NOT NULL, -- 券的发放数量
+  `remain` bigint NOT NULL, -- 剩余数量
+  `type` int NOT NULL, -- 券的种类 比如 1.代金券 2.满减券 3.折扣券
+  `area` int NOT NULL, -- 可以使用的范围 1.直营 2.店铺 3.通用
+  `source_id` bigint NOT NULL default 1, -- 来源 商家ID 默认是1 即打价网
+  `status` int NOT NULL, -- 券的状态 主要指 is_active
+  `rule_desc` varchar(1000) default '',  -- 使用规则的简要描述 显示在优惠券界面上
+  `gmt_expired` datetime null, -- 过期时间
+  `gmt_start` datetime null, -- 可以使用的最早时间
+  `expired_days` int , -- 有效天数 优先级比上面2个低
+  `created_by` varchar(200) NOT NULL, -- 创建人
+  `modified_by` varchar(200) NOT NULL, -- 修改人
+  `created_date` timestamp null default current_timestamp, -- 创建时间
+  `modified_date` timestamp, -- 修改时间
+  `is_active` varchar(1) not null default 'Y',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/**
+* 用户拥有的代金券 查询索引 user_id, order_id, coupon_id
+* 一张券只能而且必须要用于一个订单
+**/
+create table if not exists `user_coupon` (
+	`id` int(11) not null auto_increment,
+	`user_id` bigint not null, -- 所属用户
+	`coupon_id` bigint not null, -- 券的ID
+	`order_id` bigint default null, -- 订单号
+	`status` int not null, -- 券的状态
+	`value` int not null, -- 金额
+	`type` int not null, -- 类型 1代金券 2满减券 3折扣券
+	`area` int not null, -- 可以使用的范围 1.直营 2.店铺 3.通用
+	`comment` varchar(4000), -- 备注信息 后台可见 前台不可见
+	`rule_desc` varchar(1000), -- 使用规则的简要说明 显示在券的界面上 比如 "满199元使用"
+	`gmt_expired` bigint not null, -- 过期时间
+	`gmt_start` bigint not null, -- 可以使用的最早时间
+	`created_by` varchar(200) NOT NULL, -- 创建人
+	`modified_by` varchar(200) NOT NULL, -- 修改人
+	`created_date` timestamp null default current_timestamp, -- 创建时间
+	`modified_date` timestamp, -- 修改时间
+	`is_active` varchar(1) not null default 'Y',
+	primary key (`id`)
+) engine=InnoDB default charset=utf8;
+
+alter table user_order add column actual_pay numeric(10,2);
+alter table user_order add column user_coupon_ids varchar(400);
