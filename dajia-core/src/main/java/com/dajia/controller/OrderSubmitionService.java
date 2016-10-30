@@ -77,7 +77,7 @@ public class OrderSubmitionService {
      * @param user
      * @return
      */
-    @Transactional(noRollbackFor = {IgnoreRollbackException.class})
+    @Transactional
     public Charge handleOrderSubmitionRequest(OrderVO orderVO, User user) {
 
         if (null == orderVO) {
@@ -108,7 +108,7 @@ public class OrderSubmitionService {
          * 2. 商品的单价 不小于 当前数据库中该商品的单价
         /************************************************************/
         if (!orderService.orderValidate(order)) {
-            logger.error("validate order failed, orderVo={}", orderVO);
+            logger.error("订单校验失败, orderVo={}", orderVO);
             return null;
         }
 
@@ -119,7 +119,7 @@ public class OrderSubmitionService {
         DajiaResult actualPayResult = calc_actual_pay(order, orderVO.appliedCoupons, user);
 
         if(actualPayResult.isNotSucceed()) {
-            logger.error("calc actual pay failed, orderVo={}, result={}", orderVO, actualPayResult);
+            logger.error("实付价格计算失败, orderVo={}, result={}", orderVO, actualPayResult);
             throw new RuntimeException("实付价格计算失败", actualPayResult.ex);
         }
 
@@ -137,15 +137,10 @@ public class OrderSubmitionService {
         }
 
         /************************************************************/
-        /** 生成支付ID 在新事务中完成 请在新事务中捕获所有异常并抛出IgnoreRollbackException异常 **/
+        /** 生成支付ID 不影响事务提交
+         *  TODO 超时机制 把order提交到队列中
+         */
         /************************************************************/
-
-        // _for_test
-        if ("rollback_for_charge".equalsIgnoreCase(orderVO.comments) ||
-                "rollback_for_charge".equalsIgnoreCase(orderVO.userComments)) {
-            return testGetCharge(user, order);
-        }
-
         return getCharge(user, order);
     }
 
@@ -156,7 +151,7 @@ public class OrderSubmitionService {
      * @param user
      * @param order
      */
-    private void doSaveOrderTransactional(OrderVO orderVO, User user, UserOrder order) {
+    public void doSaveOrderTransactional(OrderVO orderVO, User user, UserOrder order) {
 
         try {
             orderRepo.save(order);
@@ -179,6 +174,7 @@ public class OrderSubmitionService {
             }
         }
 
+        /** 测试手动触发回滚 **/
         if ("rollback_for_me".equals(orderVO.comments) || "rollback_for_me".equals(orderVO.userComments)) {
             int a = 1;
             if (a == 1) {
@@ -194,7 +190,7 @@ public class OrderSubmitionService {
      * @param order
      * @return
      */
-    private final boolean needCoupon(OrderVO orderVO, UserOrder order) {
+    public final boolean needCoupon(OrderVO orderVO, UserOrder order) {
         boolean dontNeed = CollectionUtils.isEmpty(orderVO.appliedCoupons) || order.actualPay.equals(BigDecimal.ZERO);
         return !dontNeed;
     }
@@ -206,8 +202,7 @@ public class OrderSubmitionService {
      * @param user
      * @param order
      */
-    @Transactional(propagation = Propagation.REQUIRED)
-    private void doConsumeCoupons(OrderVO orderVO, User user, UserOrder order) {
+    public void doConsumeCoupons(OrderVO orderVO, User user, UserOrder order) {
 
         DajiaResult consumeCouponResult = userCouponService.consumeUserCoupons(user.userId, order.orderId, orderVO.appliedCoupons);
 
@@ -221,15 +216,13 @@ public class OrderSubmitionService {
     }
 
     /**
-     * 向平台支付 更新状态为已支付 这是一个单独的事务 不影响orderSubmition
-     * (使用IgnoreRollbackException)
+     * 向平台支付 更新状态为已支付
      *
      * @param user
      * @param order
      * @return
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private Charge getCharge(User user, UserOrder order) throws IgnoreRollbackException {
+    public Charge getCharge(User user, UserOrder order) {
         try {
             Charge charge = apiService.getPingppCharge(order, user, CommonUtils.getPayTypeStr(order.payType));
 
@@ -244,27 +237,10 @@ public class OrderSubmitionService {
 
             return charge;
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new IgnoreRollbackException("订单支付失败", e);
+            logger.error("订单支付失败", e);
+            return null;
         }
     }
-
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private Charge testGetCharge(User user, UserOrder order) {
-        try {
-            Charge charge = null;
-            order.userComments += "------;";
-            orderRepo.save(order);
-            int a = 1;
-            if (a == 1) {
-                throw new RuntimeException("test rollback for get charge");
-            }
-            return charge;
-        } catch (Exception ex) {
-            throw new IgnoreRollbackException(ex);
-        }
-    }
-
 
     /**
      * 计算减价逻辑
@@ -311,7 +287,7 @@ public class OrderSubmitionService {
         if (null == cartItems || cartItems.isEmpty()) {
             return;
         }
-        List<UserOrderItem> orderItems = new ArrayList<UserOrderItem>();
+        List<UserOrderItem> orderItems = new ArrayList<UserOrderItem>(cartItems.size());
 
         for (CartItemVO cartItem : cartItems) {
             UserOrderItem oi = new UserOrderItem();
