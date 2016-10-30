@@ -389,6 +389,7 @@ button img {
 	padding: 0 10px;
 	position: relative;
 	overflow: hidden;
+	margin-bottom: 10px;
 }
 
 .stamp:before {
