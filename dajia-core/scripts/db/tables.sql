@@ -299,12 +299,10 @@ CREATE TABLE IF NOT EXISTS dajia.user_share (
 	PRIMARY KEY(share_id)
 );
 
+DROP TABLE IF EXISTS dajia.coupon ;
+DROP TABLE IF EXISTS dajia.user_coupon ;
 
-
-drop table coupon ;
-drop table user_coupon ;
-
-CREATE TABLE if not exists `coupon` (
+CREATE TABLE if not exists dajia.coupon (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL, -- 券的名称
   `comment` varchar(4000) , -- 券的说明
@@ -332,7 +330,7 @@ CREATE TABLE if not exists `coupon` (
 * 用户拥有的代金券 查询索引 user_id, order_id, coupon_id
 * 一张券只能而且必须要用于一个订单
 **/
-create table if not exists `user_coupon` (
+create table if not exists dajia.user_coupon (
 	`id` int(11) not null auto_increment,
 	`user_id` bigint not null, -- 所属用户
 	`coupon_id` bigint not null, -- 券的ID
@@ -353,5 +351,5 @@ create table if not exists `user_coupon` (
 	primary key (`id`)
 ) engine=InnoDB default charset=utf8;
 
-alter table user_order add column actual_pay numeric(10,2);
-alter table user_order add column user_coupon_ids varchar(400);
+alter table dajia.user_order add column actual_pay numeric(10,2);
+alter table dajia.user_order add column user_coupon_ids varchar(400);
