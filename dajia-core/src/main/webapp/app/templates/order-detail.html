@@ -51,7 +51,7 @@
 				<p>推荐奖励：<span class="assertive">{{order.rewardValue.toFixed(2)}}元</span> (最多邀请10位好友来获取奖励)</p>
 			</div>
 		</div>
-  		<div class="card coupon">
+  		<div class="card coupon" ng-show="order.appliedCouponsObj.length>0">
 			<div class="item item-divider">
 			  使用优惠券
 			</div>
