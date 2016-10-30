@@ -399,6 +399,7 @@ angular
 					}
 					$scope.submit = function() {
 						console.log($scope.order);
+						return false;
 						if (!$scope.userAgree.checked) {
 							popWarning('购买前请确认并同意打价网用户协议，谢谢！', $timeout, $ionicLoading);
 							return;
@@ -434,7 +435,6 @@ angular
 							}
 						}
 
-						console.log($scope.order);
 						$http.post('/user/submitOrder', $scope.order).success(function(data, status, headers, config) {
 							var charge = data;
 							console.log(charge);
@@ -562,15 +562,16 @@ angular
 						}
 					}
 					$scope.calcTotalPrice = function() {
+						console.log(1);
 						var postFee = $scope.order.postFee;
 						var productDesc = null;
-						if ($scope.defaultPostFee == 0) {
-							return;
-						}
 						if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
 							$scope.order.postFee = $scope.userContact.province.minPostFee;
 						} else {
 							$scope.order.postFee = $scope.defaultPostFee;
+						}
+						if ($scope.defaultPostFee == 0) {
+							$scope.order.postFee = 0;
 						}
 						if (null != $scope.cartItems) {
 							var totalPrice = 0;
@@ -1617,7 +1618,6 @@ var couponModalInit = function($scope, $ionicModal, CouponService, $timeout, $io
 		$scope.couponModal = modal;
 	});
 	$scope.openCouponModal = function(data) {
-		console.log(data)
 		$scope.couponModal.show();
 	};
 	$scope.closeCouponModal = function() {
