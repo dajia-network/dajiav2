@@ -454,7 +454,6 @@ button img {
 .stamp .copy {
 	display: inline-block;
 	padding: 21px 14px;
-	width: 100px;
 	vertical-align: text-bottom;
 	font-size: 20px;
 	color: rgb(255, 255, 255);
@@ -486,6 +485,10 @@ button img {
 
 .stamp02:before {
 	background-color: #D24161;
+}
+
+.card.coupon, .list-inset {
+	background-color: transparent;
 }
 
 /* coupon end*/

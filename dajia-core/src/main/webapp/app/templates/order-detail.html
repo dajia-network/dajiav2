@@ -51,7 +51,7 @@
 				<p>推荐奖励：<span class="assertive">{{order.rewardValue.toFixed(2)}}元</span> (最多邀请10位好友来获取奖励)</p>
 			</div>
 		</div>
-  		<div class="card">
+  		<div class="card coupon">
 			<div class="item item-divider">
 			  使用优惠券
 			</div>
@@ -63,8 +63,8 @@
 					<p>{{user_coupon.ruleDesc}}</p></div>
 					<div class="copy">{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}
 					<p>
-						{{user_coupon.gmtStart | date:'yyyy-MM-dd'}}<br>
-						{{user_coupon.gmtExpired | date:'yyyy-MM-dd'}}
+						开始: {{user_coupon.gmtStart | date:'yyyy-MM-dd'}}<br>
+						过期: {{user_coupon.gmtExpired | date:'yyyy-MM-dd'}}
 					</p></div>
 					<i></i>
 					</div>
