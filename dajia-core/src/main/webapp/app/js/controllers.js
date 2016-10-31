@@ -43,9 +43,14 @@ angular
 									});
 									CouponService.canRequestCoupon(1, function(data) {
 										console.log(data);
-										var canRequest = data.data;
-										if (canRequest) {
-											$scope.openCouponModal(data);
+										var coupon = data.data;
+										if (coupon) {
+											if (null == coupon.gmtExpired) {
+												coupon.gmtExpired = new Date();
+												coupon.gmtExpired = coupon.gmtExpired.getTime();
+												coupon.gmtExpired += coupon.expiredDays * 24 * 3600 * 1000;
+											}
+											$scope.openCouponModal(coupon);
 										}
 									});
 								});
@@ -1617,6 +1622,7 @@ var couponModalInit = function($scope, $ionicModal, CouponService, $timeout, $io
 		$scope.couponModal = modal;
 	});
 	$scope.openCouponModal = function(data) {
+		$scope.coupon = data;
 		$scope.couponModal.show();
 	};
 	$scope.closeCouponModal = function() {

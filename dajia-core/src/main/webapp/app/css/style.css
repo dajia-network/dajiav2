@@ -340,8 +340,26 @@ button img {
 	background: transparent;
 }
 
+.coupon-pop span {
+	color: #ee385d
+}
+
 .coupon-pop img {
 	width: 100%;
+}
+
+.coupon-pop-value {
+	position: relative;
+	top: -157px;
+	left: -40px;
+	font-size: 50px;
+}
+
+.coupon-pop-date {
+	position: relative;
+	top: -144px;
+	left: 60px;
+	font-size: 16px;
 }
 
 .coupon-btn {
