@@ -350,24 +350,24 @@ button img {
 
 .coupon-pop-value {
 	position: relative;
-	top: -3.12em;
-	left: -0.96em;
+    top: -42vw;
+    left: -13vw;
 	font-size: 13.6vw;
 }
 
 .coupon-pop-date {
 	position: relative;
-	top: -11.1em;
-	left: 4.5em;
+	top: -39vw;
+	left: 15vw;
 	font-size: 3.5vw;
 }
 
-.coupon-btn {
+.coupon-btn {    
 	position: relative;
-	width: 90px;
-	height: 25px;
-	top: -50px;
-	left: 100px;
+    width: 30vw;
+    height: 10vw;
+    top: -26vw;
+    left: 31vw;
 }
 
 .coupon_rule_desc {

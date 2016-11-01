@@ -56,4 +56,4 @@ select sum(total_price) from user_order where payment_id is not null and order_s
 
 select count(1) from user_share
 union
-select count(distinct(visit_user_id)) from user_share
+select count(distinct(visit_user_id)) from user_share;
