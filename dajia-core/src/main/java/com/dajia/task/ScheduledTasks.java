@@ -32,7 +32,7 @@ public class ScheduledTasks {
 	@Autowired
 	private RefundService refundService;
 
-//	@Scheduled(cron = "0 */10 * * * * ")
+	@Scheduled(cron = "0 */10 * * * * ")
 	public void productUpdateByCron() {
 		Date currentDate = new Date();
 		logger.info("Product expiration check job starts at: " + dateFormat.format(currentDate));
@@ -46,13 +46,13 @@ public class ScheduledTasks {
 		orderService.orderRefundCheck();
 	}
 
-//	@Scheduled(cron = "0 */20 *  * * * ")
+	@Scheduled(cron = "0 */20 *  * * * ")
 	public void checkRewardByCron() {
 		String currentTime = dateFormat.format(new Date());
 		rewardService.payRewards(currentTime);
 	}
 
-//	@Scheduled(cron = "0 */60 *  * * * ")
+	@Scheduled(cron = "0 */60 *  * * * ")
 	public void retryRefundByCron() {
 		String currentTime = dateFormat.format(new Date());
 		refundService.retryRefund(currentTime);
