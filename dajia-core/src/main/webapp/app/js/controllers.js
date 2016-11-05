@@ -28,6 +28,18 @@ angular
 						pageNo : 1
 					};
 					couponModalInit($scope, $ionicModal, CouponService, $timeout, $ionicLoading);
+					CouponService.canRequestCoupon(1, function(data) {
+						console.log(data);
+						var coupon = data.data;
+						if (coupon) {
+							if (null == coupon.gmtExpired) {
+								coupon.gmtExpired = new Date();
+								coupon.gmtExpired = coupon.gmtExpired.getTime();
+								coupon.gmtExpired += coupon.expiredDays * 24 * 3600 * 1000;
+							}
+							$scope.openCouponModal(coupon);
+						}
+					});
 					var loadProducts = function() {
 						return $http.get('/products/' + $scope.page.pageNo).success(
 								function(data, status, headers, config) {
@@ -40,18 +52,6 @@ angular
 											targetDate : p.expiredDate
 										}
 										$scope.countDowns.push(countDown);
-									});
-									CouponService.canRequestCoupon(1, function(data) {
-										console.log(data);
-										var coupon = data.data;
-										if (coupon) {
-											if (null == coupon.gmtExpired) {
-												coupon.gmtExpired = new Date();
-												coupon.gmtExpired = coupon.gmtExpired.getTime();
-												coupon.gmtExpired += coupon.expiredDays * 24 * 3600 * 1000;
-											}
-											$scope.openCouponModal(coupon);
-										}
 									});
 								});
 					}
@@ -327,15 +327,10 @@ angular
 					CouponService.available(function(data) {
 						$scope.userCoupons = data.data;
 						console.log(data);
-						$scope.applyCoupon = function() {
-							$scope.order.appliedCoupons = [];
-							$scope.appliedCoupons = [];
-							$scope.userCoupons.forEach(function(c) {
-								if (c.checked) {
-									$scope.appliedCoupons.push(c);
-									$scope.order.appliedCoupons.push(c.id);
-								}
-							});
+						$scope.applyCoupon = function(userCoupon) {
+							console.log(userCoupon);
+							$scope.order.appliedCoupons = [ userCoupon.id ];
+							$scope.appliedCoupons = [ userCoupon ];
 							$scope.calcTotalPrice();
 						};
 					});
@@ -566,7 +561,6 @@ angular
 						}
 					}
 					$scope.calcTotalPrice = function() {
-						console.log(1);
 						var postFee = $scope.order.postFee;
 						var productDesc = null;
 						if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
@@ -1519,7 +1513,7 @@ angular
 
 			var get_my_coupons = function() {
 				$http.get('/user/coupons/' + $scope.page.pageNo).success(function(response, status, headers, config) {
-					console.log(response.data.content);
+					console.log(response);
 					$scope.user_coupons = response.data.content;
 				}).error(function() {
 					console.log("get_my_coupons_failed");
@@ -1631,9 +1625,9 @@ var couponModalInit = function($scope, $ionicModal, CouponService, $timeout, $io
 	$scope.$on('$destroy', function() {
 		$scope.couponModal.remove();
 	});
-	$scope.requestCoupon = function() {
+	$scope.requestCoupon = function(couponId) {
 		popLoading($ionicLoading);
-		CouponService.requestCoupon(1, function(data) {
+		CouponService.requestCoupon(couponId, function(data) {
 			console.log(data);
 			$ionicLoading.hide();
 			if (data.succeed) {

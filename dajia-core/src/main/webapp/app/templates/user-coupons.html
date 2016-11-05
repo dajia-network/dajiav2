@@ -13,7 +13,7 @@
 		<ion-list>
 			<div class="" ng-repeat="user_coupon in user_coupons" type="item-text-wrap">
 				<div class="stamp stamp02">
-				<div class="par"><p>打价网</p><sub class="sign">￥</sub><span>{{user_coupon.value}}.00</span>
+				<div class="par"><p>打价网</p><sub class="sign">￥</sub><span>{{(user_coupon.value/100).toFixed(2)}}</span>
 				<sub>{{DajiaGlobal["constants"]["coupon"]["type"][user_coupon.type]}}</sub>
 				<p>{{user_coupon.ruleDesc}}</p></div>
 				<div class="copy">{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}

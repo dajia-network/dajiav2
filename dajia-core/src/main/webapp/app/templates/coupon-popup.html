@@ -4,10 +4,10 @@
 			<div class="col text-center">
 		  		<div class="coupon-pop" ng-click="closeCouponModal()">
 		  			<img src="./img/coupon.png"></img>
-		  			<span class="coupon-pop-value">{{coupon.value}}</span>
+		  			<span class="coupon-pop-value">{{(coupon.value/100).toFixed(2)}}</span>
 		  			<span class="coupon-pop-date">{{coupon.gmtExpired | date:'yyyy-MM-dd'}}</span>
 		  		</div>
-				<div class="coupon-btn" ng-click="requestCoupon()"></div>
+				<div class="coupon-btn" ng-click="requestCoupon(coupon.id)"></div>
 			</div>
 		</div>
 	</ion-content>
