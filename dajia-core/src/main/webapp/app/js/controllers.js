@@ -283,6 +283,7 @@ angular
 					$scope.selectedUserContact = {};
 					$scope.appliedCoupons = [];
 					$scope.couponVal = 0;
+					$scope.freeShipNeed = 0;
 					$scope.userAgree = {
 						checked : true
 					};
@@ -561,7 +562,6 @@ angular
 						}
 					}
 					$scope.calcTotalPrice = function() {
-						var postFee = $scope.order.postFee;
 						var productDesc = null;
 						if ($scope.userContact.province.minPostFee > $scope.defaultPostFee) {
 							$scope.order.postFee = $scope.userContact.province.minPostFee;
@@ -579,19 +579,27 @@ angular
 									productDesc = c.shortName;
 								}
 							});
-							$scope.order.totalPrice = totalPrice + postFee;
+							$scope.order.totalPrice = totalPrice;
 							if ($scope.cartItems.length > 1) {
 								productDesc = productDesc + '等' + $scope.cartItems.length + '件产品';
 							}
 							$scope.order.productDesc = productDesc;
 						} else {
-							$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice + postFee;
+							$scope.order.totalPrice = $scope.order.quantity * $scope.order.unitPrice;
 						}
 						$scope.couponVal = 0;
 						$scope.appliedCoupons.forEach(function(c) {
 							$scope.couponVal += c.value;
 						})
-						$scope.order.totalPrice = $scope.order.totalPrice - postFee + $scope.order.postFee;
+						// 满xx总金额包邮
+						if ($scope.order.totalPrice >= DajiaGlobal.constants.freeShip) {
+							$scope.order.postFee = 0;
+							$scope.freeShipNeed = 0;
+						} else {
+							$scope.order.postFee = $scope.defaultPostFee;
+							$scope.freeShipNeed = DajiaGlobal.constants.freeShip - $scope.order.totalPrice;
+						}
+						$scope.order.totalPrice = $scope.order.totalPrice + $scope.order.postFee;
 					}
 
 					$scope.selectAlipay = function() {

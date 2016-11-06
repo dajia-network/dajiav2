@@ -46,8 +46,7 @@ DajiaGlobal.utils = {
 	}
 };
 
-DajiaGlobal.constants =
-{
+DajiaGlobal.constants = {
 	"coupon" : {
 		"area" : {
 			"1" : "直营",
@@ -66,5 +65,6 @@ DajiaGlobal.constants =
 			"4" : "已放弃",
 			"5" : "不可用"
 		}
-	}
+	},
+	"freeShip" : 80
 }
