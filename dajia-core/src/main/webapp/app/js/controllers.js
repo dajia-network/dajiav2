@@ -679,8 +679,11 @@ angular
 											if (shareRefund > o.productVO.currentPrice) {
 												shareRefund = o.productVO.currentPrice;
 											}
+											o.shareRefund = shareRefund;
 											o.progressValue = shareRefund / o.productVO.currentPrice * 100;
-											o.productVO.currentPrice = o.productVO.currentPrice - shareRefund;
+											// o.productVO.currentPrice =
+											// o.productVO.currentPrice -
+											// shareRefund;
 										}
 									});
 								});

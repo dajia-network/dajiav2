@@ -25,11 +25,11 @@
 				    <span ng-if="order.productVO.productStatus==2&&order.productVO.isPromoted=='Y'" class="assertive"><b>限时火爆打群价中!</b></span>
 				    <span ng-if="order.productVO.productStatus==3">({{order.productVO.status4Show}})</span><br/>
 				    
-			     	<span ng-if="order.productVO.productStatus==2">当前价格是<span class="assertive"><b>{{(order.productVO.currentPrice).toFixed(2)}}</b></span>元。</span>
-			     	<span ng-if="order.productVO.productStatus==3">最终价格是<span class="assertive"><b>{{(order.productVO.currentPrice).toFixed(2)}}</b></span>元。</span>
+			     	<span ng-if="order.productVO.productStatus==2">当前价格是<span class="assertive"><b>{{(order.productVO.currentPrice-order.shareRefund).toFixed(2)}}</b></span>元。</span>
+			     	<span ng-if="order.productVO.productStatus==3">最终价格是<span class="assertive"><b>{{(order.productVO.currentPrice-order.shareRefund).toFixed(2)}}</b></span>元。</span>
 			     	
-			     	<span ng-if="order.productVO.productStatus==2">我将获得退款<span class="assertive"><b>{{((order.unitPrice-order.productVO.currentPrice)*order.quantity).toFixed(2)}}</b></span>元!</span>
-			     	<span ng-if="order.productVO.productStatus==3">我获得了退款<span class="assertive"><b>{{((order.unitPrice-order.productVO.currentPrice)*order.quantity).toFixed(2)}}</b></span>元!</span>
+			     	<span ng-if="order.productVO.productStatus==2">我将获得退款<span class="assertive"><b>{{((order.unitPrice-order.productVO.currentPrice+order.shareRefund)*order.quantity).toFixed(2)}}</b></span>元!</span>
+			     	<span ng-if="order.productVO.productStatus==3">我获得了退款<span class="assertive"><b>{{((order.unitPrice-order.productVO.currentPrice+order.shareRefund)*order.quantity).toFixed(2)}}</b></span>元!</span>
 				 	
 				</div>
 				<div class="col homebar" align="center">
