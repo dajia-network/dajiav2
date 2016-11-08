@@ -28,7 +28,7 @@ angular
 						pageNo : 1
 					};
 					couponModalInit($scope, $ionicModal, CouponService, $timeout, $ionicLoading);
-					CouponService.canRequestCoupon(1, function(data) {
+					CouponService.canRequestCoupon(2, function(data) {
 						console.log(data);
 						var coupon = data.data;
 						if (coupon) {
@@ -1636,9 +1636,9 @@ var couponModalInit = function($scope, $ionicModal, CouponService, $timeout, $io
 	$scope.$on('$destroy', function() {
 		$scope.couponModal.remove();
 	});
-	$scope.requestCoupon = function(couponId) {
+	$scope.requestCoupon = function(couponId, amt) {
 		popLoading($ionicLoading);
-		CouponService.requestCoupon(couponId, function(data) {
+		CouponService.requestCoupon(couponId, amt, function(data) {
 			console.log(data);
 			$ionicLoading.hide();
 			if (data.succeed) {

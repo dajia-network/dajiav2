@@ -100,7 +100,7 @@
 		<ion-radio name="paymentRadio" ng-model="order.payType" ng-value="1">微信支付</ion-radio>
 		<ion-radio name="paymentRadio" ng-model="order.payType" ng-value="2" ng-click="selectAlipay()">支付宝</ion-radio>
 		
-		<div class="item item-divider">
+		<div class="item item-divider" ng-show="userCoupons.length>0">
 		  优惠券
 		</div>
 		<ion-radio ng-repeat="userCoupon in userCoupons" ng-click="applyCoupon(userCoupon)" name="couponRadio">

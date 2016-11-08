@@ -81,10 +81,10 @@ public class UserCouponController extends BaseController {
 		return result;
 	}
 
-	@RequestMapping(value = "/user/coupons/request/{couponId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/coupons/request/{couponId}/{amt}", method = RequestMethod.GET)
 	@ResponseBody
 	public DajiaResult requestCoupon(HttpServletRequest request, HttpServletResponse response,
-			@PathVariable("couponId") Long couponId) {
+			@PathVariable("couponId") Long couponId, @PathVariable("amt") Integer amount) {
 		User user = getLoginUser(request, response, userRepo, false);
 		Long userId = user.userId;
 
@@ -95,7 +95,7 @@ public class UserCouponController extends BaseController {
 			return canRequestResult;
 		}
 
-		DajiaResult result = userCouponService.publishCoupons(couponId, Arrays.asList(user.userId),
+		DajiaResult result = userCouponService.publishCoupons(couponId, amount, Arrays.asList(user.userId),
 				String.valueOf(user.userId));
 		String input = String.format("user=%s,couponId=%d", user.userId, couponId);
 		logger.info(String.format("succees request coupons|%s|%s", result, input));

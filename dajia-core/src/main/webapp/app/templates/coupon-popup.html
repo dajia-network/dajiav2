@@ -7,7 +7,7 @@
 		  			<span class="coupon-pop-value">{{(coupon.value/100).toFixed(2)}}</span>
 		  			<span class="coupon-pop-date">{{coupon.gmtExpired | date:'yyyy-MM-dd'}}</span>
 		  		</div>
-				<div class="coupon-btn" ng-click="requestCoupon(coupon.id)"></div>
+				<div class="coupon-btn" ng-click="requestCoupon(coupon.id, 2)"></div>
 			</div>
 		</div>
 	</ion-content>
