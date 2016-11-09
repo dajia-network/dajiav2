@@ -351,15 +351,23 @@ button img {
 .coupon-pop-value {
 	position: relative;
     top: -42vw;
-    left: -13vw;
+    left: -8vw;
 	font-size: 9vw;
 }
 
 .coupon-pop-date {
 	position: relative;
 	top: -37vw;
-	left: 9.5vw;
+	left: 4vw;
 	font-size: 3.5vw;
+}
+
+.coupon-pop-amt {
+	color: #FFFFFF !important;
+    position: relative;
+    top: -16vw;
+    left: 19vw;
+    font-size: 6vw;
 }
 
 .coupon-btn {    
