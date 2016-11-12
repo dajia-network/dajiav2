@@ -333,7 +333,7 @@ button img {
 }
 
 .modal.transparent {
-	background: transparent;
+	background: rgba(0, 0, 0, 0.3);
 }
 
 .modal.transparent>.scroll-content {
@@ -506,3 +506,15 @@ button img {
 }
 
 /* coupon end*/
+
+.qrcode-pop {
+	line-height: 1.5em;
+}
+
+.qrcode-pop div {
+	margin: 10px;
+}
+
+.qrcode-pop img {
+	width: 50%;
+}

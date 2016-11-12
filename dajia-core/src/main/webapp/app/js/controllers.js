@@ -207,7 +207,7 @@ angular
 
 								if (!DajiaGlobal.utils.isWeChat()) {
 									console.log('Not in Wechat...');
-									// $scope.openQrcodeModal(data);
+									$scope.openQrcodeModal(data);
 								}
 
 								var targetDate = new Date(product.expiredDate);
@@ -1609,6 +1609,7 @@ var qrcodeModalInit = function($scope, $ionicModal) {
 	});
 	$scope.openQrcodeModal = function(data) {
 		console.log(data)
+		$scope.product = data;
 		$scope.qrcodeModal.show();
 	};
 	$scope.closeQrcodeModal = function() {

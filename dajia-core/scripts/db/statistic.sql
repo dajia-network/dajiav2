@@ -57,3 +57,10 @@ select sum(total_price) from user_order where payment_id is not null and order_s
 select count(1) from user_share
 union
 select count(distinct(visit_user_id)) from user_share;
+
+
+select o.order_id, oi.order_item_id, o.product_desc, o.quantity, p.name, oi.quantity,
+o.contact_name, o.contact_mobile, o.address, o.user_id, o.user_comments, o.user_coupon_ids  
+from user_order o left join user_order_item oi on o.order_id=oi.order_id 
+left join product p on oi.product_id=p.product_id 
+where o.payment_id is not null and o.order_status=2 and o.order_date>'2016-11-10';

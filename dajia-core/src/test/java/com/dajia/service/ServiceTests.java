@@ -1,5 +1,6 @@
 package com.dajia.service;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Date;
 
@@ -131,5 +132,18 @@ public class ServiceTests {
 	@Test
 	public void testOrderDetail() {
 		orderService.getOrderDetailByTrackingId4Progress("2016101122103014196", 311L);
+	}
+
+	@Test
+	public void testWechatQrcode() {
+		Long pid = 100L;
+		String url;
+		try {
+			url = apiService.getProductQrcodeUrl(pid);
+			System.out.println(url);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
