@@ -509,6 +509,8 @@ button img {
 
 .qrcode-pop {
 	line-height: 1.5em;
+    width: 65%;
+    margin: 0 auto;
 }
 
 .qrcode-pop div {
@@ -516,5 +518,33 @@ button img {
 }
 
 .qrcode-pop img {
-	width: 50%;
+	width: 100%;
+}
+
+.product-qrcode {
+	background: white;
+	padding: 0px 10px;
+}
+
+.product-qrcode p {
+    font-size: 15px;
+    padding-top: 10px;
+}
+
+@media (min-width: 768px){ 
+	.pane {
+	    max-width: 512px;
+	    margin: 0 auto;
+	}
+	.modal {
+	    top: 0;
+	    right: 0;
+	    bottom: 0;
+	    left: 0;
+	    max-width: 360px;
+	    margin: 0 auto;
+    }
+    .modal.transparent {
+    	background: transparent;
+	}
 }
