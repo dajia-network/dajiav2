@@ -7,6 +7,7 @@ import com.dajia.repository.UserRepo;
 import com.dajia.service.ProductService;
 import com.dajia.service.UserCouponService;
 import com.dajia.util.DajiaResult;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Arrays;
 
 import static com.dajia.util.ResultConstants.COMMON_MSG_QUERY_OK;
@@ -69,9 +71,11 @@ public class UserCouponController extends BaseController {
 		page = page > 0 ? (page - 1) : page;
 		int size = 10;
 		DajiaResult result;
+		Long now = System.currentTimeMillis();
 		try {
-			Page<UserCoupon> userCoupons = userCouponRepo.findByUserIdOrderByStatusAscGmtExpiredDesc(user.userId,
-					new PageRequest(page, size, Sort.Direction.DESC, "gmtExpired"));
+			Page<UserCoupon> userCoupons = userCouponRepo
+					.findByUserIdAndGmtExpiredAfterOrderByStatusAscGmtExpiredDesc(user.userId, now, new PageRequest(
+							page, size, Sort.Direction.DESC, "gmtExpired"));
 			result = DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, userCoupons);
 		} catch (Exception ex) {
 			result = DajiaResult.systemError("查询优惠券失败, 系统异常", null, ex);
