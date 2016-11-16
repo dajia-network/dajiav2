@@ -57,7 +57,8 @@
   </ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable" ng-show="cartItems.length>0">
 		<div class="row noPadding">
-			<div class="col text-left">合计：<span class="assertive">{{cart.totalPrice.toFixed(2)}}元</span>&nbsp;(未含运费)</div>
+			<div class="col text-left">合计：<span class="assertive">{{cart.totalPrice.toFixed(2)}}元</span></div>
+			<div class="col text-left" ng-show="cart.freeShipNeed>0">还差<span class="assertive">{{cart.freeShipNeed.toFixed(2)}}</span>元包邮</div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">去结算</button>
 			</div>

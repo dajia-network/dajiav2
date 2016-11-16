@@ -1019,7 +1019,8 @@ angular
 		.controller('MyCartCtrl', function($scope, $http, $timeout, $ionicLoading, $window) {
 			console.log('购物车...');
 			$scope.cart = {
-				totalPrice : 0
+				totalPrice : 0,
+				freeShipNeed : 0
 			};
 			var loadMyCart = function() {
 				popLoading($ionicLoading);
@@ -1119,6 +1120,13 @@ angular
 						$scope.cart.totalPrice += c.currentPrice * c.quantity;
 					}
 				});
+				// 满xx总金额包邮
+				if ($scope.cart.totalPrice >= DajiaGlobal.constants.freeShip) {
+					$scope.cart.freeShipNeed = 0;
+				} else {
+					$scope.cart.postFee = $scope.defaultPostFee;
+					$scope.cart.freeShipNeed = DajiaGlobal.constants.freeShip - $scope.cart.totalPrice;
+				}
 			}
 		})
 
