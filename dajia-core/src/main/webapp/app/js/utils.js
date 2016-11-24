@@ -7,7 +7,7 @@ DajiaGlobal.utils = {
 	isValidStr : function(str) {
 		return (null != str && str.length > 0 && 'null' != str);
 	},
-	mobileReg : /^((13[0-9]|15[0-9]|17[0-9]|18[0-9])+\d{8})$/,
+	mobileReg : /^((13[0-9]|15[0-9]|17[0-9]|18[0-9]|19[0-9])+\d{8})$/,
 	getURLParameter : function(name) {
 		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [ ,
 				"" ])[1].replace(/\+/g, '%20'))
