@@ -73,9 +73,8 @@ public class UserCouponController extends BaseController {
 		DajiaResult result;
 		Long now = System.currentTimeMillis();
 		try {
-			Page<UserCoupon> userCoupons = userCouponRepo
-					.findByUserIdAndGmtExpiredAfterOrderByStatusAscGmtExpiredDesc(user.userId, now, new PageRequest(
-							page, size, Sort.Direction.DESC, "gmtExpired"));
+			Page<UserCoupon> userCoupons = userCouponRepo.findByUserIdAndGmtExpiredAfterOrderByStatusAscGmtExpiredDesc(
+					user.userId, now, new PageRequest(page, size, Sort.Direction.DESC, "gmtExpired"));
 			result = DajiaResult.successReturn(COMMON_MSG_QUERY_OK, null, userCoupons);
 		} catch (Exception ex) {
 			result = DajiaResult.systemError("查询优惠券失败, 系统异常", null, ex);
@@ -119,6 +118,9 @@ public class UserCouponController extends BaseController {
 	public DajiaResult canRequest(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable("couponId") Long couponId) {
 		User user = getLoginUser(request, response, userRepo, false);
+		if (null == user) {
+			return null;
+		}
 		Long userId = user.userId;
 		DajiaResult result = userCouponService.canRequest(userId, couponId);
 		String input = String.format("user=%s,couponId=%d", userId, couponId);
