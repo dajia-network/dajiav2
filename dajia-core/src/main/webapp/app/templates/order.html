@@ -81,7 +81,7 @@
 				<div class="col">邮费</div>
 				<div class="col text-right assertive">{{order.postFee}}元</div>
 			</div>
-			<div class="row" ng-show="freeShipNeed>0">
+			<div class="row" ng-if="freeShipNeed>0&&order.postFee>0">
 				<div class="col">还差<span class="assertive">{{freeShipNeed.toFixed(2)}}</span>元包邮</div>
 			</div>
 			<p>
