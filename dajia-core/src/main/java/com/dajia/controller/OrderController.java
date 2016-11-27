@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dajia.service.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,8 +87,8 @@ public class OrderController extends BaseController {
 	@Autowired
 	private CartService cartService;
 
-    @Autowired
-    private UserCouponService userCouponService;
+	@Autowired
+	private UserCouponService userCouponService;
 
 	@Autowired
 	public OrderSubmitionService orderSubmitionService;
@@ -97,7 +98,6 @@ public class OrderController extends BaseController {
 		User user = getLoginUser(request, response, userRepo, true);
 		return orderSubmitionService.handleOrderSubmitionRequest(orderVO, user);
 	}
-
 
 	@RequestMapping(value = "/user/getCharge", method = RequestMethod.POST)
 	public Charge getCharge(HttpServletRequest request, HttpServletResponse response, @RequestBody OrderVO orderVO) {
@@ -281,6 +281,38 @@ public class OrderController extends BaseController {
 		PaginationVO<OrderVO> page = CommonUtils.generatePaginationVO(orders, pageNum);
 		page.results = progressList;
 		return page;
+	}
+
+	@RequestMapping("/user/liveProgress")
+	public List<OrderVO> myLiveProgress(HttpServletRequest request, HttpServletResponse response) {
+		User user = this.getLoginUser(request, response, userRepo, true);
+		List<Integer> orderStatusList = new ArrayList<Integer>();
+		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
+		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
+		List<UserOrder> orders = orderService.loadOrdersByUserId(user.userId, orderStatusList);
+		List<OrderVO> progressList = new ArrayList<OrderVO>();
+		for (UserOrder order : orders) {
+			OrderVO ov = orderService.convertOrderVO(order);
+			if (null != order.productItemId) {
+				ov.productVO = productService.loadProductDetailByItemId(order.productItemId);
+				if (null != ov.productVO && ov.productVO.productStatus == CommonUtils.ProductStatus.VALID.getKey()) {
+					progressList.add(ov);
+				}
+			} else {
+				if (null != order.orderItems) {
+					for (UserOrderItem orderItem : order.orderItems) {
+						OrderVO orderItemVO = orderService.convertOrderVO(order);
+						orderItemVO.productVO = productService.loadProductDetailByItemId(orderItem.productItemId);
+						if (null != orderItemVO.productVO
+								&& orderItemVO.productVO.productStatus == CommonUtils.ProductStatus.VALID.getKey()) {
+							progressList.add(orderItemVO);
+						}
+					}
+				}
+			}
+		}
+		return progressList;
 	}
 
 	@RequestMapping("/user/myorders/{page}")

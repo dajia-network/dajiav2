@@ -32,15 +32,23 @@ select user_id, sum(total_price) total_price from user_order
 where payment_id is not null and order_status in (2,3,4) group by user_id
 ) res where res.user_id=u.user_id order by res.total_price desc;
 
-select p.product_id, p.short_name, res2.quantity from product p, (
+select p.product_id ID, p.short_name '产品名称', res2.quantity '总销量', 
+count(pi.product_id) '上架次数', 
+count(case when pi.fix_top>0 then pi.fix_top end) '置顶次数', 
+count(case when pi.is_promoted='Y' then pi.is_promoted end) '打群价次数' 
+from product p, product_item pi, 
+(
 select res.product_id, sum(res.quantity) quantity from (
 select product_id, sum(quantity) quantity from user_order 
 where payment_id is not null and order_status in (2,3,4) group by product_id
-union
+union all
 select oi.product_id, sum(oi.quantity) quantity from user_order_item oi, user_order o  
 where o.payment_id is not null and o.order_status in (2,3,4) and oi.order_id=o.order_id 
 group by oi.product_id
-) res group by res.product_id) res2 where res2.product_id=p.product_id order by res2.quantity desc;
+) res group by res.product_id) res2 
+where res2.product_id=p.product_id and pi.product_id=p.product_id
+group by res2.product_id 
+order by res2.quantity desc;
 
 select sum(quantity) quantity from user_order 
 where payment_id is not null and order_status in (2,3,4)
@@ -102,3 +110,9 @@ on res.order_id=us.order_id) final group by user_id, order_id) res;
 select order_id, tracking_id, total_price, actual_pay, order_date, contact_name, pay_type 
 from user_order where order_id in (select order_id from user_refund where refund_status=3)
 order by order_id desc;
+
+select * from user_refund where refund_type=0 and refund_status=3
+union
+select * from user_refund where refund_type=0 and refund_status=2
+union
+select * from user_refund where refund_type=0 and refund_status=0;

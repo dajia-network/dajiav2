@@ -1,7 +1,7 @@
 angular
 		.module('dajia.controllers', [ "ui.bootstrap", "countTo" ])
 
-		.controller('TabsCtrl', function($scope, $window) {
+		.controller('TabsCtrl', function($scope, $window, $cookies, $http) {
 			$scope.select = function(tab) {
 				if (tab == 'product') {
 					$window.location.href = '#/tab/prod';
@@ -12,7 +12,18 @@ angular
 				} else if (tab == 'mine') {
 					$window.location.href = '#/tab/mine';
 				}
+			};
+			$scope.progress = {
+				count : 0
+			};
+			$scope.loginUser = $cookies.get('dajia_user_id');
+			if (null != $scope.loginUser) {
+				$http.get('/user/liveProgress').success(function(data, status, headers, config) {
+					console.log(data);
+					$scope.progress.count = data.length;
+				});
 			}
+
 		})
 
 		.controller(
@@ -235,34 +246,43 @@ angular
 										refUserId : refUserId,
 										userId : userId
 									}
-									$http.post('/user/sharelog', shareLog);
+									$http.post('/share/sharelog', shareLog);
 								}
 								// save visit log
-								var visitLog = {
-									visitUrl : window.location.href,
-									productId : product.productId,
-									productItemId : product.productItemId,
-									userId : userId
+								if (null != userId) {
+									var visitLog = {
+										visitUrl : window.location.href,
+										productId : product.productId,
+										productItemId : product.productItemId,
+										userId : userId
+									}
+									$http.post('/user/visitlog', visitLog);
 								}
-								$http.post('/user/visitlog', visitLog);
-
-								// add user share
+								// 记录打群价
 								if (null != refUserId && null != refOrderId && null != userId
-										&& product.productId == productId && product.isPromoted == 'Y'
-										&& refUserId != userId) {
+										&& product.productId == productId && product.isPromoted == 'Y') {
 									$http.get('/product/share/' + productId + '/' + refOrderId).success(
 											function(data, status, headers, config) {
 												// $scope.openShareModal(data);
-												$scope.shareInfo = data;
+												// 如果打群价发起者自己点击分享链接，跳转至打价实况详细页
+												if (refUserId == userId) {
+													var trackingId = data.trackingId;
+													var orderItemId = data.orderItemId;
+													$window.location.replace('#/tab/prog4s/' + trackingId + '/'
+															+ orderItemId);
+													$scope.shareInfo = data;
+												}
 											});
-									var userShare = {
-										productId : product.productId,
-										productItemId : product.productItemId,
-										userId : refUserId,
-										visitUserId : userId,
-										orderId : refOrderId
+									if (refUserId != userId) {
+										var userShare = {
+											productId : product.productId,
+											productItemId : product.productItemId,
+											userId : refUserId,
+											visitUserId : userId,
+											orderId : refOrderId
+										}
+										$http.post('/share/addUserShare', userShare);
 									}
-									$http.post('/user/addUserShare', userShare);
 								}
 							});
 					$scope.progressValue = 0;
