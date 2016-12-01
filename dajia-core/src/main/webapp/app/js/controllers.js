@@ -19,8 +19,9 @@ angular
 			$scope.loginUser = $cookies.get('dajia_user_id');
 			if (null != $scope.loginUser) {
 				$http.get('/user/liveProgress').success(function(data, status, headers, config) {
-					console.log(data);
-					$scope.progress.count = data.length;
+					if (null != data) {
+						$scope.progress.count = data.length;
+					}
 				});
 			}
 
@@ -264,6 +265,7 @@ angular
 									$http.get('/product/share/' + productId + '/' + refOrderId).success(
 											function(data, status, headers, config) {
 												// $scope.openShareModal(data);
+												$scope.shareInfo = data;
 												// 如果打群价发起者自己点击分享链接，跳转至打价实况详细页
 												if (refUserId == userId) {
 													var trackingId = data.trackingId;
