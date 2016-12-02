@@ -1,0 +1,39 @@
+{
+    "button": [
+        {
+            "type": "media_id", 
+            "name": "打价简介", 
+            "media_id": "Mx6vaquY_MFbjRxyqJgcxu-HvEymjc9p9susgml0hnI"
+        }, 
+        {
+            "type": "view", 
+            "name": "去打价", 
+            "url": "http://51daja.com/app"
+        }, 
+        {
+            "name": "我是打手", 
+            "sub_button": [
+                {
+                    "type": "click", 
+                    "name": "常见问题", 
+                    "key": "MENU_001"
+                }, 
+                {
+                    "type": "click", 
+                    "name": "自助退货", 
+                    "key": "MENU_002"
+                }, 
+                {
+                    "type": "click", 
+                    "name": "在线留言", 
+                    "key": "MENU_003"
+                }, 
+                {
+                    "type": "click", 
+                    "name": "商务合作", 
+                    "key": "MENU_004"
+                }
+            ]
+        }
+    ]
+}

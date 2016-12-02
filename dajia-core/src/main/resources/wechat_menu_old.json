@@ -1,0 +1,144 @@
+{
+    "is_add_friend_reply_open": 1, 
+    "is_autoreply_open": 1, 
+    "add_friend_autoreply_info": {
+        "type": "text", 
+        "content": "欢迎来打价！
+每晚8点准时上新~！
+
+/坏笑双十一大红包来袭！
+&lt;a href=\"http://51daja.com/app\"&gt;点击速抢！&lt;/a&gt;"
+    }, 
+    "message_default_autoreply_info": {
+        "type": "text", 
+        "content": "⊙０⊙遇到问题了？别着急，看看这里有没有您需要的~
+
+回复【1】我先打价购买的话，会不会比较吃亏？
+回复【2】什么是分享额外折扣？如何获得？
+回复【3】商品何时发货？
+回复【4】分享额外折扣何时到账？退款到哪里？
+回复【5】如何进行退换货？
+
+如果您的问题不在此列，请戳左下的小键盘转换成聊天窗口，把您的问题告诉给我们，工作人员会尽快给您满意的答复哦，谢谢٩(๑ᵒ̴̶̷͈᷄ᗨᵒ̴̶̷͈᷅)و"
+    }, 
+    "keyword_autoreply_info": {
+        "list": [
+            {
+                "rule_name": "如何进行退换货？", 
+                "create_time": 1467001669, 
+                "reply_mode": "random_one", 
+                "keyword_list_info": [
+                    {
+                        "type": "text", 
+                        "match_mode": "equal", 
+                        "content": "5"
+                    }
+                ], 
+                "reply_list_info": [
+                    {
+                        "type": "news", 
+                        "content": "Mx6vaquY_MFbjRxyqJgcxp_rUJ2XBbOAdG-oZ82qKgE", 
+                        "news_info": {
+                            "list": [
+                                {
+                                    "title": "打价网退换货政策", 
+                                    "author": "打价网", 
+                                    "digest": "一、  无理由退货政策1.       打价网承诺，对于您（作为消费者）通过打价网购买的商品，若商品能够保持", 
+                                    "show_cover": 1, 
+                                    "cover_url": "http://mmbiz.qpic.cn/mmbiz/0FVK0HOcKibcqLcna2d21AHB0xF3qCJ7nfK8MibKVpZV6oNhOr6ckFtetsMycYobm4iby10sXgKPiaxPiaT7utCxl3w/0?wx_fmt=jpeg", 
+                                    "content_url": "http://mp.weixin.qq.com/s?__biz=MzAwNTg1MTI3Ng==&mid=100000002&idx=1&sn=37c18262836f113f26dc60215a96b9d4#rd", 
+                                    "source_url": ""
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }, 
+            {
+                "rule_name": "商品分享折扣何时到账？分享折扣退款到哪里？", 
+                "create_time": 1467001640, 
+                "reply_mode": "random_one", 
+                "keyword_list_info": [
+                    {
+                        "type": "text", 
+                        "match_mode": "equal", 
+                        "content": "4"
+                    }
+                ], 
+                "reply_list_info": [
+                    {
+                        "type": "text", 
+                        "content": "问：商品分享折扣何时到账？分享折扣退款到哪里？
+
+答：(✪ω✪)商品分享折扣在打价结束后7-15个工作日内返还，退款到您支付时所用的银行账号里。"
+                    }
+                ]
+            }, 
+            {
+                "rule_name": "商品何时发货？", 
+                "create_time": 1467001597, 
+                "reply_mode": "random_one", 
+                "keyword_list_info": [
+                    {
+                        "type": "text", 
+                        "match_mode": "equal", 
+                        "content": "3"
+                    }
+                ], 
+                "reply_list_info": [
+                    {
+                        "type": "text", 
+                        "content": "问：商品何时发货？
+
+答：(•̀ω•́)✧正常情况下，打价网会在商品打价结束后的1-3天内发货哦~详细的物流跟踪可以在“我是打手-&lt;a href=\"http://51daja.com/app/index.html#/tab/mine/orders\"&gt;我的订单&lt;/a&gt;”里查看"
+                    }
+                ]
+            }, 
+            {
+                "rule_name": "什么是分享额外折扣？如何获得？", 
+                "create_time": 1467001094, 
+                "reply_mode": "random_one", 
+                "keyword_list_info": [
+                    {
+                        "type": "text", 
+                        "match_mode": "equal", 
+                        "content": "2"
+                    }
+                ], 
+                "reply_list_info": [
+                    {
+                        "type": "text", 
+                        "content": "问：什么是分享额外折扣？如何获得？
+
+答：您打价购买某件商品后分享这件商品给朋友，只要朋友也通过分享链接成功购买，您即可获得此商品最终成交价的10%作为分享额外折扣~
+成功邀请两位朋友可以获得20%额外折扣~~
+如果邀请10位好友，就免单啦✧*｡٩(ˊᗜˋ*)و✧*
+邀请成功与否可以在&lt;a href=\"http://51daja.com/app/index.html#/tab/prog\"&gt;打价实况&lt;/a&gt;查看哦！"
+                    }
+                ]
+            }, 
+            {
+                "rule_name": "我先打价购买的话，会不会比较吃亏？", 
+                "create_time": 1466947250, 
+                "reply_mode": "random_one", 
+                "keyword_list_info": [
+                    {
+                        "type": "text", 
+                        "match_mode": "equal", 
+                        "content": "1"
+                    }
+                ], 
+                "reply_list_info": [
+                    {
+                        "type": "text", 
+                        "content": "问：我先打价购买的话，会不会比较吃亏？
+
+答：୧(⁼̴̶̤̀ω⁼̴̶̤́)૭当然不会啦~
+所有商品的最终成交价格都以打价结束最后一件商品价格为准，差价之后会退还给您的哦~
+比如：您购买某商品11：00并付款100元，12：00商品最终价格被打到90元，打价结束，那么我们会退还您10元。"
+                    }
+                ]
+            }
+        ]
+    }
+}

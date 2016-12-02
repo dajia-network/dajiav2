@@ -8,13 +8,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dajia.domain.User;
@@ -27,8 +30,10 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.RandomString;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.OrderVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.pingplusplus.model.Charge;
 
 @Controller
 public class WechatController extends BaseController {
@@ -100,8 +105,8 @@ public class WechatController extends BaseController {
 		return "redirect:app/index.html";
 	}
 
-	@RequestMapping("/wechat")
-	public @ResponseBody String wechatShakeHand(HttpServletRequest request) {
+	@RequestMapping(value = "/wechat", method = RequestMethod.POST)
+	public @ResponseBody String wechatShakeHand(HttpServletRequest request, @RequestBody String postContent) {
 		String signature = request.getParameter("signature");
 		String timestamp = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
@@ -110,6 +115,9 @@ public class WechatController extends BaseController {
 		logger.info("signature: " + signature);
 		logger.info("timestamp: " + timestamp);
 		logger.info("nonce: " + nonce);
+		logger.info("echostr: " + echostr);
+
+		logger.info("post content: " + postContent);
 
 		String token = ApiWechatUtils.wechat_api_token;
 		String tmpStr = "";
