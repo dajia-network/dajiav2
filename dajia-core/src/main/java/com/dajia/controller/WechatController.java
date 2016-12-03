@@ -1,6 +1,7 @@
 package com.dajia.controller;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -8,17 +9,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.dajia.domain.User;
 import com.dajia.repository.PropertyRepo;
@@ -30,10 +38,8 @@ import com.dajia.util.CommonUtils;
 import com.dajia.util.RandomString;
 import com.dajia.util.UserUtils;
 import com.dajia.vo.LoginUserVO;
-import com.dajia.vo.OrderVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.pingplusplus.model.Charge;
 
 @Controller
 public class WechatController extends BaseController {
@@ -110,14 +116,9 @@ public class WechatController extends BaseController {
 		String signature = request.getParameter("signature");
 		String timestamp = request.getParameter("timestamp");
 		String nonce = request.getParameter("nonce");
-		String echostr = request.getParameter("echostr");
-
-		logger.info("signature: " + signature);
 		logger.info("timestamp: " + timestamp);
 		logger.info("nonce: " + nonce);
-		logger.info("echostr: " + echostr);
-
-		logger.info("post content: " + postContent);
+		logger.info("post content: \n" + postContent);
 
 		String token = ApiWechatUtils.wechat_api_token;
 		String tmpStr = "";
@@ -126,13 +127,48 @@ public class WechatController extends BaseController {
 		} catch (NoSuchAlgorithmException e) {
 			logger.error(e.getMessage(), e);
 		}
-
-		logger.info("+++++++++++++++++++++tmpStr " + tmpStr);
 		logger.info("---------------------signature " + signature);
+		logger.info("+++++++++++++++++++++tmpStr " + tmpStr);
 
 		if (!tmpStr.isEmpty() && tmpStr.equals(signature)) {
+			logger.info("Validation Passed.");
+			String echostr = "";
+			try {
+				DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				InputSource is = new InputSource();
+				is.setCharacterStream(new StringReader(postContent));
+
+				Document doc = db.parse(is);
+				NodeList nodes = doc.getElementsByTagName("Event");
+				if (null != nodes && nodes.getLength() > 0) {
+					Element element = (Element) nodes.item(0);
+					String elementStr = CommonUtils.getCharacterDataFromElement(element);
+					logger.info("Event: " + elementStr);
+					if (null != elementStr && elementStr.equalsIgnoreCase("<![CDATA[CLICK]]>")) {
+						nodes = doc.getElementsByTagName("EventKey");
+						if (null != nodes && nodes.getLength() > 0) {
+							element = (Element) nodes.item(0);
+							elementStr = CommonUtils.getCharacterDataFromElement(element);
+							logger.info("Event Key: " + elementStr);
+						}
+					}
+				} else {
+					logger.error("No event found!");
+				}
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryConfigurationError e) {
+				logger.error(e.getMessage(), e);
+			} catch (SAXException e) {
+				logger.error(e.getMessage(), e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+			logger.info("---------------------echostr: " + echostr);
 			return echostr;
 		} else {
+			logger.error("Validation Failed.");
 			return "Validation Failed.";
 		}
 	}

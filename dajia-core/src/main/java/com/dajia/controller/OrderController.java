@@ -285,12 +285,17 @@ public class OrderController extends BaseController {
 
 	@RequestMapping("/user/liveProgress")
 	public List<OrderVO> myLiveProgress(HttpServletRequest request, HttpServletResponse response) {
+		long currentTime = System.currentTimeMillis();
 		User user = this.getLoginUser(request, response, userRepo, true);
+		logger.info("live progress 1: " + (System.currentTimeMillis() - currentTime) + " ms");
+		currentTime = System.currentTimeMillis();
 		List<Integer> orderStatusList = new ArrayList<Integer>();
 		orderStatusList.add(CommonUtils.OrderStatus.PAIED.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVERING.getKey());
 		orderStatusList.add(CommonUtils.OrderStatus.DELEVRIED.getKey());
 		List<UserOrder> orders = orderService.loadOrdersByUserId(user.userId, orderStatusList);
+		logger.info("live progress 2: " + (System.currentTimeMillis() - currentTime) + " ms");
+		currentTime = System.currentTimeMillis();
 		List<OrderVO> progressList = new ArrayList<OrderVO>();
 		for (UserOrder order : orders) {
 			OrderVO ov = orderService.convertOrderVO(order);
@@ -312,6 +317,8 @@ public class OrderController extends BaseController {
 				}
 			}
 		}
+		logger.info("live progress 3: " + (System.currentTimeMillis() - currentTime) + " ms");
+		currentTime = System.currentTimeMillis();
 		return progressList;
 	}
 
