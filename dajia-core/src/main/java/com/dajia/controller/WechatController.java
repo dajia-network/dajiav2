@@ -140,28 +140,8 @@ public class WechatController extends BaseController {
 
 				Document doc = db.parse(is);
 				// 处理微信公众号事件推送内容XML
-				NodeList nodes = doc.getElementsByTagName("Event");
-				if (null != nodes && nodes.getLength() > 0) {
-					Element element = (Element) nodes.item(0);
-					String elementStr = CommonUtils.getCharacterDataFromElement(element);
-					logger.info("Event: " + elementStr);
-					if (null != elementStr && elementStr.equalsIgnoreCase("CLICK")) {
-						nodes = doc.getElementsByTagName("EventKey");
-						if (null != nodes && nodes.getLength() > 0) {
-							element = (Element) nodes.item(0);
-							elementStr = CommonUtils.getCharacterDataFromElement(element);
-							logger.info("Event Key: " + elementStr);
-							if (null != elementStr) {
-								// 根据事件event key返回不同的信息给公众号用户
-								echostr = apiService.getWechatEchoStrByEventKey(elementStr);
-							} else {
-								logger.error("No event key found!");
-							}
-						}
-					}
-				} else {
-					logger.error("No event found!");
-				}
+				// 根据事件event key返回不同的信息给公众号用户
+				echostr = apiService.getWechatEchoStrByEventKey(doc);
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
