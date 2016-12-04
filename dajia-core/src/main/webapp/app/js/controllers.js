@@ -885,7 +885,11 @@ angular
 					}
 					$scope.userCoupons = function() {
 						console.log("点击我的优惠券");
-						$window.location.href = "#/tab/mine/userCoupons";
+						if (loginUser == null) {
+							$rootScope.$broadcast('event:auth-loginRequired');
+						} else {
+							$window.location.href = "#/tab/mine/userCoupons";
+						}
 					}
 					$scope.logout = function() {
 						if (loginUser == null) {
@@ -1038,119 +1042,137 @@ angular
 			}
 		})
 
-		.controller('MyCartCtrl', function($scope, $http, $timeout, $ionicLoading, $window) {
-			console.log('购物车...');
-			$scope.cart = {
-				totalPrice : 0,
-				freeShipNeed : 0
-			};
-			var loadMyCart = function() {
-				popLoading($ionicLoading);
-				return $http.get('/user/cart').success(function(data, status, headers, config) {
-					// console.log(data);
-					$scope.cartItems = data;
-					calcTotalPrice();
-					$scope.$broadcast('scroll.refreshComplete');
-					$ionicLoading.hide();
-				});
-			}
-			loadMyCart();
-			$scope.doRefresh = function() {
-				loadMyCart();
-			};
-			$scope.goHome = function() {
-				$window.location.href = '#/tab/prod';
-			}
-			$scope.add = function(cartId) {
-				var cartItem = getCartItem(cartId);
-				if (cartItem.quantity >= cartItem.buyQuota && cartItem.buyQuota != null) {
-					popWarning('该产品每个账号限购' + cartItem.buyQuota + '件', $timeout, $ionicLoading);
-					return;
-				}
-				if (cartItem.quantity + 1 > cartItem.stock) {
-					popWarning('该产品库存不足', $timeout, $ionicLoading);
-					return;
-				}
-				cartItem.quantity += 1;
-				calcTotalPrice();
-				$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
-					console.log('cartItem edit success...');
-				}).error(function(data, status, headers, config) {
-					popWarning('修改购物车信息出错', $timeout, $ionicLoading);
-				});
-			};
-			$scope.remove = function(cartId) {
-				var cartItem = getCartItem(cartId);
-				if (cartItem.quantity > 1) {
-					cartItem.quantity -= 1;
-				}
-				calcTotalPrice();
-				$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
-					console.log('cartItem edit success...');
-				}).error(function(data, status, headers, config) {
-					popWarning('修改购物车信息出错', $timeout, $ionicLoading);
-				});
-			};
-			$scope.del = function(cartId) {
-				var cartItem = getCartItem(cartId);
-				$http.get('/user/cart/remove/' + cartItem.productId).success(function(data, status, headers, config) {
-					delCartItem(cartId);
-					calcTotalPrice();
-				});
-			};
-			$scope.submit = function() {
-				// var submitItems = [];
-				// $scope.cartItems.forEach(function(c) {
-				// if (c.productStatus == 2 && c.stock > 0) {
-				// submitItems.push(c);
-				// }
-				// });
-				// console.log(submitItems);
-				if ($scope.cart.totalPrice > 0) {
-					$window.location.href = '#/tab/cartorder';
-				} else {
-					popWarning('购物车中没有需要结算的商品', $timeout, $ionicLoading);
-				}
-			}
-
-			var getCartItem = function(cartId) {
-				var cartItem;
-				if (null != $scope.cartItems) {
-					$scope.cartItems.forEach(function(c) {
-						if (c.cartId == cartId) {
-							cartItem = c;
-							return;
+		.controller(
+				'MyCartCtrl',
+				function($scope, $http, $timeout, $ionicLoading, $window, $cookies, $rootScope, $ionicModal) {
+					console.log('购物车...');
+					$scope.loginUser = $cookies.get('dajia_user_id');
+					modalInit($rootScope, $ionicModal, 'login');
+					$scope.login = function() {
+						if ($scope.loginUser == null) {
+							$rootScope.$broadcast('event:auth-loginRequired');
+						} else {
+							$window.location.reload();
 						}
-					});
-				}
-				return cartItem;
-			}
-			var delCartItem = function(cartId) {
-				if (null != $scope.cartItems) {
-					$scope.cartItems.forEach(function(c, idx) {
-						if (c.cartId == cartId) {
-							$scope.cartItems.splice(idx, 1);
-							return;
-						}
-					});
-				}
-			}
-			var calcTotalPrice = function() {
-				$scope.cart.totalPrice = 0;
-				$scope.cartItems.forEach(function(c) {
-					if (c.productStatus == 2 && c.stock > 0) {
-						$scope.cart.totalPrice += c.currentPrice * c.quantity;
 					}
-				});
-				// 满xx总金额包邮
-				if ($scope.cart.totalPrice >= DajiaGlobal.constants.freeShip) {
-					$scope.cart.freeShipNeed = 0;
-				} else {
-					$scope.cart.postFee = $scope.defaultPostFee;
-					$scope.cart.freeShipNeed = DajiaGlobal.constants.freeShip - $scope.cart.totalPrice;
-				}
-			}
-		})
+
+					$scope.cart = {
+						totalPrice : 0,
+						freeShipNeed : 0
+					};
+					var loadMyCart = function() {
+						if (null != $scope.loginUser) {
+							popLoading($ionicLoading);
+							return $http.get('/user/cart').then(function(response) {
+								// console.log(response.data);
+								$scope.cartItems = response.data;
+								calcTotalPrice();
+								$scope.$broadcast('scroll.refreshComplete');
+								$ionicLoading.hide();
+							}, function(err) {
+								console.log(err);
+								$ionicLoading.hide();
+							});
+						}
+					}
+					loadMyCart();
+					$scope.doRefresh = function() {
+						loadMyCart();
+					};
+					$scope.goHome = function() {
+						$window.location.href = '#/tab/prod';
+					}
+					$scope.add = function(cartId) {
+						var cartItem = getCartItem(cartId);
+						if (cartItem.quantity >= cartItem.buyQuota && cartItem.buyQuota != null) {
+							popWarning('该产品每个账号限购' + cartItem.buyQuota + '件', $timeout, $ionicLoading);
+							return;
+						}
+						if (cartItem.quantity + 1 > cartItem.stock) {
+							popWarning('该产品库存不足', $timeout, $ionicLoading);
+							return;
+						}
+						cartItem.quantity += 1;
+						calcTotalPrice();
+						$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+							console.log('cartItem edit success...');
+						}).error(function(data, status, headers, config) {
+							popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+						});
+					};
+					$scope.remove = function(cartId) {
+						var cartItem = getCartItem(cartId);
+						if (cartItem.quantity > 1) {
+							cartItem.quantity -= 1;
+						}
+						calcTotalPrice();
+						$http.post('/user/cart/edit', cartItem).success(function(data, status, headers, config) {
+							console.log('cartItem edit success...');
+						}).error(function(data, status, headers, config) {
+							popWarning('修改购物车信息出错', $timeout, $ionicLoading);
+						});
+					};
+					$scope.del = function(cartId) {
+						var cartItem = getCartItem(cartId);
+						$http.get('/user/cart/remove/' + cartItem.productId).success(
+								function(data, status, headers, config) {
+									delCartItem(cartId);
+									calcTotalPrice();
+								});
+					};
+					$scope.submit = function() {
+						// var submitItems = [];
+						// $scope.cartItems.forEach(function(c) {
+						// if (c.productStatus == 2 && c.stock > 0) {
+						// submitItems.push(c);
+						// }
+						// });
+						// console.log(submitItems);
+						if ($scope.cart.totalPrice > 0) {
+							$window.location.href = '#/tab/cartorder';
+						} else {
+							popWarning('购物车中没有需要结算的商品', $timeout, $ionicLoading);
+						}
+					}
+
+					var getCartItem = function(cartId) {
+						var cartItem;
+						if (null != $scope.cartItems) {
+							$scope.cartItems.forEach(function(c) {
+								if (c.cartId == cartId) {
+									cartItem = c;
+									return;
+								}
+							});
+						}
+						return cartItem;
+					}
+					var delCartItem = function(cartId) {
+						if (null != $scope.cartItems) {
+							$scope.cartItems.forEach(function(c, idx) {
+								if (c.cartId == cartId) {
+									$scope.cartItems.splice(idx, 1);
+									return;
+								}
+							});
+						}
+					}
+					var calcTotalPrice = function() {
+						$scope.cart.totalPrice = 0;
+						$scope.cartItems.forEach(function(c) {
+							if (c.productStatus == 2 && c.stock > 0) {
+								$scope.cart.totalPrice += c.currentPrice * c.quantity;
+							}
+						});
+						// 满xx总金额包邮
+						if ($scope.cart.totalPrice >= DajiaGlobal.constants.freeShip) {
+							$scope.cart.freeShipNeed = 0;
+						} else {
+							$scope.cart.postFee = $scope.defaultPostFee;
+							$scope.cart.freeShipNeed = DajiaGlobal.constants.freeShip - $scope.cart.totalPrice;
+						}
+					}
+				})
 
 		.controller('MyPassCtrl', function($scope, $http, $timeout, $ionicLoading) {
 			console.log('修改密码...');
