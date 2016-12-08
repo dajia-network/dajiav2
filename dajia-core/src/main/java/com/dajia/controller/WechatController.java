@@ -140,8 +140,7 @@ public class WechatController extends BaseController {
 
 				Document doc = db.parse(is);
 				// 处理微信公众号事件推送内容XML
-				// 根据事件event key返回不同的信息给公众号用户
-				echostr = apiService.getWechatEchoStrByEventKey(doc);
+				echostr = apiService.getWechatEchoStr(doc);
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
