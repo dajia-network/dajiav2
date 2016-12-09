@@ -11,8 +11,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dajia.service.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,15 @@ import com.dajia.repository.ProductItemRepo;
 import com.dajia.repository.UserOrderRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.repository.UserShareRepo;
+import com.dajia.service.ApiService;
+import com.dajia.service.CartService;
+import com.dajia.service.OrderService;
+import com.dajia.service.ProductService;
+import com.dajia.service.RefundService;
+import com.dajia.service.RewardService;
+import com.dajia.service.UserContactService;
+import com.dajia.service.UserCouponService;
+import com.dajia.util.ApiWechatUtils;
 import com.dajia.util.CommonUtils;
 import com.dajia.vo.OrderVO;
 import com.dajia.vo.PaginationVO;
@@ -176,6 +183,11 @@ public class OrderController extends BaseController {
 				UserOrder order = orderRepo.findByTrackingId(trackingId);
 				// order.paymentId = charge.getId();
 				productService.productSold(order);
+
+				// 微信公众号发送购买成功通知
+				User user = userRepo.findByUserId(order.userId);
+				apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success, user.oauthUserId,
+						order.trackingId);
 			}
 			response.setStatus(Ping_Plus_Code_Success);
 
