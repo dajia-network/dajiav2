@@ -40,7 +40,7 @@ angular
 						pageNo : 1
 					};
 					couponModalInit($scope, $ionicModal, CouponService, $timeout, $ionicLoading);
-					CouponService.canRequestCoupon(3, function(data) {
+					CouponService.canRequestCoupon(4, function(data) {
 						console.log(data);
 						var coupon = data.data;
 						if (coupon) {

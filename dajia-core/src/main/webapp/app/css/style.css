@@ -349,14 +349,14 @@ button img {
 .coupon-pop-value {
 	position: relative;
     top: -42vw;
-    left: -8vw;
+    left: -13vw;
 	font-size: 9vw;
 }
 
 .coupon-pop-date {
 	position: relative;
 	top: -37vw;
-	left: 5vw;
+	left: 8vw;
 	font-size: 3.5vw;
 }
 
