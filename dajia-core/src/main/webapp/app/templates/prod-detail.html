@@ -23,8 +23,8 @@
 					你的拔刀相助，帮{{shareInfo.userName}}打下1元!<br/>
 					下列用户已经帮助{{shareInfo.userName}}累计获得{{shareInfo.userShares.length}}元优惠!
 				</span>
-			  	<div class="row">
-			  		<div class="col-xs-2" ng-repeat="userShare in shareInfo.userShares">
+			  	<div class="row avatars">
+			  		<div class="col-xs-2" ng-repeat="userShare in shareInfo.userShares" style="float: left">
 			  			<a class="center-avatar margin"><img ng-src="{{userShare.visitHeadImgUrl}}"></img></a>
 			  		</div>
 			  	</div>

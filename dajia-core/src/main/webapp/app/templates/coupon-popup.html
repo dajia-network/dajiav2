@@ -1,0 +1,15 @@
+<div class="modal transparent">
+	<ion-content>
+		<div class="item item-text-wrap transparent" align="center">
+			<div class="col text-center">
+		  		<div class="coupon-pop" ng-click="closeCouponModal()">
+		  			<img src="http://dajia-static.b0.upaiyun.com/app_img/coupon.png"></img>
+		  			<span class="coupon-pop-value">{{(coupon.value/100).toFixed(2)}}</span>
+		  			<span class="coupon-pop-amt"></span>
+		  			<span class="coupon-pop-date">{{coupon.gmtExpired | date:'yyyy-MM-dd'}}</span>
+		  		</div>
+				<div class="coupon-btn" ng-click="requestCoupon(coupon.id, 1)"></div>
+			</div>
+		</div>
+	</ion-content>
+</div>

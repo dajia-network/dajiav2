@@ -1,5 +1,6 @@
 package com.dajia.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +21,9 @@ import com.dajia.domain.UserFavourite;
 import com.dajia.repository.ProductRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserRepo;
+import com.dajia.service.ApiService;
 import com.dajia.service.ProductService;
 import com.dajia.util.CommonUtils;
-import com.dajia.vo.CartItemVO;
 import com.dajia.vo.PaginationVO;
 import com.dajia.vo.ProductVO;
 
@@ -42,6 +43,9 @@ public class ProductController extends BaseController {
 	@Autowired
 	private ProductService productService;
 
+	@Autowired
+	private ApiService apiService;
+
 	@RequestMapping("/products")
 	public List<ProductVO> allProducts() {
 		List<ProductVO> products = productService.loadAllValidProductsWithPrices();
@@ -58,6 +62,11 @@ public class ProductController extends BaseController {
 	@RequestMapping("/product/{pid}")
 	public ProductVO product(@PathVariable("pid") Long pid) {
 		ProductVO productVO = productService.loadProductDetail(pid);
+		try {
+			productVO.qrcodeUrl = apiService.getProductQrcodeUrl(pid);
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+		}
 		return productVO;
 	}
 

@@ -47,6 +47,7 @@ import com.dajia.util.UserUtils;
 import com.dajia.vo.CartItemVO;
 import com.dajia.vo.LocationVO;
 import com.dajia.vo.LoginUserVO;
+import com.dajia.vo.OrderVO;
 import com.dajia.vo.ReturnVO;
 
 @RestController
@@ -342,7 +343,14 @@ public class UserController extends BaseController {
 		userContactService.markDefaultUserContact(contactId, user);
 	}
 
-	@RequestMapping(value = "/user/sharelog", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/visitlog", method = RequestMethod.POST)
+	public void saveVisitLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
+		String visitIp = CommonUtils.getRequestIP(request);
+		Integer logType = CommonUtils.LogType.PRODUCT_VISIT.getKey();
+		visitLogService.addVisitLog(visitLog, logType, visitIp);
+	}
+
+	@RequestMapping(value = "/share/sharelog", method = RequestMethod.POST)
 	public void saveShareLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
 		String visitIp = CommonUtils.getRequestIP(request);
 		Integer logType;
@@ -354,14 +362,7 @@ public class UserController extends BaseController {
 		visitLogService.addVisitLog(visitLog, logType, visitIp);
 	}
 
-	@RequestMapping(value = "/user/visitlog", method = RequestMethod.POST)
-	public void saveVisitLog(@RequestBody VisitLog visitLog, HttpServletRequest request) {
-		String visitIp = CommonUtils.getRequestIP(request);
-		Integer logType = CommonUtils.LogType.PRODUCT_VISIT.getKey();
-		visitLogService.addVisitLog(visitLog, logType, visitIp);
-	}
-
-	@RequestMapping(value = "/user/addUserShare", method = RequestMethod.POST)
+	@RequestMapping(value = "/share/addUserShare", method = RequestMethod.POST)
 	public void addUserShare(@RequestBody UserShare userShare) {
 		userShareService.addUserShare(userShare);
 	}

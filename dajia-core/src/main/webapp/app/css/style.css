@@ -11,6 +11,10 @@
 	padding: 0;
 }
 
+.row.avatars {
+	display: inline-block;
+}
+
 .col.noPadding {
 	padding: 0;
 }
@@ -137,10 +141,8 @@ button img {
 .center-avatar>img:first-child {
     top: 16px;
     left: 16px;
-    max-width: 40px;
-    max-height: 40px;
-    width: 100%;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
 }
 
@@ -321,3 +323,226 @@ button img {
 }
 
 /* countdown end*/
+
+.item.item-text-wrap.transparent {
+	background: transparent;
+	border-color: transparent;
+	margin-top: 100px;
+}
+
+.modal.transparent {
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.modal.transparent>.scroll-content {
+	background: transparent;
+}
+
+.coupon-pop span {
+	color: #ee385d
+}
+
+.coupon-pop img {
+	width: 100%;
+}
+
+.coupon-pop-value {
+	position: relative;
+    top: -42vw;
+    left: -13vw;
+	font-size: 9vw;
+}
+
+.coupon-pop-date {
+	position: relative;
+	top: -37vw;
+	left: 8vw;
+	font-size: 3.5vw;
+}
+
+.coupon-pop-amt {
+	color: #FFFFFF !important;
+    position: relative;
+    top: -16vw;
+    left: 20vw;
+    font-size: 6vw;
+}
+
+.coupon-btn {    
+	position: relative;
+    width: 30vw;
+    height: 10vw;
+    top: -24vw;
+    left: 31vw;
+}
+
+.coupon_rule_desc {
+	font-size: 0.5em;
+	color: lightcyan;
+}
+
+.coupon_name {
+	font-weight: bold;
+}
+
+.coupon_value {
+	font-size: 3em;
+}
+
+.coupon_status {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+/* coupon start*/
+.stamp {
+	width: 387px;
+	height: 110px;
+	padding: 0 10px;
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+.stamp:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 10px;
+	right: 10px;
+	z-index: -1;
+}
+
+.stamp:after {
+	content: '';
+	position: absolute;
+	left: 10px;
+	top: 10px;
+	right: 10px;
+	bottom: 10px;
+	box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.5);
+	z-index: -2;
+}
+
+.stamp i {
+	position: absolute;
+	left: 20%;
+	top: 45px;
+	height: 190px;
+	width: 390px;
+	background-color: rgba(255, 255, 255, .15);
+	transform: rotate(-30deg);
+}
+
+.stamp .par {
+	float: left;
+	padding: 16px 15px;
+	width: 220px;
+	border-right: 2px dashed rgba(255, 255, 255, .3);
+	text-align: left;
+}
+
+.stamp .par p {
+	color: #fff;
+}
+
+.stamp .par span {
+	font-size: 40px;
+	color: #fff;
+	margin-right: 5px;
+}
+
+.stamp .par .sign {
+	font-size: 34px;
+}
+
+.stamp .par sub {
+	position: relative;
+	top: 0px;
+	color: rgba(255, 255, 255, .8);
+}
+
+.stamp .copy {
+	display: inline-block;
+	padding: 21px 14px;
+	vertical-align: text-bottom;
+	font-size: 20px;
+	color: rgb(255, 255, 255);
+}
+
+.stamp .copy p {
+	font-size: 13px;
+	margin-top: 15px;
+}
+
+.stamp01 {
+	background: #F39B00;
+	background: radial-gradient(rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 5px,
+		#F39B00 5px);
+	background-size: 15px 15px;
+	background-position: 9px 3px;
+}
+
+.stamp01:before {
+	background-color: #F39B00;
+}
+
+.stamp02 {
+	background: #D24161;
+	background: radial-gradient(transparent 0, transparent 5px, #D24161 5px);
+	background-size: 15px 15px;
+	background-position: 9px 3px;
+}
+
+.stamp02:before {
+	background-color: #D24161;
+}
+
+.card.coupon, .list-inset {
+	background-color: transparent;
+}
+
+/* coupon end*/
+
+.qrcode-pop {
+	line-height: 1.5em;
+    width: 65%;
+    margin: 0 auto;
+}
+
+.qrcode-pop div {
+	margin: 10px;
+}
+
+.qrcode-pop img {
+	width: 100%;
+}
+
+.product-qrcode {
+	background: #FFFFFF;
+	padding: 0px 10px;
+}
+
+.product-qrcode p {
+    font-size: 15px;
+    padding-top: 10px;
+}
+
+@media (min-width: 768px){ 
+	.pane {
+	    max-width: 512px;
+	    margin: 0 auto;
+	}
+	.modal {
+	    top: 0;
+	    right: 0;
+	    bottom: 0;
+	    left: 0;
+	    max-width: 360px;
+	    margin: 0 auto;
+    }
+    .modal.transparent {
+    	background: transparent;
+	}
+}

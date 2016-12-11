@@ -7,7 +7,7 @@ DajiaGlobal.utils = {
 	isValidStr : function(str) {
 		return (null != str && str.length > 0 && 'null' != str);
 	},
-	mobileReg : /^((13[0-9]|15[0-9]|18[0-9])+\d{8})$/,
+	mobileReg : /^((13[0-9]|14[0-9]|15[0-9]|17[0-9]|18[0-9]|19[0-9])+\d{8})$/,
 	getURLParameter : function(name) {
 		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [ ,
 				"" ])[1].replace(/\+/g, '%20'))
@@ -35,5 +35,36 @@ DajiaGlobal.utils = {
 	},
 	pad : function(n) {
 		return (n < 10 ? '0' : '') + n;
+	},
+	isWeChat : function() {
+		var ua = window.navigator.userAgent.toLowerCase();
+		if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+			return true;
+		} else {
+			return false;
+		}
 	}
 };
+
+DajiaGlobal.constants = {
+	"coupon" : {
+		"area" : {
+			"1" : "直营",
+			"2" : "商家",
+			"3" : "通用"
+		},
+		"type" : {
+			"1" : "代金券",
+			"2" : "满减券",
+			"3" : "折扣券"
+		},
+		"status" : {
+			"1" : "可使用",
+			"2" : "已使用",
+			"3" : "已取消",
+			"4" : "已放弃",
+			"5" : "不可用"
+		}
+	},
+	"freeShip" : 80
+}

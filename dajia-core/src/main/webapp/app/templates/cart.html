@@ -8,9 +8,9 @@
 	<div class="item item-logo-center" align="center">
 		<img src="/app/img/logo-banner.png">
 	</div>
-  	<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
+  	<ion-refresher ng-if="loginUser" on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
   	</ion-refresher> 
-    <ion-list>
+    <ion-list ng-if="loginUser">
       <div class="item item-body cart" ng-repeat="cartItem in cartItems">
 			<div class="item noBorder item-thumbnail-left cart">
 				<img ng-src="{{cartItem.imgUrl4List}}">
@@ -54,10 +54,23 @@
 			</div>
 		</div>
     </div>
+    <div ng-if="loginUser==null">
+	    <div class="row">
+			<div class="col text-center">
+				请立即登录系统，查看自己的购物车
+			</div>
+		</div>
+	    <div class="row">
+			<div class="col text-center">
+				<button class="button button-outline button-assertive" ng-click="login()">立即登录</button>
+			</div>
+		</div>
+    </div>
   </ion-content>
-	<ion-footer-bar align-title="left" class="bar-stable" ng-show="cartItems.length>0">
+	<ion-footer-bar ng-if="loginUser" align-title="left" class="bar-stable" ng-show="cartItems.length>0">
 		<div class="row noPadding">
-			<div class="col text-left">合计：<span class="assertive">{{cart.totalPrice.toFixed(2)}}元</span>&nbsp;(未含运费)</div>
+			<div class="col text-left">合计：<span class="assertive">{{cart.totalPrice.toFixed(2)}}元</span></div>
+			<div class="col text-left" ng-show="cart.freeShipNeed>0">还差<span class="assertive">{{cart.freeShipNeed.toFixed(2)}}</span>元包邮</div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">去结算</button>
 			</div>

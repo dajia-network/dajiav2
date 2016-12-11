@@ -1,0 +1,42 @@
+<ion-view view-title="我的优惠券" hide-nav-bar="true">
+	<ion-nav-bar class="bar-dark">
+		<ion-nav-back-button>
+			返回
+		</ion-nav-back-button>
+	</ion-nav-bar>
+	<ion-content>
+		<div class="item item-logo-center" align="center">
+			<img src="/app/img/logo-banner.png">
+		</div>
+		<ion-refresher on-refresh="doRefresh()" pulling-text="下拉刷新" refreshing-text="刷新中..." refreshing-icon="ion-loading-b">
+		</ion-refresher>
+		<ion-list>
+			<div class="" ng-repeat="user_coupon in user_coupons" type="item-text-wrap">
+				<div class="stamp stamp02">
+				<div class="par"><p>打价网</p><sub class="sign">￥</sub><span>{{(user_coupon.value/100).toFixed(2)}}</span>
+				<sub>{{DajiaGlobal["constants"]["coupon"]["type"][user_coupon.type]}}</sub>
+				<p>{{user_coupon.ruleDesc}}</p></div>
+				<div class="copy">{{DajiaGlobal.constants.coupon.status[user_coupon.status]}}
+				<p>
+					开始: {{user_coupon.gmtStart | date:'yyyy-MM-dd'}}<br>
+					过期: {{user_coupon.gmtExpired | date:'yyyy-MM-dd'}}
+				</p></div>
+				<i></i>
+				</div>
+			</div>
+
+		</ion-list>
+		<div ng-if="user_coupons.length <= 0">
+			<div class="row">
+				<div class="col text-center">
+					您还没有可领取的优惠券哦, 敬请期待!
+				</div>
+			</div>
+			<div class="row">
+				<div class="col text-center">
+					<button class="button button-outline button-assertive" ng-click="goHome()">回首页</button>
+				</div>
+			</div>
+		</div>
+	</ion-content>
+</ion-view>

@@ -45,7 +45,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/prod',
 		views : {
 			'tab-prod' : {
-				templateUrl : 'templates/tab-products.html',
+				templateUrl : function() {
+					return 'templates/tab-products.html';
+				},
 				controller : 'ProdCtrl'
 			}
 		}
@@ -53,7 +55,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/prod/:pid',
 		views : {
 			'tab-prod' : {
-				templateUrl : 'templates/prod-detail.html',
+				templateUrl : function() {
+					return 'templates/prod-detail.html';
+				},
 				controller : 'ProdDetailCtrl'
 			}
 		}
@@ -61,7 +65,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/prod/:pid/:refuserid',
 		views : {
 			'tab-prod' : {
-				templateUrl : 'templates/prod-detail.html',
+				templateUrl : function() {
+					return 'templates/prod-detail.html';
+				},
 				controller : 'ProdDetailCtrl'
 			}
 		}
@@ -70,7 +76,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-prod' : {
-				templateUrl : 'templates/order.html',
+				templateUrl : function() {
+					return 'templates/order.html';
+				},
 				controller : 'OrderCtrl'
 			}
 		}
@@ -79,7 +87,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-prod' : {
-				templateUrl : 'templates/order.html',
+				templateUrl : function() {
+					return 'templates/order.html';
+				},
 				controller : 'OrderCtrl'
 			}
 		}
@@ -87,7 +97,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/prog',
 		views : {
 			'tab-prog' : {
-				templateUrl : 'templates/tab-progress.html',
+				templateUrl : function() {
+					return 'templates/tab-progress.html';
+				},
 				controller : 'ProgCtrl'
 			}
 		}
@@ -96,7 +108,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-prog' : {
-				templateUrl : 'templates/prog-detail.html',
+				templateUrl : function() {
+					return 'templates/prog-detail.html';
+				},
 				controller : 'ProgDetailCtrl'
 			}
 		}
@@ -105,7 +119,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-prog' : {
-				templateUrl : 'templates/prog-detail-share.html',
+				templateUrl : function() {
+					return 'templates/prog-detail-share.html';
+				},
 				controller : 'ProgDetailShareCtrl'
 			}
 		}
@@ -113,7 +129,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/mine',
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/tab-mine.html',
+				templateUrl : function() {
+					return 'templates/tab-mine.html';
+				},
 				controller : 'MineCtrl'
 			}
 		}
@@ -122,7 +140,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/order-list.html',
+				templateUrl : function() {
+					return 'templates/order-list.html';
+				},
 				controller : 'MyOrdersCtrl'
 			}
 		}
@@ -131,7 +151,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/order-detail.html',
+				templateUrl : function() {
+					return 'templates/order-detail.html';
+				},
 				controller : 'MyOrderDetailCtrl'
 			}
 		}
@@ -140,7 +162,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/fav-list.html',
+				templateUrl : function() {
+					return 'templates/fav-list.html';
+				},
 				controller : 'MyFavCtrl'
 			}
 		}
@@ -149,7 +173,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/password.html',
+				templateUrl : function() {
+					return 'templates/password.html';
+				},
 				controller : 'MyPassCtrl'
 			}
 		}
@@ -158,7 +184,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/bindMobile.html',
+				templateUrl : function() {
+					return 'templates/bindMobile.html';
+				},
 				controller : 'BindMobileCtrl'
 			}
 		}
@@ -167,7 +195,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/contact-list.html',
+				templateUrl : function() {
+					return 'templates/contact-list.html';
+				},
 				controller : 'ListContactCtrl'
 			}
 		}
@@ -175,15 +205,30 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		url : '/mine/contact/:contactId',
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/contact-detail.html',
+				templateUrl : function() {
+					return 'templates/contact-detail.html';
+				},
 				controller : 'EditContactCtrl'
+			}
+		}
+	}).state('tab.mine-userCoupons', {
+		url : '/mine/userCoupons',
+		cache : 'false',
+		views : {
+			'tab-mine' : {
+				templateUrl : function() {
+					return 'templates/user-coupons.html';
+				},
+				controller : 'UserCouponCtrl'
 			}
 		}
 	}).state('tab.mine-qcode', {
 		url : '/qcode',
 		views : {
 			'tab-mine' : {
-				templateUrl : 'templates/qcode.html',
+				templateUrl : function() {
+					return 'templates/qcode.html';
+				},
 				controller : 'QcodeCtrl'
 			}
 		}
@@ -192,7 +237,9 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-cart' : {
-				templateUrl : 'templates/cart.html',
+				templateUrl : function() {
+					return 'templates/cart.html';
+				},
 				controller : 'MyCartCtrl'
 			}
 		}
@@ -201,13 +248,17 @@ angular.module('dajia', [ 'ionic', 'ngCookies', 'dajia.controllers', 'dajia.serv
 		cache : false,
 		views : {
 			'tab-cart' : {
-				templateUrl : 'templates/cartorder.html',
+				templateUrl : function() {
+					return 'templates/cartorder.html';
+				},
 				controller : 'OrderCtrl'
 			}
 		}
 	}).state('error', {
 		url : '/error',
-		templateUrl : 'templates/error.html',
+		templateUrl : function() {
+			return 'templates/error.html';
+		},
 		controller : 'ErrorCtrl'
 	});
 

@@ -88,6 +88,9 @@
 				<div class="col">邮费</div>
 				<div class="col text-right assertive">{{order.postFee}}元</div>
 			</div>
+			<div class="row" ng-show="freeShipNeed>0">
+				<div class="col">还差<span class="assertive">{{freeShipNeed.toFixed(2)}}</span>元包邮</div>
+			</div>
 			<p>
 				提示：如果截止日期前商品价格被打得更低，我们将向您返还差额。
 			</p>
@@ -98,15 +101,20 @@
 				<input type="checkbox" ng-model="userAgree.checked" checked/>&nbsp;我已阅读并同意打价网用户协议&nbsp;(<a ng-click="openUserAgreeModal();">点击显示详情</a>)
 			</p>
 		</div>
+		<div class="item item-divider" ng-show="userCoupons.length>0">
+		  优惠券
+		</div>
+		<ion-radio ng-repeat="userCoupon in userCoupons" ng-click="applyCoupon(userCoupon)" name="couponRadio">
+			<i class="icon ion-ios-pricetags"></i>&nbsp;&nbsp;{{userCoupon.displayInfo}}</ion-radio>
 		<div class="item item-divider">
 		  支付方式
 		</div>
-		<ion-radio ng-model="order.payType" ng-value="1">微信支付</ion-radio>
-		<ion-radio ng-model="order.payType" ng-value="2" ng-click="selectAlipay()">支付宝</ion-radio>
+		<ion-radio name="paymentRadio" ng-model="order.payType" ng-value="1">微信支付</ion-radio>
+		<ion-radio name="paymentRadio" ng-model="order.payType" ng-value="2" ng-click="selectAlipay()">支付宝</ion-radio>
 	</ion-content>
 	<ion-footer-bar align-title="left" class="bar-stable">
 		<div class="row noPadding">
-			<div class="col text-left">合计金额：<span class="assertive">{{order.totalPrice.toFixed(2)}}元</span></div>
+			<div class="col text-left">合计金额：<span class="assertive">{{(order.totalPrice-couponVal/100).toFixed(2)}}元</span></div>
 			<div class="col noPadding text-right">
 				<button class="button button-sqr button-assertive" ng-click="submit()">确认付款</button>
 			</div>

@@ -1,0 +1,69 @@
+{
+    "is_menu_open": 1, 
+    "selfmenu_info": {
+        "button": [
+            {
+                "type": "news", 
+                "name": "打价简介", 
+                "value": "Mx6vaquY_MFbjRxyqJgcxu-HvEymjc9p9susgml0hnI", 
+                "news_info": {
+                    "list": [
+                        {
+                            "title": "「打价」是什么？", 
+                            "author": "", 
+                            "digest": "是一个买东西可以还价的网站哦！~", 
+                            "show_cover": 1, 
+                            "cover_url": "http://mmbiz.qpic.cn/mmbiz/0FVK0HOcKibcyr7qHejKKOwRxXt9TYoSV2n4hFBKM0hb4wmz3EouTfMBTcndsd4ian2EFKmxHO6rkFa6tTn60vrQ/0?wx_fmt=png", 
+                            "content_url": "http://mp.weixin.qq.com/s?__biz=MzAwNTg1MTI3Ng==&mid=100000008&idx=1&sn=959dd61698142fe4be1ae2cf0dd56dfa#rd", 
+                            "source_url": "http://51daja.com/app"
+                        }
+                    ]
+                }
+            }, 
+            {
+                "type": "view", 
+                "name": "去打价！", 
+                "url": "http://51daja.com/app"
+            }, 
+            {
+                "name": "我是打手", 
+                "sub_button": {
+                    "list": [
+                        {
+                            "type": "text", 
+                            "name": "常见问题", 
+                            "value": "⊙０⊙遇到问题了？别着急，看看这里有没有您需要的~
+
+回复【1】我先打价购买的话，会不会比较吃亏？
+回复【2】什么是分享额外折扣？如何获得？
+回复【3】商品何时发货？
+回复【4】分享额外折扣何时到账？退款到哪里？
+回复【5】如何进行退换货？
+
+如果您的问题不在此列，请戳左下的小键盘转换成聊天窗口，把您的问题告诉给我们，工作人员会尽快给您满意的答复哦，谢谢٩(๑ᵒ̴̶̷͈᷄ᗨᵒ̴̶̷͈᷅)و"
+                        }, 
+                        {
+                            "type": "text", 
+                            "name": "自助退货", 
+                            "value": "(•̀ω•́)✧请先按左下角小键盘按钮，然后再按以下格式内容给客服留言~提交退货申请，审核成功后，客服会把退货地址发送给您，如不在退货规则内，也会告知您~
+
+购买日期：20150101
+订单号码：XXXXXXXX
+退货原因：文字文字文字"
+                        }, 
+                        {
+                            "type": "text", 
+                            "name": "在线留言", 
+                            "value": "请戳左下的小键盘转换成聊天窗口，把您的问题告诉给我们，工作人员会尽快给您满意的答复哦，谢谢٩(๑ᵒ̴̶̷͈᷄ᗨᵒ̴̶̷͈᷅)و"
+                        }, 
+                        {
+                            "type": "text", 
+                            "name": "商务合作", 
+                            "value": "如您有意向与打价网共同发展，请发邮件至：postmaster@51daja.bid，我们会尽快给您回复~"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
