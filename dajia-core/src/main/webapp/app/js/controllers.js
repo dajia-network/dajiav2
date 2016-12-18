@@ -33,6 +33,8 @@ angular
 						CouponService) {
 					console.log('产品列表...');
 					$scope.products = [];
+					$scope.tags = [];
+					$scope.selectedTag = 0;
 					$scope.countDowns = [];
 					$scope.clocks = [];
 					$scope.page = {
@@ -53,22 +55,35 @@ angular
 						}
 					});
 					var loadProducts = function() {
-						return $http.get('/products/' + $scope.page.pageNo).success(
-								function(data, status, headers, config) {
-									$scope.page.hasMore = data.hasNext;
-									$scope.page.pageNo = data.currentPage;
-									$scope.products = $scope.products.concat(data.results);
-									$scope.products.forEach(function(p) {
-										var countDown = {
-											key : "clock-" + p.product.productId,
-											targetDate : p.expiredDate
-										}
-										$scope.countDowns.push(countDown);
-									});
-								});
+						var requestUrl = '';
+						if (null == $scope.selectedTag || 0 == $scope.selectedTag) {
+							requestUrl = '/products/' + $scope.page.pageNo;
+						} else {
+							requestUrl = '/products/' + $scope.selectedTag + '/' + $scope.page.pageNo;
+						}
+						return $http.get(requestUrl).success(function(data, status, headers, config) {
+							$scope.page.hasMore = data.hasNext;
+							$scope.page.pageNo = data.currentPage;
+							$scope.products = $scope.products.concat(data.results);
+							$scope.products.forEach(function(p) {
+								var countDown = {
+									key : "clock-" + p.product.productId,
+									targetDate : p.expiredDate
+								}
+								$scope.countDowns.push(countDown);
+							});
+						});
+					}
+					var loadTags = function() {
+						return $http.get('/tags').success(function(data, status, headers, config) {
+							console.log(data);
+							$scope.tags = data;
+						});
 					}
 					initWechatJSAPI('home', $http);
 					checkOauthLogin($cookies, $http, AuthService);
+
+					loadTags();
 					popLoading($ionicLoading);
 					loadProducts().then(function() {
 						$ionicLoading.hide();
@@ -77,8 +92,7 @@ angular
 
 					$scope.doRefresh = function() {
 						console.log('refresh...');
-						$scope.products = [];
-						$scope.page.pageNo = 1;
+						clearResults();
 						clearCountDowns();
 						loadProducts().then(function() {
 							$scope.$broadcast('scroll.refreshComplete');
@@ -98,6 +112,18 @@ angular
 							renderCountDown();
 						});
 					}
+					$scope.selectTag = function(tagId) {
+						console.log('select tag...');
+						clearResults();
+						clearCountDowns();
+						$scope.selectedTag = tagId;
+						popLoading($ionicLoading);
+						loadProducts().then(function() {
+							$ionicLoading.hide();
+							renderCountDown();
+						});
+					}
+
 					var renderCountDown = function() {
 						angular.element(document).ready(function() {
 
@@ -120,6 +146,10 @@ angular
 						});
 						$scope.countDowns = [];
 						$scope.clocks = [];
+					}
+					var clearResults = function() {
+						$scope.products = [];
+						$scope.page.pageNo = 1;
 					}
 				})
 

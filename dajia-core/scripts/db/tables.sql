@@ -300,8 +300,6 @@ CREATE TABLE IF NOT EXISTS dajia.user_share (
 );
 
 DROP TABLE IF EXISTS dajia.coupon ;
-DROP TABLE IF EXISTS dajia.user_coupon ;
-
 CREATE TABLE if not exists dajia.coupon (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL, -- 券的名称
@@ -330,6 +328,7 @@ CREATE TABLE if not exists dajia.coupon (
 * 用户拥有的代金券 查询索引 user_id, order_id, coupon_id
 * 一张券只能而且必须要用于一个订单
 **/
+DROP TABLE IF EXISTS dajia.user_coupon ;
 create table if not exists dajia.user_coupon (
 	`id` int(11) not null auto_increment,
 	`user_id` bigint not null, -- 所属用户
@@ -353,3 +352,24 @@ create table if not exists dajia.user_coupon (
 
 alter table dajia.user_order add column actual_pay numeric(10,2);
 alter table dajia.user_order add column user_coupon_ids varchar(400);
+
+DROP TABLE IF EXISTS dajia.product_tag;
+CREATE TABLE IF NOT EXISTS dajia.product_tag (
+	tag_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	tag_name varchar(400) NOT NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(tag_id)
+);
+
+DROP TABLE IF EXISTS dajia.product_tag_link;
+CREATE TABLE IF NOT EXISTS dajia.product_tag_link (
+	product_tag_link_id BIGINT(25) NOT NULL AUTO_INCREMENT,
+	tag_id BIGINT(25) NOT NULL,
+	product_id BIGINT(25) NOT NULL,
+	created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	modified_date TIMESTAMP NULL,
+    is_active VARCHAR(5) NOT NULL DEFAULT 'Y',
+	PRIMARY KEY(product_tag_link_id)
+);
