@@ -546,3 +546,38 @@ button img {
     	background: transparent;
 	}
 }
+
+.tag-bar {
+	background-color: #f8f8f8;
+	margin: -1px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #ddd;
+	white-space: nowrap
+}
+
+.button-tag {
+	border-color: transparent;
+    background-color: #f8f8f8;
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0 12px;
+    min-width: 52px;
+    border-width: 1px;
+    border-style: solid;
+    vertical-align: top;
+    text-align: center;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    min-height: 24px;
+    font-size: 12px;
+    line-height: 24px;
+    border-radius: 1px;
+    color: #ee385d;
+}
+
+.button-tag.selected {
+	font-weight: bold;
+	border-bottom: 1px solid #ee385d;
+}

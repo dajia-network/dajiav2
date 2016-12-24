@@ -22,6 +22,9 @@ import com.dajia.Application;
 import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductItemRepo;
+import com.dajia.util.ApiWechatUtils;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(Application.class)
@@ -145,5 +148,17 @@ public class ServiceTests {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void testWechatAccessToken() throws JsonParseException, JsonMappingException, IOException {
+		String token = apiService.getWechatAccessToken();
+		System.out.println("token: " + token);
+	}
+
+	@Test
+	public void testSendWechatMsg() throws JsonParseException, JsonMappingException, IOException {
+		apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success,
+				"ojKYps1y5oaBbeoHoPIq9en9391E", "201612100153331210");
 	}
 }

@@ -117,6 +117,13 @@ select * from user_refund where refund_type=0 and refund_status=2
 union
 select * from user_refund where refund_type=0 and refund_status=0;
 
+select * from user_order where order_id in (
+select order_id from user_refund where refund_type=0 and refund_status=3
+union
+select order_id from user_refund where refund_type=0 and refund_status=2
+union
+select order_id from user_refund where refund_type=0 and refund_status=0);
+
 select sum(refund_value) from user_refund where refund_type=1 and refund_status=1 
 and refund_date between '2016-11-01' and '2016-12-01';
 
