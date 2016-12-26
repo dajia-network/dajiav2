@@ -720,13 +720,12 @@ angular
 										$scope.myOrders = [];
 									}
 									$scope.myOrders = $scope.myOrders.concat(data.results);
-									console.log($scope.myOrders);
 									$scope.myOrders.forEach(function(o) {
 										if (null == o.progressValue) {
 											o.progressValue = o.productVO.priceOff
 													/ (o.productVO.originalPrice - o.productVO.targetPrice) * 100;
 										}
-										if (null != o.userShares) {
+										if (null != o.userShares & o.userShares.length > 0) {
 											var shareRefund = o.userShares.length;
 											if (shareRefund > o.productVO.currentPrice) {
 												shareRefund = o.productVO.currentPrice;
@@ -738,6 +737,7 @@ angular
 											// shareRefund;
 										}
 									});
+									console.log($scope.myOrders);
 								});
 					}
 					if ($scope.loginUser != null) {

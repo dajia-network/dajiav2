@@ -581,3 +581,12 @@ button img {
 	font-weight: bold;
 	border-bottom: 1px solid #ee385d;
 }
+
+.badge.badge-assertive, .tabs .tab-item .badge.badge-assertive {
+    background-color: #ee385d;
+    color: #fff;
+}
+
+.tab-item {
+    opacity: .8;
+}
