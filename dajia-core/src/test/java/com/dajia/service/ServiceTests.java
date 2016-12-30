@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,6 +24,7 @@ import com.dajia.domain.ProductItem;
 import com.dajia.domain.UserOrder;
 import com.dajia.repository.ProductItemRepo;
 import com.dajia.util.ApiWechatUtils;
+import com.dajia.vo.OrderFilterVO;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -158,7 +160,19 @@ public class ServiceTests {
 
 	@Test
 	public void testSendWechatMsg() throws JsonParseException, JsonMappingException, IOException {
-		apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success,
+		// apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success,
+		// "ojKYps1y5oaBbeoHoPIq9en9391E", "201612100153331210");
+
+		apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_delivering,
 				"ojKYps1y5oaBbeoHoPIq9en9391E", "201612100153331210");
+	}
+
+	@Test
+	public void testLoadOrders() {
+		OrderFilterVO orderFilter = new OrderFilterVO();
+		orderFilter.productId = 29L;
+		orderFilter.status = -1;
+		Page<UserOrder> orders = orderService.loadOrdersByPage(1, orderFilter);
+		System.out.println(orders.getSize());
 	}
 }
