@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dajia.domain.Product;
 import com.dajia.domain.ProductItem;
+import com.dajia.domain.ProductTag;
 import com.dajia.domain.User;
 import com.dajia.domain.UserFavourite;
 import com.dajia.repository.ProductRepo;
+import com.dajia.repository.ProductTagRepo;
 import com.dajia.repository.UserFavouriteRepo;
 import com.dajia.repository.UserRepo;
 import com.dajia.service.ApiService;
@@ -46,6 +48,9 @@ public class ProductController extends BaseController {
 	@Autowired
 	private ApiService apiService;
 
+	@Autowired
+	private ProductTagRepo tagRepo;
+
 	@RequestMapping("/products")
 	public List<ProductVO> allProducts() {
 		List<ProductVO> products = productService.loadAllValidProductsWithPrices();
@@ -55,6 +60,14 @@ public class ProductController extends BaseController {
 	@RequestMapping("/products/{page}")
 	public PaginationVO<ProductItem> allProductsByPage(@PathVariable("page") Integer pageNum) {
 		Page<ProductItem> products = productService.loadAllValidProductsWithPricesByPage(pageNum);
+		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
+		return page;
+	}
+
+	@RequestMapping("/products/{tagId}/{page}")
+	public PaginationVO<ProductItem> tagProductsByPage(@PathVariable("tagId") Long tagId,
+			@PathVariable("page") Integer pageNum) {
+		Page<ProductItem> products = productService.loadTagProductsByPage(tagId, pageNum);
 		PaginationVO<ProductItem> page = CommonUtils.generatePaginationVO(products, pageNum);
 		return page;
 	}
@@ -90,5 +103,10 @@ public class ProductController extends BaseController {
 		}
 		List<Product> products = productService.loadFavProductsByUserId(user.userId);
 		return productService.converProductVOListFromP(products);
+	}
+
+	@RequestMapping("/tags")
+	public List<ProductTag> productTags() {
+		return tagRepo.findByIsActive(CommonUtils.Y);
 	}
 }

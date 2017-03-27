@@ -6,6 +6,10 @@
 	<div class="item item-logo-center" align="center">
 		<img src="/app/img/logo-banner.png">
 	</div>
+	<div class="tag-bar">
+		<button class="button-tag" ng-class="{true: 'selected'}[selectedTag==0]" ng-click="selectTag(0)">全部</button>
+		<button class="button-tag" ng-class="{true: 'selected'}[selectedTag==tag.tagId]" ng-click="selectTag(tag.tagId)" ng-repeat="tag in tags">{{tag.tagName}}</button>
+	</div>
 	<div class="list card" ng-repeat="product in products">
 		<div class="overlay" ng-if="product.productStatus!=2" ng-click="go2Product(product.product.productId)"></div>
 		<div class="item item-image">

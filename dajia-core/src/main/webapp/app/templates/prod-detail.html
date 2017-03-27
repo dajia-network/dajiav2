@@ -16,7 +16,7 @@
 				</div>
 				<ion-slide-box on-slide-changed="slideHasChanged($index)">
 				  <ion-slide ng-repeat="prodImg in product.productImages">
-				    <img ng-src="{{prodImg.url}}" class="full-image">
+				    <img ng-click="showBigImage('{{prodImg.url}}')" ng-src="{{prodImg.url}}" class="full-image">
 				  </ion-slide>
 				</ion-slide-box>
 				<span ng-if="null!=shareInfo" class="assertive">
@@ -42,6 +42,7 @@
 				    <uib-progressbar class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
 				    </uib-progressbar>
 				</div>
+				<com-Image-Box></com-Image-Box>
 			</div>
 		
 			<div class="item tabs tabs-secondary tabs-icon-left">

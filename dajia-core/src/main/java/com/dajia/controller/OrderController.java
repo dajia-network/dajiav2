@@ -185,10 +185,11 @@ public class OrderController extends BaseController {
 				productService.productSold(order);
 
 				// 微信公众号发送购买成功通知
-				// User user = userRepo.findByUserId(order.userId);
-				// apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success,
-				// user.oauthUserId,
-				// order.trackingId);
+				User user = userRepo.findByUserId(order.userId);
+				if (null != user) {
+					apiService.sendWechatTemplateMsg(ApiWechatUtils.wechat_msg_template_order_success,
+							user.oauthUserId, order.trackingId);
+				}
 			}
 			response.setStatus(Ping_Plus_Code_Success);
 
