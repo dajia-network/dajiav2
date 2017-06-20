@@ -24,7 +24,7 @@
 			<label class="item item-input">
 				<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
 			</label>
-			<div class="item item-input item-select">
+			<div data-tap-disabled="true" class="item item-input item-select">
 			    <div class="input-label">
 			      省
 			    </div>
@@ -32,14 +32,14 @@
 					<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
 			    </select>
 			</div>
-			<div class="item item-input item-select">
+			<div data-tap-disabled="true" class="item item-input item-select">
 			    <div class="input-label">
 			      市
 			    </div>
 			    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
 			    </select>
 			</div>
-			<div class="item item-input item-select">
+			<div data-tap-disabled="true" class="item item-input item-select">
 			    <div class="input-label">
 			      区
 			    </div>
