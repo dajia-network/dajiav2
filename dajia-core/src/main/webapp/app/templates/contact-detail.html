@@ -18,28 +18,28 @@
 		<label class="item item-input">
 			<input type="tel" placeholder="收货人手机" ng-model="userContact.contactMobile">
 		</label>
-		<label class="item item-input item-select">
-		    <div class="input-label">
+		<div data-tap-disabled="true" class="item item-input item-select">
+		    <span class="input-label">
 		      省
-		    </div>
+		    </span>
 		    <select ng-model="userContact.province" ng-change="userContact.city=''" ng-options="province.locationValue for province in provinces" >
 				<!-- option ng-repeat="province in provinces" value="{{province}}">{{province.locationValue}}</option -->
 		    </select>
-		</label>
-		<label class="item item-input item-select">
+		</div>
+		<div data-tap-disabled="true" class="item item-input item-select">
 		    <div class="input-label">
 		      市
 		    </div>
 		    <select ng-model="userContact.city" ng-change="userContact.district=''" ng-options="city.locationValue for city in userContact.province.children" >
 		    </select>
-		</label>
-		<label class="item item-input item-select">
+		</div>
+		<div data-tap-disabled="true" class="item item-input item-select">
 		    <div class="input-label">
 		      区
 		    </div>
 		    <select ng-model="userContact.district" ng-options="district.locationValue for district in userContact.city.children" >
 		    </select>
-		</label>
+		</div>
 		
 		<label class="item item-input">
 			<input type="text" placeholder="详细地址" ng-model="userContact.address1">
